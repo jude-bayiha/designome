@@ -127,3 +127,22 @@ Reports must state which layers actually ran. Static inspection is not rendered 
 ## Repository dependency rule
 
 The concept matrix and Design DNA schema are canonical contracts. Prompts consume them. The installer consumes only accepted Design DNA. Audits consume accepted Design DNA plus implementation evidence. No artifact may silently become a new source of visual truth.
+
+## Executable runtime boundary
+
+The plugin packages three agent entry points:
+
+- `designome-extract` performs multimodal evidence and synthesis work;
+- `designome-install` reviews technical compatibility and invokes managed installation;
+- `designome-audit` separates static, rendered, interaction, and accessibility evidence.
+
+The dependency-light Node runtime performs only deterministic work:
+
+- PNG, JPEG, and GIF metadata plus SHA-256 hashing;
+- idempotent run initialization and input fingerprinting;
+- semantic Design DNA reference and evidence checks;
+- CSS entry discovery or explicit selection;
+- generated CSS, user-owned overrides, and managed `AGENTS.md` blocks;
+- manifest checksums, conflict detection, rollback, and verification.
+
+The runtime cannot interpret screenshot design intent. Skills cannot bypass runtime ownership checks. This boundary keeps model reasoning flexible and file mutation predictable.

@@ -4,12 +4,13 @@ Designome turns UI screenshots into an evidence-backed **Design DNA** that an ex
 
 ## Current status
 
-The repository defines the v0.2 product contract:
+The repository now contains the first executable vertical slice:
 
+- a Codex plugin manifest with `designome-extract`, `designome-install`, and `designome-audit` skills;
 - a versioned matrix of eight analysis axes and 18 cross-cutting concepts;
 - 13 modular prompts for evidence intake, analysis, synthesis, integration, and audit;
-- a framework-neutral Design DNA JSON Schema and reference example;
-- an idempotent target-project installation contract;
+- deterministic screenshot metadata, Design DNA validation, installation, and verification commands;
+- idempotent managed CSS and agent guidance with checksums and user-owned overrides;
 - repository quality, commit, CI, and release guardrails.
 
 The host agent performs multimodal reasoning with its installed model and account. Designome does not require a separate OCR, computer-vision, model-training, or image-processing stack.
@@ -27,12 +28,17 @@ The host agent performs multimodal reasoning with its installed model and accoun
 ## Repository map
 
 ```text
+.codex-plugin/ Codex plugin manifest
+skills/        Extract, install, and audit skill entry points
+bin/           Designome command-line entry point
+src/runtime/   Dependency-light deterministic operations
 concepts/    Versioned concept matrix
 prompts/     Modular agent workflow
 schemas/     Machine-readable contracts
 examples/    Schema-valid Design DNA example
 docs/        Product, architecture, concepts, evidence, and installation guidance
 scripts/     Repository contract validation
+tests/         Runtime and idempotency tests
 ```
 
 Start with:
@@ -41,6 +47,7 @@ Start with:
 - [Architecture and methodology](docs/architecture-and-methodology.md)
 - [Concept matrix](docs/concept-matrix.md)
 - [Target-project installation contract](docs/installation-contract.md)
+- [Runtime and CLI](docs/runtime.md)
 - [Reference screenshot analysis](docs/reference-analysis.md)
 - [Design DNA v0.2 example](examples/design-dna.reference-v0.2.json)
 
@@ -51,16 +58,19 @@ Requirements: Node.js 24+ and pnpm 11.5.2.
 ```bash
 pnpm install
 pnpm check
+pnpm designome --help
 ```
 
 Husky formats staged files and validates Conventional Commit messages. CI runs the same repository checks. Release Please prepares releases from conventional commits merged into `main`.
 
-## Intended user test
+## Agent workflow
 
-1. Supply representative screenshots and run the extraction pipeline.
-2. Review and accept the resulting Design DNA.
-3. Install it into a real target project.
+1. Invoke `$designome-extract` with representative screenshot paths.
+2. Review the generated draft and explicitly accept the Design DNA.
+3. Invoke `$designome-install` with the accepted file and target project.
 4. Ask the coding agent to generate a new interface, such as user management.
-5. Audit the result against the accepted rules and stress cases.
+5. Invoke `$designome-audit` against the implementation and accepted rules.
 
 That forward test measures the actual product outcome: whether extracted knowledge improves a new UI without copying an existing screen.
+
+Designome does not implement a second chat interface. Codex or another compatible host agent supplies the conversation, multimodal model, and authenticated account. The plugin supplies the specialized workflow; the Node helper owns deterministic file operations.

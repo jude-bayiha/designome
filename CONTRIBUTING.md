@@ -39,6 +39,7 @@ pnpm lint
 pnpm validate
 pnpm test
 pnpm check
+pnpm designome --help
 ```
 
 - Husky installs hooks through `pnpm prepare`.

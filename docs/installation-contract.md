@@ -24,6 +24,8 @@ Installation converts an accepted Design DNA into technical artifacts for a spec
 7. Run relevant project checks.
 8. Execute the installer again and require a zero-diff result.
 
+The current helper exposes the plan as JSON on standard output. The invoking skill may save that output in the extraction run as `integration-plan.json`.
+
 ## Portable CSS rules
 
 - Prefix custom properties with `--designome-`.
@@ -32,6 +34,8 @@ Installation converts an accepted Design DNA into technical artifacts for a spec
 - Keep generated CSS separate from `designome.overrides.css`.
 - Add an import once, using stable managed markers when an existing entry file must be edited.
 - Emit semantic relationships from accepted Design DNA; do not invent exact values during installation.
+
+The first adapter accepts exactly `:root` or `[data-designome]` as scope. It discovers one supported global CSS entry or requires an explicit project-relative `--css-entry` when discovery is missing or ambiguous.
 
 Example managed import:
 
@@ -70,6 +74,8 @@ The manifest records at least:
 - creation time and latest successful verification.
 
 Before replacing a managed file, compare its current hash with the manifest. A mismatch means the file was modified outside Designome. The default action is `conflict`: preserve the file, write nothing to it, and report the exact resolution choices. Adoption or forced replacement requires explicit authorization.
+
+Writes require `--instructions-reviewed`. A conflict blocks the complete installation and returns exit code 2. The manifest is written last, and a failed write or post-install verification rolls completed changes back.
 
 ## Regeneration behavior
 

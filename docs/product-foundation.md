@@ -39,7 +39,7 @@ Success means the new interface follows the extracted system in hierarchy, densi
 | Knowledge contract   | JSON Schema 2020-12 + JSON                             | Validates the matrix and Design DNA without a framework dependency                 |
 | Guidance             | Markdown                                               | Serves humans and coding agents                                                    |
 | Generated styling    | CSS custom properties and `@layer`                     | Provides portable, namespaced implementation primitives                            |
-| Local tooling        | Node.js 24 + pnpm                                      | Runs lightweight validation and future installation logic                          |
+| Local tooling        | Node.js 24 + pnpm                                      | Runs screenshot metadata, validation, installation, and verification logic         |
 | Validation           | Ajv + semantic checks                                  | Detects schema failures, broken references, and prompt-contract drift              |
 | Repository quality   | Prettier, markdownlint, Husky, lint-staged, Commitlint | Enforces formatting and contribution hygiene                                       |
 | Delivery             | GitHub Actions + Release Please                        | Runs checks and prepares conventional releases                                     |
@@ -69,4 +69,4 @@ This specification slice is complete when:
 - repository content and delivery metadata are English;
 - local checks pass twice without changing tracked files.
 
-Implementation of a distributable installer or marketplace skill is the next independent slice, after the contracts receive a forward test.
+The first source-based Codex plugin and installer slice is implemented. Marketplace publication, more target-framework adapters, and automated rendered-browser audits remain later slices after forward-test feedback.
