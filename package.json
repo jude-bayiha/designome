@@ -4,12 +4,16 @@
   "private": true,
   "description": "Agent-native extraction and delivery of evidence-backed UI design guidance.",
   "type": "module",
+  "bin": {
+    "designome": "./bin/designome.mjs"
+  },
   "packageManager": "pnpm@11.5.2",
   "engines": {
     "node": ">=24"
   },
   "scripts": {
     "prepare": "husky",
+    "designome": "node bin/designome.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" && node scripts/validate-repository.mjs",
