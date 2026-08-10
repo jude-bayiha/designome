@@ -1,0 +1,438 @@
+{
+  "schemaVersion": "0.2.0",
+  "conceptMatrixVersion": "0.2.0",
+  "documentId": "dna.reference-dashboard-v0.2",
+  "name": "Reference analytics dashboard Design DNA",
+  "description": "A compact example derived from the two supplied dashboard screenshots. Proposed rules are deliberately separated from visible evidence.",
+  "status": "draft",
+  "createdAt": "2026-08-10T00:00:00Z",
+  "revision": {
+    "number": 1,
+    "changeSummary": "Align the example with the v0.2 concept matrix and evidence contract."
+  },
+  "sources": [
+    {
+      "id": "source.ed-1",
+      "kind": "screenshot",
+      "label": "Dashboard overview with navigation and analytics",
+      "path": "/home/mrjudenq/Desktop/ed-1.jpeg",
+      "dimensions": { "width": 3072, "height": 4096 },
+      "contentHash": "sha256:af65121a2d22602919b1e89b660ae6a1a34b23448a64ae9d5c9aceaffbcc60f3",
+      "limitations": [
+        "Static screenshot",
+        "Some brand text is blurred",
+        "The right side is cropped"
+      ]
+    },
+    {
+      "id": "source.ed-2",
+      "kind": "screenshot",
+      "label": "Dashboard overview showing the right-side content",
+      "path": "/home/mrjudenq/Desktop/ed2.jpeg",
+      "dimensions": { "width": 3072, "height": 4096 },
+      "contentHash": "sha256:5e6327c0782adf63748a21dfffd8eea1e8f0215818cbfc6a8aa062dd1b8ddee9",
+      "limitations": [
+        "Static screenshot",
+        "The left side is cropped",
+        "No interaction state is demonstrated"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "evidence.app-shell",
+      "sourceRef": "source.ed-1",
+      "region": "Left navigation and main canvas",
+      "visibleSummary": "A persistent vertical navigation rail is visually separated from a light main content canvas.",
+      "limitations": ["Persistence across routes is inferred from one view"]
+    },
+    {
+      "id": "evidence.summary-cards",
+      "sourceRef": "source.ed-2",
+      "region": "Top summary area",
+      "visibleSummary": "Summary cards repeat a header, icon, primary value, supporting text, and optional trailing action.",
+      "limitations": ["Loading, empty, and error variants are not shown"]
+    },
+    {
+      "id": "evidence.performance-grid",
+      "sourceRef": "source.ed-2",
+      "region": "Performance metrics row",
+      "visibleSummary": "Metric cells use repeated anatomy and compact positive, negative, or neutral comparisons.",
+      "limitations": ["Color values and icon sources are not measured"]
+    },
+    {
+      "id": "evidence.revenue-chart",
+      "sourceRef": "source.ed-2",
+      "region": "Revenue over time card",
+      "visibleSummary": "A large dotted area chart receives more space than adjacent analytics and includes title, total, average, legend, axes, and date labels.",
+      "limitations": [
+        "Tooltip, keyboard access, and small-screen behavior are not shown"
+      ]
+    },
+    {
+      "id": "evidence.campaign-table",
+      "sourceRef": "source.ed-2",
+      "region": "Campaign rows",
+      "visibleSummary": "Rows align waiting items, live posts, budget use, revenue, and a review action into stable columns.",
+      "limitations": [
+        "Long content, sorting, and large data volumes are not shown"
+      ]
+    }
+  ],
+  "tokens": [
+    {
+      "id": "token.surface-hierarchy",
+      "name": "Surface hierarchy",
+      "category": "color",
+      "value": {
+        "kind": "relationship",
+        "expression": "cards are lighter than the canvas and separated with subtle borders rather than strong shadow"
+      },
+      "claim": {
+        "statement": "The interface uses low-contrast nested surfaces to establish containment.",
+        "conceptRefs": ["concept.visual-stability"],
+        "epistemicStatus": "observed",
+        "confidence": {
+          "score": 0.92,
+          "basis": "The relationship repeats across navigation, summary cards, charts, and table rows."
+        },
+        "evidenceRefs": [
+          "evidence.app-shell",
+          "evidence.summary-cards",
+          "evidence.revenue-chart"
+        ],
+        "scope": ["application shell", "cards", "data regions"],
+        "exceptions": ["The primary action uses a saturated blue fill"],
+        "validation": {
+          "method": "Compare generated surfaces against reference screenshots at matched scale.",
+          "status": "pending"
+        }
+      }
+    },
+    {
+      "id": "token.spacing-rhythm",
+      "name": "Repeated spacing rhythm",
+      "category": "space",
+      "value": {
+        "kind": "relationship",
+        "expression": "internal card padding is smaller than the gaps between major dashboard sections"
+      },
+      "claim": {
+        "statement": "Spacing establishes nested hierarchy through repeated relative intervals.",
+        "conceptRefs": ["concept.content-layout-resilience"],
+        "epistemicStatus": "inferred",
+        "confidence": {
+          "score": 0.78,
+          "basis": "The same relative rhythm appears across multiple containers, but source scale prevents exact measurement."
+        },
+        "evidenceRefs": [
+          "evidence.summary-cards",
+          "evidence.performance-grid",
+          "evidence.revenue-chart"
+        ],
+        "scope": ["dashboard composition"],
+        "exceptions": [],
+        "validation": {
+          "method": "Measure representative screenshot intervals and test candidate token ratios.",
+          "status": "pending"
+        }
+      }
+    }
+  ],
+  "rules": [
+    {
+      "id": "rule.card-anatomy",
+      "name": "Stable card anatomy",
+      "category": "layout",
+      "strength": "required",
+      "requirements": [
+        "Keep header identity separate from the primary value area",
+        "Align comparable values consistently",
+        "Reserve trailing actions without shifting the value"
+      ],
+      "validationCases": [
+        "Card with no action",
+        "Card with a long title",
+        "Card with two lines of supporting text"
+      ],
+      "claim": {
+        "statement": "Analytic cards repeat a recognizable header and value anatomy.",
+        "conceptRefs": [
+          "concept.content-layout-resilience",
+          "concept.visual-stability"
+        ],
+        "epistemicStatus": "observed",
+        "confidence": {
+          "score": 0.94,
+          "basis": "The pattern repeats across summary and performance sections."
+        },
+        "evidenceRefs": ["evidence.summary-cards", "evidence.performance-grid"],
+        "scope": ["analytic cards", "metric cells"],
+        "exceptions": ["Large chart cards add legends and axes"],
+        "validation": {
+          "method": "Render all card variants together and compare anatomy alignment.",
+          "status": "pending"
+        }
+      }
+    },
+    {
+      "id": "rule.content-overflow",
+      "name": "Resilient content overflow",
+      "category": "content",
+      "strength": "required",
+      "requirements": [
+        "Allow descriptive text to wrap or clamp without hiding adjacent actions",
+        "Expose full meaningful values through an accessible detail mechanism",
+        "Never let unbroken content expand the page unexpectedly"
+      ],
+      "validationCases": [
+        "Two-hundred-character description",
+        "Unbroken identifier",
+        "Localized label expanded by one hundred percent",
+        "Text enlarged to two hundred percent"
+      ],
+      "claim": {
+        "statement": "Components should preserve hierarchy and action access under long or unbroken content; this behavior is proposed because the screenshots show only short examples.",
+        "conceptRefs": [
+          "concept.content-layout-resilience",
+          "concept.localization-bidirectionality"
+        ],
+        "epistemicStatus": "proposed",
+        "confidence": {
+          "score": 0.9,
+          "basis": "The rule is necessary for robust implementation but is not visible in the source."
+        },
+        "evidenceRefs": [],
+        "scope": ["cards", "tables", "navigation labels", "actions"],
+        "exceptions": [
+          "Identifiers whose full value is required may use a scrollable or copyable region"
+        ],
+        "validation": {
+          "method": "Run content expansion, unbroken-string, localization, and text-zoom stress tests.",
+          "status": "pending"
+        }
+      }
+    },
+    {
+      "id": "rule.business-states",
+      "name": "Explicit business states",
+      "category": "state",
+      "strength": "required",
+      "requirements": [
+        "Define loading, empty, no-results, partial, error, warning, success, stale, and disabled behavior as applicable",
+        "Preserve card geometry when state content changes",
+        "Pair blocking failures with an actionable recovery path"
+      ],
+      "validationCases": [
+        "Near-instant load",
+        "Slow load",
+        "One widget fails",
+        "All data fails",
+        "No matching campaign"
+      ],
+      "claim": {
+        "statement": "Missing business states should preserve the visible component anatomy; these states are proposed because no alternate state is shown.",
+        "conceptRefs": [
+          "concept.state-edge-coverage",
+          "concept.feedback-interruption-budget",
+          "concept.visual-stability"
+        ],
+        "epistemicStatus": "proposed",
+        "confidence": {
+          "score": 0.9,
+          "basis": "The screenshots establish stable containers, while robust state behavior remains absent."
+        },
+        "evidenceRefs": [],
+        "scope": ["summary cards", "charts", "campaign table"],
+        "exceptions": [],
+        "validation": {
+          "method": "Render every applicable state and compare geometry, message actionability, and recovery.",
+          "status": "pending"
+        }
+      }
+    },
+    {
+      "id": "rule.semantic-reflow",
+      "name": "Priority-preserving reflow",
+      "category": "responsive",
+      "strength": "required",
+      "requirements": [
+        "Keep the page title and primary action discoverable",
+        "Stack summary cards before compressing their content",
+        "Give wide data regions a deliberate scroll, collapse, or alternative representation"
+      ],
+      "validationCases": [
+        "Three-hundred-twenty-pixel viewport",
+        "Four-hundred-percent zoom",
+        "Long localized labels",
+        "Wide table"
+      ],
+      "claim": {
+        "statement": "The dashboard should reflow by semantic priority; this is proposed because both screenshots show a large desktop layout.",
+        "conceptRefs": [
+          "concept.semantic-responsive-reflow",
+          "concept.data-scale-resilience"
+        ],
+        "epistemicStatus": "proposed",
+        "confidence": {
+          "score": 0.82,
+          "basis": "The visual hierarchy establishes priority, but no narrow viewport is supplied."
+        },
+        "evidenceRefs": [],
+        "scope": ["dashboard layout"],
+        "exceptions": [
+          "Dense data regions may use bounded horizontal scrolling when equivalent content remains accessible"
+        ],
+        "validation": {
+          "method": "Run viewport and zoom tests while checking order, access, and overflow.",
+          "status": "pending"
+        }
+      }
+    }
+  ],
+  "componentPatterns": [
+    {
+      "id": "component.metric-card",
+      "name": "Metric card",
+      "anatomy": [
+        "semantic icon",
+        "label",
+        "primary value",
+        "comparison or supporting text",
+        "optional action"
+      ],
+      "variants": [
+        "summary with action",
+        "compact performance metric",
+        "large visualization container"
+      ],
+      "states": [
+        {
+          "name": "stable",
+          "status": "observed",
+          "behavior": "Show the current value and supporting comparison in a stable card frame."
+        },
+        {
+          "name": "loading",
+          "status": "proposed",
+          "behavior": "Reserve the stable geometry and avoid a flash for near-instant results."
+        },
+        {
+          "name": "error",
+          "status": "proposed",
+          "behavior": "Keep the label and frame, explain the failure, and offer proportionate recovery."
+        }
+      ],
+      "ruleRefs": [
+        "rule.card-anatomy",
+        "rule.content-overflow",
+        "rule.business-states"
+      ],
+      "tokenRefs": ["token.surface-hierarchy", "token.spacing-rhythm"],
+      "claim": {
+        "statement": "Metric cards are a reusable family with stable identity and value regions.",
+        "conceptRefs": [
+          "concept.state-edge-coverage",
+          "concept.content-layout-resilience"
+        ],
+        "epistemicStatus": "observed",
+        "confidence": {
+          "score": 0.93,
+          "basis": "Several visible cards share the same semantic anatomy."
+        },
+        "evidenceRefs": [
+          "evidence.summary-cards",
+          "evidence.performance-grid",
+          "evidence.revenue-chart"
+        ],
+        "scope": ["dashboard metrics"],
+        "exceptions": [
+          "Visualization cards extend the anatomy with legends and axes"
+        ],
+        "validation": {
+          "method": "Render the family matrix across variants, states, and long content.",
+          "status": "pending"
+        }
+      }
+    },
+    {
+      "id": "component.data-row",
+      "name": "Campaign data row",
+      "anatomy": [
+        "campaign identity",
+        "waiting status",
+        "live-post count",
+        "budget progress",
+        "revenue",
+        "review action"
+      ],
+      "variants": ["default row", "row requiring attention"],
+      "states": [
+        {
+          "name": "stable",
+          "status": "observed",
+          "behavior": "Align comparable values in consistent columns with a trailing review action."
+        },
+        {
+          "name": "long content",
+          "status": "proposed",
+          "behavior": "Keep the action reachable while names and labels wrap or clamp deliberately."
+        }
+      ],
+      "ruleRefs": ["rule.content-overflow", "rule.semantic-reflow"],
+      "tokenRefs": ["token.surface-hierarchy", "token.spacing-rhythm"],
+      "claim": {
+        "statement": "Campaign data is presented as comparison-friendly rows with a consistent trailing action.",
+        "conceptRefs": [
+          "concept.data-scale-resilience",
+          "concept.affordance-discoverability"
+        ],
+        "epistemicStatus": "observed",
+        "confidence": {
+          "score": 0.9,
+          "basis": "Multiple visible rows repeat the column and action structure."
+        },
+        "evidenceRefs": ["evidence.campaign-table"],
+        "scope": ["campaign table"],
+        "exceptions": [],
+        "validation": {
+          "method": "Stress the row with long names, extreme values, narrow containers, and keyboard navigation.",
+          "status": "pending"
+        }
+      }
+    }
+  ],
+  "motion": {
+    "mode": "off",
+    "rules": []
+  },
+  "unknowns": [
+    {
+      "id": "unknown.responsive-behavior",
+      "question": "How do navigation, charts, and wide campaign data reflow at narrow widths?",
+      "impact": "high",
+      "resolutionPlan": "Obtain narrow-viewport references or validate the proposed semantic reflow in a rendered prototype.",
+      "conceptRefs": [
+        "concept.semantic-responsive-reflow",
+        "concept.data-scale-resilience"
+      ]
+    },
+    {
+      "id": "unknown.interaction-states",
+      "question": "What are the intended focus, hover, pressed, loading, empty, error, and stale states?",
+      "impact": "high",
+      "resolutionPlan": "Obtain state references or treat generated behavior as explicit proposals and forward-test every state.",
+      "conceptRefs": [
+        "concept.state-edge-coverage",
+        "concept.modality-equivalence"
+      ]
+    },
+    {
+      "id": "unknown.icon-source",
+      "question": "Which icon library, if any, is authoritative?",
+      "impact": "medium",
+      "resolutionPlan": "Keep icon rules geometry-based until the product owner supplies a library or accepts a proposed mapping.",
+      "conceptRefs": ["concept.iconographic-coherence"]
+    }
+  ]
+}

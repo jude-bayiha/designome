@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Designome Extract'
+  short_description: 'Extract evidence-backed Design DNA from screenshots'
+  default_prompt: 'Use $designome-extract to extract Design DNA from these UI screenshots.'

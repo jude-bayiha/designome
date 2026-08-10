@@ -1,0 +1,9 @@
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD033": false,
+    "MD036": false,
+  },
+  "ignores": ["node_modules/**", "CHANGELOG.md", ".designome/runs/**"],
+}

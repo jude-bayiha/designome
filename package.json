@@ -1,0 +1,40 @@
+{
+  "name": "designome",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Agent-native extraction and delivery of evidence-backed UI design guidance.",
+  "type": "module",
+  "bin": {
+    "designome": "./bin/designome.mjs"
+  },
+  "packageManager": "pnpm@11.5.2",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "prepare": "husky",
+    "designome": "node bin/designome.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" && node scripts/validate-repository.mjs",
+    "test": "node --test scripts/*.test.mjs tests/**/*.test.mjs",
+    "validate": "node scripts/validate-repository.mjs",
+    "check": "pnpm format:check && pnpm lint && pnpm test"
+  },
+  "lint-staged": {
+    "*.{cjs,css,js,json,jsonc,md,mjs,yaml,yml}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.2.0",
+    "markdownlint-cli2": "^0.23.2",
+    "prettier": "^3.9.6",
+    "yaml": "^2.9.0"
+  }
+}

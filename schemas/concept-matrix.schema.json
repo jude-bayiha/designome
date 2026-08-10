@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:designome:schema:concept-matrix:0.2.0",
+  "title": "Designome Concept Matrix",
+  "description": "Versioned routing contract for Designome's eight analysis axes, cross-cutting concepts and modular prompt stages.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "matrixVersion",
+    "epistemicStatuses",
+    "axes",
+    "concepts",
+    "promptStages"
+  ],
+  "properties": {
+    "matrixVersion": {
+      "const": "0.2.0"
+    },
+    "epistemicStatuses": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["observed", "inferred", "proposed", "unknown"]
+      }
+    },
+    "axes": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "$ref": "#/$defs/axis"
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/concept"
+      }
+    },
+    "promptStages": {
+      "type": "array",
+      "minItems": 12,
+      "items": {
+        "$ref": "#/$defs/promptStage"
+      }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "stringList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/nonEmptyString"
+      },
+      "uniqueItems": true
+    },
+    "identifierList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/identifier"
+      },
+      "uniqueItems": true
+    },
+    "axis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "order",
+        "name",
+        "purpose",
+        "promptRef",
+        "focusAreas",
+        "conceptRefs"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^axis\\.[a-z][a-z0-9-]*$"
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "name": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "purpose": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "promptRef": {
+          "type": "string",
+          "pattern": "^prompts/[0-9]{2}-[a-z0-9-]+\\.md$"
+        },
+        "focusAreas": {
+          "$ref": "#/$defs/stringList"
+        },
+        "conceptRefs": {
+          "$ref": "#/$defs/identifierList"
+        }
+      }
+    },
+    "concept": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "description",
+        "axisRefs",
+        "inspect",
+        "screenshotLimits",
+        "stressTests",
+        "outputTargets"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^concept\\.[a-z][a-z0-9-]*$"
+        },
+        "name": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "description": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "axisRefs": {
+          "$ref": "#/$defs/identifierList"
+        },
+        "inspect": {
+          "$ref": "#/$defs/stringList"
+        },
+        "screenshotLimits": {
+          "$ref": "#/$defs/stringList"
+        },
+        "stressTests": {
+          "$ref": "#/$defs/stringList"
+        },
+        "outputTargets": {
+          "$ref": "#/$defs/stringList"
+        }
+      }
+    },
+    "promptStage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "order", "kind", "file", "consumes", "produces"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^prompt\\.[a-z][a-z0-9-]*$"
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "enum": [
+            "orchestrator",
+            "intake",
+            "axis",
+            "synthesis",
+            "integration",
+            "audit"
+          ]
+        },
+        "file": {
+          "type": "string",
+          "pattern": "^prompts/[0-9]{2}-[a-z0-9-]+\\.md$"
+        },
+        "consumes": {
+          "$ref": "#/$defs/stringList"
+        },
+        "produces": {
+          "$ref": "#/$defs/stringList"
+        }
+      }
+    }
+  }
+}
