@@ -1,0 +1,865 @@
+{
+  "matrixVersion": "0.2.0",
+  "epistemicStatuses": ["observed", "inferred", "proposed", "unknown"],
+  "axes": [
+    {
+      "id": "axis.perceptual-foundations",
+      "order": 1,
+      "name": "Perceptual foundations",
+      "purpose": "Formalize the structures that immediately organize perception of the interface.",
+      "promptRef": "prompts/02-perceptual-foundations.md",
+      "focusAreas": [
+        "global regions, composition, containment, and depth",
+        "grid, alignment, proportions, and spatial rhythm",
+        "density, whitespace, and salience hierarchy",
+        "typography, color, surfaces, borders, radii, and elevation",
+        "iconography, imagery, and visual language for data"
+      ],
+      "conceptRefs": [
+        "concept.iconographic-coherence",
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow",
+        "concept.asset-media-resilience",
+        "concept.visual-stability"
+      ]
+    },
+    {
+      "id": "axis.task-architecture",
+      "order": 2,
+      "name": "Task architecture",
+      "purpose": "Describe how the interface orients, prioritizes, and moves a user through a task.",
+      "promptRef": "prompts/03-task-architecture.md",
+      "focusAreas": [
+        "orientation, navigation, and current location",
+        "information hierarchy and reading order",
+        "primary, secondary, and next-step actions",
+        "grouping, progressive disclosure, and cognitive load",
+        "context continuity across actions"
+      ],
+      "conceptRefs": [
+        "concept.affordance-discoverability",
+        "concept.spatial-continuity",
+        "concept.progressive-disclosure",
+        "concept.reversibility-forgiveness"
+      ]
+    },
+    {
+      "id": "axis.interactions-state-machine",
+      "order": 3,
+      "name": "Interactions and state machine",
+      "purpose": "Define states, transitions, feedback, and modalities required for predictable interaction.",
+      "promptRef": "prompts/04-interactions-and-states.md",
+      "focusAreas": [
+        "default, hover, focus, pressed, selected, and disabled states",
+        "loading, empty, error, success, warning, partial, and stale business states",
+        "feedback, confirmation, cancellation, and recovery",
+        "keyboard, touch, pointer, focus, and interactive targets",
+        "functional motion and user preferences"
+      ],
+      "conceptRefs": [
+        "concept.state-edge-coverage",
+        "concept.affordance-discoverability",
+        "concept.modality-equivalence",
+        "concept.spatial-continuity",
+        "concept.reversibility-forgiveness",
+        "concept.feedback-interruption-budget",
+        "concept.visual-stability",
+        "concept.motion-grammar"
+      ]
+    },
+    {
+      "id": "axis.business-data-patterns",
+      "order": 4,
+      "name": "Cross-cutting business and data patterns",
+      "purpose": "Turn visible business structures into reusable component and data contracts.",
+      "promptRef": "prompts/05-business-and-data-patterns.md",
+      "focusAreas": [
+        "visible component anatomy and variants",
+        "tables, lists, cards, forms, and validation",
+        "search, filters, sorting, pagination, and batch actions",
+        "status, progress, KPIs, and data visualization",
+        "missing, partial, large, or heterogeneous content"
+      ],
+      "conceptRefs": [
+        "concept.state-edge-coverage",
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow",
+        "concept.progressive-disclosure",
+        "concept.data-scale-resilience"
+      ]
+    },
+    {
+      "id": "axis.adaptation-inclusion",
+      "order": 5,
+      "name": "Adaptation and inclusion",
+      "purpose": "Preserve access to information and action across variations in context, content, and ability.",
+      "promptRef": "prompts/06-adaptation-and-inclusion.md",
+      "focusAreas": [
+        "reflow, intrinsic responsiveness, zoom, and enlarged text",
+        "localization, expansion, cultural formats, and RTL",
+        "reading order, labels, focus, contrast, and alternatives",
+        "keyboard, touch, pointer, and assistive-technology equivalence",
+        "theme, contrast, text size, and reduced motion"
+      ],
+      "conceptRefs": [
+        "concept.iconographic-coherence",
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow",
+        "concept.localization-bidirectionality",
+        "concept.modality-equivalence",
+        "concept.spatial-continuity",
+        "concept.motion-grammar",
+        "concept.accessibility-semantics"
+      ]
+    },
+    {
+      "id": "axis.performance-resilience",
+      "order": 6,
+      "name": "Perceived performance and resilience",
+      "purpose": "Keep the interface understandable and stable during delay, failure, and degradation.",
+      "promptRef": "prompts/07-performance-and-resilience.md",
+      "focusAreas": [
+        "priority and timing of loading states",
+        "visual stability and reserved space",
+        "partial, stale, offline, or unavailable data",
+        "error recovery, retry, and preservation of work",
+        "perceptual cost of lists, media, and visualizations"
+      ],
+      "conceptRefs": [
+        "concept.state-edge-coverage",
+        "concept.content-layout-resilience",
+        "concept.feedback-interruption-budget",
+        "concept.data-scale-resilience",
+        "concept.asset-media-resilience",
+        "concept.visual-stability",
+        "concept.motion-grammar"
+      ]
+    },
+    {
+      "id": "axis.content-trust-privacy",
+      "order": 7,
+      "name": "Content, trust, and privacy",
+      "purpose": "Make labels, messages, and consequential decisions understandable and trustworthy.",
+      "promptRef": "prompts/08-content-trust-and-privacy.md",
+      "focusAreas": [
+        "clarity, tone, precision, and terminology",
+        "actionable errors and next steps",
+        "permissions, privacy, and collection rationale",
+        "data provenance, freshness, and limitations",
+        "destructive actions, consequences, and confirmation"
+      ],
+      "conceptRefs": [
+        "concept.localization-bidirectionality",
+        "concept.reversibility-forgiveness",
+        "concept.feedback-interruption-budget",
+        "concept.trust-permission-transparency"
+      ]
+    },
+    {
+      "id": "axis.system-governance",
+      "order": 8,
+      "name": "System and governance",
+      "purpose": "Convert observations and proposals into reusable, traceable, agent-verifiable rules.",
+      "promptRef": "prompts/09-system-and-governance.md",
+      "focusAreas": [
+        "semantic tokens and relationships between tokens",
+        "component contracts, variants, and anti-patterns",
+        "provenance, confidence, exceptions, and unknowns",
+        "framework-neutral design-to-code mapping",
+        "installation, overrides, audits, and non-regression"
+      ],
+      "conceptRefs": [
+        "concept.state-edge-coverage",
+        "concept.iconographic-coherence",
+        "concept.asset-media-resilience",
+        "concept.motion-grammar",
+        "concept.accessibility-semantics",
+        "concept.design-to-code-governance"
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "id": "concept.state-edge-coverage",
+      "name": "State and edge-case coverage",
+      "description": "Inventory visible states and separately propose absent states required for a robust component.",
+      "axisRefs": [
+        "axis.interactions-state-machine",
+        "axis.business-data-patterns",
+        "axis.performance-resilience",
+        "axis.system-governance"
+      ],
+      "inspect": [
+        "displayed state and probable trigger",
+        "feedback, exit action, and context preservation",
+        "anatomy consistency across states"
+      ],
+      "screenshotLimits": [
+        "unshown states are never observed",
+        "transitions and timing are invisible in a static screenshot"
+      ],
+      "stressTests": [
+        "slow and near-instant loading",
+        "initial empty and no results",
+        "partial and total error",
+        "disabled, warning, success, and stale data"
+      ],
+      "outputTargets": [
+        "design-dna.rules",
+        "guidelines/state-patterns.md",
+        "audit/state-coverage.json"
+      ]
+    },
+    {
+      "id": "concept.iconographic-coherence",
+      "name": "Iconographic coherence",
+      "description": "Treat icons as one visual and semantic language rather than isolated decoration.",
+      "axisRefs": [
+        "axis.perceptual-foundations",
+        "axis.adaptation-inclusion",
+        "axis.system-governance"
+      ],
+      "inspect": [
+        "outline, filled, or mixed family",
+        "weight, caps, corners, bounding box, and optical size",
+        "alignment, color, semantic role, and labeling"
+      ],
+      "screenshotLimits": [
+        "the exact library and path cannot be identified with certainty",
+        "accessible names and RTL behavior are not visible"
+      ],
+      "stressTests": [
+        "unlabeled icon-only control",
+        "culturally ambiguous icon",
+        "small size or low contrast",
+        "RTL mirroring and disabled state"
+      ],
+      "outputTargets": [
+        "design-dna.tokens",
+        "guidelines/iconography.md",
+        "implementation/icon-map.md"
+      ]
+    },
+    {
+      "id": "concept.content-layout-resilience",
+      "name": "Content and layout resilience",
+      "description": "Preserve readability, hierarchy, and actions when real content exceeds visible examples.",
+      "axisRefs": [
+        "axis.perceptual-foundations",
+        "axis.business-data-patterns",
+        "axis.adaptation-inclusion",
+        "axis.performance-resilience"
+      ],
+      "inspect": [
+        "apparent width and height constraints",
+        "visible wrapping, clamping, ellipsis, and growth zones",
+        "dependencies between content and container size"
+      ],
+      "screenshotLimits": [
+        "short text does not prove an overflow strategy",
+        "fixed visible height does not prove resilience to zoom or translation"
+      ],
+      "stressTests": [
+        "very long text",
+        "unbroken URL or hash",
+        "empty or null value",
+        "large or negative number",
+        "many labels",
+        "200 percent text size"
+      ],
+      "outputTargets": [
+        "design-dna.rules",
+        "guidelines/content-resilience.md",
+        "audit/content-stress-cases.json"
+      ]
+    },
+    {
+      "id": "concept.semantic-responsive-reflow",
+      "name": "Semantic responsiveness and reflow",
+      "description": "Define how priority, order, and function survive constrained space beyond simple breakpoints.",
+      "axisRefs": [
+        "axis.perceptual-foundations",
+        "axis.business-data-patterns",
+        "axis.adaptation-inclusion"
+      ],
+      "inspect": [
+        "intrinsic containers and groups",
+        "essential versus secondary elements",
+        "evidence of wrap, local scroll, or reorganization"
+      ],
+      "screenshotLimits": [
+        "one viewport reveals no breakpoint",
+        "unshown hide, collapse, and reordering behavior remains proposed or unknown"
+      ],
+      "stressTests": [
+        "320 CSS pixels",
+        "400 percent zoom",
+        "ultra-wide window",
+        "wide table in a narrow container"
+      ],
+      "outputTargets": [
+        "guidelines/responsive.md",
+        "design-dna.rules",
+        "audit/reflow-cases.json"
+      ]
+    },
+    {
+      "id": "concept.localization-bidirectionality",
+      "name": "Localization and bidirectionality resilience",
+      "description": "Anticipate string expansion, scripts, reading direction, and cultural formats without inventing an observed locale.",
+      "axisRefs": ["axis.adaptation-inclusion", "axis.content-trust-privacy"],
+      "inspect": [
+        "visible date, number, currency, and name formats",
+        "layout dependence on label length",
+        "culturally ambiguous colors or icons"
+      ],
+      "screenshotLimits": [
+        "one language does not prove internationalization",
+        "RTL, plurals, and alternate formats remain unobserved"
+      ],
+      "stressTests": [
+        "30 to 100 percent text expansion",
+        "RTL",
+        "long names and mixed scripts",
+        "localized dates, currencies, and separators"
+      ],
+      "outputTargets": [
+        "guidelines/localization.md",
+        "audit/localization-cases.json"
+      ]
+    },
+    {
+      "id": "concept.affordance-discoverability",
+      "name": "Affordance and discoverability",
+      "description": "Align appearance, available action, and understanding of the next step.",
+      "axisRefs": ["axis.task-architecture", "axis.interactions-state-machine"],
+      "inspect": [
+        "contrast and shape of interactive elements",
+        "labels, icons, and action cues",
+        "hierarchy of primary and secondary actions"
+      ],
+      "screenshotLimits": [
+        "interactive appearance does not prove the entire region responds",
+        "hover, focus, and shortcuts are not visible"
+      ],
+      "stressTests": [
+        "keyboard-only navigation",
+        "unlabeled control",
+        "partially clickable visual region",
+        "hard-to-discover secondary action"
+      ],
+      "outputTargets": ["guidelines/interactions.md", "component-recipes.md"]
+    },
+    {
+      "id": "concept.modality-equivalence",
+      "name": "Input-modality equivalence",
+      "description": "Preserve the same useful outcome across keyboard, touch, pointer, and assistive technologies.",
+      "axisRefs": [
+        "axis.interactions-state-machine",
+        "axis.adaptation-inclusion"
+      ],
+      "inspect": [
+        "visible target size",
+        "probable order and grouping of controls",
+        "dependence on hover or an implicit gesture"
+      ],
+      "screenshotLimits": [
+        "real hit targets, DOM, and focus order are invisible",
+        "gestures and shortcuts cannot be certified"
+      ],
+      "stressTests": [
+        "keyboard only",
+        "touch with compact targets",
+        "screen reader",
+        "zoom with visible focus"
+      ],
+      "outputTargets": [
+        "guidelines/accessibility.md",
+        "audit/input-modality-cases.json"
+      ]
+    },
+    {
+      "id": "concept.spatial-continuity",
+      "name": "Spatial continuity and context preservation",
+      "description": "Preserve orientation, focus, scroll, and mental context across transitions and returns.",
+      "axisRefs": [
+        "axis.task-architecture",
+        "axis.interactions-state-machine",
+        "axis.adaptation-inclusion"
+      ],
+      "inspect": [
+        "navigation anchors and current location",
+        "spatial relation between trigger and result",
+        "embedded panels, dialogs, and details"
+      ],
+      "screenshotLimits": [
+        "focus return and scroll restoration are not visible",
+        "continuity across screens requires a sequence or a proposal"
+      ],
+      "stressTests": [
+        "open and close a dialog",
+        "browser back",
+        "filter then open detail",
+        "error during editing"
+      ],
+      "outputTargets": [
+        "guidelines/navigation-and-focus.md",
+        "interaction-contracts.md"
+      ]
+    },
+    {
+      "id": "concept.progressive-disclosure",
+      "name": "Progressive disclosure",
+      "description": "Make complexity available when needed without imposing it at first glance.",
+      "axisRefs": ["axis.task-architecture", "axis.business-data-patterns"],
+      "inspect": [
+        "primary and secondary information",
+        "menus, expandable details, and terminal actions",
+        "initial density and paths to depth"
+      ],
+      "screenshotLimits": [
+        "a closed panel does not reveal its content",
+        "placement alone does not establish usage frequency or product intent"
+      ],
+      "stressTests": [
+        "novice user",
+        "expert user",
+        "many actions",
+        "very rich row details"
+      ],
+      "outputTargets": [
+        "guidelines/task-architecture.md",
+        "component-recipes.md"
+      ]
+    },
+    {
+      "id": "concept.reversibility-forgiveness",
+      "name": "Reversibility and forgiveness",
+      "description": "Reduce the cost of mistakes through undo, rollback, proportionate confirmation, and work preservation.",
+      "axisRefs": [
+        "axis.task-architecture",
+        "axis.interactions-state-machine",
+        "axis.content-trust-privacy"
+      ],
+      "inspect": [
+        "visible destructive or consequential actions",
+        "confirmation, cancellation, or secondary action",
+        "precision of stated consequences"
+      ],
+      "screenshotLimits": [
+        "real undo and rollback availability is not proven",
+        "server-side effects remain unknown"
+      ],
+      "stressTests": [
+        "duplicate submission",
+        "failure after optimistic update",
+        "reversible deletion",
+        "navigation with unsaved changes"
+      ],
+      "outputTargets": [
+        "guidelines/feedback-and-recovery.md",
+        "interaction-contracts.md"
+      ]
+    },
+    {
+      "id": "concept.feedback-interruption-budget",
+      "name": "Feedback proportionality and interruption budget",
+      "description": "Choose inline, toast, banner, panel, or dialog feedback according to urgency, consequence, and expected action.",
+      "axisRefs": [
+        "axis.interactions-state-machine",
+        "axis.performance-resilience",
+        "axis.content-trust-privacy"
+      ],
+      "inspect": [
+        "placement and intensity of visible statuses",
+        "relationship between message, cause, and action",
+        "use of color, icons, and attention levels"
+      ],
+      "screenshotLimits": [
+        "feedback duration and repetition remain invisible",
+        "a screenshot cannot prove screen-reader behavior"
+      ],
+      "stressTests": [
+        "non-actionable information",
+        "blocking error",
+        "multiple failed widgets",
+        "frequent low-cost success"
+      ],
+      "outputTargets": [
+        "guidelines/feedback-and-recovery.md",
+        "guidelines/content.md"
+      ]
+    },
+    {
+      "id": "concept.data-scale-resilience",
+      "name": "Data-scale resilience",
+      "description": "Preserve comprehension and control with more rows, columns, series, statuses, or extreme values.",
+      "axisRefs": [
+        "axis.business-data-patterns",
+        "axis.performance-resilience"
+      ],
+      "inspect": [
+        "table or list density and anatomy",
+        "column and action priority",
+        "visible pagination, summaries, filters, and legends"
+      ],
+      "screenshotLimits": [
+        "real volume, virtualization, and backend limits are invisible",
+        "one data page does not prove extreme behavior"
+      ],
+      "stressTests": [
+        "zero, one, and ten thousand rows",
+        "many columns",
+        "duplicate labels",
+        "many chart series",
+        "batch selection and action"
+      ],
+      "outputTargets": [
+        "guidelines/data-patterns.md",
+        "audit/data-scale-cases.json"
+      ]
+    },
+    {
+      "id": "concept.asset-media-resilience",
+      "name": "Asset and media resilience",
+      "description": "Define dimensions, cropping, loading, fallback, and purpose for images, logos, illustrations, and charts.",
+      "axisRefs": [
+        "axis.perceptual-foundations",
+        "axis.performance-resilience",
+        "axis.system-governance"
+      ],
+      "inspect": [
+        "ratio, crop, density, and alignment",
+        "reserved space and content relationship",
+        "informative or decorative role"
+      ],
+      "screenshotLimits": [
+        "source files, licenses, alternate text, and fallbacks are invisible",
+        "a loaded asset does not reveal its loading state"
+      ],
+      "stressTests": [
+        "missing image",
+        "unexpected aspect ratio",
+        "slow media",
+        "logo on contrasting backgrounds",
+        "hidden decorative illustration"
+      ],
+      "outputTargets": ["guidelines/assets.md", "implementation/asset-map.md"]
+    },
+    {
+      "id": "concept.visual-stability",
+      "name": "Visual stability",
+      "description": "Avoid shifts, flicker, and geometry changes that disrupt reading or action.",
+      "axisRefs": [
+        "axis.perceptual-foundations",
+        "axis.interactions-state-machine",
+        "axis.performance-resilience"
+      ],
+      "inspect": [
+        "reserved spaces and stable dimensions",
+        "relationship between loaded state and container",
+        "visible sticky or overlaid elements"
+      ],
+      "screenshotLimits": [
+        "layout shift and flicker require a sequence or rendered test",
+        "runtime performance cannot be certified from pixels"
+      ],
+      "stressTests": [
+        "near-instant loading",
+        "late font",
+        "image without dimensions",
+        "height-changing error",
+        "sticky bar under zoom"
+      ],
+      "outputTargets": [
+        "guidelines/perceived-performance.md",
+        "audit/visual-stability-cases.json"
+      ]
+    },
+    {
+      "id": "concept.motion-grammar",
+      "name": "Motion grammar",
+      "description": "Propose functional, interruptible, reduced-motion-compatible motion without presenting static-screen deductions as observed.",
+      "axisRefs": [
+        "axis.interactions-state-machine",
+        "axis.adaptation-inclusion",
+        "axis.performance-resilience",
+        "axis.system-governance"
+      ],
+      "inspect": [
+        "spatial relationships that suggest origin or destination",
+        "state changes that benefit from continuity",
+        "hierarchy between immediate feedback and transition"
+      ],
+      "screenshotLimits": [
+        "duration, easing, and path are not observable in a screenshot",
+        "every absent rule must be proposed or unknown"
+      ],
+      "stressTests": [
+        "prefers-reduced-motion",
+        "interruption by a new action",
+        "slow device",
+        "transition that must not alter layout"
+      ],
+      "outputTargets": ["guidelines/motion.md", "design-tokens.motion.json"]
+    },
+    {
+      "id": "concept.accessibility-semantics",
+      "name": "Accessibility semantics and annotations",
+      "description": "Separate visible accessibility cues from DOM and behavioral requirements that implementation must verify.",
+      "axisRefs": ["axis.adaptation-inclusion", "axis.system-governance"],
+      "inspect": [
+        "visual order, grouping, and probable heading levels",
+        "visible labels, relative contrast, and non-color coding",
+        "compact targets and shown focus"
+      ],
+      "screenshotLimits": [
+        "conformance cannot be certified without DOM and tests",
+        "roles, accessible names, focus order, and live regions remain unknown"
+      ],
+      "stressTests": [
+        "keyboard navigation",
+        "screen reader",
+        "forced contrast",
+        "zoom and enlarged text",
+        "information without color"
+      ],
+      "outputTargets": [
+        "guidelines/accessibility.md",
+        "implementation/accessibility-annotations.md"
+      ]
+    },
+    {
+      "id": "concept.trust-permission-transparency",
+      "name": "Trust, permission, and transparency",
+      "description": "Explain provenance, freshness, access, and consequences when they affect a user decision.",
+      "axisRefs": ["axis.content-trust-privacy"],
+      "inspect": [
+        "provenance or freshness indicators",
+        "access badges, warnings, and permission labels",
+        "visible explanation of consequences"
+      ],
+      "screenshotLimits": [
+        "real policies, data processing, and permissions are invisible",
+        "an absent indicator does not prove an absent rule"
+      ],
+      "stressTests": [
+        "insufficient permission",
+        "stale data",
+        "unavailable source",
+        "irreversible action",
+        "sensitive-data collection"
+      ],
+      "outputTargets": [
+        "guidelines/content-and-trust.md",
+        "audit/trust-cases.json"
+      ]
+    },
+    {
+      "id": "concept.design-to-code-governance",
+      "name": "Design-to-code and non-regression contract",
+      "description": "Make extracted rules agent-usable, installable without duplication, and verifiable after generation.",
+      "axisRefs": ["axis.system-governance"],
+      "inspect": [
+        "tokens, relationships, and component contracts to export",
+        "required rules, recommendations, and anti-patterns",
+        "evidence, confidence, unknowns, and exceptions"
+      ],
+      "screenshotLimits": [
+        "a screenshot does not reveal the target framework or code structure",
+        "agent guidance does not mechanically enforce compliance"
+      ],
+      "stressTests": [
+        "regeneration with new screenshots",
+        "manually edited generated file",
+        "existing CSS import",
+        "nested agent instructions",
+        "audit of a newly generated page"
+      ],
+      "outputTargets": [
+        "design-dna.json",
+        "designome.generated.css",
+        "agent-skill",
+        "audit/report.md"
+      ]
+    }
+  ],
+  "promptStages": [
+    {
+      "id": "prompt.orchestrator",
+      "order": 0,
+      "kind": "orchestrator",
+      "file": "prompts/00-orchestrator.md",
+      "consumes": ["user request", "screenshots", "run configuration"],
+      "produces": ["run plan", "stage routing", "completion report"]
+    },
+    {
+      "id": "prompt.source-evidence",
+      "order": 1,
+      "kind": "intake",
+      "file": "prompts/01-source-evidence.md",
+      "consumes": ["screenshots", "known source context"],
+      "produces": [
+        "source-manifest.json",
+        "evidence-index.json",
+        "run-context.json"
+      ]
+    },
+    {
+      "id": "prompt.perceptual-foundations",
+      "order": 2,
+      "kind": "axis",
+      "file": "prompts/02-perceptual-foundations.md",
+      "consumes": [
+        "screenshots",
+        "source manifest",
+        "evidence contract",
+        "axis 1 matrix slice"
+      ],
+      "produces": ["stages/02-perceptual-foundations.json"]
+    },
+    {
+      "id": "prompt.task-architecture",
+      "order": 3,
+      "kind": "axis",
+      "file": "prompts/03-task-architecture.md",
+      "consumes": [
+        "screenshots",
+        "source manifest",
+        "evidence contract",
+        "axis 2 matrix slice"
+      ],
+      "produces": ["stages/03-task-architecture.json"]
+    },
+    {
+      "id": "prompt.interactions-states",
+      "order": 4,
+      "kind": "axis",
+      "file": "prompts/04-interactions-and-states.md",
+      "consumes": [
+        "screenshots",
+        "source manifest",
+        "evidence contract",
+        "axis 3 matrix slice",
+        "motion mode"
+      ],
+      "produces": ["stages/04-interactions-and-states.json"]
+    },
+    {
+      "id": "prompt.business-data",
+      "order": 5,
+      "kind": "axis",
+      "file": "prompts/05-business-and-data-patterns.md",
+      "consumes": [
+        "screenshots",
+        "source manifest",
+        "evidence contract",
+        "axis 4 matrix slice"
+      ],
+      "produces": ["stages/05-business-and-data-patterns.json"]
+    },
+    {
+      "id": "prompt.adaptation-inclusion",
+      "order": 6,
+      "kind": "axis",
+      "file": "prompts/06-adaptation-and-inclusion.md",
+      "consumes": [
+        "screenshots",
+        "source manifest",
+        "evidence contract",
+        "axis 5 matrix slice"
+      ],
+      "produces": ["stages/06-adaptation-and-inclusion.json"]
+    },
+    {
+      "id": "prompt.performance-resilience",
+      "order": 7,
+      "kind": "axis",
+      "file": "prompts/07-performance-and-resilience.md",
+      "consumes": [
+        "screenshots",
+        "source manifest",
+        "evidence contract",
+        "axis 6 matrix slice"
+      ],
+      "produces": ["stages/07-performance-and-resilience.json"]
+    },
+    {
+      "id": "prompt.content-trust",
+      "order": 8,
+      "kind": "axis",
+      "file": "prompts/08-content-trust-and-privacy.md",
+      "consumes": [
+        "screenshots",
+        "source manifest",
+        "evidence contract",
+        "axis 7 matrix slice"
+      ],
+      "produces": ["stages/08-content-trust-and-privacy.json"]
+    },
+    {
+      "id": "prompt.system-governance",
+      "order": 9,
+      "kind": "axis",
+      "file": "prompts/09-system-and-governance.md",
+      "consumes": [
+        "screenshots",
+        "source manifest",
+        "evidence contract",
+        "axis 8 matrix slice"
+      ],
+      "produces": ["stages/09-system-and-governance.json"]
+    },
+    {
+      "id": "prompt.synthesis",
+      "order": 10,
+      "kind": "synthesis",
+      "file": "prompts/10-synthesis.md",
+      "consumes": [
+        "source manifest",
+        "all axis stage outputs",
+        "concept matrix"
+      ],
+      "produces": [
+        "design-dna.json",
+        "design-rules.md",
+        "confidence-report.md",
+        "unknowns.md"
+      ]
+    },
+    {
+      "id": "prompt.integration",
+      "order": 11,
+      "kind": "integration",
+      "file": "prompts/11-project-integration.md",
+      "consumes": [
+        "accepted Design DNA",
+        "target project path",
+        "integration policy"
+      ],
+      "produces": [
+        "integration-plan.json",
+        "generated CSS",
+        "agent guidance",
+        "agent skill"
+      ]
+    },
+    {
+      "id": "prompt.generation-audit",
+      "order": 12,
+      "kind": "audit",
+      "file": "prompts/12-generation-audit.md",
+      "consumes": [
+        "accepted Design DNA",
+        "generated implementation",
+        "rendered screenshots when available",
+        "stress cases"
+      ],
+      "produces": [
+        "audit/report.md",
+        "audit/findings.json",
+        "revision proposal"
+      ]
+    }
+  ]
+}

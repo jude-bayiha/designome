@@ -1,0 +1,357 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:designome:schema:design-dna:0.2.0",
+  "title": "Designome Design DNA",
+  "description": "Framework-neutral, evidence-backed design guidance extracted from screenshots.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "conceptMatrixVersion",
+    "documentId",
+    "name",
+    "status",
+    "createdAt",
+    "revision",
+    "sources",
+    "evidence",
+    "tokens",
+    "rules",
+    "componentPatterns",
+    "motion",
+    "unknowns"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.2.0" },
+    "conceptMatrixVersion": { "const": "0.2.0" },
+    "documentId": { "$ref": "#/$defs/identifier" },
+    "name": { "$ref": "#/$defs/nonEmptyString" },
+    "description": { "type": "string" },
+    "status": { "enum": ["draft", "accepted", "superseded"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "revision": { "$ref": "#/$defs/revision" },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/source" }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/evidence" }
+    },
+    "tokens": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/token" }
+    },
+    "rules": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/rule" }
+    },
+    "componentPatterns": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/componentPattern" }
+    },
+    "motion": { "$ref": "#/$defs/motionPolicy" },
+    "unknowns": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/unknown" }
+    },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "identifierList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identifier" }
+    },
+    "stringList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/nonEmptyString" }
+    },
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["number", "changeSummary"],
+      "properties": {
+        "number": { "type": "integer", "minimum": 1 },
+        "previousDocumentId": { "$ref": "#/$defs/identifier" },
+        "changeSummary": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "label", "path", "dimensions", "limitations"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "kind": { "const": "screenshot" },
+        "label": { "$ref": "#/$defs/nonEmptyString" },
+        "path": { "$ref": "#/$defs/nonEmptyString" },
+        "dimensions": { "$ref": "#/$defs/dimensions" },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "limitations": { "$ref": "#/$defs/stringList" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sourceRef",
+        "region",
+        "visibleSummary",
+        "limitations"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "sourceRef": { "$ref": "#/$defs/identifier" },
+        "region": { "$ref": "#/$defs/nonEmptyString" },
+        "visibleSummary": { "$ref": "#/$defs/nonEmptyString" },
+        "limitations": { "$ref": "#/$defs/stringList" }
+      }
+    },
+    "confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "basis"],
+      "properties": {
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "basis": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "status"],
+      "properties": {
+        "method": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "enum": ["pending", "passed", "failed", "not-applicable"] }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "statement",
+        "conceptRefs",
+        "epistemicStatus",
+        "confidence",
+        "evidenceRefs",
+        "scope",
+        "exceptions",
+        "validation"
+      ],
+      "properties": {
+        "statement": { "$ref": "#/$defs/nonEmptyString" },
+        "conceptRefs": { "$ref": "#/$defs/identifierList" },
+        "epistemicStatus": {
+          "enum": ["observed", "inferred", "proposed", "unknown"]
+        },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "evidenceRefs": { "$ref": "#/$defs/identifierList" },
+        "scope": { "$ref": "#/$defs/stringList" },
+        "exceptions": { "$ref": "#/$defs/stringList" },
+        "validation": { "$ref": "#/$defs/validation" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "epistemicStatus": { "enum": ["observed", "inferred"] }
+            },
+            "required": ["epistemicStatus"]
+          },
+          "then": {
+            "properties": {
+              "evidenceRefs": { "minItems": 1 }
+            }
+          }
+        }
+      ]
+    },
+    "designValue": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "value"],
+          "properties": {
+            "kind": { "const": "exact" },
+            "value": { "type": ["string", "number", "boolean"] }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "minimum", "maximum", "unit"],
+          "properties": {
+            "kind": { "const": "range" },
+            "minimum": { "type": "number" },
+            "maximum": { "type": "number" },
+            "unit": { "$ref": "#/$defs/nonEmptyString" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "expression"],
+          "properties": {
+            "kind": { "const": "relationship" },
+            "expression": { "$ref": "#/$defs/nonEmptyString" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "reason"],
+          "properties": {
+            "kind": { "const": "unknown" },
+            "reason": { "$ref": "#/$defs/nonEmptyString" }
+          }
+        }
+      ]
+    },
+    "token": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "category", "value", "claim"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "category": {
+          "enum": [
+            "color",
+            "space",
+            "size",
+            "typography",
+            "radius",
+            "border",
+            "elevation",
+            "motion",
+            "other"
+          ]
+        },
+        "value": { "$ref": "#/$defs/designValue" },
+        "claim": { "$ref": "#/$defs/claim" }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "category",
+        "strength",
+        "requirements",
+        "validationCases",
+        "claim"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "category": {
+          "enum": [
+            "layout",
+            "content",
+            "state",
+            "interaction",
+            "responsive",
+            "accessibility",
+            "performance",
+            "trust",
+            "motion",
+            "governance"
+          ]
+        },
+        "strength": { "enum": ["required", "recommended", "avoid"] },
+        "requirements": { "$ref": "#/$defs/stringList" },
+        "validationCases": { "$ref": "#/$defs/stringList" },
+        "claim": { "$ref": "#/$defs/claim" }
+      }
+    },
+    "componentState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status", "behavior"],
+      "properties": {
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "enum": ["observed", "inferred", "proposed", "unknown"] },
+        "behavior": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "componentPattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "anatomy",
+        "variants",
+        "states",
+        "ruleRefs",
+        "tokenRefs",
+        "claim"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "anatomy": { "$ref": "#/$defs/stringList" },
+        "variants": { "$ref": "#/$defs/stringList" },
+        "states": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/componentState" }
+        },
+        "ruleRefs": { "$ref": "#/$defs/identifierList" },
+        "tokenRefs": { "$ref": "#/$defs/identifierList" },
+        "claim": { "$ref": "#/$defs/claim" }
+      }
+    },
+    "motionPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "rules"],
+      "properties": {
+        "mode": { "enum": ["off", "observed-only", "auto"] },
+        "rules": { "$ref": "#/$defs/identifierList" }
+      }
+    },
+    "unknown": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "question", "impact", "resolutionPlan", "conceptRefs"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "question": { "$ref": "#/$defs/nonEmptyString" },
+        "impact": { "enum": ["low", "medium", "high"] },
+        "resolutionPlan": { "$ref": "#/$defs/nonEmptyString" },
+        "conceptRefs": { "$ref": "#/$defs/identifierList" }
+      }
+    }
+  }
+}
