@@ -17,7 +17,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" && node scripts/validate-repository.mjs",
-    "test": "node --test scripts/*.test.mjs",
+    "test": "node --test scripts/*.test.mjs tests/**/*.test.mjs",
     "validate": "node scripts/validate-repository.mjs",
     "check": "pnpm format:check && pnpm lint && pnpm test"
   },
