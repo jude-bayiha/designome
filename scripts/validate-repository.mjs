@@ -136,6 +136,143 @@ function validateWorkflowYaml(rootDirectory) {
   return errors;
 }
 
+function validatePluginSurface(rootDirectory) {
+  const errors = [];
+  const manifestPath = path.join(rootDirectory, '.codex-plugin', 'plugin.json');
+  if (!fs.existsSync(manifestPath)) {
+    return ['plugin manifest is missing: .codex-plugin/plugin.json'];
+  }
+
+  try {
+    const manifest = readJson(manifestPath);
+    if (manifest.name !== 'designome') {
+      errors.push('plugin manifest name must be designome');
+    }
+    if (
+      !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/u.test(
+        manifest.version,
+      )
+    ) {
+      errors.push('plugin manifest version must use strict semver');
+    }
+    if (manifest.skills !== './skills/') {
+      errors.push('plugin manifest skills path must be ./skills/');
+    }
+    if (
+      !manifest.interface?.displayName ||
+      !manifest.interface?.shortDescription
+    ) {
+      errors.push('plugin manifest interface metadata is incomplete');
+    }
+    const prompts = Array.isArray(manifest.interface?.defaultPrompt)
+      ? manifest.interface.defaultPrompt
+      : [manifest.interface?.defaultPrompt].filter(Boolean);
+    if (prompts.length === 0 || prompts.length > 3) {
+      errors.push(
+        'plugin manifest must define between one and three default prompts',
+      );
+    }
+    if (
+      prompts.some(
+        (prompt) => typeof prompt !== 'string' || prompt.length > 128,
+      )
+    ) {
+      errors.push(
+        'plugin default prompts must be strings of at most 128 characters',
+      );
+    }
+  } catch (error) {
+    errors.push(`plugin manifest validation failed: ${error.message}`);
+  }
+
+  const skillsDirectory = path.join(rootDirectory, 'skills');
+  if (!fs.existsSync(skillsDirectory)) {
+    errors.push('plugin skills directory is missing');
+    return errors;
+  }
+
+  for (const skillName of fs.readdirSync(skillsDirectory).sort()) {
+    const skillDirectory = path.join(skillsDirectory, skillName);
+    if (!fs.statSync(skillDirectory).isDirectory()) continue;
+    const skillPath = path.join(skillDirectory, 'SKILL.md');
+    const agentPath = path.join(skillDirectory, 'agents', 'openai.yaml');
+    if (!fs.existsSync(skillPath)) {
+      errors.push(`${skillName} is missing SKILL.md`);
+      continue;
+    }
+
+    const skillText = readText(skillPath);
+    if (/\[TODO(?:\s|:)/u.test(skillText)) {
+      errors.push(`${skillName}/SKILL.md contains a TODO placeholder`);
+    }
+    const frontmatterMatch = skillText.match(/^---\n([\s\S]*?)\n---\n/u);
+    if (!frontmatterMatch) {
+      errors.push(`${skillName}/SKILL.md has invalid frontmatter`);
+      continue;
+    }
+    try {
+      const frontmatter = parseYaml(frontmatterMatch[1]);
+      if (frontmatter.name !== skillName) {
+        errors.push(`${skillName}/SKILL.md name must match its folder`);
+      }
+      if (
+        typeof frontmatter.description !== 'string' ||
+        frontmatter.description.trim() === ''
+      ) {
+        errors.push(`${skillName}/SKILL.md description is required`);
+      }
+      const unexpectedKeys = Object.keys(frontmatter).filter(
+        (key) => !['name', 'description'].includes(key),
+      );
+      if (unexpectedKeys.length > 0) {
+        errors.push(
+          `${skillName}/SKILL.md has unsupported frontmatter keys: ${unexpectedKeys.join(', ')}`,
+        );
+      }
+    } catch (error) {
+      errors.push(
+        `${skillName}/SKILL.md frontmatter failed to parse: ${error.message}`,
+      );
+    }
+
+    if (!fs.existsSync(agentPath)) {
+      errors.push(`${skillName} is missing agents/openai.yaml`);
+      continue;
+    }
+    try {
+      const agent = parseYaml(readText(agentPath));
+      const description = agent.interface?.short_description;
+      const defaultPrompt = agent.interface?.default_prompt;
+      if (
+        typeof description !== 'string' ||
+        description.length < 25 ||
+        description.length > 64
+      ) {
+        errors.push(
+          `${skillName} short_description must contain 25 to 64 characters`,
+        );
+      }
+      if (
+        typeof defaultPrompt !== 'string' ||
+        !defaultPrompt.includes(`$${skillName}`)
+      ) {
+        errors.push(
+          `${skillName} default_prompt must explicitly mention $${skillName}`,
+        );
+      }
+    } catch (error) {
+      errors.push(
+        `${skillName}/agents/openai.yaml failed to parse: ${error.message}`,
+      );
+    }
+  }
+
+  const binPath = path.join(rootDirectory, 'bin', 'designome.mjs');
+  if (!fs.existsSync(binPath))
+    errors.push('Designome CLI entrypoint is missing');
+  return errors;
+}
+
 export function validateRepository(rootDirectory = repositoryRoot) {
   const errors = [];
   const ajv = new Ajv2020({
@@ -189,6 +326,7 @@ export function validateRepository(rootDirectory = repositoryRoot) {
   }
 
   errors.push(...validateWorkflowYaml(rootDirectory));
+  errors.push(...validatePluginSurface(rootDirectory));
   return errors;
 }
 
