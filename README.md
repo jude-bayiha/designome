@@ -10,6 +10,7 @@ The repository now contains the first executable vertical slice:
 - a versioned matrix of eight analysis axes and 18 cross-cutting concepts;
 - 13 modular prompts for evidence intake, analysis, synthesis, integration, and audit;
 - deterministic screenshot metadata, Design DNA validation, installation, and verification commands;
+- executable audit planning with explicit browser-provider and evidence-layer boundaries;
 - project-local design documentation plus Tailwind-aware or CSS-variable integration context;
 - a project-local `designome-audit` skill that fresh Codex sessions can discover;
 - idempotent managed CSS and agent guidance with checksums and user-owned overrides;
