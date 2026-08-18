@@ -32,7 +32,40 @@ The current helper exposes the plan as JSON on standard output. The invoking ski
 
 ## Project-local design documentation
 
-Installation writes human-readable documentation inside the target repository. The default directory is `docs/designome`; repository instructions may select another visible project-relative directory with `--docs-dir`. The generated set includes an index, visual foundations, typography, iconography, components and states, proposed component mapping, canonical rules, and repository integration context.
+Installation writes human-readable documentation inside the target repository. The default directory is `docs/designome`; repository instructions may select another visible project-relative directory with `--docs-dir`. The concept matrix owns a versioned, mandatory projection. The installer always writes its index plus all 22 projected documents:
+
+```text
+docs/designome/
+├── README.md
+├── foundations/
+│   ├── colors-and-surfaces.md
+│   ├── typography.md
+│   ├── spacing-and-layout.md
+│   ├── iconography.md
+│   └── motion.md
+├── components/
+│   ├── catalogue.md
+│   ├── anatomy.md
+│   ├── states.md
+│   ├── data-display.md
+│   ├── forms-and-filters.md
+│   └── component-mapping.md
+├── behavior/
+│   ├── interaction-contracts.md
+│   ├── responsive-reflow.md
+│   ├── content-resilience.md
+│   ├── accessibility.md
+│   ├── localization.md
+│   └── loading-errors-recovery.md
+└── governance/
+    ├── rules.md
+    ├── evidence-and-confidence.md
+    ├── unknowns-and-exceptions.md
+    ├── calibration.md
+    └── integration.md
+```
+
+Completeness is structural, not evidentiary inflation. A projected document may contain only `unknown` boundaries and `proposed` stress tests when the accepted Design DNA does not support a stronger claim. It must still exist so agents and humans have a stable place to extend, review, and regenerate the subject.
 
 Generated documentation is managed and checksum-protected. Existing project documentation is user-owned. Declare existing paths with repeatable `--existing-rules` options and resolve one precedence policy:
 
@@ -50,7 +83,7 @@ The installer creates `.designome/audit.config.json` once as a project-owned sta
 
 The `auto` styling strategy detects supported technical markers. A `components.json` file selects the `shadcn-components` adapter, Tailwind dependencies or directives select `tailwind-utilities`, and other projects receive `css-variables`. An explicit strategy may be passed when repository instructions require it.
 
-`--ui-kit auto` reuses detected shadcn/ui source components, `--ui-kit none` disables that adapter preference, and `--ui-kit shadcn` records a proposed greenfield setup when no `components.json` exists. None of these options initializes shadcn/ui or installs dependencies. Generated `component-mapping.md` remains proposed technical guidance and inventories only source components already present in the project.
+`--ui-kit auto` reuses detected shadcn/ui source components, `--ui-kit none` disables that adapter preference, and `--ui-kit shadcn` records a proposed greenfield setup when no `components.json` exists. None of these options initializes shadcn/ui or installs dependencies. Generated `components/component-mapping.md` remains proposed technical guidance and inventories only source components already present in the project.
 
 The generated CSS is a semantic token bridge. In Tailwind projects, generation guidance requires existing utilities and theme conventions before new component CSS. In shadcn/ui projects, guidance also preserves installed source components, semantic variables, aliases, primitive base, and icon library. Detection changes the implementation adapter only and never turns target CSS or components into visual evidence.
 
@@ -95,7 +128,7 @@ Guidance is not enforcement. Critical requirements also need schema validation, 
 The manifest records at least:
 
 - Design DNA ID, revision, and content hash;
-- matrix and installer versions;
+- documentation-layout and installer versions;
 - generated documentation directory, styling adapter, existing-rule paths, and precedence policy;
 - managed path, ownership class, and last written hash;
 - import target and marker IDs;
@@ -103,6 +136,8 @@ The manifest records at least:
 - creation time and latest successful verification.
 
 Before replacing a managed file, compare its current hash with the manifest. A mismatch means the file was modified outside Designome. The default action is `conflict`: preserve the file, write nothing to it, and report the exact resolution choices. Adoption or forced replacement requires explicit authorization.
+
+When a layout upgrade makes a previously managed documentation path obsolete, the installer deletes it only if the previous manifest owns it and its current checksum still matches. A missing or manually edited obsolete file is a blocking conflict. The migration therefore does not weaken managed-file protection or silently discard human edits.
 
 Writes require `--instructions-reviewed`. A conflict blocks the complete installation and returns exit code 2. The manifest is written last, and a failed write or post-install verification rolls completed changes back.
 

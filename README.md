@@ -12,7 +12,7 @@ The repository now contains the first executable vertical slice:
 - deterministic screenshot metadata, Design DNA validation, installation, and verification commands;
 - executable audit planning with explicit browser-provider and evidence-layer boundaries;
 - bounded repair planning and project-aware shadcn/ui component mapping;
-- project-local design documentation plus Tailwind-aware or CSS-variable integration context;
+- a complete 23-file project-local design dossier spanning foundations, components, behavior, and governance, plus repository-native integration context;
 - a project-local `designome-audit` skill that fresh Codex sessions can discover;
 - idempotent managed CSS and agent guidance with checksums and user-owned overrides;
 - repository quality, commit, CI, and release guardrails.

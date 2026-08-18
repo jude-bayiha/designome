@@ -50,6 +50,12 @@ Every concept declares:
 
 This makes the matrix both an extraction checklist and an audit-routing contract. New concepts require all five fields and reciprocal axis references.
 
+## Documentation projection
+
+The matrix also owns `documentationLayoutVersion` and exactly 22 `documentationProjection` entries. Each entry binds a stable path and purpose to relevant concepts, token categories, rule categories, and a deterministic renderer. Installation adds the dossier index, producing 23 files in total.
+
+This projection prevents the documentation surface from shrinking to whichever claims happen to be most abundant in one extraction. It does not authorize invention: missing evidence becomes an `unknown` boundary or a `proposed` stress test in the expected document. Changing a projected path, renderer, or routing contract requires coordinated matrix, schema, prompt, installer, test, and documentation updates.
+
 ## Why multiple prompts
 
 A single prompt encourages shallow coverage, repeated claims, and lost uncertainty. Specialized prompts reduce the active context and produce reviewable fragments. The synthesis stage alone resolves duplication and contradictions, while the audit stage tests whether accepted rules changed the generated product outcome.
