@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/jude-bayiha/designome/compare/v1.1.0...v1.2.0) (2026-08-18)
+
+
+### Features
+
+* **installer:** export project audit skill ([a3e541c](https://github.com/jude-bayiha/designome/commit/a3e541c1150ab642191ff4ce262108000d9ebd10))
+* **installer:** export project-local audit skill ([1a7ff60](https://github.com/jude-bayiha/designome/commit/1a7ff60faf20a751258c3922c0fcd92aa447cfb1))
+
 ## [1.1.0](https://github.com/jude-bayiha/designome/compare/v1.0.1...v1.1.0) (2026-08-18)
 
 
