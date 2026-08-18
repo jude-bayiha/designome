@@ -9,7 +9,7 @@ Read `_shared-contract.md` and the `axis.business-data-patterns` matrix slice.
 
 ## Task
 
-Extract visible component anatomy and patterns for tables, lists, cards, forms, filters, search, sorting, pagination, batch actions, status, progress, KPIs, and data visualizations. Identify content and data boundaries that implementations must survive.
+Extract visible component anatomy and patterns for tables, lists, cards, forms, filters, search, sorting, pagination, batch actions, status, progress, KPIs, and data visualizations. Identify content and data boundaries that implementations must survive. For dense collections, separate row height, primary text, metadata, header labels, icons, status treatments, and control targets so that compactness remains legible and internally aligned.
 
 ## Output
 
@@ -21,3 +21,4 @@ Return the shared stage JSON for `prompt.business-data` with component recipes, 
 - Distinguish visible truncation from a proposed overflow policy.
 - Do not assume pagination, virtualization, sorting, or filtering works unless shown.
 - Preserve component-specific exceptions instead of forcing false uniformity.
+- Treat avatar fallback centering, line height, stable geometry, and status-label readability as implementation checks when screenshots cannot prove their DOM behavior.

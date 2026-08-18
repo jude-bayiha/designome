@@ -253,7 +253,9 @@
       "inspect": [
         "apparent width and height constraints",
         "visible wrapping, clamping, ellipsis, and growth zones",
-        "dependencies between content and container size"
+        "dependencies between content and container size",
+        "typography role, line height, and density relationships that preserve readability",
+        "gaps between major regions compared with internal panel spacing"
       ],
       "screenshotLimits": [
         "short text does not prove an overflow strategy",
@@ -265,7 +267,9 @@
         "empty or null value",
         "large or negative number",
         "many labels",
-        "200 percent text size"
+        "200 percent text size",
+        "computed table text below an accepted readability floor",
+        "adjacent major regions with collapsed spacing"
       ],
       "outputTargets": [
         "design-dna.rules",
@@ -501,7 +505,9 @@
       "inspect": [
         "table or list density and anatomy",
         "column and action priority",
-        "visible pagination, summaries, filters, and legends"
+        "visible pagination, summaries, filters, and legends",
+        "primary text, metadata, status, icon, and target-size calibration",
+        "avatar fallback geometry and optical centering"
       ],
       "screenshotLimits": [
         "real volume, virtualization, and backend limits are invisible",
@@ -512,7 +518,8 @@
         "many columns",
         "duplicate labels",
         "many chart series",
-        "batch selection and action"
+        "batch selection and action",
+        "fallback avatars with one to three initials"
       ],
       "outputTargets": [
         "guidelines/data-patterns.md",
@@ -663,7 +670,8 @@
       "inspect": [
         "tokens, relationships, and component contracts to export",
         "required rules, recommendations, and anti-patterns",
-        "evidence, confidence, unknowns, and exceptions"
+        "evidence, confidence, unknowns, and exceptions",
+        "operational bounds, preferred values, and audit-only calibration rules"
       ],
       "screenshotLimits": [
         "a screenshot does not reveal the target framework or code structure",
@@ -674,11 +682,16 @@
         "manually edited generated file",
         "existing CSS import",
         "nested agent instructions",
+        "existing design documentation and precedence policy",
+        "Tailwind or repository-native styling adapter",
+        "forward-test calibration without evidence-status promotion",
         "audit of a newly generated page"
       ],
       "outputTargets": [
         "design-dna.json",
         "designome.generated.css",
+        "docs/designome",
+        "integration-policy.json",
         "agent-skill",
         "audit/report.md"
       ]
@@ -840,6 +853,8 @@
       "produces": [
         "integration-plan.json",
         "generated CSS",
+        "generated design documentation",
+        "resolved styling and rule-precedence context",
         "agent guidance",
         "agent skill"
       ]
@@ -853,12 +868,15 @@
         "accepted Design DNA",
         "generated implementation",
         "rendered screenshots when available",
-        "stress cases"
+        "stress cases",
+        "computed typography, spacing, and component geometry",
+        "explicit human feedback"
       ],
       "produces": [
         "audit/report.md",
         "audit/findings.json",
-        "revision proposal"
+        "revision proposal",
+        "calibration patch proposal"
       ]
     }
   ]

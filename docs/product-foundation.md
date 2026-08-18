@@ -12,6 +12,7 @@ Designome converts screenshot evidence into:
 - content, data-scale, responsive, localization, accessibility, motion, and resilience guidance;
 - explicit unknowns and implementation validation;
 - an optional agent skill and managed target-project artifacts.
+- project-local human-readable design documentation and repository-native styling context.
 
 ## Scope boundary
 
@@ -48,15 +49,18 @@ No Python, NumPy, OpenCV, OCR engine, vector database, training pipeline, or sta
 
 ## Product risks and controls
 
-| Risk                                                    | Control                                                                                  |
-| ------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| The model invents exact values or unseen behavior       | Epistemic statuses, evidence references, screenshot-limit rules, and synthesis gates     |
-| One giant prompt becomes unstable                       | Stage routing and specialized prompt files                                               |
-| Guidance is too aesthetic to improve real code          | State, edge-case, content, data, accessibility, and audit contracts                      |
-| Target-project style contaminates extraction            | Technical-only inspection policy and explicit source separation                          |
-| Reinstallation duplicates or overwrites work            | Managed markers, checksums, separate overrides, dry-run, and second-run no-diff test     |
-| `AGENTS.md` is treated as enforcement                   | Pair guidance with schema checks, generation audits, and future installer validation     |
-| Static screenshots imply false accessibility confidence | Separate visible cues from DOM, keyboard, assistive-technology, and runtime verification |
+| Risk                                                         | Control                                                                                  |
+| ------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| The model invents exact values or unseen behavior            | Epistemic statuses, evidence references, screenshot-limit rules, and synthesis gates     |
+| One giant prompt becomes unstable                            | Stage routing and specialized prompt files                                               |
+| Guidance is too aesthetic to improve real code               | State, edge-case, content, data, accessibility, and audit contracts                      |
+| Relational guidance permits unreadable implementation values | Forward-test calibration, bounded preferred values, and computed-style audits            |
+| Target-project style contaminates extraction                 | Technical-only inspection policy and explicit source separation                          |
+| Generated CSS competes with Tailwind or project primitives   | Detect the styling stack and prefer repository-native utilities before component CSS     |
+| Existing UI rules are silently replaced                      | Explicit precedence policy, read-only declared rule paths, and conflict reporting        |
+| Reinstallation duplicates or overwrites work                 | Managed markers, checksums, separate overrides, dry-run, and second-run no-diff test     |
+| `AGENTS.md` is treated as enforcement                        | Pair guidance with schema checks, generation audits, and future installer validation     |
+| Static screenshots imply false accessibility confidence      | Separate visible cues from DOM, keyboard, assistive-technology, and runtime verification |
 
 ## v0.2 deliverables
 

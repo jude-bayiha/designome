@@ -60,6 +60,8 @@ Every canonical claim contains:
 
 Confidence and status are independent. A direct observation can have low confidence because of crop or compression. An unknown can have high certainty because the relevant state is absent.
 
+Accepted range values may add a preferred implementation value and either a `bounded` or `audit-only` strategy. This makes forward-test calibration executable without reclassifying a human preference or computed implementation value as screenshot evidence.
+
 ## Status promotion
 
 | Status     | Admission rule                                                                        | Promotion path                                 |
@@ -87,7 +89,9 @@ Extraction may run without a target project. When a target path is supplied, the
 - source and CSS entry points;
 - aliases and build scripts;
 - installed icon or motion libraries;
-- applicable repository and nested agent instructions.
+- applicable repository and nested agent instructions;
+- declared existing design-documentation paths and precedence;
+- styling-system dependencies and directives such as Tailwind.
 
 It may not treat existing CSS, components, tokens, or rendered UI as Design DNA evidence. Technical compatibility can change the export shape, never the extracted design meaning.
 
@@ -106,6 +110,11 @@ It may not treat existing CSS, components, tokens, or rendered UI as Design DNA 
 ├── confidence-report.md
 ├── unknowns.md
 ├── integration-plan.json
+├── docs/designome/ (or a repository-configured target directory)
+│   ├── README.md
+│   ├── typography.md
+│   ├── iconography.md
+│   └── integration.md
 └── audit/
     ├── report.md
     └── findings.json
@@ -143,6 +152,7 @@ The dependency-light Node runtime performs only deterministic work:
 - semantic Design DNA reference and evidence checks;
 - CSS entry discovery or explicit selection;
 - generated CSS, user-owned overrides, and managed `AGENTS.md` blocks;
+- project-local human-readable design documentation and styling-adapter context;
 - manifest checksums, conflict detection, rollback, and verification.
 
 The runtime cannot interpret screenshot design intent. Skills cannot bypass runtime ownership checks. This boundary keeps model reasoning flexible and file mutation predictable.

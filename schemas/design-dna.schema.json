@@ -213,7 +213,9 @@
             "kind": { "const": "range" },
             "minimum": { "type": "number" },
             "maximum": { "type": "number" },
-            "unit": { "$ref": "#/$defs/nonEmptyString" }
+            "unit": { "$ref": "#/$defs/nonEmptyString" },
+            "preferred": { "type": "number" },
+            "strategy": { "enum": ["bounded", "audit-only"] }
           }
         },
         {

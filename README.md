@@ -10,6 +10,7 @@ The repository now contains the first executable vertical slice:
 - a versioned matrix of eight analysis axes and 18 cross-cutting concepts;
 - 13 modular prompts for evidence intake, analysis, synthesis, integration, and audit;
 - deterministic screenshot metadata, Design DNA validation, installation, and verification commands;
+- project-local design documentation plus Tailwind-aware or CSS-variable integration context;
 - idempotent managed CSS and agent guidance with checksums and user-owned overrides;
 - repository quality, commit, CI, and release guardrails.
 
@@ -47,6 +48,7 @@ Start with:
 - [Architecture and methodology](docs/architecture-and-methodology.md)
 - [Concept matrix](docs/concept-matrix.md)
 - [Target-project installation contract](docs/installation-contract.md)
+- [Integration and calibration matrix](docs/integration-and-calibration-matrix.md)
 - [Runtime and CLI](docs/runtime.md)
 - [Reference screenshot analysis](docs/reference-analysis.md)
 - [Design DNA v0.2 example](examples/design-dna.reference-v0.2.json)

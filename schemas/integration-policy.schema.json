@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designome.dev/schemas/integration-policy.schema.json",
+  "title": "Designome target-project integration policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "documentationDirectory",
+    "rulePrecedence",
+    "existingRulePaths",
+    "stylingStrategy"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.1.0" },
+    "documentationDirectory": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+    },
+    "rulePrecedence": {
+      "enum": ["complement", "existing-first", "designome-first"]
+    },
+    "existingRulePaths": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+      }
+    },
+    "stylingStrategy": {
+      "enum": [
+        "auto",
+        "css-variables",
+        "tailwind-utilities",
+        "shadcn-components"
+      ]
+    }
+  }
+}

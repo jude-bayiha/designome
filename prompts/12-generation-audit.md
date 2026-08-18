@@ -11,11 +11,11 @@ Read `_shared-contract.md`, the accepted Design DNA, and applicable stress cases
 
 ## Task
 
-Compare the implementation with accepted rules, inspect generated code, and distinguish static checks from rendered or interaction evidence. Classify deviations by impact and confidence, then propose the smallest corrective change.
+Compare the implementation with accepted rules, inspect generated code, and distinguish static checks from rendered or interaction evidence. When a browser is available, inspect computed typography, line height, control geometry, avatar fallback centering, local overflow, and gaps between major regions against accepted ranges and relationships. Classify deviations by impact and confidence, then propose the smallest corrective change.
 
 ## Output
 
-Produce `audit/report.md`, `audit/findings.json`, and a revision proposal. Each finding includes rule reference, evidence, severity, certainty, affected scope, suggested fix, and verification method.
+Produce `audit/report.md`, `audit/findings.json`, a revision proposal, and proposed calibration patches when human or rendered evidence exposes an under-specified accepted rule. Each finding includes rule reference, evidence, severity, certainty, affected scope, suggested fix, and verification method.
 
 ## Guardrails
 
@@ -24,3 +24,4 @@ Produce `audit/report.md`, `audit/findings.json`, and a revision proposal. Each 
 - Proposals are not failures until accepted as requirements.
 - Preserve intentional, documented exceptions.
 - Do not mutate the implementation unless the user separately authorizes a fix.
+- Never promote a computed implementation value or human preference to screenshot-observed evidence. Keep it as a proposed calibration until explicit acceptance.

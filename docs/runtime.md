@@ -41,12 +41,20 @@ node bin/designome.mjs install \
   --dna <accepted-design-dna.json> \
   --project <target-project> \
   --css-entry src/styles/globals.css \
+  --docs-dir docs/design-system/generated \
+  --rule-precedence complement \
+  --existing-rules docs/design-system/core \
+  --styling auto \
   --dry-run
 
 node bin/designome.mjs install \
   --dna <accepted-design-dna.json> \
   --project <target-project> \
   --css-entry src/styles/globals.css \
+  --docs-dir docs/design-system/generated \
+  --rule-precedence complement \
+  --existing-rules docs/design-system/core \
+  --styling auto \
   --instructions-reviewed
 ```
 
@@ -57,15 +65,18 @@ Current target artifacts are:
 ```text
 .designome/design-dna.json
 .designome/manifest.json
+docs/designome/ (or the configured documentation directory)
 <css-directory>/designome.generated.css
 <css-directory>/designome.overrides.css
 <css-entry> managed import block
 AGENTS.md managed guidance block
 ```
 
+The installer detects Tailwind from project dependencies and CSS directives when `--styling auto` is used. It records the resolved adapter and rule-precedence policy in the manifest and generated integration documentation. Existing rule paths are read-only context and are never rewritten.
+
 The accepted Design DNA is copied verbatim. Review source paths, notes, and extensions for private metadata before installation, especially when the target repository will be shared.
 
-Only literal accepted token values become CSS custom properties. Relationships, ranges, and unknown values remain comments rather than fabricated CSS values.
+Literal accepted values and accepted bounded ranges with a preferred value become CSS custom properties. Bounds remain comments for audit visibility. Relationships, audit-only ranges, and unknown values remain comments rather than fabricated CSS values.
 
 ### Verify an installation
 
