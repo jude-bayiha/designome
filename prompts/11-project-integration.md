@@ -10,16 +10,17 @@ Read `_shared-contract.md` and `docs/installation-contract.md` before executing 
 
 ## Task
 
-Inspect only technical project facts, plan changes, and install managed Designome artifacts idempotently. Detect repository-native styling systems such as Tailwind and shadcn/ui without treating their visual output as evidence. Generate human-readable UI documentation inside the target project, a proposed component mapping, namespaced token CSS, a compact agent-guidance block, optional skill files, a manifest with checksums, and a human-owned overrides file. Run a dry-run before writes and verify a second run produces no diff.
+Inspect only technical project facts, plan changes, and install managed Designome artifacts idempotently. Detect repository-native styling systems such as Tailwind and shadcn/ui without treating their visual output as evidence. Compile every entry in the concept matrix `documentationProjection` into the target project and add its generated index. Every projected document is mandatory even when its only honest content is an `unknown` boundary or `proposed` stress test. Also generate a proposed component mapping, namespaced token CSS, a compact agent-guidance block, optional skill files, a manifest with checksums, and a human-owned overrides file. Run a dry-run before writes and verify a second run produces no diff.
 
 ## Output
 
-Produce `integration-plan.json`, managed generated files, project-local design documentation, resolved styling and rule-precedence context, `.designome/manifest.json`, and an installation report with created, updated, unchanged, conflicted, and skipped paths.
+Produce `integration-plan.json`, the complete versioned documentation layout, managed generated files, resolved styling and rule-precedence context, `.designome/manifest.json`, and an installation report with created, updated, deleted, unchanged, conflicted, and skipped paths.
 
 ## Guardrails
 
 - Installation requires an explicit target path and accepted Design DNA.
 - Never overwrite a manually modified managed file; report a checksum conflict.
+- Remove an obsolete generated documentation path only when the previous manifest owns it and its checksum still matches. A manual edit remains a blocking conflict.
 - Use stable markers and replace one managed block instead of appending duplicates.
 - Never edit user overrides, merge target styles into the Design DNA, or add duplicate CSS imports.
 - Existing UI documentation influences precedence and implementation only; it is never screenshot evidence and is never rewritten silently.

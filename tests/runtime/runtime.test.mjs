@@ -17,12 +17,55 @@ import {
 } from '../../src/runtime/install.mjs';
 import { inspectImageBuffer } from '../../src/runtime/images.mjs';
 import { initializeRun } from '../../src/runtime/run.mjs';
+import { sha256 } from '../../src/runtime/files.mjs';
 
 const repositoryRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '..',
   '..',
 );
+
+const expectedDocumentationPaths = [
+  'README.md',
+  'behavior/accessibility.md',
+  'behavior/content-resilience.md',
+  'behavior/interaction-contracts.md',
+  'behavior/loading-errors-recovery.md',
+  'behavior/localization.md',
+  'behavior/responsive-reflow.md',
+  'components/anatomy.md',
+  'components/catalogue.md',
+  'components/component-mapping.md',
+  'components/data-display.md',
+  'components/forms-and-filters.md',
+  'components/states.md',
+  'foundations/colors-and-surfaces.md',
+  'foundations/iconography.md',
+  'foundations/motion.md',
+  'foundations/spacing-and-layout.md',
+  'foundations/typography.md',
+  'governance/calibration.md',
+  'governance/evidence-and-confidence.md',
+  'governance/integration.md',
+  'governance/rules.md',
+  'governance/unknowns-and-exceptions.md',
+];
+
+async function listFiles(directory, prefix = '') {
+  const entries = await fs.readdir(directory, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const relativePath = path.posix.join(prefix, entry.name);
+    if (entry.isDirectory()) {
+      files.push(
+        ...(await listFiles(path.join(directory, entry.name), relativePath)),
+      );
+    } else {
+      files.push(relativePath);
+    }
+  }
+  return files.sort();
+}
 
 async function temporaryDirectory(t, prefix) {
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), prefix));
@@ -288,30 +331,46 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
   assert.match(generatedCss, /Styling adapter: tailwind-utilities/u);
 
   const generatedDocumentation = await fs.readFile(
-    path.join(projectRoot, 'docs', 'ui', 'generated', 'integration.md'),
+    path.join(
+      projectRoot,
+      'docs',
+      'ui',
+      'generated',
+      'governance',
+      'integration.md',
+    ),
     'utf8',
   );
   assert.match(generatedDocumentation, /Detected system: `tailwind`/u);
   assert.match(generatedDocumentation, /Policy: `existing-first`/u);
   assert.match(generatedDocumentation, /`docs\/ui\/core.md`/u);
   assert.deepEqual(
-    (
-      await fs.readdir(path.join(projectRoot, 'docs', 'ui', 'generated'))
-    ).sort(),
-    [
-      'README.md',
-      'component-mapping.md',
-      'components-and-states.md',
-      'iconography.md',
-      'integration.md',
-      'rules.md',
-      'typography.md',
-      'visual-foundations.md',
-    ],
+    await listFiles(path.join(projectRoot, 'docs', 'ui', 'generated')),
+    expectedDocumentationPaths,
   );
+  for (const documentationPath of expectedDocumentationPaths) {
+    const content = await fs.readFile(
+      path.join(projectRoot, 'docs', 'ui', 'generated', documentationPath),
+      'utf8',
+    );
+    assert.ok(content.length > 120, documentationPath);
+    assert.match(content, /^# /u, documentationPath);
+    assert.match(
+      content,
+      /`(?:observed|inferred|proposed|unknown)`/u,
+      documentationPath,
+    );
+  }
   assert.match(
     await fs.readFile(
-      path.join(projectRoot, 'docs', 'ui', 'generated', 'rules.md'),
+      path.join(
+        projectRoot,
+        'docs',
+        'ui',
+        'generated',
+        'governance',
+        'rules.md',
+      ),
       'utf8',
     ),
     /Epistemic status: `observed`/u,
@@ -322,11 +381,12 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
       'docs',
       'ui',
       'generated',
-      'components-and-states.md',
+      'components',
+      'catalogue.md',
     ),
     'utf8',
   );
-  assert.match(componentDocumentation, /^# Components and states\n\n## /u);
+  assert.match(componentDocumentation, /^# Component catalogue\n\n/u);
   assert.doesNotMatch(componentDocumentation, /\n#\n \nC\no\nm\np/u);
 
   assert.deepEqual(
@@ -383,7 +443,7 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
   assert.equal(second.status, 'installed');
   assert.equal(
     second.actions.filter((action) =>
-      ['create', 'update', 'conflict'].includes(action.action),
+      ['create', 'update', 'delete', 'conflict'].includes(action.action),
     ).length,
     0,
   );
@@ -456,6 +516,89 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
       (action) => action.path === '.agents/skills/designome-audit/SKILL.md',
     ).action,
     'conflict',
+  );
+});
+
+test('documentation migration deletes only checksum-matching obsolete files', async (t) => {
+  const temporaryRoot = await temporaryDirectory(
+    t,
+    'designome-docs-migration-test-',
+  );
+  const projectRoot = path.join(temporaryRoot, 'target-project');
+  await fs.mkdir(path.join(projectRoot, 'src', 'styles'), { recursive: true });
+  await fs.writeFile(
+    path.join(projectRoot, 'package.json'),
+    '{"name":"target-project","private":true}\n',
+  );
+  await fs.writeFile(
+    path.join(projectRoot, 'src', 'styles', 'globals.css'),
+    'body { margin: 0; }\n',
+  );
+  await fs.writeFile(path.join(projectRoot, 'AGENTS.md'), '# Instructions\n');
+  const dna = await referenceDna();
+  dna.status = 'accepted';
+  const dnaPath = path.join(temporaryRoot, 'accepted-design-dna.json');
+  await fs.writeFile(dnaPath, `${JSON.stringify(dna, null, 2)}\n`);
+  const options = {
+    dnaPath,
+    projectPath: projectRoot,
+    cssEntry: 'src/styles/globals.css',
+    instructionsReviewed: true,
+  };
+  await installDesignDna(options);
+
+  const manifestPath = path.join(projectRoot, '.designome', 'manifest.json');
+  const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
+  const obsoletePath = 'docs/designome/visual-foundations.md';
+  const obsoleteContent = '# Legacy visual foundations\n\nManaged content.\n';
+  await fs.writeFile(path.join(projectRoot, obsoletePath), obsoleteContent);
+  manifest.managedArtifacts.push({
+    path: obsoletePath,
+    kind: 'file',
+    sha256: sha256(obsoleteContent),
+  });
+  await fs.writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+
+  const migrationPlan = await planInstallation(options);
+  assert.equal(migrationPlan.status, 'ready');
+  assert.equal(
+    migrationPlan.publicPlan.actions.find(
+      (action) => action.path === obsoletePath,
+    ).action,
+    'delete',
+  );
+  await installDesignDna(options);
+  assert.equal(
+    await fs.stat(path.join(projectRoot, obsoletePath)).catch(() => null),
+    null,
+  );
+
+  const protectedManifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
+  const protectedPath = 'docs/designome/typography.md';
+  const protectedContent = '# Legacy typography\n\nManaged content.\n';
+  await fs.writeFile(path.join(projectRoot, protectedPath), protectedContent);
+  protectedManifest.managedArtifacts.push({
+    path: protectedPath,
+    kind: 'file',
+    sha256: sha256(protectedContent),
+  });
+  await fs.writeFile(
+    manifestPath,
+    `${JSON.stringify(protectedManifest, null, 2)}\n`,
+  );
+  await fs.appendFile(path.join(projectRoot, protectedPath), 'Manual edit.\n');
+
+  const protectedPlan = await planInstallation(options);
+  assert.equal(protectedPlan.status, 'conflict');
+  assert.equal(
+    protectedPlan.publicPlan.actions.find(
+      (action) => action.path === protectedPath,
+    ).action,
+    'conflict',
+  );
+  assert.match(
+    await fs.readFile(path.join(projectRoot, protectedPath), 'utf8'),
+    /Manual edit\./u,
   );
 });
 
@@ -541,7 +684,13 @@ test('installation planning detects shadcn project context without mutating it',
     instructionsReviewed: true,
   });
   const componentMapping = await fs.readFile(
-    path.join(projectRoot, 'docs', 'designome', 'component-mapping.md'),
+    path.join(
+      projectRoot,
+      'docs',
+      'designome',
+      'components',
+      'component-mapping.md',
+    ),
     'utf8',
   );
   assert.match(

@@ -10,6 +10,8 @@
     "epistemicStatuses",
     "axes",
     "concepts",
+    "documentationLayoutVersion",
+    "documentationProjection",
     "promptStages"
   ],
   "properties": {
@@ -38,6 +40,17 @@
       "minItems": 1,
       "items": {
         "$ref": "#/$defs/concept"
+      }
+    },
+    "documentationLayoutVersion": {
+      "const": "1.0.0"
+    },
+    "documentationProjection": {
+      "type": "array",
+      "minItems": 22,
+      "maxItems": 22,
+      "items": {
+        "$ref": "#/$defs/documentationEntry"
       }
     },
     "promptStages": {
@@ -149,6 +162,83 @@
         },
         "outputTargets": {
           "$ref": "#/$defs/stringList"
+        }
+      }
+    },
+    "documentationEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "title",
+        "purpose",
+        "renderer",
+        "conceptRefs",
+        "tokenCategories",
+        "ruleCategories"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^(?:foundations|components|behavior|governance)/[a-z][a-z0-9-]*\\.md$"
+        },
+        "title": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "purpose": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "renderer": {
+          "enum": [
+            "generic",
+            "component-catalogue",
+            "component-anatomy",
+            "component-states",
+            "component-mapping",
+            "rules",
+            "evidence",
+            "unknowns",
+            "calibration",
+            "integration"
+          ]
+        },
+        "conceptRefs": {
+          "$ref": "#/$defs/identifierList"
+        },
+        "tokenCategories": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "color",
+              "space",
+              "size",
+              "typography",
+              "radius",
+              "border",
+              "elevation",
+              "motion",
+              "other"
+            ]
+          }
+        },
+        "ruleCategories": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "layout",
+              "content",
+              "state",
+              "interaction",
+              "responsive",
+              "accessibility",
+              "performance",
+              "trust",
+              "motion",
+              "governance"
+            ]
+          }
         }
       }
     },

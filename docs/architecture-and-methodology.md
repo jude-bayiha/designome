@@ -112,9 +112,10 @@ It may not treat existing CSS, components, tokens, or rendered UI as Design DNA 
 ├── integration-plan.json
 ├── docs/designome/ (or a repository-configured target directory)
 │   ├── README.md
-│   ├── typography.md
-│   ├── iconography.md
-│   └── integration.md
+│   ├── foundations/ (5 documents)
+│   ├── components/ (6 documents)
+│   ├── behavior/ (6 documents)
+│   └── governance/ (5 documents)
 └── audit/
     ├── plan.json
     ├── evidence.json
@@ -156,7 +157,7 @@ The dependency-light Node runtime performs only deterministic work:
 - semantic Design DNA reference and evidence checks;
 - CSS entry discovery or explicit selection;
 - generated CSS, user-owned overrides, and managed `AGENTS.md` blocks;
-- project-local human-readable design documentation and styling-adapter context;
+- a matrix-projected 23-file design dossier and styling-adapter context;
 - audit configuration validation, browser-provider resolution, and evidence artifact initialization;
 - manifest checksums, conflict detection, rollback, and verification.
 

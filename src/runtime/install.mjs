@@ -223,46 +223,6 @@ function claimDetails(claim) {
   ].join('\n');
 }
 
-function renderTokenDocument(title, introduction, tokens, unknowns = []) {
-  const sections = tokens.length
-    ? tokens.map((token) =>
-        [
-          `## ${token.name}`,
-          '',
-          token.claim.statement,
-          '',
-          `**Design value:** ${markdownValue(token.value)}`,
-          '',
-          claimDetails(token.claim),
-        ].join('\n'),
-      )
-    : [
-        '## No accepted token',
-        '',
-        'The accepted Design DNA contains no token in this category. Do not invent one; resolve the relevant unknowns or add an explicitly proposed rule.',
-      ].join('\n');
-  const unknownSections = unknowns.map((item) =>
-    [
-      `### ${item.question}`,
-      '',
-      `- Status: \`unknown\``,
-      `- Impact: ${item.impact}`,
-      `- Resolution: ${item.resolutionPlan}`,
-    ].join('\n'),
-  );
-  return [
-    `# ${title}`,
-    '',
-    introduction,
-    '',
-    ...sections,
-    ...(unknownSections.length
-      ? ['', '## Relevant unknowns', '', ...unknownSections]
-      : []),
-    '',
-  ].join('\n');
-}
-
 function renderRulesDocument(dna) {
   const rules = dna.rules.map((rule) =>
     [
@@ -296,47 +256,6 @@ function renderRulesDocument(dna) {
   ].join('\n');
 }
 
-function renderComponentsDocument(dna) {
-  const components = dna.componentPatterns ?? [];
-  const componentSections = components.length
-    ? components.map((component) =>
-        [
-          `## ${component.name}`,
-          '',
-          component.claim.statement,
-          '',
-          '### Anatomy',
-          '',
-          ...component.anatomy.map((item) => `- ${item}`),
-          '',
-          '### Variants',
-          '',
-          ...component.variants.map((item) => `- ${item}`),
-          '',
-          '### States',
-          '',
-          ...component.states.map(
-            (item) =>
-              `- **${item.name}** — \`${item.status}\`: ${item.behavior}`,
-          ),
-        ].join('\n'),
-      )
-    : [
-        [
-          '## No canonical component catalogue',
-          '',
-          'The screenshots support reusable rules but not a complete component inventory. Use the rules below without inventing unrequested page or role families.',
-          '',
-          ...dna.rules
-            .filter((rule) =>
-              ['layout', 'state', 'interaction'].includes(rule.category),
-            )
-            .map((rule) => `- \`${rule.id}\` — ${rule.name}`),
-        ].join('\n'),
-      ];
-  return ['# Components and states', '', ...componentSections, ''].join('\n');
-}
-
 function renderIntegrationDocument({
   dna,
   styling,
@@ -353,6 +272,8 @@ function renderIntegrationDocument({
     '# Repository integration',
     '',
     `This project installs \`${dna.documentId}\` revision ${dna.revision.number}. Designome documentation is managed in \`${documentationDirectory}\`.`,
+    '',
+    '- Technical context status: `observed` in the target repository; it is not screenshot evidence.',
     '',
     '## Styling context',
     '',
@@ -446,82 +367,384 @@ function renderComponentMappingDocument(dna, styling) {
   ].join('\n');
 }
 
+function sharesValue(left = [], right = []) {
+  const rightValues = new Set(right);
+  return left.some((item) => rightValues.has(item));
+}
+
+function relevantConcepts(matrix, entry) {
+  return matrix.concepts.filter((concept) =>
+    entry.conceptRefs.includes(concept.id),
+  );
+}
+
+function renderRelevantUnknowns(unknowns) {
+  if (!unknowns.length) {
+    return [
+      '## Relevant unknowns',
+      '',
+      '- Status: `unknown`',
+      '- No unresolved question is currently routed to this document. Absence of an unknown is not evidence that every behavior has been observed.',
+    ].join('\n');
+  }
+  return [
+    '## Relevant unknowns',
+    '',
+    ...unknowns.flatMap((item) => [
+      `### ${item.question}`,
+      '',
+      '- Status: `unknown`',
+      `- Impact: \`${item.impact}\``,
+      `- Resolution: ${item.resolutionPlan}`,
+      '',
+    ]),
+  ].join('\n');
+}
+
+function renderStressTests(concepts) {
+  const tests = [
+    ...new Set(concepts.flatMap((concept) => concept.stressTests)),
+  ];
+  return [
+    '## Required stress tests',
+    '',
+    ...(tests.length
+      ? tests.map((item) => `- Status: \`proposed\` — ${item}`)
+      : [
+          '- Status: `proposed` — Validate this guidance against the generated implementation before promotion.',
+        ]),
+  ].join('\n');
+}
+
+function renderGenericDocument(dna, matrix, entry) {
+  const tokens = dna.tokens.filter(
+    (token) =>
+      entry.tokenCategories.includes(token.category) ||
+      sharesValue(token.claim.conceptRefs, entry.conceptRefs),
+  );
+  const rules = dna.rules.filter(
+    (rule) =>
+      entry.ruleCategories.includes(rule.category) ||
+      sharesValue(rule.claim.conceptRefs, entry.conceptRefs),
+  );
+  const unknowns = dna.unknowns.filter((item) =>
+    sharesValue(item.conceptRefs, entry.conceptRefs),
+  );
+  const tokenSections = tokens.flatMap((token) => [
+    `### Token: ${token.name}`,
+    '',
+    token.claim.statement,
+    '',
+    `- Design value: ${markdownValue(token.value)}`,
+    claimDetails(token.claim),
+    '',
+  ]);
+  const ruleSections = rules.flatMap((rule) => [
+    `### Rule: ${rule.name}`,
+    '',
+    rule.claim.statement,
+    '',
+    `- Strength: \`${rule.strength}\``,
+    `- Category: \`${rule.category}\``,
+    ...rule.requirements.map((item) => `- Requirement: ${item}`),
+    ...rule.validationCases.map((item) => `- Validation case: ${item}`),
+    claimDetails(rule.claim),
+    '',
+  ]);
+  return [
+    `# ${entry.title}`,
+    '',
+    entry.purpose,
+    '',
+    '## Routed Design DNA guidance',
+    '',
+    ...(tokenSections.length || ruleSections.length
+      ? [...tokenSections, ...ruleSections]
+      : [
+          '- Status: `unknown`',
+          '- No accepted token or rule currently covers this subject. Use the proposed stress tests below; do not treat them as screenshot evidence.',
+          '',
+        ]),
+    renderStressTests(relevantConcepts(matrix, entry)),
+    '',
+    renderRelevantUnknowns(unknowns),
+    '',
+  ].join('\n');
+}
+
+function renderComponentCatalogue(dna) {
+  const components = dna.componentPatterns ?? [];
+  return [
+    '# Component catalogue',
+    '',
+    'Reusable patterns supported by accepted Design DNA. This is not permission to invent additional page families or roles.',
+    '',
+    ...(components.length
+      ? components.flatMap((component) => [
+          `## ${component.name}`,
+          '',
+          component.claim.statement,
+          '',
+          `- Component ID: \`${component.id}\``,
+          `- Variants: ${component.variants.join('; ')}`,
+          `- Rule references: ${component.ruleRefs.map((item) => `\`${item}\``).join(', ') || 'none'}`,
+          `- Token references: ${component.tokenRefs.map((item) => `\`${item}\``).join(', ') || 'none'}`,
+          claimDetails(component.claim),
+          '',
+        ])
+      : [
+          '## No accepted component pattern',
+          '',
+          '- Status: `unknown`',
+          '- The screenshots and accepted synthesis do not support a reusable component catalogue yet.',
+          '',
+        ]),
+  ].join('\n');
+}
+
+function renderComponentAnatomy(dna) {
+  const components = dna.componentPatterns ?? [];
+  return [
+    '# Component anatomy',
+    '',
+    'Anatomy inherits the epistemic status, evidence, scope, and exceptions of its component claim.',
+    '',
+    ...(components.length
+      ? components.flatMap((component) => [
+          `## ${component.name}`,
+          '',
+          ...component.anatomy.map((item) => `- ${item}`),
+          '',
+          claimDetails(component.claim),
+          '',
+        ])
+      : [
+          '- Status: `unknown`',
+          '- No component anatomy has been accepted.',
+          '',
+        ]),
+  ].join('\n');
+}
+
+function renderComponentStates(dna) {
+  const components = dna.componentPatterns ?? [];
+  return [
+    '# Component states',
+    '',
+    'Each state carries its own status. Proposed states are resilience contracts, not observed screenshot behavior.',
+    '',
+    ...(components.length
+      ? components.flatMap((component) => [
+          `## ${component.name}`,
+          '',
+          ...component.states.map(
+            (state) =>
+              `- **${state.name}** — Status: \`${state.status}\` — ${state.behavior}`,
+          ),
+          '',
+        ])
+      : [
+          '- Status: `unknown`',
+          '- No component state matrix has been accepted.',
+          '',
+        ]),
+  ].join('\n');
+}
+
+function renderEvidenceDocument(dna) {
+  const evidenceBySource = new Map(
+    dna.sources.map((source) => [source.id, []]),
+  );
+  for (const evidence of dna.evidence) {
+    if (!evidenceBySource.has(evidence.sourceRef)) {
+      evidenceBySource.set(evidence.sourceRef, []);
+    }
+    evidenceBySource.get(evidence.sourceRef).push(evidence);
+  }
+  const confidenceClaims = [
+    ...dna.tokens.map((item) => ({ id: item.id, claim: item.claim })),
+    ...dna.rules.map((item) => ({ id: item.id, claim: item.claim })),
+    ...(dna.componentPatterns ?? []).map((item) => ({
+      id: item.id,
+      claim: item.claim,
+    })),
+  ];
+  return [
+    '# Evidence and confidence',
+    '',
+    'Screenshot regions are the only source of visual truth. Repository code and styling affect integration only.',
+    '',
+    '## Evidence register',
+    '',
+    ...dna.sources.flatMap((source) => [
+      `### ${source.label}`,
+      '',
+      '- Status: `observed`',
+      `- Source ID: \`${source.id}\``,
+      `- Kind: \`${source.kind}\``,
+      `- Limitations: ${source.limitations.join('; ')}`,
+      '',
+      ...(evidenceBySource.get(source.id) ?? []).flatMap((evidence) => [
+        `#### ${evidence.region}`,
+        '',
+        `- Evidence ID: \`${evidence.id}\``,
+        `- Visible summary: ${evidence.visibleSummary}`,
+        `- Limitations: ${evidence.limitations.join('; ')}`,
+        '',
+      ]),
+    ]),
+    '## Claim confidence register',
+    '',
+    ...confidenceClaims.map(
+      ({ id, claim }) =>
+        `- \`${id}\` — Status: \`${claim.epistemicStatus}\`; confidence: ${claim.confidence.score}; basis: ${claim.confidence.basis}`,
+    ),
+    '',
+  ].join('\n');
+}
+
+function renderUnknownsDocument(dna) {
+  const claims = [
+    ...dna.tokens.map((item) => ({ id: item.id, claim: item.claim })),
+    ...dna.rules.map((item) => ({ id: item.id, claim: item.claim })),
+    ...(dna.componentPatterns ?? []).map((item) => ({
+      id: item.id,
+      claim: item.claim,
+    })),
+  ];
+  const exceptions = claims.filter(({ claim }) => claim.exceptions.length);
+  return [
+    '# Unknowns and exceptions',
+    '',
+    'Unknowns are unresolved questions. Exceptions preserve the stated limits of accepted claims.',
+    '',
+    renderRelevantUnknowns(dna.unknowns),
+    '',
+    '## Claim exceptions',
+    '',
+    ...(exceptions.length
+      ? exceptions.flatMap(({ id, claim }) => [
+          `### ${id}`,
+          '',
+          `- Claim status: \`${claim.epistemicStatus}\``,
+          ...claim.exceptions.map((item) => `- Exception: ${item}`),
+          '',
+        ])
+      : [
+          '- Status: `unknown`',
+          '- No exception is documented; this does not prove that no exception exists.',
+          '',
+        ]),
+  ].join('\n');
+}
+
+function renderCalibrationDocument(dna, matrix, entry) {
+  const tokens = dna.tokens.filter((token) =>
+    entry.tokenCategories.includes(token.category),
+  );
+  const rules = dna.rules.filter((rule) =>
+    entry.ruleCategories.includes(rule.category),
+  );
+  return [
+    '# Calibration',
+    '',
+    'Calibration never promotes a measured or proposed value to observed. Exact values require accepted Design DNA evidence.',
+    '',
+    '## Current calibration inputs',
+    '',
+    ...(tokens.length
+      ? tokens.flatMap((token) => [
+          `### ${token.name}`,
+          '',
+          `- Value: ${markdownValue(token.value)}`,
+          claimDetails(token.claim),
+          '',
+        ])
+      : [
+          '- Status: `unknown`',
+          '- No bounded typography, spacing, or size calibration is currently accepted.',
+          '',
+        ]),
+    '## Calibration rules',
+    '',
+    ...(rules.length
+      ? rules.map(
+          (rule) =>
+            `- \`${rule.id}\` — Status: \`${rule.claim.epistemicStatus}\` — ${rule.claim.statement}`,
+        )
+      : ['- Status: `unknown` — No dedicated calibration rule is accepted.']),
+    '',
+    renderStressTests(relevantConcepts(matrix, entry)),
+    '',
+  ].join('\n');
+}
+
+function renderDocumentationReadme(dna, matrix) {
+  const groups = new Map();
+  for (const entry of matrix.documentationProjection) {
+    const directory = entry.path.split('/')[0];
+    if (!groups.has(directory)) groups.set(directory, []);
+    groups.get(directory).push(entry);
+  }
+  return [
+    '# Designome UI documentation',
+    '',
+    `Design DNA: \`${dna.documentId}\`, revision ${dna.revision.number}, status \`${dna.status}\`. Documentation layout: \`${matrix.documentationLayoutVersion}\`.`,
+    '',
+    'This complete dossier is generated from accepted Design DNA. Every UI claim remains `observed`, `inferred`, `proposed`, or `unknown`; proposed resilience guidance is never presented as screenshot evidence.',
+    '',
+    'These files are checksum-managed by Designome. Put manual additions in repository-owned documentation or Designome override files rather than editing generated documents.',
+    '',
+    ...[...groups].flatMap(([directory, entries]) => [
+      `## ${directory[0].toUpperCase()}${directory.slice(1)}`,
+      '',
+      ...entries.map(
+        (entry) => `- [${entry.title}](./${entry.path}) — ${entry.purpose}`,
+      ),
+      '',
+    ]),
+  ].join('\n');
+}
+
 function renderDocumentation({
   dna,
   styling,
   integrationPolicy,
   documentationDirectory,
+  matrix,
 }) {
-  const typographyTokens = dna.tokens.filter(
-    (token) => token.category === 'typography',
-  );
-  const iconTokens = dna.tokens.filter((token) =>
-    /icon/iu.test(`${token.id} ${token.name} ${token.claim.statement}`),
-  );
-  const foundationTokens = dna.tokens.filter(
-    (token) => !typographyTokens.includes(token) && !iconTokens.includes(token),
-  );
-  const iconUnknowns = dna.unknowns.filter((item) =>
-    item.conceptRefs.includes('concept.iconographic-coherence'),
-  );
-  return new Map([
-    [
-      'README.md',
-      [
-        '# Designome UI documentation',
-        '',
-        `Design DNA: \`${dna.documentId}\`, revision ${dna.revision.number}, status \`${dna.status}\`.`,
-        '',
-        'These files are generated from accepted Design DNA and preserve observed, inferred, proposed, and unknown claims. Read repository integration guidance before applying them.',
-        '',
-        '- [Visual foundations](./visual-foundations.md)',
-        '- [Typography](./typography.md)',
-        '- [Iconography](./iconography.md)',
-        '- [Components and states](./components-and-states.md)',
-        '- [Component mapping](./component-mapping.md)',
-        '- [UI rules](./rules.md)',
-        '- [Repository integration](./integration.md)',
-        '',
-      ].join('\n'),
-    ],
-    [
-      'visual-foundations.md',
-      renderTokenDocument(
-        'Visual foundations',
-        'Surface, color, spacing, containment, size, and other perceptual guidance.',
-        foundationTokens,
-      ),
-    ],
-    [
-      'typography.md',
-      renderTokenDocument(
-        'Typography',
-        'Typography roles and relationships. Exact families or sizes remain unknown unless explicitly evidenced or accepted.',
-        typographyTokens,
-      ),
-    ],
-    [
-      'iconography.md',
-      renderTokenDocument(
-        'Iconography',
-        'Icon rules describe visual and semantic coherence without inventing an icon library.',
-        iconTokens,
-        iconUnknowns,
-      ),
-    ],
-    ['components-and-states.md', renderComponentsDocument(dna)],
-    ['component-mapping.md', renderComponentMappingDocument(dna, styling)],
-    ['rules.md', renderRulesDocument(dna)],
-    [
-      'integration.md',
-      renderIntegrationDocument({
-        dna,
-        styling,
-        integrationPolicy,
-        documentationDirectory,
-      }),
-    ],
+  const documents = new Map([
+    ['README.md', renderDocumentationReadme(dna, matrix)],
   ]);
+  for (const entry of matrix.documentationProjection) {
+    const content =
+      entry.renderer === 'component-catalogue'
+        ? renderComponentCatalogue(dna)
+        : entry.renderer === 'component-anatomy'
+          ? renderComponentAnatomy(dna)
+          : entry.renderer === 'component-states'
+            ? renderComponentStates(dna)
+            : entry.renderer === 'component-mapping'
+              ? renderComponentMappingDocument(dna, styling)
+              : entry.renderer === 'rules'
+                ? renderRulesDocument(dna)
+                : entry.renderer === 'evidence'
+                  ? renderEvidenceDocument(dna)
+                  : entry.renderer === 'unknowns'
+                    ? renderUnknownsDocument(dna)
+                    : entry.renderer === 'calibration'
+                      ? renderCalibrationDocument(dna, matrix, entry)
+                      : entry.renderer === 'integration'
+                        ? renderIntegrationDocument({
+                            dna,
+                            styling,
+                            integrationPolicy,
+                            documentationDirectory,
+                          })
+                        : renderGenericDocument(dna, matrix, entry);
+    documents.set(entry.path, content);
+  }
+  return documents;
 }
 
 async function detectStylingContext(
@@ -831,6 +1054,55 @@ async function inspectOwnedFile(
   };
 }
 
+async function inspectObsoleteDocumentationFiles({
+  projectRoot,
+  previousManifest,
+  documentationRelative,
+  desiredPaths,
+}) {
+  if (!previousManifest) return [];
+  const previousDirectory =
+    previousManifest.adapter?.documentationDirectory ?? documentationRelative;
+  const prefix = `${previousDirectory.replace(/\/$/u, '')}/`;
+  const obsolete = (previousManifest.managedArtifacts ?? []).filter(
+    (artifact) =>
+      artifact.kind === 'file' &&
+      artifact.path.startsWith(prefix) &&
+      !desiredPaths.has(artifact.path),
+  );
+  const actions = [];
+  for (const artifact of obsolete) {
+    const absolutePath = resolveProjectPath(
+      projectRoot,
+      artifact.path,
+      'obsolete documentation path',
+    );
+    const current = await readTextIfExists(absolutePath);
+    if (current === null) {
+      actions.push({
+        path: artifact.path,
+        kind: 'file',
+        action: 'conflict',
+        reason: 'Previously managed documentation file is missing.',
+      });
+    } else if (sha256(current) !== artifact.sha256) {
+      actions.push({
+        path: artifact.path,
+        kind: 'file',
+        action: 'conflict',
+        reason: 'Managed documentation file was modified outside Designome.',
+      });
+    } else {
+      actions.push({
+        path: artifact.path,
+        kind: 'file',
+        action: 'delete',
+      });
+    }
+  }
+  return actions;
+}
+
 async function inspectBlockFile({
   projectRoot,
   relativePath,
@@ -983,6 +1255,9 @@ export async function planInstallation({
     });
   });
   await assertValidDesignDna(dna, { requireAccepted: true });
+  const conceptMatrix = await readJson(
+    path.join(pluginRoot, 'concepts', 'concept-matrix.v0.2.json'),
+  );
 
   const resolvedCssEntry = await resolveCssEntry(projectRoot, cssEntry);
   const cssEntryRelative = toPosixPath(
@@ -1041,6 +1316,7 @@ export async function planInstallation({
     uiKitPreference,
   );
   const integrationPolicy = {
+    documentationLayout: 'complete-v1',
     rulePrecedence,
     existingRulePaths: [...new Set(normalizedExistingRulePaths)].sort(),
     uiKitPreference,
@@ -1095,6 +1371,7 @@ export async function planInstallation({
     styling,
     integrationPolicy,
     documentationDirectory: documentationRelative,
+    matrix: conceptMatrix,
   });
   const auditSkill = new Map([
     [
@@ -1142,6 +1419,19 @@ export async function planInstallation({
       ),
     );
   }
+  const desiredDocumentationPaths = new Set(
+    [...documentation.keys()].map((filename) =>
+      toPosixPath(path.join(documentationRelative, filename)),
+    ),
+  );
+  actions.push(
+    ...(await inspectObsoleteDocumentationFiles({
+      projectRoot,
+      previousManifest,
+      documentationRelative,
+      desiredPaths: desiredDocumentationPaths,
+    })),
+  );
   for (const [filename, content] of auditSkill) {
     actions.push(
       await inspectOwnedFile(
@@ -1210,6 +1500,7 @@ export async function planInstallation({
       overridesCssRelative,
       scope,
       documentationRelative,
+      documentationLayoutVersion: conceptMatrix.documentationLayoutVersion,
       integrationPolicy,
       styling,
     }),
@@ -1221,7 +1512,9 @@ export async function planInstallation({
 
   const managedArtifacts = actions
     .filter((action) => action.kind === 'file' || action.kind === 'block')
-    .filter((action) => action.action !== 'conflict')
+    .filter(
+      (action) => action.action !== 'conflict' && action.action !== 'delete',
+    )
     .map((action) =>
       action.kind === 'file'
         ? { path: action.path, kind: 'file', sha256: action.sha256 }
@@ -1249,6 +1542,7 @@ export async function planInstallation({
       overridesCss: overridesCssRelative,
       scope,
       documentationDirectory: documentationRelative,
+      documentationLayoutVersion: conceptMatrix.documentationLayoutVersion,
       styling,
       integrationPolicy,
       instructionFiles,
@@ -1313,7 +1607,7 @@ export async function installDesignDna(options) {
   }
 
   const writeActions = plan.actions.filter((action) =>
-    ['create', 'update'].includes(action.action),
+    ['create', 'update', 'delete'].includes(action.action),
   );
   const backups = [];
   try {
@@ -1323,7 +1617,11 @@ export async function installDesignDna(options) {
         path: absolutePath,
         content: await readTextIfExists(absolutePath),
       });
-      await atomicWrite(absolutePath, action.content);
+      if (action.action === 'delete') {
+        await fs.rm(absolutePath, { force: true });
+      } else {
+        await atomicWrite(absolutePath, action.content);
+      }
     }
   } catch (error) {
     await rollbackWrites(backups);

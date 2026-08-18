@@ -73,6 +73,8 @@ docs/designome/ (or the configured documentation directory)
 AGENTS.md managed guidance block
 ```
 
+The documentation directory contains `README.md` plus the 22 mandatory paths declared by `documentationProjection` in the concept matrix. They are grouped under `foundations/`, `components/`, `behavior/`, and `governance/`. A subject with no accepted visual claim still receives an honest `unknown` boundary or `proposed` stress-test contract; the runtime never fills the gap with fabricated observation.
+
 The installer detects Tailwind from project dependencies and CSS directives when `--styling auto` is used. It records the resolved adapter and rule-precedence policy in the manifest and generated integration documentation. Existing rule paths are read-only context and are never rewritten.
 
 The accepted Design DNA is copied verbatim. Review source paths, notes, and extensions for private metadata before installation, especially when the target repository will be shared.
@@ -85,7 +87,7 @@ Literal accepted values and accepted bounded ranges with a preferred value becom
 node bin/designome.mjs verify-install --project <target-project>
 ```
 
-Verification checks the manifest, accepted Design DNA, full-file hashes, exact marker multiplicity, managed-block hashes, and presence of user-owned overrides.
+Verification checks the manifest, accepted Design DNA, full-file hashes, exact marker multiplicity, managed-block hashes, and presence of user-owned overrides. Layout migration deletes an obsolete generated documentation file only when its manifest ownership and checksum still match; manual changes remain conflicts.
 
 ### Initialize an implementation audit
 

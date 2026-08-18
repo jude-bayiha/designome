@@ -12,7 +12,7 @@ Compare implementation evidence with accepted Design DNA. Keep static, rendered,
 This skill works from either the Designome plugin or an installed target project.
 
 - Plugin mode: when `../../prompts/12-generation-audit.md` exists, resolve the plugin root as `../..`. Read the shared contract, audit prompt, concept matrix, accepted Design DNA, and relevant generated files. Read only the axis prompts needed to interpret affected concepts.
-- Project-local mode: when `../../../.designome/design-dna.json` exists, resolve the project root as `../../..`. Read the accepted Design DNA plus the generated documentation index, integration guidance, rules, and component states under the documentation directory recorded in `.designome/manifest.json`.
+- Project-local mode: when `../../../.designome/design-dna.json` exists, resolve the project root as `../../..`. Read the accepted Design DNA plus the generated documentation index, `governance/integration.md`, `governance/rules.md`, `components/states.md`, and the behavior document relevant to each audited finding under the documentation directory recorded in `.designome/manifest.json`.
 
 Stop if neither context can be resolved. Never guess which Design DNA or project is in scope.
 

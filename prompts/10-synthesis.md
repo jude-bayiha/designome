@@ -12,9 +12,11 @@ Read `_shared-contract.md`, the full concept matrix, and every completed stage f
 
 Merge compatible claims, keep scoped exceptions, resolve or expose conflicts, normalize concept references, and assign stable rule IDs. Promote no claim beyond its evidence. Separate canonical rules, proposals, unknowns, and implementation validation. Run an operationality check: every required rule must identify affected roles, a testable relationship or accepted bound, and a concrete rendered or static verification method.
 
+Preserve enough normalized detail to populate every entry in `documentationProjection`: foundations, component catalogue, anatomy and states, behavior contracts, evidence, unknowns, calibration, and integration. Route each accepted claim through its concept references. When screenshots do not establish a subject, record an `unknown` or a clearly labeled `proposed` stress test instead of omitting the subject or fabricating an observation.
+
 ## Output
 
-Produce schema-valid `design-dna.json`, `design-rules.md`, `confidence-report.md`, and `unknowns.md`. Include coverage by axis and concept, unresolved conflicts, and an acceptance checklist.
+Produce schema-valid `design-dna.json`, `design-rules.md`, `confidence-report.md`, and `unknowns.md`. Include coverage by axis, concept, and documentation-projection entry, unresolved conflicts, and an acceptance checklist. Projection coverage means the installer can write a complete dossier; it does not require an accepted visual claim for every subject.
 
 ## Guardrails
 
