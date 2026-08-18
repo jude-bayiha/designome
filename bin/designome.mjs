@@ -2,6 +2,7 @@
 
 import path from 'node:path';
 
+import { runAudit } from '../src/runtime/audit.mjs';
 import { assertValidDesignDna } from '../src/runtime/design-dna.mjs';
 import { DesignomeError } from '../src/runtime/errors.mjs';
 import { readJson } from '../src/runtime/files.mjs';
@@ -22,9 +23,13 @@ function parseArguments(values) {
     }
     const name = value.slice(2);
     if (
-      ['dry-run', 'instructions-reviewed', 'require-accepted', 'help'].includes(
-        name,
-      )
+      [
+        'dry-run',
+        'instructions-reviewed',
+        'overwrite',
+        'require-accepted',
+        'help',
+      ].includes(name)
     ) {
       options.set(name, true);
       continue;
@@ -103,6 +108,9 @@ function printHelp() {
     `  install --dna <file> --project <dir> [options] --instructions-reviewed\n`,
   );
   process.stdout.write(`  verify-install --project <dir>\n`);
+  process.stdout.write(
+    `  audit --project <dir> [--config <file>] [--output <dir>] [--provider <name>] [--dry-run] [--overwrite]\n`,
+  );
 }
 
 async function main() {
@@ -183,6 +191,26 @@ async function main() {
       projectPath: option(parsed, 'project', { required: true }),
     });
     if (!result.valid) process.exitCode = 1;
+  } else if (command === 'audit') {
+    assertArguments(parsed, [
+      'project',
+      'config',
+      'output',
+      'provider',
+      'dry-run',
+      'overwrite',
+      'help',
+    ]);
+    result = await runAudit({
+      projectPath: option(parsed, 'project', { required: true }),
+      configPath: option(parsed, 'config', {
+        fallback: '.designome/audit.config.json',
+      }),
+      outputDirectory: option(parsed, 'output', { fallback: null }),
+      provider: option(parsed, 'provider', { fallback: 'auto' }),
+      dryRun: Boolean(parsed.options.get('dry-run')),
+      overwrite: Boolean(parsed.options.get('overwrite')),
+    });
   } else {
     throw new DesignomeError(`Unknown command: ${command}`, {
       code: 'UNKNOWN_COMMAND',

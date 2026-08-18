@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "0.1.0",
+  "baseUrl": "http://127.0.0.1:3000",
+  "startCommand": "pnpm dev",
+  "outputDirectory": "audit",
+  "routes": [
+    {
+      "id": "overview",
+      "path": "/",
+      "viewports": [
+        { "name": "desktop", "width": 1440, "height": 1000 },
+        { "name": "mobile", "width": 390, "height": 844 }
+      ],
+      "flows": ["load the route", "verify the primary navigation"]
+    }
+  ]
+}

@@ -873,6 +873,8 @@
         "explicit human feedback"
       ],
       "produces": [
+        "audit/plan.json",
+        "audit/evidence.json",
         "audit/report.md",
         "audit/findings.json",
         "revision proposal",

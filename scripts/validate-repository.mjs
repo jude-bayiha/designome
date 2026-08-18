@@ -312,6 +312,16 @@ export function validateRepository(rootDirectory = repositoryRoot) {
     'examples',
     'integration-policy.reference.json',
   );
+  const auditConfigSchemaPath = path.join(
+    rootDirectory,
+    'schemas',
+    'audit-config.schema.json',
+  );
+  const auditConfigExamplePath = path.join(
+    rootDirectory,
+    'examples',
+    'audit-config.reference.json',
+  );
 
   try {
     const matrixSchema = readJson(matrixSchemaPath);
@@ -349,6 +359,19 @@ export function validateRepository(rootDirectory = repositoryRoot) {
     }
   } catch (error) {
     errors.push(`integration policy validation failed: ${error.message}`);
+  }
+
+  try {
+    const auditConfigSchema = readJson(auditConfigSchemaPath);
+    const auditConfigExample = readJson(auditConfigExamplePath);
+    const validateAuditConfig = ajv.compile(auditConfigSchema);
+    if (!validateAuditConfig(auditConfigExample)) {
+      errors.push(
+        ...formatAjvErrors('audit config', validateAuditConfig.errors),
+      );
+    }
+  } catch (error) {
+    errors.push(`audit config validation failed: ${error.message}`);
   }
 
   errors.push(...validateWorkflowYaml(rootDirectory));

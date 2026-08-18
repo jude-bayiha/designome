@@ -87,6 +87,24 @@ node bin/designome.mjs verify-install --project <target-project>
 
 Verification checks the manifest, accepted Design DNA, full-file hashes, exact marker multiplicity, managed-block hashes, and presence of user-owned overrides.
 
+### Initialize an implementation audit
+
+```bash
+node bin/designome.mjs audit \
+  --project <target-project> \
+  --config .designome/audit.config.json \
+  --provider auto \
+  --dry-run
+
+node bin/designome.mjs audit \
+  --project <target-project> \
+  --provider in-app-browser
+```
+
+The user-owned audit config declares the base URL, routes, viewports, flows, and output directory. The command verifies the managed installation, validates the accepted Design DNA, resolves a browser provider, and initializes `plan.json`, `evidence.json`, `findings.json`, and `report.md`.
+
+Provider resolution never silently installs dependencies. `auto` selects an existing target-project Playwright setup when one is detected, otherwise it produces a static-only plan. `in-app-browser` records that the host agent owns browser execution. `managed-playwright` remains unavailable until the user explicitly authorizes dependency installation through the repair and adapter workflow.
+
 ## Exit behavior
 
 | Exit | Meaning                                                  |

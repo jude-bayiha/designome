@@ -44,7 +44,7 @@ flowchart LR
 | 09 System and governance      | Tokens, contracts, exceptions, enforcement                   | governance fragment                |
 | 10 Synthesis                  | Resolve claims into one canonical contract                   | `design-dna.json` and reports      |
 | 11 Integration                | Install accepted artifacts idempotently                      | managed files and manifest         |
-| 12 Generation audit           | Compare generated work with accepted rules                   | findings and revision proposal     |
+| 12 Generation audit           | Plan evidence capture and compare generated work with rules  | evidence, findings, and proposals  |
 
 ## Evidence and claim model
 
@@ -116,6 +116,8 @@ It may not treat existing CSS, components, tokens, or rendered UI as Design DNA 
 │   ├── iconography.md
 │   └── integration.md
 └── audit/
+    ├── plan.json
+    ├── evidence.json
     ├── report.md
     └── findings.json
 ```
@@ -153,6 +155,7 @@ The dependency-light Node runtime performs only deterministic work:
 - CSS entry discovery or explicit selection;
 - generated CSS, user-owned overrides, and managed `AGENTS.md` blocks;
 - project-local human-readable design documentation and styling-adapter context;
+- audit configuration validation, browser-provider resolution, and evidence artifact initialization;
 - manifest checksums, conflict detection, rollback, and verification.
 
 The runtime cannot interpret screenshot design intent. Skills cannot bypass runtime ownership checks. This boundary keeps model reasoning flexible and file mutation predictable.
