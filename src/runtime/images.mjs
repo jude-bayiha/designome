@@ -69,16 +69,75 @@ function readGifDimensions(buffer) {
   };
 }
 
+function readWebpDimensions(buffer) {
+  if (
+    buffer.length < 20 ||
+    buffer.subarray(0, 4).toString('ascii') !== 'RIFF' ||
+    buffer.subarray(8, 12).toString('ascii') !== 'WEBP'
+  ) {
+    return null;
+  }
+
+  let offset = 12;
+  while (offset + 8 <= buffer.length) {
+    const chunkType = buffer.subarray(offset, offset + 4).toString('ascii');
+    const chunkLength = buffer.readUInt32LE(offset + 4);
+    const dataOffset = offset + 8;
+    const dataEnd = dataOffset + chunkLength;
+    if (dataEnd > buffer.length) return null;
+
+    if (chunkType === 'VP8X' && chunkLength >= 10) {
+      return {
+        format: 'webp',
+        width: buffer.readUIntLE(dataOffset + 4, 3) + 1,
+        height: buffer.readUIntLE(dataOffset + 7, 3) + 1,
+      };
+    }
+
+    if (
+      chunkType === 'VP8L' &&
+      chunkLength >= 5 &&
+      buffer[dataOffset] === 0x2f
+    ) {
+      const packedDimensions = buffer.readUInt32LE(dataOffset + 1);
+      return {
+        format: 'webp',
+        width: (packedDimensions & 0x3fff) + 1,
+        height: ((packedDimensions >>> 14) & 0x3fff) + 1,
+      };
+    }
+
+    if (
+      chunkType === 'VP8 ' &&
+      chunkLength >= 10 &&
+      buffer[dataOffset + 3] === 0x9d &&
+      buffer[dataOffset + 4] === 0x01 &&
+      buffer[dataOffset + 5] === 0x2a
+    ) {
+      return {
+        format: 'webp',
+        width: buffer.readUInt16LE(dataOffset + 6) & 0x3fff,
+        height: buffer.readUInt16LE(dataOffset + 8) & 0x3fff,
+      };
+    }
+
+    offset = dataEnd + (chunkLength % 2);
+  }
+
+  return null;
+}
+
 export function inspectImageBuffer(buffer) {
   const dimensions =
     readPngDimensions(buffer) ??
     readJpegDimensions(buffer) ??
-    readGifDimensions(buffer);
+    readGifDimensions(buffer) ??
+    readWebpDimensions(buffer);
   if (!dimensions || dimensions.width < 1 || dimensions.height < 1) {
     throw new DesignomeError('Unsupported or malformed image', {
       code: 'UNSUPPORTED_IMAGE',
       details: [
-        'Supported deterministic metadata formats are PNG, JPEG, and GIF.',
+        'Supported deterministic metadata formats are PNG, JPEG, GIF, and WebP.',
       ],
     });
   }

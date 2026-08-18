@@ -138,7 +138,7 @@ The plugin packages three agent entry points:
 
 The dependency-light Node runtime performs only deterministic work:
 
-- PNG, JPEG, and GIF metadata plus SHA-256 hashing;
+- PNG, JPEG, GIF, and WebP metadata plus SHA-256 hashing;
 - idempotent run initialization and input fingerprinting;
 - semantic Design DNA reference and evidence checks;
 - CSS entry discovery or explicit selection;
