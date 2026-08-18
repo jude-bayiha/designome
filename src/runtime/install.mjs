@@ -21,6 +21,7 @@ import { inspectManagedBlock, upsertManagedBlock } from './markers.mjs';
 
 const manifestRelativePath = '.designome/manifest.json';
 const installedDnaRelativePath = '.designome/design-dna.json';
+const auditConfigRelativePath = '.designome/audit.config.json';
 const defaultDocumentationDirectory = 'docs/designome';
 const auditSkillRelativeDirectory = '.agents/skills/designome-audit';
 const supportedManifestVersions = new Set(['0.1.0', '0.2.0']);
@@ -133,6 +134,25 @@ function renderOverridesCss() {
     '}',
     '',
   ].join('\n');
+}
+
+function renderAuditConfig() {
+  return jsonText({
+    schemaVersion: '0.1.0',
+    baseUrl: 'http://127.0.0.1:3000',
+    outputDirectory: 'audit',
+    routes: [
+      {
+        id: 'overview',
+        path: '/',
+        viewports: [
+          { name: 'desktop', width: 1440, height: 1000 },
+          { name: 'mobile', width: 390, height: 844 },
+        ],
+        flows: ['load the route'],
+      },
+    ],
+  });
 }
 
 function renderCssImportBlock(generatedName, overridesName) {
@@ -1050,6 +1070,14 @@ export async function planInstallation({
     action: overridesCurrent === null ? 'create' : 'preserve',
     content: overridesCurrent === null ? renderOverridesCss() : null,
   });
+  const auditConfigPath = path.join(projectRoot, auditConfigRelativePath);
+  const auditConfigCurrent = await readTextIfExists(auditConfigPath);
+  actions.push({
+    path: auditConfigRelativePath,
+    kind: 'user-owned',
+    action: auditConfigCurrent === null ? 'create' : 'preserve',
+    content: auditConfigCurrent === null ? renderAuditConfig() : null,
+  });
 
   const conflicts = actions.filter((action) => action.action === 'conflict');
   const packageJson = await readJson(path.join(pluginRoot, 'package.json'));
@@ -1111,6 +1139,11 @@ export async function planInstallation({
     managedArtifacts,
     userOwnedArtifacts: [
       { path: overridesCssRelative, kind: 'file', rewritePolicy: 'preserve' },
+      {
+        path: auditConfigRelativePath,
+        kind: 'file',
+        rewritePolicy: 'preserve',
+      },
     ],
   };
   const manifestText = jsonText(manifest);

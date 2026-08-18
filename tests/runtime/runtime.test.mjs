@@ -9,6 +9,7 @@ import {
   assertValidDesignDna,
   validateDesignDna,
 } from '../../src/runtime/design-dna.mjs';
+import { runAudit } from '../../src/runtime/audit.mjs';
 import {
   installDesignDna,
   planInstallation,
@@ -355,6 +356,23 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
   assert.match(agents, /docs\/ui\/generated\/README.md/u);
   assert.match(agents, /tailwind-utilities/u);
 
+  const auditConfigPath = path.join(
+    projectRoot,
+    '.designome',
+    'audit.config.json',
+  );
+  const auditConfig = JSON.parse(await fs.readFile(auditConfigPath, 'utf8'));
+  auditConfig.routes.push({
+    id: 'people',
+    path: '/people',
+    viewports: [{ name: 'desktop', width: 1280, height: 900 }],
+    flows: ['filter the collection'],
+  });
+  await fs.writeFile(
+    auditConfigPath,
+    `${JSON.stringify(auditConfig, null, 2)}\n`,
+  );
+
   const second = await installDesignDna({
     dnaPath,
     projectPath: projectRoot,
@@ -369,6 +387,7 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
     ).length,
     0,
   );
+  assert.match(await fs.readFile(auditConfigPath, 'utf8'), /"\/people"/u);
 
   const overridesPath = path.join(cssDirectory, 'designome.overrides.css');
   await fs.appendFile(
@@ -489,5 +508,70 @@ test('installation planning detects shadcn project context without mutating it',
   assert.equal(
     await fs.stat(path.join(projectRoot, '.designome')).catch(() => null),
     null,
+  );
+});
+
+test('executable audit resolves providers and initializes evidence artifacts', async (t) => {
+  const temporaryRoot = await temporaryDirectory(t, 'designome-audit-test-');
+  const projectRoot = path.join(temporaryRoot, 'target-project');
+  await fs.mkdir(path.join(projectRoot, 'src', 'styles'), { recursive: true });
+  await fs.writeFile(
+    path.join(projectRoot, 'package.json'),
+    JSON.stringify({
+      name: 'target-project',
+      private: true,
+      devDependencies: {
+        '@playwright/test': '^1.58.0',
+      },
+    }),
+  );
+  await fs.writeFile(
+    path.join(projectRoot, 'src', 'styles', 'globals.css'),
+    'body { margin: 0; }\n',
+  );
+  await fs.writeFile(path.join(projectRoot, 'AGENTS.md'), '# Instructions\n');
+  await fs.writeFile(
+    path.join(projectRoot, 'playwright.config.ts'),
+    'export default {};\n',
+  );
+  const dna = await referenceDna();
+  dna.status = 'accepted';
+  const dnaPath = path.join(temporaryRoot, 'accepted-design-dna.json');
+  await fs.writeFile(dnaPath, `${JSON.stringify(dna, null, 2)}\n`);
+  await installDesignDna({
+    dnaPath,
+    projectPath: projectRoot,
+    cssEntry: 'src/styles/globals.css',
+    instructionsReviewed: true,
+  });
+
+  const dryRun = await runAudit({ projectPath: projectRoot, dryRun: true });
+  assert.equal(dryRun.status, 'ready');
+  assert.equal(dryRun.provider.selected, 'existing-playwright');
+  assert.deepEqual(dryRun.provider.playwright.configs, [
+    'playwright.config.ts',
+  ]);
+
+  const initialized = await runAudit({
+    projectPath: projectRoot,
+    provider: 'in-app-browser',
+  });
+  assert.equal(initialized.status, 'initialized');
+  assert.equal(initialized.provider.executionOwner, 'host-agent');
+  assert.deepEqual((await fs.readdir(path.join(projectRoot, 'audit'))).sort(), [
+    'evidence.json',
+    'findings.json',
+    'plan.json',
+    'report.md',
+  ]);
+  const evidence = JSON.parse(
+    await fs.readFile(path.join(projectRoot, 'audit', 'evidence.json'), 'utf8'),
+  );
+  assert.equal(evidence.provider.selected, 'in-app-browser');
+  assert.deepEqual(evidence.captures, []);
+
+  await assert.rejects(
+    runAudit({ projectPath: projectRoot }),
+    (error) => error.code === 'AUDIT_OUTPUT_CONFLICT',
   );
 });
