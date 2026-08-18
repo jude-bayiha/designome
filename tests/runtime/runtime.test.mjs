@@ -315,6 +315,40 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
     ),
     /Epistemic status: `observed`/u,
   );
+  const componentDocumentation = await fs.readFile(
+    path.join(
+      projectRoot,
+      'docs',
+      'ui',
+      'generated',
+      'components-and-states.md',
+    ),
+    'utf8',
+  );
+  assert.match(componentDocumentation, /^# Components and states\n\n## /u);
+  assert.doesNotMatch(componentDocumentation, /\n#\n \nC\no\nm\np/u);
+
+  assert.deepEqual(
+    (
+      await fs.readdir(
+        path.join(projectRoot, '.agents', 'skills', 'designome-audit'),
+      )
+    ).sort(),
+    ['SKILL.md', 'agents'],
+  );
+  assert.match(
+    await fs.readFile(
+      path.join(
+        projectRoot,
+        '.agents',
+        'skills',
+        'designome-audit',
+        'SKILL.md',
+      ),
+      'utf8',
+    ),
+    /Project-local mode/u,
+  );
 
   const agents = await fs.readFile(path.join(projectRoot, 'AGENTS.md'), 'utf8');
   assert.equal(agents.match(/designome:guidance:start/gu)?.length, 1);
@@ -381,6 +415,29 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
     failedVerification.errors.includes(
       'Managed file checksum mismatch: src/styles/designome.generated.css',
     ),
+  );
+
+  const auditSkillPath = path.join(
+    projectRoot,
+    '.agents',
+    'skills',
+    'designome-audit',
+    'SKILL.md',
+  );
+  await fs.appendFile(auditSkillPath, '\n<!-- manual edit -->\n');
+  const skillConflict = await planInstallation({
+    dnaPath,
+    projectPath: projectRoot,
+    cssEntry: 'src/styles/globals.css',
+    ...integrationOptions,
+    instructionsReviewed: true,
+  });
+  assert.equal(skillConflict.status, 'conflict');
+  assert.equal(
+    skillConflict.publicPlan.actions.find(
+      (action) => action.path === '.agents/skills/designome-audit/SKILL.md',
+    ).action,
+    'conflict',
   );
 });
 
