@@ -322,6 +322,26 @@ export function validateRepository(rootDirectory = repositoryRoot) {
     'examples',
     'audit-config.reference.json',
   );
+  const auditEvidenceSchemaPath = path.join(
+    rootDirectory,
+    'schemas',
+    'audit-evidence.schema.json',
+  );
+  const auditEvidenceExamplePath = path.join(
+    rootDirectory,
+    'examples',
+    'audit-evidence.reference.json',
+  );
+  const auditFindingsSchemaPath = path.join(
+    rootDirectory,
+    'schemas',
+    'audit-findings.schema.json',
+  );
+  const auditFindingsExamplePath = path.join(
+    rootDirectory,
+    'examples',
+    'audit-findings.reference.json',
+  );
 
   try {
     const matrixSchema = readJson(matrixSchemaPath);
@@ -372,6 +392,20 @@ export function validateRepository(rootDirectory = repositoryRoot) {
     }
   } catch (error) {
     errors.push(`audit config validation failed: ${error.message}`);
+  }
+
+  for (const [label, schemaPath, examplePath] of [
+    ['audit evidence', auditEvidenceSchemaPath, auditEvidenceExamplePath],
+    ['audit findings', auditFindingsSchemaPath, auditFindingsExamplePath],
+  ]) {
+    try {
+      const validateAuditArtifact = ajv.compile(readJson(schemaPath));
+      if (!validateAuditArtifact(readJson(examplePath))) {
+        errors.push(...formatAjvErrors(label, validateAuditArtifact.errors));
+      }
+    } catch (error) {
+      errors.push(`${label} validation failed: ${error.message}`);
+    }
   }
 
   errors.push(...validateWorkflowYaml(rootDirectory));

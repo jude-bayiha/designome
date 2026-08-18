@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-08-18T00:00:00.000Z",
+  "designDna": { "documentId": "design-dna.reference", "revision": 1 },
+  "findings": [],
+  "calibrationCandidates": [
+    {
+      "id": "calibration.001",
+      "epistemicStatus": "proposed",
+      "scope": "people table primary text",
+      "evidence": "Computed font size is 12px.",
+      "proposal": "Consider an accepted 13px readability floor.",
+      "acceptanceRequired": true
+    }
+  ]
+}

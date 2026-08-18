@@ -9,7 +9,7 @@ import {
   assertValidDesignDna,
   validateDesignDna,
 } from '../../src/runtime/design-dna.mjs';
-import { runAudit } from '../../src/runtime/audit.mjs';
+import { evaluateAuditEvidence, runAudit } from '../../src/runtime/audit.mjs';
 import {
   installDesignDna,
   planInstallation,
@@ -573,5 +573,99 @@ test('executable audit resolves providers and initializes evidence artifacts', a
   await assert.rejects(
     runAudit({ projectPath: projectRoot }),
     (error) => error.code === 'AUDIT_OUTPUT_CONFLICT',
+  );
+});
+
+test('mechanical audit separates observed risks from calibration proposals', async () => {
+  const dna = await referenceDna();
+  dna.status = 'accepted';
+  const result = evaluateAuditEvidence({
+    dna,
+    evidence: {
+      schemaVersion: '0.1.0',
+      generatedAt: new Date().toISOString(),
+      provider: { selected: 'in-app-browser' },
+      layers: { rendered: 'executed', interaction: 'executed' },
+      captures: [
+        {
+          id: 'capture.people.mobile',
+          routeId: 'people',
+          viewport: { width: 390, height: 844 },
+          screenshotPath: 'audit/screenshots/people-mobile.png',
+          document: { scrollWidth: 794, clientWidth: 390 },
+          elements: [
+            {
+              id: 'invite-action',
+              role: 'action',
+              visible: true,
+              clipped: true,
+              rect: { width: 90, height: 40 },
+            },
+            {
+              id: 'person-avatar',
+              role: 'avatar',
+              visible: true,
+              clipped: false,
+              rect: { width: 240, height: 34 },
+              flexShrink: 1,
+              alignItems: 'stretch',
+              justifyContent: 'flex-start',
+              textAlign: 'left',
+            },
+            {
+              id: 'person-name',
+              role: 'table-primary-text',
+              visible: true,
+              clipped: false,
+              rect: { width: 120, height: 18 },
+              fontSize: 12,
+            },
+            {
+              id: 'statistics-section',
+              role: 'section',
+              visible: true,
+              clipped: false,
+              rect: { width: 360, height: 120 },
+              gapBefore: 8,
+              panelPadding: 20,
+            },
+          ],
+        },
+      ],
+      interactions: [
+        {
+          id: 'select-person',
+          routeId: 'people',
+          kind: 'selection',
+          expected: 'aria-pressed becomes true',
+          actual: 'aria-pressed remained false',
+          passed: false,
+          ruleRefs: [],
+        },
+      ],
+      consoleErrors: [{ routeId: 'people', message: 'Hydration failed' }],
+      accessibilityChecks: [
+        {
+          id: 'modal-focus-return',
+          routeId: 'people',
+          expected: 'focus returns to invite trigger',
+          actual: 'focus moved to body',
+          passed: false,
+          ruleRefs: [],
+        },
+      ],
+    },
+  });
+  assert.equal(result.findings.length, 8);
+  assert.equal(result.calibrationCandidates.length, 2);
+  assert.ok(
+    result.findings.every((finding) => finding.epistemicStatus === 'observed'),
+  );
+  assert.ok(
+    result.calibrationCandidates.every(
+      (candidate) =>
+        candidate.epistemicStatus === 'proposed' &&
+        candidate.acceptanceRequired,
+    ),
   );
 });

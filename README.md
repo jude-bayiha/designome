@@ -50,6 +50,7 @@ Start with:
 - [Architecture and methodology](docs/architecture-and-methodology.md)
 - [Concept matrix](docs/concept-matrix.md)
 - [Target-project installation contract](docs/installation-contract.md)
+- [Rendered audit contract](docs/audit-contract.md)
 - [Integration and calibration matrix](docs/integration-and-calibration-matrix.md)
 - [Runtime and CLI](docs/runtime.md)
 - [Reference screenshot analysis](docs/reference-analysis.md)
