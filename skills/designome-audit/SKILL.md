@@ -34,10 +34,19 @@ Stop if neither context can be resolved. Never guess which Design DNA or project
    ```
 
 3. Establish available evidence: changed code, rendered screenshots, viewport set, state fixtures, interaction results, and accessibility checks.
-4. Route relevant matrix concepts and stress tests. Inspect long and unbroken content, nulls, extreme values, states, reflow, localization, modalities, data scale, media failure, visual stability, and motion mode as applicable.
-5. Run repository checks only inside the audited target project. Do not run checks from the Designome plugin source unless the plugin itself is the audit target.
-6. Produce `audit/report.md` and `audit/findings.json`. Each finding includes rule reference, evidence, severity, certainty, scope, suggested correction, and verification method.
-7. State which validation layers actually ran. Propose revisions, but do not modify the implementation without separate authorization.
+4. Initialize or dry-run the executable audit when the helper is available:
+
+   ```bash
+   node <designome-plugin-root>/bin/designome.mjs audit \
+     --project <target-project> \
+     --provider <auto|in-app-browser|existing-playwright|managed-playwright|static> \
+     --dry-run
+   ```
+
+5. Route relevant matrix concepts and stress tests. Inspect long and unbroken content, nulls, extreme values, states, reflow, localization, modalities, data scale, media failure, visual stability, and motion mode as applicable.
+6. Run repository checks only inside the audited target project. Do not run checks from the Designome plugin source unless the plugin itself is the audit target.
+7. Produce `audit/plan.json`, `audit/evidence.json`, `audit/report.md`, and `audit/findings.json`. Each finding includes rule reference, evidence, severity, certainty, scope, suggested correction, and verification method.
+8. State which validation layers actually ran. Propose revisions, but do not modify the implementation without separate authorization.
 
 ## Guardrails
 
@@ -46,3 +55,4 @@ Stop if neither context can be resolved. Never guess which Design DNA or project
 - Preserve documented exceptions.
 - Distinguish an implementation deviation from an incomplete or contradictory Design DNA.
 - Prefer the smallest corrective change and retain evidence for any proposed Design DNA revision.
+- Prefer the host in-app browser, then an existing target-project Playwright setup. Do not install managed Playwright without explicit authorization.
