@@ -3,5 +3,6 @@
   "documentationDirectory": "docs/design-system/generated",
   "rulePrecedence": "complement",
   "existingRulePaths": ["docs/design-system/core"],
-  "stylingStrategy": "auto"
+  "stylingStrategy": "auto",
+  "uiKitPreference": "auto"
 }

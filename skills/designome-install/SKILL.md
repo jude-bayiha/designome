@@ -35,6 +35,7 @@ Read completely before installation:
      [--rule-precedence <complement|existing-first|designome-first>] \
      [--existing-rules <project-relative-path>] \
      [--styling <auto|css-variables|tailwind-utilities|shadcn-components>] \
+     [--ui-kit <auto|none|shadcn>] \
      --dry-run
    ```
 
@@ -60,5 +61,6 @@ Read completely before installation:
 - Do not copy existing design documentation into the Design DNA. Record it as implementation context and apply the resolved precedence policy.
 - When Tailwind is detected, prefer utilities and theme conventions; generated CSS remains a semantic token bridge, not a parallel component system.
 - When `components.json` is detected, resolve shadcn/ui project context and prefer installed components, semantic variables, configured aliases, primitive base, and icon library. Never initialize or overwrite components without explicit authorization.
+- Use `--ui-kit shadcn` only to record an explicit greenfield preference. Without `components.json`, it remains a proposed initialization step and never runs `shadcn init` automatically.
 - Do not add a dependency merely because the target project already uses it.
 - Stop when repository instructions prohibit or materially alter the planned writes.
