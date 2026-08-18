@@ -1119,7 +1119,7 @@
       "produces": [
         "integration-plan.json",
         "generated CSS",
-        "generated design documentation",
+        "complete documentation projection v1.0.0",
         "resolved styling and rule-precedence context",
         "agent guidance",
         "agent skill"

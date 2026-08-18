@@ -39,7 +39,7 @@ Read completely before installation:
      --dry-run
    ```
 
-5. Review every planned create, update, preserve, unchanged, and conflict action. Stop on any conflict.
+5. Review every planned create, update, delete, preserve, unchanged, and conflict action. A delete is valid only for obsolete documentation owned by the previous manifest whose checksum still matches. Stop on any conflict.
 6. Execute the same command without `--dry-run` and add `--instructions-reviewed`.
 7. Verify managed files and marker blocks:
 
@@ -48,13 +48,15 @@ Read completely before installation:
      --project <target-project>
    ```
 
-8. Execute the install command a second time. Require zero creates or updates and a successful verification.
-9. Run the target project's relevant checks and report static validation separately from rendered or interaction validation.
+8. Verify that the configured documentation directory contains the generated index plus all 22 paths in the matrix `documentationProjection`. Every file must preserve explicit epistemic status; an `unknown` boundary or `proposed` stress test is valid when no accepted claim covers the subject.
+9. Execute the install command a second time. Require zero creates, updates, or deletes and a successful verification.
+10. Run the target project's relevant checks and report static validation separately from rendered or interaction validation.
 
 ## Guardrails
 
 - Never install a `draft` or `superseded` Design DNA.
 - Never overwrite a checksum conflict or manually modified managed block.
+- Never preserve a stale flat generated document silently. Delete it only through checksum-verified manifest migration; otherwise stop with a conflict.
 - Never rewrite `designome.overrides.css` after creating it.
 - Never append duplicate imports or Designome guidance blocks.
 - Do not inspect target CSS, components, or rendered UI for design extraction.
