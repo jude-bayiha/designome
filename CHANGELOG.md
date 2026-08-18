@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/jude-bayiha/designome/compare/v1.2.0...v1.3.0) (2026-08-18)
+
+
+### Features
+
+* **audit:** evaluate rendered UI mechanics ([cc3ac81](https://github.com/jude-bayiha/designome/commit/cc3ac81ae531600f2d9003f80d97d27d89dd1a91))
+* **audit:** initialize executable evidence plans ([ba00647](https://github.com/jude-bayiha/designome/commit/ba00647378b04ed365e326189919efc0f62e2a58))
+
 ## [1.2.0](https://github.com/jude-bayiha/designome/compare/v1.1.0...v1.2.0) (2026-08-18)
 
 
