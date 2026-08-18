@@ -60,3 +60,9 @@ The evidence artifact records expected and actual outcomes. Failed executed cont
 - `audit/report.md` summarizes evidence boundaries and counts.
 
 Audit output is working evidence and should not be committed by default. Use a new output directory per independent run or pass `--overwrite` only when replacing a known audit run intentionally.
+
+## Bounded repair mode
+
+Repair requires `--mode repair --implementation-authorized`. The generated `repair-plan.json` contains only observed finding IDs, excludes proposed calibration candidates, limits the loop to one-to-three passes, and sets `designDnaMutationAllowed` to `false`. The agent applies the smallest implementation patch, runs target checks, and recaptures affected evidence. The loop stops on success, the configured pass limit, or a new authorization or product decision.
+
+Managed Playwright remains a separate setup decision. `--browser-install-authorized` records an authorized proposal for `@playwright/test` and Chromium, but the audit command itself never edits dependencies or downloads a browser.

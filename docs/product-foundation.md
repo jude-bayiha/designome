@@ -49,18 +49,19 @@ No Python, NumPy, OpenCV, OCR engine, vector database, training pipeline, or sta
 
 ## Product risks and controls
 
-| Risk                                                         | Control                                                                                  |
-| ------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| The model invents exact values or unseen behavior            | Epistemic statuses, evidence references, screenshot-limit rules, and synthesis gates     |
-| One giant prompt becomes unstable                            | Stage routing and specialized prompt files                                               |
-| Guidance is too aesthetic to improve real code               | State, edge-case, content, data, accessibility, and audit contracts                      |
-| Relational guidance permits unreadable implementation values | Forward-test calibration, bounded preferred values, and computed-style audits            |
-| Target-project style contaminates extraction                 | Technical-only inspection policy and explicit source separation                          |
-| Generated CSS competes with Tailwind or project primitives   | Detect the styling stack and prefer repository-native utilities before component CSS     |
-| Existing UI rules are silently replaced                      | Explicit precedence policy, read-only declared rule paths, and conflict reporting        |
-| Reinstallation duplicates or overwrites work                 | Managed markers, checksums, separate overrides, dry-run, and second-run no-diff test     |
-| `AGENTS.md` is treated as enforcement                        | Pair guidance with schema checks, generation audits, and future installer validation     |
-| Static screenshots imply false accessibility confidence      | Separate visible cues from DOM, keyboard, assistive-technology, and runtime verification |
+| Risk                                                         | Control                                                                                          |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| The model invents exact values or unseen behavior            | Epistemic statuses, evidence references, screenshot-limit rules, and synthesis gates             |
+| One giant prompt becomes unstable                            | Stage routing and specialized prompt files                                                       |
+| Guidance is too aesthetic to improve real code               | State, edge-case, content, data, accessibility, and audit contracts                              |
+| Relational guidance permits unreadable implementation values | Forward-test calibration, bounded preferred values, and computed-style audits                    |
+| Target-project style contaminates extraction                 | Technical-only inspection policy and explicit source separation                                  |
+| Generated CSS competes with Tailwind or project primitives   | Detect the styling stack and prefer repository-native utilities before component CSS             |
+| Existing UI rules are silently replaced                      | Explicit precedence policy, read-only declared rule paths, and conflict reporting                |
+| Reinstallation duplicates or overwrites work                 | Managed markers, checksums, separate overrides, dry-run, and second-run no-diff test             |
+| `AGENTS.md` is treated as enforcement                        | Pair guidance with schema checks, generation audits, and future installer validation             |
+| Static screenshots imply false accessibility confidence      | Separate visible cues from DOM, keyboard, assistive-technology, and runtime verification         |
+| Automated repair silently changes product or design intent   | Explicit authorization, bounded passes, finding IDs, stop conditions, and immutable accepted DNA |
 
 ## v0.2 deliverables
 
@@ -73,4 +74,4 @@ This specification slice is complete when:
 - repository content and delivery metadata are English;
 - local checks pass twice without changing tracked files.
 
-The first source-based Codex plugin and installer slice is implemented. Marketplace publication, more target-framework adapters, and automated rendered-browser audits remain later slices after forward-test feedback.
+The source-based Codex plugin, installer, executable audit planner, mechanical evidence evaluator, bounded repair plan, and initial CSS, Tailwind, and shadcn/ui adapter matrix are implemented. Browser control remains owned by the host or target project; Designome does not silently install or operate a second browser stack.

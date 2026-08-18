@@ -32,7 +32,7 @@ The current helper exposes the plan as JSON on standard output. The invoking ski
 
 ## Project-local design documentation
 
-Installation writes human-readable documentation inside the target repository. The default directory is `docs/designome`; repository instructions may select another visible project-relative directory with `--docs-dir`. The generated set includes an index, visual foundations, typography, iconography, components and states, canonical rules, and repository integration context.
+Installation writes human-readable documentation inside the target repository. The default directory is `docs/designome`; repository instructions may select another visible project-relative directory with `--docs-dir`. The generated set includes an index, visual foundations, typography, iconography, components and states, proposed component mapping, canonical rules, and repository integration context.
 
 Generated documentation is managed and checksum-protected. Existing project documentation is user-owned. Declare existing paths with repeatable `--existing-rules` options and resolve one precedence policy:
 
@@ -49,6 +49,8 @@ The installer creates `.designome/audit.config.json` once as a project-owned sta
 ## Repository-native styling
 
 The `auto` styling strategy detects supported technical markers. A `components.json` file selects the `shadcn-components` adapter, Tailwind dependencies or directives select `tailwind-utilities`, and other projects receive `css-variables`. An explicit strategy may be passed when repository instructions require it.
+
+`--ui-kit auto` reuses detected shadcn/ui source components, `--ui-kit none` disables that adapter preference, and `--ui-kit shadcn` records a proposed greenfield setup when no `components.json` exists. None of these options initializes shadcn/ui or installs dependencies. Generated `component-mapping.md` remains proposed technical guidance and inventories only source components already present in the project.
 
 The generated CSS is a semantic token bridge. In Tailwind projects, generation guidance requires existing utilities and theme conventions before new component CSS. In shadcn/ui projects, guidance also preserves installed source components, semantic variables, aliases, primitive base, and icon library. Detection changes the implementation adapter only and never turns target CSS or components into visual evidence.
 
