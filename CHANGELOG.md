@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/jude-bayiha/designome/compare/v1.0.1...v1.1.0) (2026-08-18)
+
+
+### Features
+
+* **installer:** generate target design documentation ([b588fcb](https://github.com/jude-bayiha/designome/commit/b588fcbd6541883e73a0c5f6a97be776d1826b5a))
+
 ## [1.0.1](https://github.com/jude-bayiha/designome/compare/v1.0.0...v1.0.1) (2026-08-18)
 
 
