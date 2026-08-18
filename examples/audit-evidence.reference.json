@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-08-18T00:00:00.000Z",
+  "provider": { "selected": "in-app-browser", "status": "external" },
+  "layers": { "rendered": "executed", "interaction": "executed" },
+  "captures": [
+    {
+      "id": "capture.overview.desktop",
+      "routeId": "overview",
+      "viewport": { "width": 1440, "height": 1000 },
+      "screenshotPath": "audit/screenshots/overview-desktop.png",
+      "document": { "scrollWidth": 1440, "clientWidth": 1440 },
+      "elements": [
+        {
+          "id": "overview-primary-action",
+          "role": "action",
+          "visible": true,
+          "clipped": false,
+          "rect": { "width": 120, "height": 40 },
+          "ruleRefs": ["rule.semantic-reflow"]
+        }
+      ]
+    }
+  ],
+  "interactions": [
+    {
+      "id": "overview-navigation",
+      "routeId": "overview",
+      "kind": "navigation",
+      "expected": "URL and active navigation item update",
+      "actual": "URL and active navigation item updated",
+      "passed": true,
+      "ruleRefs": []
+    }
+  ],
+  "consoleErrors": [],
+  "accessibilityChecks": []
+}

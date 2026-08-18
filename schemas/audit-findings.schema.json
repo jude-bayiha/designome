@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designome.dev/schemas/audit-findings.schema.json",
+  "title": "Designome audit findings",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "designDna",
+    "findings",
+    "calibrationCandidates"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.1.0" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "designDna": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["documentId", "revision"],
+      "properties": {
+        "documentId": { "type": "string", "minLength": 1 },
+        "revision": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/finding" }
+    },
+    "calibrationCandidates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/calibration" }
+    }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "epistemicStatus",
+        "severity",
+        "certainty",
+        "scope",
+        "ruleRef",
+        "evidence",
+        "suggestedCorrection",
+        "verificationMethod"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["design-deviation", "mechanical-risk"] },
+        "epistemicStatus": { "const": "observed" },
+        "severity": { "enum": ["low", "medium", "high", "critical"] },
+        "certainty": { "type": "number", "minimum": 0, "maximum": 1 },
+        "scope": { "type": "string", "minLength": 1 },
+        "ruleRef": { "type": "string", "minLength": 1 },
+        "evidence": { "type": "string", "minLength": 1 },
+        "suggestedCorrection": { "type": "string", "minLength": 1 },
+        "verificationMethod": { "type": "string", "minLength": 1 }
+      }
+    },
+    "calibration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "epistemicStatus",
+        "scope",
+        "evidence",
+        "proposal",
+        "acceptanceRequired"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "epistemicStatus": { "const": "proposed" },
+        "scope": { "type": "string", "minLength": 1 },
+        "evidence": { "type": "string", "minLength": 1 },
+        "proposal": { "type": "string", "minLength": 1 },
+        "acceptanceRequired": { "const": true }
+      }
+    }
+  }
+}

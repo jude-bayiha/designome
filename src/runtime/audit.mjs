@@ -158,7 +158,7 @@ async function resolveProvider(projectRoot, requestedProvider, packageJson) {
   };
 }
 
-function reportMarkdown({ dna, plan }) {
+function reportMarkdown({ dna, plan, findings }) {
   const renderedStatus = ['existing-playwright', 'in-app-browser'].includes(
     plan.provider.selected,
   )
@@ -188,9 +188,307 @@ function reportMarkdown({ dna, plan }) {
         `- \`${route.path}\` at ${route.viewports.map((viewport) => `${viewport.width}x${viewport.height}`).join(', ')}`,
     ),
     '',
+    '## Results',
+    '',
+    `- Observed findings: ${findings.findings.length}`,
+    `- Proposed calibration candidates: ${findings.calibrationCandidates.length}`,
+    '',
     'No implementation deviation is reported until evidence is attached to a rule or accepted calibration.',
     '',
   ].join('\n');
+}
+
+function findingFactory() {
+  let findingIndex = 0;
+  let calibrationIndex = 0;
+  return {
+    finding(values) {
+      findingIndex += 1;
+      return {
+        id: `finding.${String(findingIndex).padStart(3, '0')}`,
+        epistemicStatus: 'observed',
+        certainty: 1,
+        ...values,
+      };
+    },
+    calibration(values) {
+      calibrationIndex += 1;
+      return {
+        id: `calibration.${String(calibrationIndex).padStart(3, '0')}`,
+        epistemicStatus: 'proposed',
+        acceptanceRequired: true,
+        ...values,
+      };
+    },
+  };
+}
+
+function validateEvidence(evidence) {
+  const errors = [];
+  if (evidence?.schemaVersion !== '0.1.0')
+    errors.push('schemaVersion must be 0.1.0');
+  for (const property of [
+    'captures',
+    'interactions',
+    'consoleErrors',
+    'accessibilityChecks',
+  ]) {
+    if (!Array.isArray(evidence?.[property]))
+      errors.push(`${property} must be an array`);
+  }
+  return errors;
+}
+
+function tokenExpectation(dna, tokenRef) {
+  const token = dna.tokens.find((candidate) => candidate.id === tokenRef);
+  if (!token || token.category !== 'typography') return null;
+  if (token.value.kind === 'exact' && Number.isFinite(token.value.value)) {
+    return { token, minimum: token.value.value, maximum: token.value.value };
+  }
+  if (token.value.kind === 'range') {
+    return {
+      token,
+      minimum: token.value.minimum,
+      maximum: token.value.maximum,
+    };
+  }
+  return null;
+}
+
+export function evaluateAuditEvidence({ dna, evidence }) {
+  const errors = validateEvidence(evidence);
+  if (errors.length > 0) {
+    throw new DesignomeError('Audit evidence is invalid', {
+      code: 'INVALID_AUDIT_EVIDENCE',
+      details: errors,
+    });
+  }
+  const factory = findingFactory();
+  const findings = [];
+  const calibrationCandidates = [];
+  for (const capture of evidence.captures) {
+    const captureScope = `${capture.routeId} at ${capture.viewport.width}x${capture.viewport.height}`;
+    if (capture.document.scrollWidth > capture.document.clientWidth + 1) {
+      findings.push(
+        factory.finding({
+          kind: 'mechanical-risk',
+          severity: 'high',
+          scope: captureScope,
+          ruleRef: 'mechanical.global-horizontal-overflow',
+          evidence: `Document scroll width ${capture.document.scrollWidth}px exceeds client width ${capture.document.clientWidth}px.`,
+          suggestedCorrection:
+            'Remove global overflow and keep intentional overflow inside an explicit local scroller.',
+          verificationMethod:
+            'Repeat the capture and require document scrollWidth to equal clientWidth within one pixel.',
+        }),
+      );
+    }
+    for (const element of capture.elements) {
+      const scope = `${captureScope}, element ${element.id}`;
+      if (
+        ['action', 'label', 'status'].includes(element.role) &&
+        (!element.visible || element.clipped)
+      ) {
+        findings.push(
+          factory.finding({
+            kind: 'mechanical-risk',
+            severity: element.role === 'action' ? 'high' : 'medium',
+            scope,
+            ruleRef: 'mechanical.essential-content-clipping',
+            evidence: `${element.role} is ${element.visible ? 'visible but clipped' : 'not visible'}.`,
+            suggestedCorrection:
+              'Preserve the essential control or content through wrapping, reflow, or an intentional local overflow strategy.',
+            verificationMethod:
+              'Recapture the same viewport and require the element to be visible and unclipped.',
+          }),
+        );
+      }
+      if (element.role === 'avatar') {
+        const ratio =
+          element.rect.height === 0
+            ? Number.POSITIVE_INFINITY
+            : element.rect.width / element.rect.height;
+        if (Math.abs(1 - ratio) > 0.05) {
+          findings.push(
+            factory.finding({
+              kind: 'mechanical-risk',
+              severity: 'medium',
+              scope,
+              ruleRef: 'mechanical.avatar-stable-geometry',
+              evidence: `Avatar measures ${element.rect.width}x${element.rect.height}px.`,
+              suggestedCorrection:
+                'Use stable square geometry and prevent flex or grid stretching.',
+              verificationMethod:
+                'Recapture and require the avatar width-to-height ratio to remain within five percent of one.',
+            }),
+          );
+        }
+        if (element.flexShrink !== undefined && element.flexShrink !== 0) {
+          findings.push(
+            factory.finding({
+              kind: 'mechanical-risk',
+              severity: 'medium',
+              scope,
+              ruleRef: 'mechanical.avatar-flex-shrink',
+              evidence: `Computed flex-shrink is ${element.flexShrink}.`,
+              suggestedCorrection:
+                'Prevent the avatar from shrinking inside flexible rows.',
+              verificationMethod:
+                'Require computed flex-shrink zero at every configured viewport.',
+            }),
+          );
+        }
+        const centeringValues = [
+          element.alignItems,
+          element.justifyContent,
+          element.textAlign,
+        ].filter((value) => value !== undefined);
+        if (
+          centeringValues.length > 0 &&
+          centeringValues.some((value) => value !== 'center')
+        ) {
+          findings.push(
+            factory.finding({
+              kind: 'mechanical-risk',
+              severity: 'low',
+              scope,
+              ruleRef: 'mechanical.avatar-optical-centering',
+              evidence: `Computed centering values are ${centeringValues.join(', ')}.`,
+              suggestedCorrection:
+                'Center fallback initials on both axes and use a stable line height.',
+              verificationMethod:
+                'Require centered alignment and visually inspect one-to-three-initial fallbacks.',
+            }),
+          );
+        }
+      }
+      if (Number.isFinite(element.fontSize)) {
+        for (const tokenRef of element.tokenRefs ?? []) {
+          const expectation = tokenExpectation(dna, tokenRef);
+          if (
+            !expectation ||
+            (element.fontSize >= expectation.minimum &&
+              element.fontSize <= expectation.maximum)
+          ) {
+            continue;
+          }
+          const evidenceText = `Computed font size ${element.fontSize}px is outside ${tokenRef} bounds ${expectation.minimum}-${expectation.maximum}px.`;
+          if (
+            ['observed', 'inferred'].includes(
+              expectation.token.claim.epistemicStatus,
+            )
+          ) {
+            findings.push(
+              factory.finding({
+                kind: 'design-deviation',
+                severity: 'medium',
+                scope,
+                ruleRef: tokenRef,
+                evidence: evidenceText,
+                suggestedCorrection:
+                  'Use the accepted typography bounds for this semantic role.',
+                verificationMethod:
+                  'Repeat the computed-style audit after the scoped typography change.',
+              }),
+            );
+          } else {
+            calibrationCandidates.push(
+              factory.calibration({
+                scope,
+                evidence: evidenceText,
+                proposal: `Review and explicitly accept or reject ${tokenRef} as an enforceable typography bound.`,
+              }),
+            );
+          }
+        }
+        const proposedFloor =
+          element.role === 'table-primary-text'
+            ? 13
+            : ['table-metadata', 'status'].includes(element.role)
+              ? 11
+              : null;
+        if (
+          proposedFloor !== null &&
+          element.fontSize < proposedFloor &&
+          (element.tokenRefs ?? []).length === 0
+        ) {
+          calibrationCandidates.push(
+            factory.calibration({
+              scope,
+              evidence: `${element.role} computed font size is ${element.fontSize}px.`,
+              proposal: `Consider an accepted readability floor of ${proposedFloor}px for ${element.role}.`,
+            }),
+          );
+        }
+      }
+      if (
+        element.role === 'section' &&
+        Number.isFinite(element.gapBefore) &&
+        Number.isFinite(element.panelPadding) &&
+        element.gapBefore < element.panelPadding
+      ) {
+        calibrationCandidates.push(
+          factory.calibration({
+            scope,
+            evidence: `Major gap ${element.gapBefore}px is smaller than panel padding ${element.panelPadding}px.`,
+            proposal:
+              'Consider accepting a relationship that major section gaps are at least as large as internal panel padding.',
+          }),
+        );
+      }
+    }
+  }
+  for (const interaction of evidence.interactions) {
+    if (interaction.passed) continue;
+    findings.push(
+      factory.finding({
+        kind: 'mechanical-risk',
+        severity: ['navigation', 'modal', 'selection'].includes(
+          interaction.kind,
+        )
+          ? 'high'
+          : 'medium',
+        scope: `${interaction.routeId}, interaction ${interaction.id}`,
+        ruleRef: interaction.ruleRefs?.[0] ?? `interaction.${interaction.kind}`,
+        evidence: `Expected ${interaction.expected}; observed ${interaction.actual}.`,
+        suggestedCorrection:
+          'Restore the observable interaction outcome and its programmatic state.',
+        verificationMethod: `Repeat the ${interaction.kind} flow and require the expected state transition.`,
+      }),
+    );
+  }
+  for (const error of evidence.consoleErrors) {
+    findings.push(
+      factory.finding({
+        kind: 'mechanical-risk',
+        severity: 'high',
+        scope: `${error.routeId}, browser console`,
+        ruleRef: 'mechanical.console-error-free',
+        evidence: error.message,
+        suggestedCorrection:
+          'Resolve the runtime error without suppressing unrelated diagnostics.',
+        verificationMethod:
+          'Reload the route and repeat configured flows with no console or page errors.',
+      }),
+    );
+  }
+  for (const check of evidence.accessibilityChecks) {
+    if (check.passed) continue;
+    findings.push(
+      factory.finding({
+        kind: 'mechanical-risk',
+        severity: 'high',
+        scope: `${check.routeId}, accessibility check ${check.id}`,
+        ruleRef: check.ruleRefs?.[0] ?? 'mechanical.accessibility-semantics',
+        evidence: `Expected ${check.expected}; observed ${check.actual}.`,
+        suggestedCorrection:
+          'Restore the expected accessible name, state, focus behavior, or semantic relationship.',
+        verificationMethod:
+          'Repeat the same keyboard or accessibility-tree assertion.',
+      }),
+    );
+  }
+  return { findings, calibrationCandidates };
 }
 
 export async function planAudit({
@@ -287,6 +585,30 @@ export async function runAudit(options) {
       { code: 'AUDIT_OUTPUT_CONFLICT' },
     );
   }
+  let evidence = {
+    schemaVersion: '0.1.0',
+    generatedAt: prepared.plan.createdAt,
+    provider: prepared.plan.provider,
+    layers: prepared.plan.layers,
+    captures: [],
+    interactions: [],
+    consoleErrors: [],
+    accessibilityChecks: [],
+  };
+  if (options.evidencePath) {
+    const resolvedEvidencePath = resolveProjectPath(
+      prepared.projectRoot,
+      options.evidencePath,
+      '--evidence',
+    );
+    evidence = await readJson(resolvedEvidencePath).catch((error) => {
+      throw new DesignomeError('Cannot read audit evidence', {
+        code: 'AUDIT_EVIDENCE_UNREADABLE',
+        details: [error.message],
+      });
+    });
+  }
+  const evaluated = evaluateAuditEvidence({ dna: prepared.dna, evidence });
   const findings = {
     schemaVersion: '0.1.0',
     generatedAt: prepared.plan.createdAt,
@@ -294,17 +616,8 @@ export async function runAudit(options) {
       documentId: prepared.dna.documentId,
       revision: prepared.dna.revision.number,
     },
-    findings: [],
-    calibrationCandidates: [],
-  };
-  const evidence = {
-    schemaVersion: '0.1.0',
-    generatedAt: prepared.plan.createdAt,
-    provider: prepared.plan.provider,
-    layers: prepared.plan.layers,
-    captures: [],
-    interactions: [],
-    accessibilityChecks: [],
+    findings: evaluated.findings,
+    calibrationCandidates: evaluated.calibrationCandidates,
   };
   await fs.mkdir(prepared.outputPath, { recursive: true });
   await atomicWrite(
@@ -321,12 +634,14 @@ export async function runAudit(options) {
   );
   await atomicWrite(
     path.join(prepared.outputPath, 'report.md'),
-    reportMarkdown({ dna: prepared.dna, plan: prepared.plan }),
+    reportMarkdown({ dna: prepared.dna, plan: prepared.plan, findings }),
   );
   return {
     status: 'initialized',
     outputDirectory: prepared.plan.outputDirectory,
     provider: prepared.plan.provider,
+    findingCount: findings.findings.length,
+    calibrationCandidateCount: findings.calibrationCandidates.length,
     artifacts: ['plan.json', 'evidence.json', 'findings.json', 'report.md'],
   };
 }

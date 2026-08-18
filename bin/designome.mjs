@@ -109,7 +109,7 @@ function printHelp() {
   );
   process.stdout.write(`  verify-install --project <dir>\n`);
   process.stdout.write(
-    `  audit --project <dir> [--config <file>] [--output <dir>] [--provider <name>] [--dry-run] [--overwrite]\n`,
+    `  audit --project <dir> [--config <file>] [--output <dir>] [--provider <name>] [--evidence <file>] [--dry-run] [--overwrite]\n`,
   );
 }
 
@@ -196,6 +196,7 @@ async function main() {
       'project',
       'config',
       'output',
+      'evidence',
       'provider',
       'dry-run',
       'overwrite',
@@ -207,6 +208,7 @@ async function main() {
         fallback: '.designome/audit.config.json',
       }),
       outputDirectory: option(parsed, 'output', { fallback: null }),
+      evidencePath: option(parsed, 'evidence', { fallback: null }),
       provider: option(parsed, 'provider', { fallback: 'auto' }),
       dryRun: Boolean(parsed.options.get('dry-run')),
       overwrite: Boolean(parsed.options.get('overwrite')),

@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designome.dev/schemas/audit-evidence.schema.json",
+  "title": "Designome rendered audit evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "provider",
+    "layers",
+    "captures",
+    "interactions",
+    "consoleErrors",
+    "accessibilityChecks"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.1.0" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "provider": { "type": "object" },
+    "layers": { "type": "object" },
+    "captures": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/capture" }
+    },
+    "interactions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/interaction" }
+    },
+    "consoleErrors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/consoleError" }
+    },
+    "accessibilityChecks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/check" }
+    }
+  },
+  "$defs": {
+    "rect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "number", "minimum": 0 },
+        "height": { "type": "number", "minimum": 0 }
+      }
+    },
+    "element": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "role", "visible", "clipped", "rect"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "role": {
+          "enum": [
+            "action",
+            "label",
+            "status",
+            "avatar",
+            "table-primary-text",
+            "table-metadata",
+            "section",
+            "local-scroller",
+            "other"
+          ]
+        },
+        "visible": { "type": "boolean" },
+        "clipped": { "type": "boolean" },
+        "rect": { "$ref": "#/$defs/rect" },
+        "fontSize": { "type": "number", "minimum": 0 },
+        "lineHeight": { "type": "number", "minimum": 0 },
+        "flexShrink": { "type": "number", "minimum": 0 },
+        "alignItems": { "type": "string" },
+        "justifyContent": { "type": "string" },
+        "textAlign": { "type": "string" },
+        "gapBefore": { "type": "number", "minimum": 0 },
+        "panelPadding": { "type": "number", "minimum": 0 },
+        "tokenRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "ruleRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "capture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "routeId",
+        "viewport",
+        "screenshotPath",
+        "document",
+        "elements"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "routeId": { "type": "string", "minLength": 1 },
+        "viewport": { "$ref": "#/$defs/rect" },
+        "screenshotPath": { "type": "string", "minLength": 1 },
+        "document": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scrollWidth", "clientWidth"],
+          "properties": {
+            "scrollWidth": { "type": "number", "minimum": 0 },
+            "clientWidth": { "type": "number", "minimum": 0 }
+          }
+        },
+        "elements": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/element" }
+        }
+      }
+    },
+    "interaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "routeId", "kind", "expected", "actual", "passed"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "routeId": { "type": "string", "minLength": 1 },
+        "kind": {
+          "enum": [
+            "navigation",
+            "disclosure",
+            "filter",
+            "search",
+            "selection",
+            "modal",
+            "focus-return",
+            "detail-update",
+            "other"
+          ]
+        },
+        "expected": { "type": "string", "minLength": 1 },
+        "actual": { "type": "string", "minLength": 1 },
+        "passed": { "type": "boolean" },
+        "ruleRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "consoleError": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["routeId", "message"],
+      "properties": {
+        "routeId": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 }
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "routeId", "expected", "actual", "passed"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "routeId": { "type": "string", "minLength": 1 },
+        "expected": { "type": "string", "minLength": 1 },
+        "actual": { "type": "string", "minLength": 1 },
+        "passed": { "type": "boolean" },
+        "ruleRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}
