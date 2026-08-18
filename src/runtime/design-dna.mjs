@@ -112,6 +112,27 @@ function validateDesignValue(value, location, errors) {
     ) {
       errors.push(`${location}.minimum must not exceed maximum`);
     }
+    if (value.preferred !== undefined) {
+      if (!Number.isFinite(value.preferred)) {
+        errors.push(`${location}.preferred must be a finite number`);
+      } else if (
+        Number.isFinite(value.minimum) &&
+        Number.isFinite(value.maximum) &&
+        (value.preferred < value.minimum || value.preferred > value.maximum)
+      ) {
+        errors.push(`${location}.preferred must be within the range`);
+      }
+      if (!['bounded', 'audit-only'].includes(value.strategy)) {
+        errors.push(
+          `${location}.strategy must be bounded or audit-only when preferred is present`,
+        );
+      }
+    } else if (
+      value.strategy !== undefined &&
+      !['bounded', 'audit-only'].includes(value.strategy)
+    ) {
+      errors.push(`${location}.strategy must be bounded or audit-only`);
+    }
     requireString(value.unit, `${location}.unit`, errors);
   } else if (value.kind === 'relationship') {
     requireString(value.expression, `${location}.expression`, errors);

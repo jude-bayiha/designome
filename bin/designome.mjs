@@ -97,7 +97,7 @@ function printHelp() {
     `  validate-dna --file <design-dna.json> [--require-accepted]\n`,
   );
   process.stdout.write(
-    `  install --dna <file> --project <dir> [--css-entry <file>] [--scope <selector>] --dry-run\n`,
+    `  install --dna <file> --project <dir> [--css-entry <file>] [--scope <selector>] [--docs-dir <dir>] [--rule-precedence <mode>] [--existing-rules <path>] [--styling <strategy>] --dry-run\n`,
   );
   process.stdout.write(
     `  install --dna <file> --project <dir> [options] --instructions-reviewed\n`,
@@ -147,6 +147,10 @@ async function main() {
       'project',
       'css-entry',
       'scope',
+      'docs-dir',
+      'rule-precedence',
+      'existing-rules',
+      'styling',
       'dry-run',
       'instructions-reviewed',
       'help',
@@ -156,6 +160,17 @@ async function main() {
       projectPath: option(parsed, 'project', { required: true }),
       cssEntry: option(parsed, 'css-entry', { fallback: null }),
       scope: option(parsed, 'scope', { fallback: ':root' }),
+      documentationDirectory: option(parsed, 'docs-dir', {
+        fallback: 'docs/designome',
+      }),
+      rulePrecedence: option(parsed, 'rule-precedence', {
+        fallback: 'complement',
+      }),
+      existingRulePaths: option(parsed, 'existing-rules', {
+        fallback: [],
+        multiple: true,
+      }),
+      stylingStrategy: option(parsed, 'styling', { fallback: 'auto' }),
       dryRun: Boolean(parsed.options.get('dry-run')),
       instructionsReviewed: Boolean(
         parsed.options.get('instructions-reviewed'),

@@ -179,6 +179,21 @@ test('runtime Design DNA validation enforces evidence and acceptance', async () 
     ),
   );
 
+  const preferredOutsideRange = structuredClone(dna);
+  preferredOutsideRange.tokens[0].value = {
+    kind: 'range',
+    minimum: 12,
+    maximum: 16,
+    preferred: 10,
+    strategy: 'bounded',
+    unit: 'px',
+  };
+  assert.ok(
+    (await validateDesignDna(preferredOutsideRange)).includes(
+      'tokens[0].value.preferred must be within the range',
+    ),
+  );
+
   await assert.rejects(
     assertValidDesignDna(dna, { requireAccepted: true }),
     (error) =>
@@ -194,27 +209,47 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
   await fs.mkdir(cssDirectory, { recursive: true });
   await fs.writeFile(
     path.join(projectRoot, 'package.json'),
-    '{"name":"target-project","private":true}\n',
+    '{"name":"target-project","private":true,"devDependencies":{"tailwindcss":"^4.0.0","@tailwindcss/postcss":"^4.0.0"}}\n',
   );
   await fs.writeFile(
     path.join(cssDirectory, 'globals.css'),
-    '@charset "UTF-8";\n\nbody { margin: 0; }\n',
+    '@charset "UTF-8";\n@import "tailwindcss";\n\nbody { margin: 0; }\n',
   );
   await fs.writeFile(
     path.join(projectRoot, 'AGENTS.md'),
     '# Target project instructions\n',
   );
+  await fs.mkdir(path.join(projectRoot, 'docs', 'ui'), { recursive: true });
+  await fs.writeFile(
+    path.join(projectRoot, 'docs', 'ui', 'core.md'),
+    '# Existing UI rules\n',
+  );
 
   const dna = await referenceDna();
   dna.status = 'accepted';
   dna.tokens[0].value = { kind: 'exact', value: '#225ea8' };
+  dna.tokens[1].value = {
+    kind: 'range',
+    minimum: 20,
+    maximum: 32,
+    preferred: 24,
+    strategy: 'bounded',
+    unit: 'px',
+  };
   const dnaPath = path.join(temporaryRoot, 'accepted-design-dna.json');
   await fs.writeFile(dnaPath, `${JSON.stringify(dna, null, 2)}\n`);
+  const integrationOptions = {
+    documentationDirectory: 'docs/ui/generated',
+    existingRulePaths: ['docs/ui/core.md'],
+    rulePrecedence: 'existing-first',
+    stylingStrategy: 'auto',
+  };
 
   const dryRun = await installDesignDna({
     dnaPath,
     projectPath: projectRoot,
     cssEntry: 'src/styles/globals.css',
+    ...integrationOptions,
     dryRun: true,
   });
   assert.equal(dryRun.status, 'ready');
@@ -227,6 +262,7 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
     dnaPath,
     projectPath: projectRoot,
     cssEntry: 'src/styles/globals.css',
+    ...integrationOptions,
     instructionsReviewed: true,
   });
   assert.equal(first.status, 'installed');
@@ -247,14 +283,49 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
     'utf8',
   );
   assert.match(generatedCss, /--designome-surface-hierarchy: #225ea8;/u);
+  assert.match(generatedCss, /--designome-spacing-rhythm: 24px;/u);
+  assert.match(generatedCss, /spacing-rhythm bounds: 20 to 32 px/u);
+  assert.match(generatedCss, /Styling adapter: tailwind-utilities/u);
+
+  const generatedDocumentation = await fs.readFile(
+    path.join(projectRoot, 'docs', 'ui', 'generated', 'integration.md'),
+    'utf8',
+  );
+  assert.match(generatedDocumentation, /Detected system: `tailwind`/u);
+  assert.match(generatedDocumentation, /Policy: `existing-first`/u);
+  assert.match(generatedDocumentation, /`docs\/ui\/core.md`/u);
+  assert.deepEqual(
+    (
+      await fs.readdir(path.join(projectRoot, 'docs', 'ui', 'generated'))
+    ).sort(),
+    [
+      'README.md',
+      'components-and-states.md',
+      'iconography.md',
+      'integration.md',
+      'rules.md',
+      'typography.md',
+      'visual-foundations.md',
+    ],
+  );
+  assert.match(
+    await fs.readFile(
+      path.join(projectRoot, 'docs', 'ui', 'generated', 'rules.md'),
+      'utf8',
+    ),
+    /Epistemic status: `observed`/u,
+  );
 
   const agents = await fs.readFile(path.join(projectRoot, 'AGENTS.md'), 'utf8');
   assert.equal(agents.match(/designome:guidance:start/gu)?.length, 1);
+  assert.match(agents, /docs\/ui\/generated\/README.md/u);
+  assert.match(agents, /tailwind-utilities/u);
 
   const second = await installDesignDna({
     dnaPath,
     projectPath: projectRoot,
     cssEntry: 'src/styles/globals.css',
+    ...integrationOptions,
     instructionsReviewed: true,
   });
   assert.equal(second.status, 'installed');
@@ -274,6 +345,7 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
     dnaPath,
     projectPath: projectRoot,
     cssEntry: 'src/styles/globals.css',
+    ...integrationOptions,
     instructionsReviewed: true,
   });
   assert.equal(
@@ -290,6 +362,7 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
     dnaPath,
     projectPath: projectRoot,
     cssEntry: 'src/styles/globals.css',
+    ...integrationOptions,
     instructionsReviewed: true,
   });
   assert.equal(conflict.status, 'conflict');
@@ -308,5 +381,56 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
     failedVerification.errors.includes(
       'Managed file checksum mismatch: src/styles/designome.generated.css',
     ),
+  );
+});
+
+test('installation planning detects shadcn project context without mutating it', async (t) => {
+  const temporaryRoot = await temporaryDirectory(t, 'designome-shadcn-test-');
+  const projectRoot = path.join(temporaryRoot, 'target-project');
+  await fs.mkdir(path.join(projectRoot, 'src', 'app'), { recursive: true });
+  await fs.writeFile(
+    path.join(projectRoot, 'package.json'),
+    '{"name":"target-project","private":true,"devDependencies":{"tailwindcss":"^4.0.0"}}\n',
+  );
+  await fs.writeFile(
+    path.join(projectRoot, 'src', 'app', 'globals.css'),
+    '@import "tailwindcss";\n',
+  );
+  await fs.writeFile(path.join(projectRoot, 'AGENTS.md'), '# Instructions\n');
+  await fs.writeFile(
+    path.join(projectRoot, 'components.json'),
+    `${JSON.stringify(
+      {
+        style: 'nova',
+        base: 'radix',
+        iconLibrary: 'lucide',
+        rsc: true,
+        tailwind: { css: 'src/app/globals.css', cssVariables: true },
+        aliases: { ui: '@/components/ui', utils: '@/lib/utils' },
+      },
+      null,
+      2,
+    )}\n`,
+  );
+
+  const dna = await referenceDna();
+  dna.status = 'accepted';
+  const dnaPath = path.join(temporaryRoot, 'accepted-design-dna.json');
+  await fs.writeFile(dnaPath, `${JSON.stringify(dna, null, 2)}\n`);
+
+  const plan = await planInstallation({
+    dnaPath,
+    projectPath: projectRoot,
+    cssEntry: 'src/app/globals.css',
+    stylingStrategy: 'auto',
+  });
+
+  assert.equal(plan.publicPlan.adapter.styling.system, 'shadcn');
+  assert.equal(plan.publicPlan.adapter.styling.strategy, 'shadcn-components');
+  assert.equal(plan.publicPlan.adapter.styling.shadcn.style, 'nova');
+  assert.equal(plan.publicPlan.adapter.styling.shadcn.iconLibrary, 'lucide');
+  assert.equal(
+    await fs.stat(path.join(projectRoot, '.designome')).catch(() => null),
+    null,
   );
 });

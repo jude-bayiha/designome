@@ -302,6 +302,16 @@ export function validateRepository(rootDirectory = repositoryRoot) {
     'examples',
     'design-dna.reference-v0.2.json',
   );
+  const integrationPolicySchemaPath = path.join(
+    rootDirectory,
+    'schemas',
+    'integration-policy.schema.json',
+  );
+  const integrationPolicyExamplePath = path.join(
+    rootDirectory,
+    'examples',
+    'integration-policy.reference.json',
+  );
 
   try {
     const matrixSchema = readJson(matrixSchemaPath);
@@ -323,6 +333,22 @@ export function validateRepository(rootDirectory = repositoryRoot) {
       errors.push(...formatAjvErrors('Design DNA example', validateDna.errors));
   } catch (error) {
     errors.push(`Design DNA validation failed: ${error.message}`);
+  }
+
+  try {
+    const integrationPolicySchema = readJson(integrationPolicySchemaPath);
+    const integrationPolicyExample = readJson(integrationPolicyExamplePath);
+    const validateIntegrationPolicy = ajv.compile(integrationPolicySchema);
+    if (!validateIntegrationPolicy(integrationPolicyExample)) {
+      errors.push(
+        ...formatAjvErrors(
+          'integration policy',
+          validateIntegrationPolicy.errors,
+        ),
+      );
+    }
+  } catch (error) {
+    errors.push(`integration policy validation failed: ${error.message}`);
   }
 
   errors.push(...validateWorkflowYaml(rootDirectory));

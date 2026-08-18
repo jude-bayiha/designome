@@ -4,20 +4,22 @@ Installation converts an accepted Design DNA into technical artifacts for a spec
 
 ## Ownership boundary
 
-| Artifact                            | Owner                               | Rewrite policy                                                 |
-| ----------------------------------- | ----------------------------------- | -------------------------------------------------------------- |
-| Accepted `design-dna.json`          | Designome run plus human acceptance | Replace only with a newly accepted revision                    |
-| Generated CSS                       | Designome                           | Replace only when the stored checksum matches the current file |
-| Designome agent guidance block      | Designome                           | Replace the single managed block in place                      |
-| Designome skill export              | Designome                           | Regenerate as a versioned unit                                 |
-| Overrides CSS                       | Target-project user                 | Create once if absent; never rewrite                           |
-| Existing project CSS and components | Target-project user                 | Do not mine for visual rules or overwrite                      |
+| Artifact                            | Owner                               | Rewrite policy                                                   |
+| ----------------------------------- | ----------------------------------- | ---------------------------------------------------------------- |
+| Accepted `design-dna.json`          | Designome run plus human acceptance | Replace only with a newly accepted revision                      |
+| Generated CSS                       | Designome                           | Replace only when the stored checksum matches the current file   |
+| Designome agent guidance block      | Designome                           | Replace the single managed block in place                        |
+| Designome skill export              | Designome                           | Regenerate as a versioned unit                                   |
+| Generated design documentation      | Designome                           | Replace only when the stored checksum matches the current file   |
+| Overrides CSS                       | Target-project user                 | Create once if absent; never rewrite                             |
+| Existing design documentation       | Target-project user                 | Read only when declared; never rewrite or use as source evidence |
+| Existing project CSS and components | Target-project user                 | Do not mine for visual rules or overwrite                        |
 
 ## Required sequence
 
 1. Resolve and validate the explicit target path.
 2. Read repository and nested agent instructions applicable to planned files.
-3. Inspect technical facts only: framework, package manager, source roots, CSS entry points, aliases, scripts, and installed compatible libraries.
+3. Inspect technical facts only: framework, package manager, source roots, CSS entry points, aliases, scripts, installed compatible libraries, styling system, and declared design-documentation paths.
 4. Produce `integration-plan.json` and a dry-run diff.
 5. Stop on ambiguity, prohibited scope, manual modification conflict, or duplicate unmanaged integration.
 6. Write managed files and record their hashes in `.designome/manifest.json`.
@@ -25,6 +27,24 @@ Installation converts an accepted Design DNA into technical artifacts for a spec
 8. Execute the installer again and require a zero-diff result.
 
 The current helper exposes the plan as JSON on standard output. The invoking skill may save that output in the extraction run as `integration-plan.json`.
+
+## Project-local design documentation
+
+Installation writes human-readable documentation inside the target repository. The default directory is `docs/designome`; repository instructions may select another visible project-relative directory with `--docs-dir`. The generated set includes an index, visual foundations, typography, iconography, components and states, canonical rules, and repository integration context.
+
+Generated documentation is managed and checksum-protected. Existing project documentation is user-owned. Declare existing paths with repeatable `--existing-rules` options and resolve one precedence policy:
+
+- `complement` keeps existing rules authoritative where they speak and uses Designome for documented gaps;
+- `existing-first` makes existing rules authoritative on conflicts;
+- `designome-first` makes accepted Designome rules authoritative for generated UI while still reporting conflicts.
+
+Precedence never authorizes deletion or silent rewriting of existing documentation. Applicable `AGENTS.md` instructions may specify these choices in natural language; the invoking agent must pass the resolved values explicitly and the manifest records them.
+
+## Repository-native styling
+
+The `auto` styling strategy detects supported technical markers. A `components.json` file selects the `shadcn-components` adapter, Tailwind dependencies or directives select `tailwind-utilities`, and other projects receive `css-variables`. An explicit strategy may be passed when repository instructions require it.
+
+The generated CSS is a semantic token bridge. In Tailwind projects, generation guidance requires existing utilities and theme conventions before new component CSS. In shadcn/ui projects, guidance also preserves installed source components, semantic variables, aliases, primitive base, and icon library. Detection changes the implementation adapter only and never turns target CSS or components into visual evidence.
 
 ## Portable CSS rules
 
@@ -68,6 +88,7 @@ The manifest records at least:
 
 - Design DNA ID, revision, and content hash;
 - matrix and installer versions;
+- generated documentation directory, styling adapter, existing-rule paths, and precedence policy;
 - managed path, ownership class, and last written hash;
 - import target and marker IDs;
 - target-project technical adapter;
