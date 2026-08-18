@@ -33,6 +33,7 @@ export function collectMatrixReferenceErrors(matrix, rootDirectory) {
   const conceptIds = new Set();
   const promptIds = new Set();
   const promptOrders = new Set();
+  const documentationPaths = new Set();
 
   for (const axis of matrix.axes) {
     if (axisIds.has(axis.id)) errors.push(`duplicate axis id: ${axis.id}`);
@@ -51,6 +52,33 @@ export function collectMatrixReferenceErrors(matrix, rootDirectory) {
     if (conceptIds.has(concept.id))
       errors.push(`duplicate concept id: ${concept.id}`);
     conceptIds.add(concept.id);
+  }
+
+  for (const entry of matrix.documentationProjection) {
+    if (documentationPaths.has(entry.path)) {
+      errors.push(`duplicate documentation path: ${entry.path}`);
+    }
+    documentationPaths.add(entry.path);
+    for (const conceptRef of entry.conceptRefs) {
+      if (!conceptIds.has(conceptRef)) {
+        errors.push(
+          `${entry.path} references missing concept ${conceptRef}`,
+        );
+      }
+    }
+  }
+
+  for (const requiredDirectory of [
+    'foundations/',
+    'components/',
+    'behavior/',
+    'governance/',
+  ]) {
+    if (![...documentationPaths].some((item) => item.startsWith(requiredDirectory))) {
+      errors.push(
+        `documentation projection must include ${requiredDirectory}`,
+      );
+    }
   }
 
   for (const axis of matrix.axes) {

@@ -702,6 +702,267 @@
       ]
     }
   ],
+  "documentationLayoutVersion": "1.0.0",
+  "documentationProjection": [
+    {
+      "path": "foundations/colors-and-surfaces.md",
+      "title": "Colors and surfaces",
+      "purpose": "Document evidenced color, border, radius, and elevation relationships without inventing exact values.",
+      "renderer": "generic",
+      "conceptRefs": ["concept.visual-stability"],
+      "tokenCategories": ["color", "radius", "border", "elevation"],
+      "ruleCategories": ["layout"]
+    },
+    {
+      "path": "foundations/typography.md",
+      "title": "Typography",
+      "purpose": "Document type roles, hierarchy, readability, and density bounds.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.content-layout-resilience",
+        "concept.data-scale-resilience",
+        "concept.localization-bidirectionality"
+      ],
+      "tokenCategories": ["typography", "size"],
+      "ruleCategories": ["content", "accessibility"]
+    },
+    {
+      "path": "foundations/spacing-and-layout.md",
+      "title": "Spacing and layout",
+      "purpose": "Describe spatial rhythm, containment, alignment, and layout relationships across widths.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow",
+        "concept.spatial-continuity",
+        "concept.visual-stability"
+      ],
+      "tokenCategories": ["space", "size"],
+      "ruleCategories": ["layout", "responsive"]
+    },
+    {
+      "path": "foundations/iconography.md",
+      "title": "Iconography",
+      "purpose": "Capture visible icon roles and coherence without selecting an unevidenced icon library.",
+      "renderer": "generic",
+      "conceptRefs": ["concept.iconographic-coherence"],
+      "tokenCategories": ["size", "other"],
+      "ruleCategories": ["accessibility"]
+    },
+    {
+      "path": "foundations/motion.md",
+      "title": "Motion",
+      "purpose": "Separate visible motion cues from proposed transition and reduced-motion contracts.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.motion-grammar",
+        "concept.feedback-interruption-budget"
+      ],
+      "tokenCategories": ["motion"],
+      "ruleCategories": ["motion", "performance"]
+    },
+    {
+      "path": "components/catalogue.md",
+      "title": "Component catalogue",
+      "purpose": "Inventory reusable component patterns supported by the accepted Design DNA.",
+      "renderer": "component-catalogue",
+      "conceptRefs": [
+        "concept.state-edge-coverage",
+        "concept.design-to-code-governance"
+      ],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "components/anatomy.md",
+      "title": "Component anatomy",
+      "purpose": "Record the visible and inferred parts of each reusable component pattern.",
+      "renderer": "component-anatomy",
+      "conceptRefs": [
+        "concept.affordance-discoverability",
+        "concept.content-layout-resilience"
+      ],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "components/states.md",
+      "title": "Component states",
+      "purpose": "Expose state coverage and keep unsupported states explicitly proposed or unknown.",
+      "renderer": "component-states",
+      "conceptRefs": [
+        "concept.state-edge-coverage",
+        "concept.feedback-interruption-budget"
+      ],
+      "tokenCategories": [],
+      "ruleCategories": ["state"]
+    },
+    {
+      "path": "components/data-display.md",
+      "title": "Data display",
+      "purpose": "Document tables, lists, metrics, status indicators, and their scale resilience.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.data-scale-resilience",
+        "concept.content-layout-resilience",
+        "concept.visual-stability"
+      ],
+      "tokenCategories": ["typography", "space", "size"],
+      "ruleCategories": ["content", "layout", "responsive"]
+    },
+    {
+      "path": "components/forms-and-filters.md",
+      "title": "Forms and filters",
+      "purpose": "Describe visible input, search, filter, selection, and disclosure contracts.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.affordance-discoverability",
+        "concept.progressive-disclosure",
+        "concept.state-edge-coverage"
+      ],
+      "tokenCategories": ["space", "size", "radius", "border"],
+      "ruleCategories": ["interaction", "state", "accessibility"]
+    },
+    {
+      "path": "components/component-mapping.md",
+      "title": "Component mapping",
+      "purpose": "Map Designome patterns onto repository-native component primitives as proposed technical guidance.",
+      "renderer": "component-mapping",
+      "conceptRefs": ["concept.design-to-code-governance"],
+      "tokenCategories": [],
+      "ruleCategories": ["governance"]
+    },
+    {
+      "path": "behavior/interaction-contracts.md",
+      "title": "Interaction contracts",
+      "purpose": "Document affordance, modality, continuity, disclosure, reversibility, and feedback expectations.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.affordance-discoverability",
+        "concept.modality-equivalence",
+        "concept.spatial-continuity",
+        "concept.progressive-disclosure",
+        "concept.reversibility-forgiveness",
+        "concept.feedback-interruption-budget"
+      ],
+      "tokenCategories": ["motion"],
+      "ruleCategories": ["interaction", "state", "motion"]
+    },
+    {
+      "path": "behavior/responsive-reflow.md",
+      "title": "Responsive reflow",
+      "purpose": "Turn visible composition into semantic reflow requirements and explicit validation cases.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.semantic-responsive-reflow",
+        "concept.content-layout-resilience",
+        "concept.spatial-continuity"
+      ],
+      "tokenCategories": ["space", "size"],
+      "ruleCategories": ["responsive", "layout", "content"]
+    },
+    {
+      "path": "behavior/content-resilience.md",
+      "title": "Content resilience",
+      "purpose": "Define stress cases for long, empty, dense, missing, and media-dependent content.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.content-layout-resilience",
+        "concept.data-scale-resilience",
+        "concept.asset-media-resilience"
+      ],
+      "tokenCategories": ["typography", "space", "size"],
+      "ruleCategories": ["content", "responsive", "performance"]
+    },
+    {
+      "path": "behavior/accessibility.md",
+      "title": "Accessibility",
+      "purpose": "Record evidenced semantics and propose verification for keyboard, screen reader, contrast, zoom, and motion needs.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.accessibility-semantics",
+        "concept.modality-equivalence",
+        "concept.iconographic-coherence"
+      ],
+      "tokenCategories": ["color", "typography", "motion"],
+      "ruleCategories": ["accessibility", "interaction"]
+    },
+    {
+      "path": "behavior/localization.md",
+      "title": "Localization",
+      "purpose": "Keep language, expansion, formatting, and bidirectionality assumptions explicit.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.localization-bidirectionality",
+        "concept.content-layout-resilience"
+      ],
+      "tokenCategories": ["typography", "space"],
+      "ruleCategories": ["content", "responsive", "accessibility"]
+    },
+    {
+      "path": "behavior/loading-errors-recovery.md",
+      "title": "Loading, errors, and recovery",
+      "purpose": "Describe state completeness, interruption budget, recovery, and visual-stability expectations.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.state-edge-coverage",
+        "concept.feedback-interruption-budget",
+        "concept.reversibility-forgiveness",
+        "concept.visual-stability"
+      ],
+      "tokenCategories": ["motion", "space", "size"],
+      "ruleCategories": ["state", "interaction", "performance"]
+    },
+    {
+      "path": "governance/rules.md",
+      "title": "UI rules",
+      "purpose": "Publish every accepted Design DNA rule with requirements, validation, evidence, scope, and exceptions.",
+      "renderer": "rules",
+      "conceptRefs": ["concept.design-to-code-governance"],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "governance/evidence-and-confidence.md",
+      "title": "Evidence and confidence",
+      "purpose": "Make source evidence, claim confidence, and inference boundaries auditable.",
+      "renderer": "evidence",
+      "conceptRefs": ["concept.design-to-code-governance"],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "governance/unknowns-and-exceptions.md",
+      "title": "Unknowns and exceptions",
+      "purpose": "Centralize unresolved questions, claim exceptions, impact, and resolution plans.",
+      "renderer": "unknowns",
+      "conceptRefs": ["concept.design-to-code-governance"],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "governance/calibration.md",
+      "title": "Calibration",
+      "purpose": "Separate accepted bounded values from audit-only measurements and proposed refinements.",
+      "renderer": "calibration",
+      "conceptRefs": [
+        "concept.visual-stability",
+        "concept.content-layout-resilience",
+        "concept.design-to-code-governance"
+      ],
+      "tokenCategories": ["typography", "space", "size"],
+      "ruleCategories": ["governance", "accessibility", "responsive"]
+    },
+    {
+      "path": "governance/integration.md",
+      "title": "Repository integration",
+      "purpose": "Explain styling context, rule precedence, component strategy, and managed-file ownership.",
+      "renderer": "integration",
+      "conceptRefs": ["concept.design-to-code-governance"],
+      "tokenCategories": [],
+      "ruleCategories": ["governance"]
+    }
+  ],
   "promptStages": [
     {
       "id": "prompt.orchestrator",
