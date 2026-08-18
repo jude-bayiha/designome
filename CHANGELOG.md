@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/jude-bayiha/designome/compare/v1.3.0...v1.4.0) (2026-08-18)
+
+
+### Features
+
+* **product:** add bounded repair and shadcn mapping ([2138429](https://github.com/jude-bayiha/designome/commit/21384295d0d8ffc1b9b225092dba65ebbae33cdd))
+
 ## [1.3.0](https://github.com/jude-bayiha/designome/compare/v1.2.0...v1.3.0) (2026-08-18)
 
 
