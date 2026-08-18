@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/jude-bayiha/designome/compare/v1.0.0...v1.0.1) (2026-08-18)
+
+
+### Bug Fixes
+
+* **repo:** support WebP screenshot metadata ([659982a](https://github.com/jude-bayiha/designome/commit/659982a5f225f3ed71c33e57bbf21584290dd685))
+* **repo:** support WebP screenshot metadata ([ffe9737](https://github.com/jude-bayiha/designome/commit/ffe9737d7a3ac010feee868662248f9c1cf135dc))
+
 ## 1.0.0 (2026-08-10)
 
 
