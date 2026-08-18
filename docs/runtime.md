@@ -14,7 +14,7 @@ node bin/designome.mjs init-run \
   --image /absolute/path/reference-2.jpeg
 ```
 
-The command validates input paths, deduplicates identical images, reads PNG/JPEG/GIF dimensions, computes SHA-256 hashes, fingerprints the configuration, and writes:
+The command validates input paths, deduplicates identical images, reads PNG/JPEG/GIF/WebP dimensions from binary signatures, computes SHA-256 hashes, fingerprints the configuration, and writes:
 
 - `source-manifest.json`;
 - `run-context.json`;

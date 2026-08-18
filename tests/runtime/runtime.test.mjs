@@ -14,6 +14,7 @@ import {
   planInstallation,
   verifyInstallation,
 } from '../../src/runtime/install.mjs';
+import { inspectImageBuffer } from '../../src/runtime/images.mjs';
 import { initializeRun } from '../../src/runtime/run.mjs';
 
 const repositoryRoot = path.resolve(
@@ -36,6 +37,49 @@ async function referenceDna() {
     ),
   );
 }
+
+function webpBuffer(chunkType, payload) {
+  const padding = payload.length % 2;
+  const buffer = Buffer.alloc(20 + payload.length + padding);
+  buffer.write('RIFF', 0, 'ascii');
+  buffer.writeUInt32LE(buffer.length - 8, 4);
+  buffer.write('WEBP', 8, 'ascii');
+  buffer.write(chunkType, 12, 'ascii');
+  buffer.writeUInt32LE(payload.length, 16);
+  payload.copy(buffer, 20);
+  return buffer;
+}
+
+test('image inspection reads extended, lossless, and lossy WebP dimensions', () => {
+  const extended = Buffer.alloc(10);
+  extended.writeUIntLE(1023, 4, 3);
+  extended.writeUIntLE(767, 7, 3);
+
+  const lossless = Buffer.alloc(5);
+  lossless[0] = 0x2f;
+  lossless.writeUInt32LE(639 | (479 << 14), 1);
+
+  const lossy = Buffer.alloc(10);
+  lossy.set([0x9d, 0x01, 0x2a], 3);
+  lossy.writeUInt16LE(320, 6);
+  lossy.writeUInt16LE(240, 8);
+
+  assert.deepEqual(inspectImageBuffer(webpBuffer('VP8X', extended)), {
+    format: 'webp',
+    width: 1024,
+    height: 768,
+  });
+  assert.deepEqual(inspectImageBuffer(webpBuffer('VP8L', lossless)), {
+    format: 'webp',
+    width: 640,
+    height: 480,
+  });
+  assert.deepEqual(inspectImageBuffer(webpBuffer('VP8 ', lossy)), {
+    format: 'webp',
+    width: 320,
+    height: 240,
+  });
+});
 
 test('init-run records image metadata and is idempotent', async (t) => {
   const temporaryRoot = await temporaryDirectory(t, 'designome-run-test-');
