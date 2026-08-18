@@ -11,6 +11,7 @@ The repository now contains the first executable vertical slice:
 - 13 modular prompts for evidence intake, analysis, synthesis, integration, and audit;
 - deterministic screenshot metadata, Design DNA validation, installation, and verification commands;
 - project-local design documentation plus Tailwind-aware or CSS-variable integration context;
+- a project-local `designome-audit` skill that fresh Codex sessions can discover;
 - idempotent managed CSS and agent guidance with checksums and user-owned overrides;
 - repository quality, commit, CI, and release guardrails.
 
