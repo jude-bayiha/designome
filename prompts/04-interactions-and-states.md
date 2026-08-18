@@ -10,7 +10,7 @@ Read `_shared-contract.md` and the `axis.interactions-state-machine` matrix slic
 
 ## Task
 
-Inventory visible control and business states, probable triggers, feedback, exits, focus implications, reversibility, and modality requirements. Propose absent loading, empty, error, success, warning, partial, disabled, and stale states only when they are necessary for robustness.
+Inventory visible control and business states, probable triggers, feedback, exits, focus implications, reversibility, and modality requirements. Propose absent loading, empty, error, success, warning, partial, disabled, and stale states only when they are necessary for robustness. For implemented UI, define observable contracts for navigation and active location, disclosure and `aria-expanded`, filtering and no-results, selection and programmatic state, modal open/close/focus return, and master-detail updates.
 
 ## Output
 
@@ -22,3 +22,4 @@ Return the shared stage JSON for `prompt.interactions-states` plus a state-cover
 - With motion `off`, emit no motion guidance. With `observed-only`, retain only supplied motion evidence. With `auto`, motion absent from evidence is always `proposed`.
 - Motion must be functional, interruptible, layout-stable, and compatible with reduced motion.
 - Never claim accessibility behavior from appearance alone.
+- A visual pressed, selected, expanded, or open appearance does not prove the underlying state changed; require an observable interaction result and its programmatic state.

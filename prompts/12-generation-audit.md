@@ -16,7 +16,7 @@ Initialize the executable audit plan, compare the implementation with accepted r
 
 ## Output
 
-Produce `audit/plan.json`, `audit/evidence.json`, `audit/report.md`, `audit/findings.json`, a revision proposal, and proposed calibration patches when human or rendered evidence exposes an under-specified accepted rule. Each finding includes rule reference, evidence, severity, certainty, affected scope, suggested fix, and verification method.
+Produce `audit/plan.json`, `audit/evidence.json`, `audit/report.md`, `audit/findings.json`, a revision proposal, and proposed calibration patches when human or rendered evidence exposes an under-specified accepted rule. Each finding includes rule reference, evidence, severity, certainty, affected scope, suggested fix, and verification method. Separate observed design deviations and mechanical risks from proposed calibration candidates that still require explicit acceptance.
 
 ## Guardrails
 

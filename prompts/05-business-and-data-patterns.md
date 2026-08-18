@@ -9,7 +9,7 @@ Read `_shared-contract.md` and the `axis.business-data-patterns` matrix slice.
 
 ## Task
 
-Extract visible component anatomy and patterns for tables, lists, cards, forms, filters, search, sorting, pagination, batch actions, status, progress, KPIs, and data visualizations. Identify content and data boundaries that implementations must survive. For dense collections, separate row height, primary text, metadata, header labels, icons, status treatments, and control targets so that compactness remains legible and internally aligned.
+Extract visible component anatomy and patterns for tables, lists, cards, forms, filters, search, sorting, pagination, batch actions, status, progress, KPIs, and data visualizations. Identify content and data boundaries that implementations must survive. For dense collections, separate row height, primary text, metadata, header labels, icons, status treatments, and control targets so that compactness remains legible and internally aligned. Record computed typography and stable avatar geometry as implementation evidence only; when no accepted bound exists, produce a calibration candidate instead of a defect.
 
 ## Output
 

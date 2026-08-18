@@ -46,7 +46,8 @@ Stop if neither context can be resolved. Never guess which Design DNA or project
 5. Route relevant matrix concepts and stress tests. Inspect long and unbroken content, nulls, extreme values, states, reflow, localization, modalities, data scale, media failure, visual stability, and motion mode as applicable.
 6. Run repository checks only inside the audited target project. Do not run checks from the Designome plugin source unless the plugin itself is the audit target.
 7. Produce `audit/plan.json`, `audit/evidence.json`, `audit/report.md`, and `audit/findings.json`. Each finding includes rule reference, evidence, severity, certainty, scope, suggested correction, and verification method.
-8. State which validation layers actually ran. Propose revisions, but do not modify the implementation without separate authorization.
+8. After browser or interaction evidence is populated, evaluate it with `--evidence audit/evidence.json --overwrite`. Keep observed mechanical risks separate from proposed calibration candidates.
+9. State which validation layers actually ran. Propose revisions, but do not modify the implementation without separate authorization.
 
 ## Guardrails
 

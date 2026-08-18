@@ -255,7 +255,8 @@
         "visible wrapping, clamping, ellipsis, and growth zones",
         "dependencies between content and container size",
         "typography role, line height, and density relationships that preserve readability",
-        "gaps between major regions compared with internal panel spacing"
+        "gaps between major regions compared with internal panel spacing",
+        "visibility and clipping of actions, labels, and statuses"
       ],
       "screenshotLimits": [
         "short text does not prove an overflow strategy",
@@ -289,7 +290,8 @@
       "inspect": [
         "intrinsic containers and groups",
         "essential versus secondary elements",
-        "evidence of wrap, local scroll, or reorganization"
+        "evidence of wrap, local scroll, or reorganization",
+        "document scroll width compared with client width at each viewport"
       ],
       "screenshotLimits": [
         "one viewport reveals no breakpoint",
@@ -350,7 +352,8 @@
         "keyboard-only navigation",
         "unlabeled control",
         "partially clickable visual region",
-        "hard-to-discover secondary action"
+        "hard-to-discover secondary action",
+        "control whose programmatic state does not change after activation"
       ],
       "outputTargets": ["guidelines/interactions.md", "component-recipes.md"]
     },
@@ -404,7 +407,8 @@
         "open and close a dialog",
         "browser back",
         "filter then open detail",
-        "error during editing"
+        "error during editing",
+        "modal close followed by focus return to its trigger"
       ],
       "outputTargets": [
         "guidelines/navigation-and-focus.md",
@@ -519,7 +523,8 @@
         "duplicate labels",
         "many chart series",
         "batch selection and action",
-        "fallback avatars with one to three initials"
+        "fallback avatars with one to three initials",
+        "avatar inside a shrinking or stretching flex and grid row"
       ],
       "outputTargets": [
         "guidelines/data-patterns.md",

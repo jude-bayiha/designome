@@ -9,7 +9,7 @@ Read `_shared-contract.md` and the `axis.adaptation-inclusion` matrix slice.
 
 ## Task
 
-Identify visible responsive, reflow, zoom, localization, bidirectionality, contrast, labeling, focus, target-size, input-modality, theme, and reduced-motion implications. Turn unshown requirements into explicit proposals and verification tasks.
+Identify visible responsive, reflow, zoom, localization, bidirectionality, contrast, labeling, focus, target-size, input-modality, theme, and reduced-motion implications. Turn unshown requirements into explicit proposals and verification tasks. In rendered audits, compare document scroll width with client width and distinguish accidental global overflow from an explicit local data-region scroller.
 
 ## Output
 
