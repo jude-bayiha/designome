@@ -7,22 +7,18 @@ description: Audit generated or existing UI against an accepted Designome Design
 
 Compare implementation evidence with accepted Design DNA. Keep static, rendered, interaction, and accessibility validation explicitly separate.
 
-## Resolve bundled files
+## Resolve the execution context
 
-Resolve paths relative to this `SKILL.md`. The plugin root is `../..`. Convert it to an absolute path before invoking the helper; replace `<designome-plugin-root>` below with that path.
+This skill works from either the Designome plugin or an installed target project.
 
-Read completely before the audit:
+- Plugin mode: when `../../prompts/12-generation-audit.md` exists, resolve the plugin root as `../..`. Read the shared contract, audit prompt, concept matrix, accepted Design DNA, and relevant generated files. Read only the axis prompts needed to interpret affected concepts.
+- Project-local mode: when `../../../.designome/design-dna.json` exists, resolve the project root as `../../..`. Read the accepted Design DNA plus the generated documentation index, integration guidance, rules, and component states under the documentation directory recorded in `.designome/manifest.json`.
 
-1. `../../prompts/_shared-contract.md`
-2. `../../prompts/12-generation-audit.md`
-3. `../../concepts/concept-matrix.v0.2.json`
-4. The accepted Design DNA and relevant generated files
-
-Read only the axis prompts needed to interpret affected concepts.
+Stop if neither context can be resolved. Never guess which Design DNA or project is in scope.
 
 ## Workflow
 
-1. Validate the Design DNA:
+1. Validate the Design DNA. In plugin mode, use the bundled helper. In project-local mode, use a `designome` executable already available in the environment when present; otherwise record deterministic validation as unavailable and continue with explicit evidence boundaries:
 
    ```bash
    node <designome-plugin-root>/bin/designome.mjs validate-dna \
@@ -30,7 +26,7 @@ Read only the axis prompts needed to interpret affected concepts.
      --require-accepted
    ```
 
-2. When Designome is installed, verify managed artifacts:
+2. When Designome is installed, verify managed artifacts with the same available helper. Do not install a package or dependency merely to obtain the command:
 
    ```bash
    node <designome-plugin-root>/bin/designome.mjs verify-install \

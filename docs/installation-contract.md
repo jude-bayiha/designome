@@ -11,6 +11,7 @@ Installation converts an accepted Design DNA into technical artifacts for a spec
 | Designome agent guidance block      | Designome                           | Replace the single managed block in place                        |
 | Designome skill export              | Designome                           | Regenerate as a versioned unit                                   |
 | Generated design documentation      | Designome                           | Replace only when the stored checksum matches the current file   |
+| Project-local audit skill           | Designome                           | Replace only when the stored checksum matches the current file   |
 | Overrides CSS                       | Target-project user                 | Create once if absent; never rewrite                             |
 | Existing design documentation       | Target-project user                 | Read only when declared; never rewrite or use as source evidence |
 | Existing project CSS and components | Target-project user                 | Do not mine for visual rules or overwrite                        |
@@ -39,6 +40,8 @@ Generated documentation is managed and checksum-protected. Existing project docu
 - `designome-first` makes accepted Designome rules authoritative for generated UI while still reporting conflicts.
 
 Precedence never authorizes deletion or silent rewriting of existing documentation. Applicable `AGENTS.md` instructions may specify these choices in natural language; the invoking agent must pass the resolved values explicitly and the manifest records them.
+
+Installation also exports `designome-audit` to `.agents/skills/designome-audit`. Codex sessions started inside the target repository can therefore discover the audit workflow without relying on global plugin discovery. The exported skill resolves the accepted Design DNA and generated documentation from the project; it never treats implementation code as screenshot evidence.
 
 ## Repository-native styling
 

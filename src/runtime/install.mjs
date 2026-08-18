@@ -22,6 +22,7 @@ import { inspectManagedBlock, upsertManagedBlock } from './markers.mjs';
 const manifestRelativePath = '.designome/manifest.json';
 const installedDnaRelativePath = '.designome/design-dna.json';
 const defaultDocumentationDirectory = 'docs/designome';
+const auditSkillRelativeDirectory = '.agents/skills/designome-audit';
 const supportedManifestVersions = new Set(['0.1.0', '0.2.0']);
 const cssStartMarker = '/* designome:generated-import:start */';
 const cssEndMarker = '/* designome:generated-import:end */';
@@ -272,7 +273,7 @@ function renderRulesDocument(dna) {
 }
 
 function renderComponentsDocument(dna) {
-  const components = dna.components ?? [];
+  const components = dna.componentPatterns ?? [];
   const componentSections = components.length
     ? components.map((component) =>
         [
@@ -297,16 +298,18 @@ function renderComponentsDocument(dna) {
         ].join('\n'),
       )
     : [
-        '## No canonical component catalogue',
-        '',
-        'The screenshots support reusable rules but not a complete component inventory. Use the rules below without inventing unrequested page or role families.',
-        '',
-        ...dna.rules
-          .filter((rule) =>
-            ['layout', 'state', 'interaction'].includes(rule.category),
-          )
-          .map((rule) => `- \`${rule.id}\` — ${rule.name}`),
-      ].join('\n');
+        [
+          '## No canonical component catalogue',
+          '',
+          'The screenshots support reusable rules but not a complete component inventory. Use the rules below without inventing unrequested page or role families.',
+          '',
+          ...dna.rules
+            .filter((rule) =>
+              ['layout', 'state', 'interaction'].includes(rule.category),
+            )
+            .map((rule) => `- \`${rule.id}\` — ${rule.name}`),
+        ].join('\n'),
+      ];
   return ['# Components and states', '', ...componentSections, ''].join('\n');
 }
 
@@ -953,6 +956,28 @@ export async function planInstallation({
     integrationPolicy,
     documentationDirectory: documentationRelative,
   });
+  const auditSkill = new Map([
+    [
+      'SKILL.md',
+      await fs.readFile(
+        path.join(pluginRoot, 'skills', 'designome-audit', 'SKILL.md'),
+        'utf8',
+      ),
+    ],
+    [
+      'agents/openai.yaml',
+      await fs.readFile(
+        path.join(
+          pluginRoot,
+          'skills',
+          'designome-audit',
+          'agents',
+          'openai.yaml',
+        ),
+        'utf8',
+      ),
+    ],
+  ]);
   const instructionFiles = await discoverInstructionFiles(
     projectRoot,
     resolvedCssEntry,
@@ -972,6 +997,16 @@ export async function planInstallation({
       await inspectOwnedFile(
         projectRoot,
         toPosixPath(path.join(documentationRelative, filename)),
+        content,
+        previousManifest,
+      ),
+    );
+  }
+  for (const [filename, content] of auditSkill) {
+    actions.push(
+      await inspectOwnedFile(
+        projectRoot,
+        toPosixPath(path.join(auditSkillRelativeDirectory, filename)),
         content,
         previousManifest,
       ),
