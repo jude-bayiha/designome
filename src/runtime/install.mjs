@@ -1316,6 +1316,7 @@ export async function planInstallation({
     uiKitPreference,
   );
   const integrationPolicy = {
+    documentationLayout: 'complete-v1',
     rulePrecedence,
     existingRulePaths: [...new Set(normalizedExistingRulePaths)].sort(),
     uiKitPreference,

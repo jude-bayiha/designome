@@ -1,6 +1,7 @@
 {
   "schemaVersion": "0.1.0",
   "documentationDirectory": "docs/design-system/generated",
+  "documentationLayout": "complete-v1",
   "rulePrecedence": "complement",
   "existingRulePaths": ["docs/design-system/core"],
   "stylingStrategy": "auto",
