@@ -135,6 +135,8 @@ Run artifacts are local working evidence and should not be committed by default.
 
 Reports must state which layers actually ran. Static inspection is not rendered or interaction proof.
 
+Rendered measurements are normalized through the [audit contract](audit-contract.md). Observed implementation risks, accepted Design DNA deviations, and proposed calibration candidates remain separate result classes.
+
 ## Repository dependency rule
 
 The concept matrix and Design DNA schema are canonical contracts. Prompts consume them. The installer consumes only accepted Design DNA. Audits consume accepted Design DNA plus implementation evidence. No artifact may silently become a new source of visual truth.

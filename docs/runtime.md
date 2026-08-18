@@ -103,6 +103,15 @@ node bin/designome.mjs audit \
 
 The user-owned audit config declares the base URL, routes, viewports, flows, and output directory. The command verifies the managed installation, validates the accepted Design DNA, resolves a browser provider, and initializes `plan.json`, `evidence.json`, `findings.json`, and `report.md`.
 
+After the host browser or project runner populates evidence, evaluate it without changing implementation code:
+
+```bash
+node bin/designome.mjs audit \
+  --project <target-project> \
+  --evidence audit/evidence.json \
+  --overwrite
+```
+
 Provider resolution never silently installs dependencies. `auto` selects an existing target-project Playwright setup when one is detected, otherwise it produces a static-only plan. `in-app-browser` records that the host agent owns browser execution. `managed-playwright` remains unavailable until the user explicitly authorizes dependency installation through the repair and adapter workflow.
 
 ## Exit behavior
