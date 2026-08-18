@@ -882,6 +882,7 @@
         "audit/evidence.json",
         "audit/report.md",
         "audit/findings.json",
+        "audit/repair-plan.json when separately authorized",
         "revision proposal",
         "calibration patch proposal"
       ]
