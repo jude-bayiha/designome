@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designome.dev/schemas/repair-plan.schema.json",
+  "title": "Designome bounded repair plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "mode",
+    "implementationAuthorized",
+    "maximumPasses",
+    "findingRefs",
+    "excludedCalibrationCandidates",
+    "loop",
+    "stopConditions",
+    "designDnaMutationAllowed"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.1.0" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "mode": { "const": "repair" },
+    "implementationAuthorized": { "const": true },
+    "maximumPasses": { "type": "integer", "minimum": 1, "maximum": 3 },
+    "findingRefs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "excludedCalibrationCandidates": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "loop": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "stopConditions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "designDnaMutationAllowed": { "const": false }
+  }
+}

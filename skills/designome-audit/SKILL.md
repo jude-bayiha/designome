@@ -49,6 +49,12 @@ Stop if neither context can be resolved. Never guess which Design DNA or project
 8. After browser or interaction evidence is populated, evaluate it with `--evidence audit/evidence.json --overwrite`. Keep observed mechanical risks separate from proposed calibration candidates.
 9. State which validation layers actually ran. Propose revisions, but do not modify the implementation without separate authorization.
 
+## Explicit repair mode
+
+Use repair mode only after the user authorizes implementation changes. Pass `--mode repair --implementation-authorized` and choose at most three passes. Apply the smallest implementation-only patch for observed finding IDs, run target-project checks, and recapture affected routes and interactions after every pass. Stop when findings pass, the maximum is reached, or a new product decision is required.
+
+Never patch an excluded calibration candidate, mutate accepted Design DNA, install a browser dependency, or initialize a UI kit as part of repair mode.
+
 ## Guardrails
 
 - Do not claim rendered, responsive, keyboard, screen-reader, motion, or runtime proof unless it was executed.

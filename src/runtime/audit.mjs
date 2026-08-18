@@ -103,7 +103,12 @@ async function detectExistingPlaywright(projectRoot, packageJson) {
   };
 }
 
-async function resolveProvider(projectRoot, requestedProvider, packageJson) {
+async function resolveProvider(
+  projectRoot,
+  requestedProvider,
+  packageJson,
+  browserInstallAuthorized,
+) {
   if (!providerNames.has(requestedProvider)) {
     throw new DesignomeError(`Unknown audit provider: ${requestedProvider}`, {
       code: 'INVALID_AUDIT_PROVIDER',
@@ -126,10 +131,18 @@ async function resolveProvider(projectRoot, requestedProvider, packageJson) {
     return {
       requested: requestedProvider,
       selected,
-      status: 'unavailable',
+      status: browserInstallAuthorized ? 'planned' : 'authorization-required',
       executionOwner: 'designome',
-      reason:
-        'Managed Playwright requires explicit dependency authorization and is not enabled by this runtime slice.',
+      reason: browserInstallAuthorized
+        ? 'Managed Playwright setup is authorized for a separate reviewed step; this audit command does not mutate dependencies.'
+        : 'Managed Playwright requires explicit dependency authorization.',
+      setupProposal: browserInstallAuthorized
+        ? {
+            epistemicStatus: 'proposed',
+            package: '@playwright/test',
+            browser: 'chromium',
+          }
+        : null,
       playwright,
     };
   }
@@ -496,6 +509,7 @@ export async function planAudit({
   configPath = defaultConfigPath,
   outputDirectory,
   provider = 'auto',
+  browserInstallAuthorized = false,
 }) {
   const projectRoot = await assertProjectRoot(projectPath);
   const resolvedConfig = resolveProjectPath(
@@ -536,6 +550,7 @@ export async function planAudit({
     projectRoot,
     provider,
     packageJson,
+    browserInstallAuthorized,
   );
   const configuredOutput = outputDirectory ?? config.outputDirectory ?? 'audit';
   const resolvedOutput = resolveProjectPath(
@@ -574,6 +589,28 @@ export async function planAudit({
 }
 
 export async function runAudit(options) {
+  const mode = options.mode ?? 'report';
+  if (!['report', 'repair'].includes(mode)) {
+    throw new DesignomeError('Audit mode must be report or repair', {
+      code: 'INVALID_AUDIT_MODE',
+    });
+  }
+  const maximumRepairPasses = Number(options.maximumRepairPasses ?? 2);
+  if (
+    !Number.isInteger(maximumRepairPasses) ||
+    maximumRepairPasses < 1 ||
+    maximumRepairPasses > 3
+  ) {
+    throw new DesignomeError('Repair passes must be an integer from 1 to 3', {
+      code: 'INVALID_REPAIR_PASSES',
+    });
+  }
+  if (mode === 'repair' && options.implementationAuthorized !== true) {
+    throw new DesignomeError(
+      'Repair mode requires explicit implementation authorization',
+      { code: 'IMPLEMENTATION_AUTHORIZATION_REQUIRED' },
+    );
+  }
   const prepared = await planAudit(options);
   if (options.dryRun) return { status: 'ready', ...prepared.plan };
   const existingOutput = await readTextIfExists(
@@ -636,12 +673,50 @@ export async function runAudit(options) {
     path.join(prepared.outputPath, 'report.md'),
     reportMarkdown({ dna: prepared.dna, plan: prepared.plan, findings }),
   );
+  const artifacts = [
+    'plan.json',
+    'evidence.json',
+    'findings.json',
+    'report.md',
+  ];
+  if (mode === 'repair') {
+    const repairPlan = {
+      schemaVersion: '0.1.0',
+      generatedAt: prepared.plan.createdAt,
+      mode: 'repair',
+      implementationAuthorized: true,
+      maximumPasses: maximumRepairPasses,
+      findingRefs: findings.findings.map((finding) => finding.id),
+      excludedCalibrationCandidates: findings.calibrationCandidates.map(
+        (candidate) => candidate.id,
+      ),
+      loop: [
+        'capture and measure',
+        'evaluate findings',
+        'apply the smallest implementation-only patch',
+        'run target-project checks',
+        'recapture the affected routes and interactions',
+      ],
+      stopConditions: [
+        'all scoped observed findings pass',
+        'maximum pass count reached',
+        'a new authorization or product decision is required',
+      ],
+      designDnaMutationAllowed: false,
+    };
+    await atomicWrite(
+      path.join(prepared.outputPath, 'repair-plan.json'),
+      jsonText(repairPlan),
+    );
+    artifacts.push('repair-plan.json');
+  }
   return {
     status: 'initialized',
     outputDirectory: prepared.plan.outputDirectory,
     provider: prepared.plan.provider,
     findingCount: findings.findings.length,
     calibrationCandidateCount: findings.calibrationCandidates.length,
-    artifacts: ['plan.json', 'evidence.json', 'findings.json', 'report.md'],
+    mode,
+    artifacts,
   };
 }

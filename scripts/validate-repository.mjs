@@ -342,6 +342,16 @@ export function validateRepository(rootDirectory = repositoryRoot) {
     'examples',
     'audit-findings.reference.json',
   );
+  const repairPlanSchemaPath = path.join(
+    rootDirectory,
+    'schemas',
+    'repair-plan.schema.json',
+  );
+  const repairPlanExamplePath = path.join(
+    rootDirectory,
+    'examples',
+    'repair-plan.reference.json',
+  );
 
   try {
     const matrixSchema = readJson(matrixSchemaPath);
@@ -397,6 +407,7 @@ export function validateRepository(rootDirectory = repositoryRoot) {
   for (const [label, schemaPath, examplePath] of [
     ['audit evidence', auditEvidenceSchemaPath, auditEvidenceExamplePath],
     ['audit findings', auditFindingsSchemaPath, auditFindingsExamplePath],
+    ['repair plan', repairPlanSchemaPath, repairPlanExamplePath],
   ]) {
     try {
       const validateAuditArtifact = ajv.compile(readJson(schemaPath));

@@ -9,7 +9,8 @@
     "documentationDirectory",
     "rulePrecedence",
     "existingRulePaths",
-    "stylingStrategy"
+    "stylingStrategy",
+    "uiKitPreference"
   ],
   "properties": {
     "schemaVersion": { "const": "0.1.0" },
@@ -37,6 +38,9 @@
         "tailwind-utilities",
         "shadcn-components"
       ]
+    },
+    "uiKitPreference": {
+      "enum": ["auto", "none", "shadcn"]
     }
   }
 }

@@ -258,7 +258,6 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
     await fs.stat(path.join(projectRoot, '.designome')).catch(() => null),
     null,
   );
-
   const first = await installDesignDna({
     dnaPath,
     projectPath: projectRoot,
@@ -301,6 +300,7 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
     ).sort(),
     [
       'README.md',
+      'component-mapping.md',
       'components-and-states.md',
       'iconography.md',
       'integration.md',
@@ -435,7 +435,6 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
       'Managed file checksum mismatch: src/styles/designome.generated.css',
     ),
   );
-
   const auditSkillPath = path.join(
     projectRoot,
     '.agents',
@@ -488,6 +487,13 @@ test('installation planning detects shadcn project context without mutating it',
       2,
     )}\n`,
   );
+  await fs.mkdir(path.join(projectRoot, 'src', 'components', 'ui'), {
+    recursive: true,
+  });
+  await fs.writeFile(
+    path.join(projectRoot, 'src', 'components', 'ui', 'button.tsx'),
+    'export function Button() { return null; }\n',
+  );
 
   const dna = await referenceDna();
   dna.status = 'accepted';
@@ -505,8 +511,73 @@ test('installation planning detects shadcn project context without mutating it',
   assert.equal(plan.publicPlan.adapter.styling.strategy, 'shadcn-components');
   assert.equal(plan.publicPlan.adapter.styling.shadcn.style, 'nova');
   assert.equal(plan.publicPlan.adapter.styling.shadcn.iconLibrary, 'lucide');
+  assert.deepEqual(plan.publicPlan.adapter.styling.shadcn.installedComponents, [
+    'button',
+  ]);
+  const disabledPlan = await planInstallation({
+    dnaPath,
+    projectPath: projectRoot,
+    cssEntry: 'src/app/globals.css',
+    stylingStrategy: 'auto',
+    uiKitPreference: 'none',
+  });
+  assert.equal(
+    disabledPlan.publicPlan.adapter.styling.strategy,
+    'tailwind-utilities',
+  );
+  assert.equal(
+    disabledPlan.publicPlan.adapter.styling.uiKit.status,
+    'disabled',
+  );
   assert.equal(
     await fs.stat(path.join(projectRoot, '.designome')).catch(() => null),
+    null,
+  );
+  await installDesignDna({
+    dnaPath,
+    projectPath: projectRoot,
+    cssEntry: 'src/app/globals.css',
+    stylingStrategy: 'auto',
+    instructionsReviewed: true,
+  });
+  const componentMapping = await fs.readFile(
+    path.join(projectRoot, 'docs', 'designome', 'component-mapping.md'),
+    'utf8',
+  );
+  assert.match(
+    componentMapping,
+    /Installed shadcn\/ui sources detected: `button`/u,
+  );
+  assert.match(componentMapping, /technical implementation guidance/u);
+});
+
+test('greenfield shadcn preference remains an explicit proposal', async (t) => {
+  const temporaryRoot = await temporaryDirectory(t, 'designome-uikit-test-');
+  const projectRoot = path.join(temporaryRoot, 'target-project');
+  await fs.mkdir(path.join(projectRoot, 'src', 'styles'), { recursive: true });
+  await fs.writeFile(
+    path.join(projectRoot, 'package.json'),
+    '{"name":"target-project","private":true}\n',
+  );
+  await fs.writeFile(
+    path.join(projectRoot, 'src', 'styles', 'globals.css'),
+    'body { margin: 0; }\n',
+  );
+  const dna = await referenceDna();
+  dna.status = 'accepted';
+  const dnaPath = path.join(temporaryRoot, 'accepted-design-dna.json');
+  await fs.writeFile(dnaPath, `${JSON.stringify(dna, null, 2)}\n`);
+
+  const plan = await planInstallation({
+    dnaPath,
+    projectPath: projectRoot,
+    cssEntry: 'src/styles/globals.css',
+    uiKitPreference: 'shadcn',
+  });
+  assert.equal(plan.publicPlan.adapter.styling.strategy, 'css-variables');
+  assert.equal(plan.publicPlan.adapter.styling.uiKit.status, 'proposed');
+  assert.equal(
+    await fs.stat(path.join(projectRoot, 'components.json')).catch(() => null),
     null,
   );
 });
@@ -574,6 +645,35 @@ test('executable audit resolves providers and initializes evidence artifacts', a
     runAudit({ projectPath: projectRoot }),
     (error) => error.code === 'AUDIT_OUTPUT_CONFLICT',
   );
+
+  await assert.rejects(
+    runAudit({
+      projectPath: projectRoot,
+      outputDirectory: 'audit-repair',
+      mode: 'repair',
+    }),
+    (error) => error.code === 'IMPLEMENTATION_AUTHORIZATION_REQUIRED',
+  );
+  const repair = await runAudit({
+    projectPath: projectRoot,
+    outputDirectory: 'audit-repair',
+    provider: 'managed-playwright',
+    browserInstallAuthorized: true,
+    mode: 'repair',
+    maximumRepairPasses: 3,
+    implementationAuthorized: true,
+  });
+  assert.equal(repair.mode, 'repair');
+  assert.equal(repair.provider.status, 'planned');
+  assert.ok(repair.artifacts.includes('repair-plan.json'));
+  const repairPlan = JSON.parse(
+    await fs.readFile(
+      path.join(projectRoot, 'audit-repair', 'repair-plan.json'),
+      'utf8',
+    ),
+  );
+  assert.equal(repairPlan.maximumPasses, 3);
+  assert.equal(repairPlan.designDnaMutationAllowed, false);
 });
 
 test('mechanical audit separates observed risks from calibration proposals', async () => {

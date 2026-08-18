@@ -12,7 +12,7 @@ Read `_shared-contract.md`, the accepted Design DNA, and applicable stress cases
 
 ## Task
 
-Initialize the executable audit plan, compare the implementation with accepted rules, inspect generated code, and distinguish static checks from rendered or interaction evidence. Resolve providers in this order: host in-app browser when the host can execute it, an existing target-project Playwright setup, explicitly authorized managed Playwright, then a clearly labeled static-only fallback. When a browser is available, inspect computed typography, line height, control geometry, avatar fallback centering, local overflow, and gaps between major regions against accepted ranges and relationships. Classify deviations by impact and confidence, then propose the smallest corrective change.
+Initialize the executable audit plan, compare the implementation with accepted rules, inspect generated code, and distinguish static checks from rendered or interaction evidence. Resolve providers in this order: host in-app browser when the host can execute it, an existing target-project Playwright setup, explicitly authorized managed Playwright, then a clearly labeled static-only fallback. When a browser is available, inspect computed typography, line height, control geometry, avatar fallback centering, local overflow, and gaps between major regions against accepted ranges and relationships. Classify deviations by impact and confidence, then propose the smallest corrective change. In explicitly authorized repair mode, limit the loop to one-to-three passes, patch only observed scoped findings, run target checks, and recapture affected evidence.
 
 ## Output
 
@@ -27,3 +27,4 @@ Produce `audit/plan.json`, `audit/evidence.json`, `audit/report.md`, `audit/find
 - Do not mutate the implementation unless the user separately authorizes a fix.
 - Never promote a computed implementation value or human preference to screenshot-observed evidence. Keep it as a proposed calibration until explicit acceptance.
 - Do not install Playwright or another browser dependency without explicit authorization.
+- Repair mode never mutates accepted Design DNA and excludes unaccepted calibration candidates from automatic patches.

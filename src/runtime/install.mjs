@@ -176,18 +176,22 @@ function renderGuidanceBlock({
         .join(', ')
     : 'none declared';
   const stylingInstruction =
-    styling.system === 'shadcn'
+    styling.strategy === 'shadcn-components'
       ? 'Prefer installed shadcn/ui components, semantic theme tokens, configured aliases, and the declared icon library. Do not reinitialize or overwrite components without explicit approval.'
       : styling.system === 'tailwind'
         ? "Prefer the project's existing Tailwind utilities and theme conventions before adding new component CSS."
         : "Prefer the project's existing styling primitives before adding a parallel component system.";
+  const uiKitInstruction =
+    styling.uiKit?.status === 'proposed'
+      ? ' A shadcn/ui greenfield preference is recorded as proposed; do not initialize or install it without separate explicit authorization.'
+      : '';
   return [
     guidanceStartMarker,
     '## Designome-generated UI',
     '',
     `Read \`${documentationDirectory}/README.md\` and \`.designome/design-dna.json\` before generating UI.`,
     `Repository rule precedence is \`${integrationPolicy.rulePrecedence}\`; declared existing UI rules: ${existingRules}.`,
-    `The detected styling adapter is \`${styling.strategy}\`. ${stylingInstruction}`,
+    `The detected styling adapter is \`${styling.strategy}\`. ${stylingInstruction}${uiKitInstruction}`,
     'Preserve claim status, cover applicable business states and stress cases, and run `$designome-audit` before delivery.',
     guidanceEndMarker,
     '',
@@ -355,9 +359,11 @@ function renderIntegrationDocument({
     `- Detected system: \`${styling.system}\``,
     `- Integration strategy: \`${styling.strategy}\``,
     `- Detected version: ${styling.version ? `\`${styling.version}\`` : 'unknown'}`,
+    `- UI kit preference: \`${styling.uiKit?.preference ?? 'auto'}\``,
+    `- UI kit status: \`${styling.uiKit?.status ?? 'not-detected'}\``,
     ...evidence,
     '',
-    styling.system === 'shadcn'
+    styling.strategy === 'shadcn-components'
       ? 'Reuse installed shadcn/ui source components and semantic theme tokens first. Respect the configured aliases, React Server Components mode, primitive base, and icon library. Adding or updating components requires a dry-run and explicit authorization; never reinitialize or overwrite a customized component silently.'
       : styling.system === 'tailwind'
         ? 'Use existing Tailwind utilities and theme conventions first. Treat `designome.generated.css` as a namespaced semantic-token bridge, not as permission to build a parallel raw-CSS component system.'
@@ -378,6 +384,64 @@ function renderIntegrationDocument({
     ...existing,
     '',
     'Never mine existing project CSS or components as screenshot evidence. Repository context changes implementation shape, not the meaning or epistemic status of the Design DNA.',
+    '',
+  ].join('\n');
+}
+
+function renderComponentMappingDocument(dna, styling) {
+  const installed = styling.shadcn?.installedComponents ?? [];
+  const patterns = dna.componentPatterns ?? [];
+  if (styling.strategy !== 'shadcn-components') {
+    const proposal =
+      styling.uiKit?.status === 'proposed'
+        ? 'A greenfield shadcn/ui setup was requested. Initialization remains a proposed technical action and requires separate explicit authorization before Designome can map components.'
+        : "No shadcn/ui adapter is active. Use the project's current component and styling primitives.";
+    return [
+      '# Component mapping',
+      '',
+      `- Adapter status: \`${styling.uiKit?.status ?? 'not-detected'}\``,
+      '- Epistemic status: `proposed`',
+      '',
+      proposal,
+      '',
+    ].join('\n');
+  }
+  const candidateNames = [
+    ['button', 'button'],
+    ['action', 'button'],
+    ['dialog', 'dialog'],
+    ['modal', 'dialog'],
+    ['table', 'table'],
+    ['list', 'table'],
+    ['avatar', 'avatar'],
+    ['status', 'badge'],
+    ['badge', 'badge'],
+    ['search', 'input'],
+    ['filter', 'input'],
+  ];
+  const rows = patterns.map((pattern) => {
+    const haystack = `${pattern.id} ${pattern.name}`.toLowerCase();
+    const candidate = candidateNames.find(([term]) => haystack.includes(term));
+    const component = candidate?.[1] ?? null;
+    const available = component ? installed.includes(component) : false;
+    return `| ${pattern.name} | ${component ? `\`${component}\`` : 'No direct candidate'} | ${available ? 'Reuse installed source' : component ? 'Propose review; do not install automatically' : 'Implement with existing project primitives'} | \`proposed\` |`;
+  });
+  return [
+    '# Component mapping',
+    '',
+    'This is technical implementation guidance, not screenshot evidence. Every mapping remains `proposed` until reviewed in the target repository.',
+    '',
+    `Installed shadcn/ui sources detected: ${installed.length ? installed.map((item) => `\`${item}\``).join(', ') : 'none'}.`,
+    '',
+    '| Designome pattern | shadcn/ui candidate | Decision | Status |',
+    '| ------------------ | ------------------- | -------- | ------ |',
+    ...(rows.length
+      ? rows
+      : [
+          '| No canonical component patterns | No direct candidate | Reuse only explicit project components | `proposed` |',
+        ]),
+    '',
+    'Respect configured aliases, React Server Components mode, primitive base, icon library, semantic variables, and local source customizations. Never initialize, add, or overwrite a component without separate authorization.',
     '',
   ].join('\n');
 }
@@ -414,6 +478,7 @@ function renderDocumentation({
         '- [Typography](./typography.md)',
         '- [Iconography](./iconography.md)',
         '- [Components and states](./components-and-states.md)',
+        '- [Component mapping](./component-mapping.md)',
         '- [UI rules](./rules.md)',
         '- [Repository integration](./integration.md)',
         '',
@@ -445,6 +510,7 @@ function renderDocumentation({
       ),
     ],
     ['components-and-states.md', renderComponentsDocument(dna)],
+    ['component-mapping.md', renderComponentMappingDocument(dna, styling)],
     ['rules.md', renderRulesDocument(dna)],
     [
       'integration.md',
@@ -462,6 +528,7 @@ async function detectStylingContext(
   projectRoot,
   cssEntryPath,
   requestedStrategy,
+  uiKitPreference,
 ) {
   const packagePath = path.join(projectRoot, 'package.json');
   const packageJson = (await pathExists(packagePath))
@@ -504,9 +571,9 @@ async function detectStylingContext(
     : [];
   const strategy =
     requestedStrategy === 'auto'
-      ? detectedSystem === 'shadcn'
+      ? detectedSystem === 'shadcn' && uiKitPreference !== 'none'
         ? 'shadcn-components'
-        : detectedSystem === 'tailwind'
+        : tailwindEvidence.length > 0
           ? 'tailwind-utilities'
           : 'css-variables'
       : requestedStrategy;
@@ -525,11 +592,54 @@ async function detectStylingContext(
       { code: 'STYLE_STRATEGY_UNAVAILABLE' },
     );
   }
+  const componentDirectories = [];
+  if (shadcnConfig) {
+    const alias = shadcnConfig.aliases?.ui;
+    if (typeof alias === 'string') {
+      if (alias.startsWith('@/'))
+        componentDirectories.push(
+          path.join(projectRoot, 'src', alias.slice(2)),
+        );
+      else if (!alias.startsWith('@'))
+        componentDirectories.push(path.resolve(projectRoot, alias));
+    }
+    componentDirectories.push(
+      path.join(projectRoot, 'src', 'components', 'ui'),
+      path.join(projectRoot, 'components', 'ui'),
+    );
+  }
+  const installedComponents = new Set();
+  for (const directory of componentDirectories) {
+    relativeInside(projectRoot, directory, 'shadcn component directory');
+    const entries = await fs
+      .readdir(directory, { withFileTypes: true })
+      .catch((error) => {
+        if (error.code === 'ENOENT') return [];
+        throw error;
+      });
+    for (const entry of entries) {
+      if (entry.isFile() && /\.[cm]?[jt]sx?$/u.test(entry.name))
+        installedComponents.add(entry.name.replace(/\.[^.]+$/u, ''));
+    }
+  }
   return {
     system: detectedSystem,
     strategy,
     version: tailwindVersion,
     evidence: [...shadcnEvidence, ...tailwindEvidence],
+    uiKit: shadcnConfig
+      ? {
+          preference: uiKitPreference,
+          status: strategy === 'shadcn-components' ? 'reuse' : 'disabled',
+        }
+      : uiKitPreference === 'shadcn'
+        ? {
+            preference: uiKitPreference,
+            status: 'proposed',
+            requiredAction:
+              'Review and explicitly authorize shadcn/ui initialization before changing the target project.',
+          }
+        : { preference: uiKitPreference, status: 'not-detected' },
     ...(shadcnConfig
       ? {
           shadcn: {
@@ -539,6 +649,7 @@ async function detectStylingContext(
             rsc: shadcnConfig.rsc ?? null,
             cssVariables: shadcnConfig.tailwind?.cssVariables ?? null,
             aliases: shadcnConfig.aliases ?? {},
+            installedComponents: [...installedComponents].sort(),
           },
         }
       : {}),
@@ -819,6 +930,7 @@ export async function planInstallation({
   rulePrecedence = 'complement',
   existingRulePaths = [],
   stylingStrategy = 'auto',
+  uiKitPreference = 'auto',
   instructionsReviewed = false,
 }) {
   if (![':root', '[data-designome]'].includes(scope)) {
@@ -837,6 +949,12 @@ export async function planInstallation({
       {
         code: 'INVALID_RULE_PRECEDENCE',
       },
+    );
+  }
+  if (!['auto', 'none', 'shadcn'].includes(uiKitPreference)) {
+    throw new DesignomeError(
+      'UI kit preference must be auto, none, or shadcn',
+      { code: 'INVALID_UI_KIT_PREFERENCE' },
     );
   }
   if (
@@ -920,10 +1038,12 @@ export async function planInstallation({
     projectRoot,
     resolvedCssEntry,
     stylingStrategy,
+    uiKitPreference,
   );
   const integrationPolicy = {
     rulePrecedence,
     existingRulePaths: [...new Set(normalizedExistingRulePaths)].sort(),
+    uiKitPreference,
   };
   const generatedCssPath = path.join(cssDirectory, 'designome.generated.css');
   const overridesCssPath = path.join(cssDirectory, 'designome.overrides.css');

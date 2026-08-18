@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-08-18T00:00:00.000Z",
+  "mode": "repair",
+  "implementationAuthorized": true,
+  "maximumPasses": 2,
+  "findingRefs": ["finding.001"],
+  "excludedCalibrationCandidates": ["calibration.001"],
+  "loop": [
+    "capture and measure",
+    "apply the smallest implementation-only patch",
+    "recapture affected evidence"
+  ],
+  "stopConditions": [
+    "all scoped observed findings pass",
+    "maximum pass count reached"
+  ],
+  "designDnaMutationAllowed": false
+}

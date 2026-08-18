@@ -112,7 +112,21 @@ node bin/designome.mjs audit \
   --overwrite
 ```
 
-Provider resolution never silently installs dependencies. `auto` selects an existing target-project Playwright setup when one is detected, otherwise it produces a static-only plan. `in-app-browser` records that the host agent owns browser execution. `managed-playwright` remains unavailable until the user explicitly authorizes dependency installation through the repair and adapter workflow.
+With separate authorization for implementation changes, initialize a bounded repair plan:
+
+```bash
+node bin/designome.mjs audit \
+  --project <target-project> \
+  --evidence audit/evidence.json \
+  --output audit-repair \
+  --mode repair \
+  --max-passes 2 \
+  --implementation-authorized
+```
+
+The repair plan includes observed finding IDs, excludes proposed calibration candidates, caps the loop at three passes, and forbids accepted Design DNA mutation. It guides the agent; the deterministic helper does not edit implementation source files itself.
+
+Provider resolution never silently installs dependencies. `auto` selects an existing target-project Playwright setup when one is detected, otherwise it produces a static-only plan. `in-app-browser` records that the host agent owns browser execution. `managed-playwright` remains authorization-required unless `--browser-install-authorized` records a separate reviewed setup proposal; the audit command still performs no dependency mutation.
 
 ## Exit behavior
 

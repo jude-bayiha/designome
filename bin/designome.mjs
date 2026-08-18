@@ -26,6 +26,8 @@ function parseArguments(values) {
       [
         'dry-run',
         'instructions-reviewed',
+        'implementation-authorized',
+        'browser-install-authorized',
         'overwrite',
         'require-accepted',
         'help',
@@ -102,14 +104,14 @@ function printHelp() {
     `  validate-dna --file <design-dna.json> [--require-accepted]\n`,
   );
   process.stdout.write(
-    `  install --dna <file> --project <dir> [--css-entry <file>] [--scope <selector>] [--docs-dir <dir>] [--rule-precedence <mode>] [--existing-rules <path>] [--styling <strategy>] --dry-run\n`,
+    `  install --dna <file> --project <dir> [--css-entry <file>] [--scope <selector>] [--docs-dir <dir>] [--rule-precedence <mode>] [--existing-rules <path>] [--styling <strategy>] [--ui-kit <auto|none|shadcn>] --dry-run\n`,
   );
   process.stdout.write(
     `  install --dna <file> --project <dir> [options] --instructions-reviewed\n`,
   );
   process.stdout.write(`  verify-install --project <dir>\n`);
   process.stdout.write(
-    `  audit --project <dir> [--config <file>] [--output <dir>] [--provider <name>] [--evidence <file>] [--dry-run] [--overwrite]\n`,
+    `  audit --project <dir> [--config <file>] [--output <dir>] [--provider <name>] [--evidence <file>] [--mode <report|repair>] [--max-passes <1|2|3>] [--implementation-authorized] [--browser-install-authorized] [--dry-run] [--overwrite]\n`,
   );
 }
 
@@ -159,6 +161,7 @@ async function main() {
       'rule-precedence',
       'existing-rules',
       'styling',
+      'ui-kit',
       'dry-run',
       'instructions-reviewed',
       'help',
@@ -179,6 +182,7 @@ async function main() {
         multiple: true,
       }),
       stylingStrategy: option(parsed, 'styling', { fallback: 'auto' }),
+      uiKitPreference: option(parsed, 'ui-kit', { fallback: 'auto' }),
       dryRun: Boolean(parsed.options.get('dry-run')),
       instructionsReviewed: Boolean(
         parsed.options.get('instructions-reviewed'),
@@ -198,6 +202,10 @@ async function main() {
       'output',
       'evidence',
       'provider',
+      'mode',
+      'max-passes',
+      'implementation-authorized',
+      'browser-install-authorized',
       'dry-run',
       'overwrite',
       'help',
@@ -210,6 +218,14 @@ async function main() {
       outputDirectory: option(parsed, 'output', { fallback: null }),
       evidencePath: option(parsed, 'evidence', { fallback: null }),
       provider: option(parsed, 'provider', { fallback: 'auto' }),
+      mode: option(parsed, 'mode', { fallback: 'report' }),
+      maximumRepairPasses: option(parsed, 'max-passes', { fallback: '2' }),
+      implementationAuthorized: Boolean(
+        parsed.options.get('implementation-authorized'),
+      ),
+      browserInstallAuthorized: Boolean(
+        parsed.options.get('browser-install-authorized'),
+      ),
       dryRun: Boolean(parsed.options.get('dry-run')),
       overwrite: Boolean(parsed.options.get('overwrite')),
     });
