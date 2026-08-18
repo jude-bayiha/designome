@@ -61,9 +61,7 @@ export function collectMatrixReferenceErrors(matrix, rootDirectory) {
     documentationPaths.add(entry.path);
     for (const conceptRef of entry.conceptRefs) {
       if (!conceptIds.has(conceptRef)) {
-        errors.push(
-          `${entry.path} references missing concept ${conceptRef}`,
-        );
+        errors.push(`${entry.path} references missing concept ${conceptRef}`);
       }
     }
   }
@@ -74,10 +72,12 @@ export function collectMatrixReferenceErrors(matrix, rootDirectory) {
     'behavior/',
     'governance/',
   ]) {
-    if (![...documentationPaths].some((item) => item.startsWith(requiredDirectory))) {
-      errors.push(
-        `documentation projection must include ${requiredDirectory}`,
-      );
+    if (
+      ![...documentationPaths].some((item) =>
+        item.startsWith(requiredDirectory),
+      )
+    ) {
+      errors.push(`documentation projection must include ${requiredDirectory}`);
     }
   }
 
