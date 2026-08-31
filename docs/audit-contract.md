@@ -2,17 +2,29 @@
 
 Designome audits accepted Design DNA against implementation evidence without turning implementation values into screenshot evidence. The executable helper initializes deterministic artifacts and evaluates normalized measurements; the host agent or a target-project browser runner performs the actual navigation and capture work.
 
-## Evidence layers
+## Four independent audit layers
 
-| Layer                   | Evidence required                              | What it can establish                                       |
-| ----------------------- | ---------------------------------------------- | ----------------------------------------------------------- |
-| Managed installation    | Manifest and checksum verification             | The audited rules are the installed accepted revision       |
-| Static implementation   | Changed code and repository checks             | Referenced tokens, components, and obvious code risks       |
-| Rendered browser        | Screenshots plus computed geometry and styles  | Reflow, clipping, overflow, typography, and avatar geometry |
-| Interaction             | Executed input and observed programmatic state | Navigation, disclosure, filtering, selection, and dialogs   |
-| Accessibility semantics | Keyboard or accessibility-tree assertions      | Names, roles, states, focus movement, and relationships     |
+| Layer        | Evidence owner                             | What it can establish                                                                                                                                     |
+| ------------ | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Installation | Deterministic runtime                      | Accepted DNA validity, managed ownership, manifest, checksums, conflicts, idempotence, and artifact integrity                                             |
+| Mechanical   | Runtime evaluation of browser measurements | Reflow, clipping, overflow, geometry, measurable typography, avatars, console errors, and essential elements                                              |
+| Perceptual   | Host-agent multimodal reasoning            | Hierarchy, density, composition, proportions, rhythm, contrast, palette, surfaces, component fidelity, and cross-screen coherence                         |
+| Usage        | Executed host browser                      | Navigation, filters, search, dialogs, panels, focus return, accessibility semantics, states, recovery, responsive behavior, extreme content, LTR, and RTL |
 
-Reports state which layers actually ran. Missing layers remain `pending` or `not-available`; static success never implies rendered or interaction success.
+Each layer uses only `passed`, `failed`, `incomplete`, `not-requested`, or `unavailable`. A mechanical pass never implies perceptual or usage validation. The global result preserves `failed` and `incomplete` layers.
+
+## Canonical provider state
+
+Provider state uses `not-requested`, `provider-unavailable`, `awaiting-evidence`, `evidence-received`, `running`, `passed`, `failed`, or `incomplete`. Allowed external execution normally follows:
+
+```text
+awaiting-evidence
+→ evidence-received
+→ running
+→ passed | failed | incomplete
+```
+
+Transitions are validated. A valid external file records provider name and reception time, then coverage is calculated from actual routes, viewports, scenarios, directions, and flows. The JSON report is canonical; Markdown is rendered from that same object and cannot retain a stale pending label.
 
 ## Browser provider order
 
@@ -49,15 +61,16 @@ Typography bounds linked to accepted `observed` or `inferred` Design DNA tokens 
 | Modal         | Dialog opens, closes, traps appropriate focus, and returns focus   |
 | Master-detail | Selecting an item updates the associated detail surface            |
 
-The evidence artifact records expected and actual outcomes. Failed executed contracts are `observed` findings. Unexecuted contracts are not findings.
+The evidence artifact records expected and observed outcomes. Failed executed contracts are `observed` findings. Configured but unexecuted contracts make the usage layer `incomplete`; they are not fabricated findings.
 
 ## Artifact ownership
 
 - `.designome/audit.config.json` is project-owned and preserved after its first creation.
 - `audit/plan.json` records routes, viewports, provider, and expected layers.
-- `audit/evidence.json` records normalized captures and executed checks.
+- the official adapter writes an external evidence artifact; the audit normalizes it to `audit/evidence.json`;
 - `audit/findings.json` separates observed findings from proposed calibration candidates.
-- `audit/report.md` summarizes evidence boundaries and counts.
+- `audit/report.json` is the canonical provider, coverage, layer, and result state.
+- `audit/report.md` is generated exclusively from `audit/report.json` state.
 
 Audit output is working evidence and should not be committed by default. Use a new output directory per independent run or pass `--overwrite` only when replacing a known audit run intentionally.
 
@@ -66,3 +79,5 @@ Audit output is working evidence and should not be committed by default. Use a n
 Repair requires `--mode repair --implementation-authorized`. The generated `repair-plan.json` contains only observed finding IDs, excludes proposed calibration candidates, limits the loop to one-to-three passes, and sets `designDnaMutationAllowed` to `false`. The agent applies the smallest implementation patch, runs target checks, and recaptures affected evidence. The loop stops on success, the configured pass limit, or a new authorization or product decision.
 
 Managed Playwright remains a separate setup decision. `--browser-install-authorized` records an authorized proposal for `@playwright/test` and Chromium, but the audit command itself never edits dependencies or downloads a browser.
+
+See [Browser evidence adapter](browser-evidence-adapter.md) for the stable host integration surface and schema migration behavior.

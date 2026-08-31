@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designome.dev/schemas/audit-report/1.0.0",
+  "title": "Designome canonical audit report state",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "designDna",
+    "overallStatus",
+    "provider",
+    "layers",
+    "coverage",
+    "evidenceBoundaries",
+    "results",
+    "limitations"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "designDna": { "type": "object" },
+    "overallStatus": {
+      "enum": ["passed", "failed", "incomplete", "not-requested"]
+    },
+    "provider": {
+      "type": "object",
+      "required": [
+        "name",
+        "status",
+        "executionOwner",
+        "receivedAt",
+        "transitions",
+        "coveredRoutes",
+        "coveredViewports"
+      ],
+      "properties": {
+        "name": { "type": "string" },
+        "status": {
+          "enum": [
+            "not-requested",
+            "provider-unavailable",
+            "awaiting-evidence",
+            "evidence-received",
+            "running",
+            "passed",
+            "failed",
+            "incomplete"
+          ]
+        },
+        "executionOwner": { "type": "string" },
+        "receivedAt": { "type": ["string", "null"], "format": "date-time" },
+        "transitions": { "type": "array" },
+        "coveredRoutes": { "type": "array", "items": { "type": "string" } },
+        "coveredViewports": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "layers": {
+      "type": "object",
+      "required": ["installation", "mechanical", "perceptual", "usage"],
+      "additionalProperties": { "$ref": "#/$defs/layer" }
+    },
+    "coverage": { "type": "object" },
+    "evidenceBoundaries": { "type": "object" },
+    "results": { "type": "object" },
+    "limitations": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "layer": {
+      "type": "object",
+      "required": ["status", "evidenceOwner", "summary"],
+      "properties": {
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "incomplete",
+            "not-requested",
+            "unavailable"
+          ]
+        },
+        "evidenceOwner": { "type": "string" },
+        "summary": { "type": "string" }
+      }
+    }
+  }
+}

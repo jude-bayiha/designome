@@ -192,7 +192,8 @@
       "inspect": [
         "displayed state and probable trigger",
         "feedback, exit action, and context preservation",
-        "anatomy consistency across states"
+        "anatomy consistency across states",
+        "browser-observed loading, empty, error, and recovery scenarios"
       ],
       "screenshotLimits": [
         "unshown states are never observed",
@@ -202,7 +203,8 @@
         "slow and near-instant loading",
         "initial empty and no results",
         "partial and total error",
-        "disabled, warning, success, and stale data"
+        "disabled, warning, success, and stale data",
+        "interrupted audit capture followed by deterministic workflow resume"
       ],
       "outputTargets": [
         "design-dna.rules",
@@ -676,7 +678,9 @@
         "tokens, relationships, and component contracts to export",
         "required rules, recommendations, and anti-patterns",
         "evidence, confidence, unknowns, and exceptions",
-        "operational bounds, preferred values, and audit-only calibration rules"
+        "operational bounds, preferred values, and audit-only calibration rules",
+        "persistent workflow state and explicit runtime, host-agent, and human handoffs",
+        "transactional installation ownership, checksums, rollback, and provider state transitions"
       ],
       "screenshotLimits": [
         "a screenshot does not reveal the target framework or code structure",
@@ -690,7 +694,10 @@
         "existing design documentation and precedence policy",
         "Tailwind or repository-native styling adapter",
         "forward-test calibration without evidence-status promotion",
-        "audit of a newly generated page"
+        "audit of a newly generated page",
+        "interruption and deterministic resume at every host or runtime boundary",
+        "valid external browser evidence replacing awaiting-evidence with a calculated status",
+        "preflight and apply failures that leave no partial installation"
       ],
       "outputTargets": [
         "design-dna.json",
@@ -698,6 +705,8 @@
         "docs/designome",
         "integration-policy.json",
         "agent-skill",
+        "workflow-state.json",
+        "audit/report.json",
         "audit/report.md"
       ]
     }

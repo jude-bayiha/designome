@@ -23,7 +23,15 @@ Read completely before installation:
 1. Require an explicit target-project path and a Design DNA whose status is `accepted`. Confirm that source paths and notes contain no secret or private metadata that must be removed before the accepted file is copied into the target.
 2. Inspect technical facts only: framework, package manager, source roots, CSS entry points, aliases, scripts, installed compatible libraries, styling systems such as Tailwind, existing UI-documentation paths, and applicable agent instructions.
 3. Read every `AGENTS.md` that applies to the planned target files. Resolve the documentation directory, rule precedence (`complement`, `existing-first`, or `designome-first`), declared existing-rule paths, and styling strategy before writing. Natural-language instructions are resolved by the agent and passed explicitly to the deterministic helper.
-4. Run a dry-run. Pass `--css-entry` when discovery is absent or ambiguous:
+4. Run the read-only diagnostic before the dry-run:
+
+   ```bash
+   node <designome-plugin-root>/bin/designome.mjs doctor \
+     --project <target-project> \
+     --dna <accepted-design-dna.json>
+   ```
+
+5. Run a dry-run. Pass `--css-entry` when discovery is absent or ambiguous:
 
    ```bash
    node <designome-plugin-root>/bin/designome.mjs install \
@@ -39,18 +47,18 @@ Read completely before installation:
      --dry-run
    ```
 
-5. Review every planned create, update, delete, preserve, unchanged, and conflict action. A delete is valid only for obsolete documentation owned by the previous manifest whose checksum still matches. Stop on any conflict.
-6. Execute the same command without `--dry-run` and add `--instructions-reviewed`.
-7. Verify managed files and marker blocks:
+6. Review every planned create, update, delete, preserve, unchanged, and conflict action. A delete is valid only for obsolete documentation owned by the previous manifest whose checksum still matches. Stop on any conflict.
+7. Execute the same command without `--dry-run` and add `--instructions-reviewed`. The runtime stages and validates files outside the project, journals application, writes the manifest last, verifies the result, cleans temporary state, and rolls back automatically on failure.
+8. Verify managed files and marker blocks:
 
    ```bash
    node <designome-plugin-root>/bin/designome.mjs verify-install \
      --project <target-project>
    ```
 
-8. Verify that the configured documentation directory contains the generated index plus all 22 paths in the matrix `documentationProjection`. Every file must preserve explicit epistemic status; an `unknown` boundary or `proposed` stress test is valid when no accepted claim covers the subject.
-9. Execute the install command a second time. Require zero creates, updates, or deletes and a successful verification.
-10. Run the target project's relevant checks and report static validation separately from rendered or interaction validation.
+9. Verify that the configured documentation directory contains the generated index plus all 22 paths in the matrix `documentationProjection`. Every file must preserve explicit epistemic status; an `unknown` boundary or `proposed` stress test is valid when no accepted claim covers the subject.
+10. Execute the install command a second time. Require zero creates, updates, or deletes and a successful verification.
+11. Run the target project's relevant checks and report static validation separately from rendered or interaction validation.
 
 ## Guardrails
 
@@ -66,3 +74,5 @@ Read completely before installation:
 - Use `--ui-kit shadcn` only to record an explicit greenfield preference. Without `components.json`, it remains a proposed initialization step and never runs `shadcn init` automatically.
 - Do not add a dependency merely because the target project already uses it.
 - Stop when repository instructions prohibit or materially alter the planned writes.
+- `doctor` and `--dry-run` are strictly read-only. A missing `package.json` must fail before `.designome`, documentation, CSS, guidance, or manifest files are created.
+- A conflict report must preserve the expected owner, recorded checksum, observed checksum, refused operation, and safe resolutions. Never use force overwrite as a silent fallback.

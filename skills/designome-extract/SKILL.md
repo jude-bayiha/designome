@@ -45,6 +45,8 @@ Read each axis prompt only when the orchestrator routes that axis. Read `../../p
 
 8. Report coverage, conflicts, unknowns, unperformed validation, and the exact files produced. Leave the Design DNA as `draft` until the user explicitly accepts it.
 
+When invoked from `designome run`, write the draft to the `expectedArtifact` path in the current host handoff, then call `designome run --resume`. The runtime detects and validates the artifact deterministically. It does not perform this skill's visual reasoning.
+
 ## Guardrails
 
 - Use only `observed`, `inferred`, `proposed`, and `unknown`.
@@ -54,3 +56,4 @@ Read each axis prompt only when the orchestrator routes that axis. Read `../../p
 - Do not create page inventories, role families, speculative screens, or target-project visual rules.
 - A target-project path may inform later technical installation, never extraction.
 - Do not install artifacts from this skill.
+- Never mark the draft accepted on behalf of the human. The orchestrated workflow records the one mandatory human acceptance separately.

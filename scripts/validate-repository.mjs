@@ -224,6 +224,7 @@ function validatePluginSurface(rootDirectory) {
     if (!fs.statSync(skillDirectory).isDirectory()) continue;
     const skillPath = path.join(skillDirectory, 'SKILL.md');
     const agentPath = path.join(skillDirectory, 'agents', 'openai.yaml');
+    const contractPath = path.join(skillDirectory, 'contract.json');
     if (!fs.existsSync(skillPath)) {
       errors.push(`${skillName} is missing SKILL.md`);
       continue;
@@ -292,6 +293,23 @@ function validatePluginSurface(rootDirectory) {
       errors.push(
         `${skillName}/agents/openai.yaml failed to parse: ${error.message}`,
       );
+    }
+    if (!fs.existsSync(contractPath)) {
+      errors.push(`${skillName} is missing contract.json`);
+    } else {
+      try {
+        const contract = readJson(contractPath);
+        if (
+          contract.schemaVersion !== '1.0.0' ||
+          contract.runtimeContractVersion !== '1.0.0'
+        ) {
+          errors.push(`${skillName} has an incompatible runtime contract`);
+        }
+      } catch (error) {
+        errors.push(
+          `${skillName}/contract.json failed to parse: ${error.message}`,
+        );
+      }
     }
   }
 
@@ -380,6 +398,26 @@ export function validateRepository(rootDirectory = repositoryRoot) {
     'examples',
     'repair-plan.reference.json',
   );
+  const auditReportSchemaPath = path.join(
+    rootDirectory,
+    'schemas',
+    'audit-report.schema.json',
+  );
+  const auditReportExamplePath = path.join(
+    rootDirectory,
+    'examples',
+    'audit-report.reference.json',
+  );
+  const runStateSchemaPath = path.join(
+    rootDirectory,
+    'schemas',
+    'run-state.schema.json',
+  );
+  const runStateExamplePath = path.join(
+    rootDirectory,
+    'examples',
+    'run-state.reference.json',
+  );
 
   try {
     const matrixSchema = readJson(matrixSchemaPath);
@@ -436,6 +474,8 @@ export function validateRepository(rootDirectory = repositoryRoot) {
     ['audit evidence', auditEvidenceSchemaPath, auditEvidenceExamplePath],
     ['audit findings', auditFindingsSchemaPath, auditFindingsExamplePath],
     ['repair plan', repairPlanSchemaPath, repairPlanExamplePath],
+    ['audit report', auditReportSchemaPath, auditReportExamplePath],
+    ['run state', runStateSchemaPath, runStateExamplePath],
   ]) {
     try {
       const validateAuditArtifact = ajv.compile(readJson(schemaPath));

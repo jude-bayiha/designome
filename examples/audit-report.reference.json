@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-31T10:00:00.000Z",
+  "designDna": { "documentId": "design-dna.reference", "revision": 1 },
+  "overallStatus": "incomplete",
+  "provider": {
+    "name": "in-app-browser",
+    "status": "incomplete",
+    "executionOwner": "host-agent",
+    "receivedAt": "2026-08-31T10:00:00.000Z",
+    "transitions": [],
+    "coveredRoutes": ["home"],
+    "coveredViewports": ["390x844"]
+  },
+  "layers": {
+    "installation": {
+      "status": "passed",
+      "evidenceOwner": "designome-runtime",
+      "summary": "Installation verified."
+    },
+    "mechanical": {
+      "status": "passed",
+      "evidenceOwner": "designome-runtime-from-browser-measurements",
+      "summary": "Capture evaluated."
+    },
+    "perceptual": {
+      "status": "incomplete",
+      "evidenceOwner": "host-agent",
+      "summary": "Some aspects are missing."
+    },
+    "usage": {
+      "status": "passed",
+      "evidenceOwner": "host-agent-browser",
+      "summary": "Flow evaluated."
+    }
+  },
+  "coverage": {
+    "complete": false,
+    "missing": { "captures": [], "interactions": [] }
+  },
+  "evidenceBoundaries": {
+    "automatic": [],
+    "browser": [],
+    "hostAgent": [],
+    "unverified": []
+  },
+  "results": { "observedFindingCount": 0, "proposalCount": 0 },
+  "limitations": [
+    "The host-agent perceptual plan was not completely evaluated."
+  ]
+}

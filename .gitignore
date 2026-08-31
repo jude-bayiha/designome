@@ -2,6 +2,7 @@ node_modules/
 coverage/
 dist/
 .designome/runs/
+.designome/active-run.json
 .env
 .env.*
 !.env.example

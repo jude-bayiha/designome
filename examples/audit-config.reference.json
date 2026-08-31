@@ -1,17 +1,25 @@
 {
-  "schemaVersion": "0.1.0",
+  "schemaVersion": "1.0.0",
   "baseUrl": "http://127.0.0.1:3000",
   "startCommand": "pnpm dev",
   "outputDirectory": "audit",
+  "layers": {
+    "installation": true,
+    "mechanical": true,
+    "perceptual": true,
+    "usage": true
+  },
   "routes": [
     {
-      "id": "overview",
+      "id": "home",
       "path": "/",
       "viewports": [
-        { "name": "desktop", "width": 1440, "height": 1000 },
-        { "name": "mobile", "width": 390, "height": 844 }
+        { "name": "mobile", "width": 390, "height": 844 },
+        { "name": "desktop", "width": 1440, "height": 900 }
       ],
-      "flows": ["load the route", "verify the primary navigation"]
+      "flows": ["open-navigation", "recover-after-error"],
+      "scenarios": ["default", "loading", "empty", "error", "recovery"],
+      "directions": ["ltr", "rtl"]
     }
   ]
 }
