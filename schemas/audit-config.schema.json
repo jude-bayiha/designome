@@ -1,18 +1,29 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designome.dev/schemas/audit-config.schema.json",
+  "$id": "https://designome.dev/schemas/audit-config/1.0.0",
   "title": "Designome audit configuration",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "baseUrl", "routes"],
+  "required": ["schemaVersion", "baseUrl", "layers", "routes"],
   "properties": {
-    "schemaVersion": { "const": "0.1.0" },
+    "schemaVersion": { "const": "1.0.0" },
     "baseUrl": { "type": "string", "format": "uri" },
     "startCommand": { "type": "string", "minLength": 1 },
     "outputDirectory": {
       "type": "string",
       "minLength": 1,
       "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+    },
+    "layers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["installation", "mechanical", "perceptual", "usage"],
+      "properties": {
+        "installation": { "type": "boolean" },
+        "mechanical": { "type": "boolean" },
+        "perceptual": { "type": "boolean" },
+        "usage": { "type": "boolean" }
+      }
     },
     "routes": {
       "type": "array",
@@ -34,7 +45,14 @@
     "route": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "path", "viewports", "flows"],
+      "required": [
+        "id",
+        "path",
+        "viewports",
+        "flows",
+        "scenarios",
+        "directions"
+      ],
       "properties": {
         "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
         "path": { "type": "string", "pattern": "^/" },
@@ -47,6 +65,27 @@
           "type": "array",
           "uniqueItems": true,
           "items": { "type": "string", "minLength": 1 }
+        },
+        "scenarios": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "default",
+              "loading",
+              "empty",
+              "error",
+              "recovery",
+              "extreme-content"
+            ]
+          }
+        },
+        "directions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["ltr", "rtl"] }
         }
       }
     }

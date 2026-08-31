@@ -1,15 +1,30 @@
 {
-  "schemaVersion": "0.1.0",
-  "generatedAt": "2026-08-18T00:00:00.000Z",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-31T10:00:00.000Z",
   "designDna": { "documentId": "design-dna.reference", "revision": 1 },
-  "findings": [],
+  "findings": [
+    {
+      "id": "finding.001",
+      "kind": "mechanical-risk",
+      "layer": "mechanical",
+      "severity": "high",
+      "scope": "home at 390x844",
+      "ruleRef": "mechanical.global-horizontal-overflow",
+      "evidence": "Document scroll width exceeds client width.",
+      "epistemicStatus": "observed",
+      "certainty": 1,
+      "suggestedCorrection": "Remove global overflow.",
+      "verificationMethod": "Repeat the same viewport capture."
+    }
+  ],
   "calibrationCandidates": [
     {
       "id": "calibration.001",
+      "layer": "perceptual",
+      "scope": "home hierarchy",
+      "evidence": "The target appears denser than the source.",
+      "proposal": "Review a density rule before changing Design DNA.",
       "epistemicStatus": "proposed",
-      "scope": "people table primary text",
-      "evidence": "Computed font size is 12px.",
-      "proposal": "Consider an accepted 13px readability floor.",
       "acceptanceRequired": true
     }
   ]

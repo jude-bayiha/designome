@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designome.dev/schemas/audit-findings.schema.json",
-  "title": "Designome audit findings",
+  "$id": "https://designome.dev/schemas/audit-findings/1.0.0",
+  "title": "Designome evaluated audit findings",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -12,72 +12,78 @@
     "calibrationCandidates"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.1.0" },
+    "schemaVersion": { "const": "1.0.0" },
     "generatedAt": { "type": "string", "format": "date-time" },
     "designDna": {
       "type": "object",
-      "additionalProperties": false,
       "required": ["documentId", "revision"],
       "properties": {
         "documentId": { "type": "string", "minLength": 1 },
         "revision": { "type": "integer", "minimum": 1 }
       }
     },
-    "findings": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/finding" }
-    },
+    "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
     "calibrationCandidates": {
       "type": "array",
-      "items": { "$ref": "#/$defs/calibration" }
+      "items": { "$ref": "#/$defs/proposal" }
     }
   },
   "$defs": {
     "finding": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "id",
         "kind",
-        "epistemicStatus",
+        "layer",
         "severity",
-        "certainty",
         "scope",
         "ruleRef",
         "evidence",
+        "epistemicStatus",
+        "certainty",
         "suggestedCorrection",
         "verificationMethod"
       ],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
-        "kind": { "enum": ["design-deviation", "mechanical-risk"] },
-        "epistemicStatus": { "const": "observed" },
+        "kind": {
+          "enum": [
+            "mechanical-risk",
+            "design-deviation",
+            "perceptual-deviation"
+          ]
+        },
+        "layer": { "enum": ["mechanical", "perceptual", "usage"] },
         "severity": { "enum": ["low", "medium", "high", "critical"] },
-        "certainty": { "type": "number", "minimum": 0, "maximum": 1 },
         "scope": { "type": "string", "minLength": 1 },
         "ruleRef": { "type": "string", "minLength": 1 },
         "evidence": { "type": "string", "minLength": 1 },
+        "epistemicStatus": { "enum": ["observed", "inferred", "unknown"] },
+        "certainty": { "type": "number", "minimum": 0, "maximum": 1 },
+        "provenance": { "type": "object" },
+        "limitations": { "type": "array", "items": { "type": "string" } },
         "suggestedCorrection": { "type": "string", "minLength": 1 },
         "verificationMethod": { "type": "string", "minLength": 1 }
       }
     },
-    "calibration": {
+    "proposal": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "id",
-        "epistemicStatus",
+        "layer",
         "scope",
         "evidence",
         "proposal",
+        "epistemicStatus",
         "acceptanceRequired"
       ],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
-        "epistemicStatus": { "const": "proposed" },
+        "layer": { "enum": ["mechanical", "perceptual", "usage"] },
         "scope": { "type": "string", "minLength": 1 },
         "evidence": { "type": "string", "minLength": 1 },
         "proposal": { "type": "string", "minLength": 1 },
+        "epistemicStatus": { "const": "proposed" },
         "acceptanceRequired": { "const": true }
       }
     }

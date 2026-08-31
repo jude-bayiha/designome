@@ -7,6 +7,10 @@
   "bin": {
     "designome": "./bin/designome.mjs"
   },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./audit": "./src/runtime/capture-session.mjs"
+  },
   "packageManager": "pnpm@11.5.2",
   "engines": {
     "node": ">=24"

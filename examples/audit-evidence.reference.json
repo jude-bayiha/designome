@@ -1,38 +1,132 @@
 {
-  "schemaVersion": "0.1.0",
-  "generatedAt": "2026-08-18T00:00:00.000Z",
-  "provider": { "selected": "in-app-browser", "status": "external" },
-  "layers": { "rendered": "executed", "interaction": "executed" },
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-31T10:00:00.000Z",
+  "adapter": {
+    "name": "@designome/audit-browser-adapter",
+    "version": "1.0.0",
+    "evidenceSchemaVersion": "1.0.0"
+  },
+  "plan": {
+    "schemaVersion": "1.0.0",
+    "fingerprint": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "provider": {
+    "name": "in-app-browser",
+    "kind": "external",
+    "executionOwner": "host-agent",
+    "status": "evidence-received",
+    "receivedAt": "2026-08-31T10:00:00.000Z"
+  },
+  "coverage": {
+    "complete": true,
+    "expected": {
+      "captures": [
+        {
+          "routeId": "home",
+          "viewport": { "width": 390, "height": 844 },
+          "scenario": "default",
+          "direction": "ltr"
+        }
+      ],
+      "interactions": [{ "routeId": "home", "flowId": "open-navigation" }]
+    },
+    "actual": {
+      "captures": [
+        {
+          "routeId": "home",
+          "viewport": { "width": 390, "height": 844 },
+          "scenario": "default",
+          "direction": "ltr"
+        }
+      ],
+      "interactions": [{ "routeId": "home", "flowId": "open-navigation" }]
+    },
+    "missing": { "captures": [], "interactions": [] }
+  },
   "captures": [
     {
-      "id": "capture.overview.desktop",
-      "routeId": "overview",
-      "viewport": { "width": 1440, "height": 1000 },
-      "screenshotPath": "audit/screenshots/overview-desktop.png",
-      "document": { "scrollWidth": 1440, "clientWidth": 1440 },
+      "id": "capture.home.mobile",
+      "routeId": "home",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": { "width": 390, "height": 844 },
+      "scenario": "default",
+      "direction": "ltr",
+      "screenshotPath": "audit/screenshots/home-mobile.png",
+      "document": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "scrollHeight": 1200,
+        "clientHeight": 844,
+        "horizontalOverflow": false
+      },
       "elements": [
         {
-          "id": "overview-primary-action",
+          "id": "navigation-trigger",
           "role": "action",
           "visible": true,
+          "hidden": false,
           "clipped": false,
-          "rect": { "width": 120, "height": 40 },
-          "ruleRefs": ["rule.semantic-reflow"]
+          "rect": { "width": 44, "height": 44 },
+          "tokenRefs": [],
+          "ruleRefs": []
         }
-      ]
+      ],
+      "responsiveChecks": [],
+      "recordedAt": "2026-08-31T09:59:00.000Z"
     }
   ],
   "interactions": [
     {
-      "id": "overview-navigation",
-      "routeId": "overview",
-      "kind": "navigation",
-      "expected": "URL and active navigation item update",
-      "actual": "URL and active navigation item updated",
+      "id": "open-navigation",
+      "routeId": "home",
+      "flowId": "open-navigation",
+      "kind": "disclosure",
+      "expected": "Navigation panel opens and aria-expanded becomes true",
+      "observed": "Navigation panel opened and aria-expanded became true",
       "passed": true,
-      "ruleRefs": []
+      "urlBefore": "http://127.0.0.1:3000/",
+      "urlAfter": "http://127.0.0.1:3000/",
+      "urlChanged": false,
+      "disclosure": { "expandedBefore": false, "expandedAfter": true },
+      "dialog": null,
+      "focus": null,
+      "ruleRefs": [],
+      "recordedAt": "2026-08-31T09:59:30.000Z"
     }
   ],
-  "consoleErrors": [],
-  "accessibilityChecks": []
+  "consoleMessages": [],
+  "accessibilityChecks": [
+    {
+      "id": "navigation-name",
+      "routeId": "home",
+      "expected": "Trigger has an accessible name",
+      "observed": "Accessible name is Open navigation",
+      "passed": true,
+      "accessibleName": "Open navigation",
+      "accessibleRole": "button",
+      "accessibleState": { "expanded": true },
+      "ruleRefs": [],
+      "recordedAt": "2026-08-31T09:59:31.000Z"
+    }
+  ],
+  "perceptualObservations": [
+    {
+      "id": "perceptual.home.hierarchy",
+      "aspect": "visual-hierarchy",
+      "statement": "The target preserves the source hierarchy between title, content, and primary action.",
+      "epistemicStatus": "observed",
+      "certainty": 0.88,
+      "result": "passed",
+      "provenance": {
+        "evaluator": "host-agent",
+        "method": "multimodal-comparison"
+      },
+      "sourceCaptureRefs": ["source.reference"],
+      "targetCaptureRefs": ["capture.home.mobile"],
+      "ruleRefs": [],
+      "tokenRefs": [],
+      "limitations": ["Only the configured mobile viewport was compared."],
+      "recordedAt": "2026-08-31T10:00:00.000Z"
+    }
+  ]
 }

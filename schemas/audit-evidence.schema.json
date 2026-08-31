@@ -1,73 +1,146 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designome.dev/schemas/audit-evidence.schema.json",
-  "title": "Designome rendered audit evidence",
+  "$id": "https://designome.dev/schemas/audit-evidence/1.0.0",
+  "title": "Designome normalized browser and host-agent audit evidence",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schemaVersion",
     "generatedAt",
+    "adapter",
+    "plan",
     "provider",
-    "layers",
+    "coverage",
     "captures",
     "interactions",
-    "consoleErrors",
-    "accessibilityChecks"
+    "consoleMessages",
+    "accessibilityChecks",
+    "perceptualObservations"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.1.0" },
+    "schemaVersion": { "const": "1.0.0" },
     "generatedAt": { "type": "string", "format": "date-time" },
-    "provider": { "type": "object" },
-    "layers": { "type": "object" },
-    "captures": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/capture" }
+    "adapter": {
+      "type": "object",
+      "required": ["name", "version", "evidenceSchemaVersion"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "evidenceSchemaVersion": { "const": "1.0.0" },
+        "migratedFrom": { "type": "string" }
+      }
     },
+    "plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "fingerprint"],
+      "properties": {
+        "schemaVersion": { "const": "1.0.0" },
+        "fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "kind", "executionOwner", "status", "receivedAt"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["external", "target-project"] },
+        "executionOwner": { "enum": ["host-agent", "target-project"] },
+        "status": { "const": "evidence-received" },
+        "receivedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "coverage": { "$ref": "#/$defs/coverage" },
+    "captures": { "type": "array", "items": { "$ref": "#/$defs/capture" } },
     "interactions": {
       "type": "array",
       "items": { "$ref": "#/$defs/interaction" }
     },
-    "consoleErrors": {
+    "consoleMessages": {
       "type": "array",
-      "items": { "$ref": "#/$defs/consoleError" }
+      "items": { "$ref": "#/$defs/consoleMessage" }
     },
     "accessibilityChecks": {
       "type": "array",
-      "items": { "$ref": "#/$defs/check" }
+      "items": { "$ref": "#/$defs/accessibilityCheck" }
+    },
+    "perceptualObservations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/perceptualObservation" }
     }
   },
   "$defs": {
-    "rect": {
+    "viewport": {
       "type": "object",
-      "additionalProperties": false,
       "required": ["width", "height"],
       "properties": {
         "width": { "type": "number", "minimum": 0 },
         "height": { "type": "number", "minimum": 0 }
       }
     },
-    "element": {
+    "coverageItem": {
+      "type": "object",
+      "required": ["routeId", "viewport", "scenario", "direction"],
+      "properties": {
+        "routeId": { "type": "string", "minLength": 1 },
+        "viewport": { "$ref": "#/$defs/viewport" },
+        "scenario": { "type": "string", "minLength": 1 },
+        "direction": { "enum": ["ltr", "rtl"] }
+      }
+    },
+    "interactionCoverage": {
+      "type": "object",
+      "required": ["routeId", "flowId"],
+      "properties": {
+        "routeId": { "type": "string", "minLength": 1 },
+        "flowId": { "type": "string", "minLength": 1 }
+      }
+    },
+    "coverageSet": {
+      "type": "object",
+      "required": ["captures", "interactions"],
+      "properties": {
+        "captures": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/coverageItem" }
+        },
+        "interactions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/interactionCoverage" }
+        }
+      }
+    },
+    "coverage": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "role", "visible", "clipped", "rect"],
+      "required": ["complete", "expected", "actual", "missing"],
+      "properties": {
+        "complete": { "type": "boolean" },
+        "expected": { "$ref": "#/$defs/coverageSet" },
+        "actual": { "$ref": "#/$defs/coverageSet" },
+        "missing": { "$ref": "#/$defs/coverageSet" }
+      }
+    },
+    "element": {
+      "type": "object",
+      "required": [
+        "id",
+        "role",
+        "visible",
+        "hidden",
+        "clipped",
+        "rect",
+        "tokenRefs",
+        "ruleRefs"
+      ],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
-        "role": {
-          "enum": [
-            "action",
-            "label",
-            "status",
-            "avatar",
-            "table-primary-text",
-            "table-metadata",
-            "section",
-            "local-scroller",
-            "other"
-          ]
-        },
+        "role": { "type": "string", "minLength": 1 },
         "visible": { "type": "boolean" },
+        "hidden": { "type": "boolean" },
         "clipped": { "type": "boolean" },
-        "rect": { "$ref": "#/$defs/rect" },
+        "rect": { "$ref": "#/$defs/viewport" },
         "fontSize": { "type": "number", "minimum": 0 },
         "lineHeight": { "type": "number", "minimum": 0 },
         "flexShrink": { "type": "number", "minimum": 0 },
@@ -76,103 +149,169 @@
         "textAlign": { "type": "string" },
         "gapBefore": { "type": "number", "minimum": 0 },
         "panelPadding": { "type": "number", "minimum": 0 },
-        "tokenRefs": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": { "type": "string", "minLength": 1 }
-        },
-        "ruleRefs": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": { "type": "string", "minLength": 1 }
-        }
+        "tokenRefs": { "type": "array", "items": { "type": "string" } },
+        "ruleRefs": { "type": "array", "items": { "type": "string" } },
+        "accessibleName": { "type": ["string", "null"] },
+        "accessibleRole": { "type": ["string", "null"] },
+        "accessibleState": { "type": ["object", "null"] }
       }
     },
     "capture": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "id",
         "routeId",
         "viewport",
+        "scenario",
+        "direction",
         "screenshotPath",
         "document",
-        "elements"
+        "elements",
+        "responsiveChecks",
+        "recordedAt"
       ],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
         "routeId": { "type": "string", "minLength": 1 },
-        "viewport": { "$ref": "#/$defs/rect" },
+        "url": { "type": ["string", "null"] },
+        "viewport": { "$ref": "#/$defs/viewport" },
+        "scenario": { "type": "string", "minLength": 1 },
+        "direction": { "enum": ["ltr", "rtl"] },
         "screenshotPath": { "type": "string", "minLength": 1 },
         "document": {
           "type": "object",
-          "additionalProperties": false,
-          "required": ["scrollWidth", "clientWidth"],
+          "required": [
+            "scrollWidth",
+            "clientWidth",
+            "scrollHeight",
+            "clientHeight",
+            "horizontalOverflow"
+          ],
           "properties": {
             "scrollWidth": { "type": "number", "minimum": 0 },
-            "clientWidth": { "type": "number", "minimum": 0 }
+            "clientWidth": { "type": "number", "minimum": 0 },
+            "scrollHeight": { "type": "number", "minimum": 0 },
+            "clientHeight": { "type": "number", "minimum": 0 },
+            "horizontalOverflow": { "type": "boolean" }
           }
         },
-        "elements": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/element" }
-        }
+        "elements": { "type": "array", "items": { "$ref": "#/$defs/element" } },
+        "responsiveChecks": { "type": "array", "items": { "type": "object" } },
+        "recordedAt": { "type": "string", "format": "date-time" }
       }
     },
     "interaction": {
       "type": "object",
-      "additionalProperties": false,
-      "required": ["id", "routeId", "kind", "expected", "actual", "passed"],
+      "required": [
+        "id",
+        "routeId",
+        "flowId",
+        "kind",
+        "expected",
+        "observed",
+        "passed",
+        "urlChanged",
+        "ruleRefs",
+        "recordedAt"
+      ],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
         "routeId": { "type": "string", "minLength": 1 },
-        "kind": {
-          "enum": [
-            "navigation",
-            "disclosure",
-            "filter",
-            "search",
-            "selection",
-            "modal",
-            "focus-return",
-            "detail-update",
-            "other"
-          ]
+        "flowId": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "minLength": 1 },
+        "expected": { "type": "string", "minLength": 1 },
+        "observed": { "type": "string", "minLength": 1 },
+        "passed": { "type": "boolean" },
+        "urlBefore": { "type": ["string", "null"] },
+        "urlAfter": { "type": ["string", "null"] },
+        "urlChanged": { "type": "boolean" },
+        "disclosure": { "type": ["object", "null"] },
+        "dialog": { "type": ["object", "null"] },
+        "focus": { "type": ["object", "null"] },
+        "ruleRefs": { "type": "array", "items": { "type": "string" } },
+        "recordedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "consoleMessage": {
+      "type": "object",
+      "required": ["routeId", "level", "message", "source", "recordedAt"],
+      "properties": {
+        "routeId": { "type": "string", "minLength": 1 },
+        "level": { "enum": ["warning", "error"] },
+        "message": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "minLength": 1 },
+        "recordedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "accessibilityCheck": {
+      "type": "object",
+      "required": [
+        "id",
+        "routeId",
+        "expected",
+        "observed",
+        "passed",
+        "ruleRefs",
+        "recordedAt"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "routeId": { "type": "string", "minLength": 1 },
+        "expected": { "type": "string", "minLength": 1 },
+        "observed": { "type": "string", "minLength": 1 },
+        "passed": { "type": "boolean" },
+        "accessibleName": { "type": ["string", "null"] },
+        "accessibleRole": { "type": ["string", "null"] },
+        "accessibleState": { "type": ["object", "null"] },
+        "ruleRefs": { "type": "array", "items": { "type": "string" } },
+        "recordedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "perceptualObservation": {
+      "type": "object",
+      "required": [
+        "id",
+        "aspect",
+        "statement",
+        "epistemicStatus",
+        "certainty",
+        "result",
+        "provenance",
+        "sourceCaptureRefs",
+        "targetCaptureRefs",
+        "ruleRefs",
+        "tokenRefs",
+        "limitations",
+        "recordedAt"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "aspect": { "type": "string", "minLength": 1 },
+        "statement": { "type": "string", "minLength": 1 },
+        "epistemicStatus": {
+          "enum": ["observed", "inferred", "proposed", "unknown"]
         },
-        "expected": { "type": "string", "minLength": 1 },
-        "actual": { "type": "string", "minLength": 1 },
-        "passed": { "type": "boolean" },
-        "ruleRefs": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": { "type": "string", "minLength": 1 }
-        }
-      }
-    },
-    "consoleError": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["routeId", "message"],
-      "properties": {
-        "routeId": { "type": "string", "minLength": 1 },
-        "message": { "type": "string", "minLength": 1 }
-      }
-    },
-    "check": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["id", "routeId", "expected", "actual", "passed"],
-      "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "routeId": { "type": "string", "minLength": 1 },
-        "expected": { "type": "string", "minLength": 1 },
-        "actual": { "type": "string", "minLength": 1 },
-        "passed": { "type": "boolean" },
-        "ruleRefs": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": { "type": "string", "minLength": 1 }
-        }
+        "certainty": { "type": "number", "minimum": 0, "maximum": 1 },
+        "result": { "enum": ["passed", "failed", "incomplete"] },
+        "severity": { "enum": ["low", "medium", "high", "critical"] },
+        "scope": { "type": "string" },
+        "provenance": {
+          "type": "object",
+          "required": ["evaluator", "method"],
+          "properties": {
+            "evaluator": { "const": "host-agent" },
+            "method": { "type": "string", "minLength": 1 },
+            "model": { "type": "string" },
+            "session": { "type": "string" }
+          }
+        },
+        "sourceCaptureRefs": { "type": "array", "items": { "type": "string" } },
+        "targetCaptureRefs": { "type": "array", "items": { "type": "string" } },
+        "ruleRefs": { "type": "array", "items": { "type": "string" } },
+        "tokenRefs": { "type": "array", "items": { "type": "string" } },
+        "limitations": { "type": "array", "items": { "type": "string" } },
+        "suggestedCorrection": { "type": "string" },
+        "recordedAt": { "type": "string", "format": "date-time" }
       }
     }
   }
