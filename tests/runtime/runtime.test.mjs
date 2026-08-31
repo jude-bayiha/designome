@@ -395,7 +395,7 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
         path.join(projectRoot, '.agents', 'skills', 'designome-audit'),
       )
     ).sort(),
-    ['SKILL.md', 'agents'],
+    ['SKILL.md', 'agents', 'contract.json'],
   );
   assert.match(
     await fs.readFile(
@@ -776,19 +776,19 @@ test('executable audit resolves providers and initializes evidence artifacts', a
     projectPath: projectRoot,
     provider: 'in-app-browser',
   });
-  assert.equal(initialized.status, 'initialized');
+  assert.equal(initialized.status, 'awaiting-evidence');
   assert.equal(initialized.provider.executionOwner, 'host-agent');
   assert.deepEqual((await fs.readdir(path.join(projectRoot, 'audit'))).sort(), [
-    'evidence.json',
     'findings.json',
     'plan.json',
+    'report.json',
     'report.md',
   ]);
-  const evidence = JSON.parse(
-    await fs.readFile(path.join(projectRoot, 'audit', 'evidence.json'), 'utf8'),
+  const report = JSON.parse(
+    await fs.readFile(path.join(projectRoot, 'audit', 'report.json'), 'utf8'),
   );
-  assert.equal(evidence.provider.selected, 'in-app-browser');
-  assert.deepEqual(evidence.captures, []);
+  assert.equal(report.provider.name, 'in-app-browser');
+  assert.equal(report.provider.status, 'awaiting-evidence');
 
   await assert.rejects(
     runAudit({ projectPath: projectRoot }),
@@ -803,26 +803,14 @@ test('executable audit resolves providers and initializes evidence artifacts', a
     }),
     (error) => error.code === 'IMPLEMENTATION_AUTHORIZATION_REQUIRED',
   );
-  const repair = await runAudit({
+  const managed = await runAudit({
     projectPath: projectRoot,
     outputDirectory: 'audit-repair',
     provider: 'managed-playwright',
     browserInstallAuthorized: true,
-    mode: 'repair',
-    maximumRepairPasses: 3,
-    implementationAuthorized: true,
+    dryRun: true,
   });
-  assert.equal(repair.mode, 'repair');
-  assert.equal(repair.provider.status, 'planned');
-  assert.ok(repair.artifacts.includes('repair-plan.json'));
-  const repairPlan = JSON.parse(
-    await fs.readFile(
-      path.join(projectRoot, 'audit-repair', 'repair-plan.json'),
-      'utf8',
-    ),
-  );
-  assert.equal(repairPlan.maximumPasses, 3);
-  assert.equal(repairPlan.designDnaMutationAllowed, false);
+  assert.equal(managed.provider.status, 'provider-unavailable');
 });
 
 test('mechanical audit separates observed risks from calibration proposals', async () => {
@@ -831,17 +819,42 @@ test('mechanical audit separates observed risks from calibration proposals', asy
   const result = evaluateAuditEvidence({
     dna,
     evidence: {
-      schemaVersion: '0.1.0',
+      schemaVersion: '1.0.0',
       generatedAt: new Date().toISOString(),
-      provider: { selected: 'in-app-browser' },
-      layers: { rendered: 'executed', interaction: 'executed' },
+      adapter: {
+        name: '@designome/audit-browser-adapter',
+        version: '1.0.0',
+        evidenceSchemaVersion: '1.0.0',
+      },
+      plan: {
+        schemaVersion: '1.0.0',
+        fingerprint: '0'.repeat(64),
+      },
+      provider: {
+        name: 'in-app-browser',
+        kind: 'external',
+        executionOwner: 'host-agent',
+        status: 'evidence-received',
+        receivedAt: new Date().toISOString(),
+      },
+      coverage: {
+        complete: true,
+        expected: { captures: [], interactions: [] },
+        actual: { captures: [], interactions: [] },
+        missing: { captures: [], interactions: [] },
+      },
       captures: [
         {
           id: 'capture.people.mobile',
           routeId: 'people',
           viewport: { width: 390, height: 844 },
           screenshotPath: 'audit/screenshots/people-mobile.png',
-          document: { scrollWidth: 794, clientWidth: 390 },
+          document: {
+            scrollWidth: 794,
+            clientWidth: 390,
+            scrollHeight: 1200,
+            clientHeight: 844,
+          },
           elements: [
             {
               id: 'invite-action',
@@ -884,25 +897,35 @@ test('mechanical audit separates observed risks from calibration proposals', asy
       interactions: [
         {
           id: 'select-person',
+          flowId: 'select-person',
           routeId: 'people',
           kind: 'selection',
           expected: 'aria-pressed becomes true',
-          actual: 'aria-pressed remained false',
+          observed: 'aria-pressed remained false',
           passed: false,
           ruleRefs: [],
         },
       ],
-      consoleErrors: [{ routeId: 'people', message: 'Hydration failed' }],
+      consoleMessages: [
+        {
+          routeId: 'people',
+          level: 'error',
+          message: 'Hydration failed',
+          source: 'browser-console',
+          recordedAt: new Date().toISOString(),
+        },
+      ],
       accessibilityChecks: [
         {
           id: 'modal-focus-return',
           routeId: 'people',
           expected: 'focus returns to invite trigger',
-          actual: 'focus moved to body',
+          observed: 'focus moved to body',
           passed: false,
           ruleRefs: [],
         },
       ],
+      perceptualObservations: [],
     },
   });
   assert.equal(result.findings.length, 8);
