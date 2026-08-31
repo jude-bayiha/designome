@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { randomUUID } from 'node:crypto';
 
 import { assertValidDesignDna, validateDesignDna } from './design-dna.mjs';
 import { DesignomeError } from './errors.mjs';
@@ -13,7 +14,6 @@ import {
   readTextIfExists,
   relativeInside,
   resolveProjectPath,
-  rollbackWrites,
   sha256,
   toPosixPath,
 } from './files.mjs';
@@ -24,6 +24,7 @@ const installedDnaRelativePath = '.designome/design-dna.json';
 const auditConfigRelativePath = '.designome/audit.config.json';
 const defaultDocumentationDirectory = 'docs/designome';
 const auditSkillRelativeDirectory = '.agents/skills/designome-audit';
+const transactionRelativePath = '.designome/install-transaction.json';
 const supportedManifestVersions = new Set(['0.1.0', '0.2.0']);
 const cssStartMarker = '/* designome:generated-import:start */';
 const cssEndMarker = '/* designome:generated-import:end */';
@@ -138,9 +139,15 @@ function renderOverridesCss() {
 
 function renderAuditConfig() {
   return jsonText({
-    schemaVersion: '0.1.0',
+    schemaVersion: '1.0.0',
     baseUrl: 'http://127.0.0.1:3000',
     outputDirectory: 'audit',
+    layers: {
+      installation: true,
+      mechanical: true,
+      perceptual: true,
+      usage: true,
+    },
     routes: [
       {
         id: 'overview',
@@ -150,6 +157,8 @@ function renderAuditConfig() {
           { name: 'mobile', width: 390, height: 844 },
         ],
         flows: ['load the route'],
+        scenarios: ['default', 'loading', 'empty', 'error', 'recovery'],
+        directions: ['ltr'],
       },
     ],
   });
@@ -897,22 +906,18 @@ async function assertProjectRoot(projectRoot) {
       code: 'TARGET_PROJECT_MISSING',
     });
   }
-  const markers = [
-    '.git',
-    'package.json',
-    'pyproject.toml',
-    'Cargo.toml',
-    'composer.json',
-  ];
-  const hasMarker = (
-    await Promise.all(
-      markers.map((marker) => pathExists(path.join(resolved, marker))),
-    )
-  ).some(Boolean);
-  if (!hasMarker) {
-    throw new DesignomeError('Target path does not look like a project root', {
-      code: 'INVALID_TARGET_PROJECT',
-      details: [`Expected one of: ${markers.join(', ')}`],
+  const packagePath = path.join(resolved, 'package.json');
+  if (!(await pathExists(packagePath))) {
+    throw new DesignomeError('Target project is missing package.json', {
+      code: 'PROJECT_PACKAGE_JSON_MISSING',
+      details: {
+        checkedPath: packagePath,
+        prerequisite:
+          'Designome installation and audit require a JavaScript package root with package.json.',
+        resolution:
+          'Pass the application package root or create package.json before retrying.',
+        writesPerformed: false,
+      },
     });
   }
   return resolved;
@@ -1022,6 +1027,15 @@ async function inspectOwnedFile(
       kind: 'file',
       action: 'conflict',
       reason: 'Existing file is not owned by the manifest.',
+      expectedOwner: 'designome',
+      recordedChecksum: null,
+      observedChecksum: sha256(current),
+      nature: 'unmanaged-file-collision',
+      refusedOperations: ['overwrite'],
+      safeResolutions: [
+        'Move or rename the unmanaged file after review.',
+        'Choose a different Designome installation path.',
+      ],
     };
   }
   if (previous && current === null) {
@@ -1030,6 +1044,15 @@ async function inspectOwnedFile(
       kind: 'file',
       action: 'conflict',
       reason: 'Previously managed file is missing.',
+      expectedOwner: 'designome',
+      recordedChecksum: previous.sha256,
+      observedChecksum: null,
+      nature: 'managed-file-missing',
+      refusedOperations: ['overwrite', 'delete'],
+      safeResolutions: [
+        'Restore the manifest-owned file from version control.',
+        'Perform an explicit ownership migration before reinstalling.',
+      ],
     };
   }
   if (previous && sha256(current) !== previous.sha256) {
@@ -1038,6 +1061,15 @@ async function inspectOwnedFile(
       kind: 'file',
       action: 'conflict',
       reason: 'Managed file was modified outside Designome.',
+      expectedOwner: 'designome',
+      recordedChecksum: previous.sha256,
+      observedChecksum: sha256(current),
+      nature: 'managed-file-modified',
+      refusedOperations: ['overwrite', 'delete'],
+      safeResolutions: [
+        'Move intentional changes to a user-owned override and restore the managed file.',
+        'Review and explicitly migrate ownership before reinstalling.',
+      ],
     };
   }
   return {
@@ -1051,6 +1083,7 @@ async function inspectOwnedFile(
           : 'update',
     content: desiredContent,
     sha256: sha256(desiredContent),
+    observedChecksum: current === null ? null : sha256(current),
   };
 }
 
@@ -1084,6 +1117,15 @@ async function inspectObsoleteDocumentationFiles({
         kind: 'file',
         action: 'conflict',
         reason: 'Previously managed documentation file is missing.',
+        expectedOwner: 'designome',
+        recordedChecksum: artifact.sha256,
+        observedChecksum: null,
+        nature: 'managed-file-missing',
+        refusedOperations: ['delete', 'overwrite'],
+        safeResolutions: [
+          'Restore the managed file before retrying the migration.',
+          'Review an explicit ownership migration.',
+        ],
       });
     } else if (sha256(current) !== artifact.sha256) {
       actions.push({
@@ -1091,12 +1133,22 @@ async function inspectObsoleteDocumentationFiles({
         kind: 'file',
         action: 'conflict',
         reason: 'Managed documentation file was modified outside Designome.',
+        expectedOwner: 'designome',
+        recordedChecksum: artifact.sha256,
+        observedChecksum: sha256(current),
+        nature: 'managed-file-modified',
+        refusedOperations: ['delete', 'overwrite'],
+        safeResolutions: [
+          'Move intentional changes to user-owned documentation and restore the managed file.',
+          'Review an explicit ownership migration.',
+        ],
       });
     } else {
       actions.push({
         path: artifact.path,
         kind: 'file',
         action: 'delete',
+        observedChecksum: sha256(current),
       });
     }
   }
@@ -1123,6 +1175,15 @@ async function inspectBlockFile({
       kind: 'block',
       action: 'conflict',
       reason: 'Existing managed markers are not owned by the manifest.',
+      expectedOwner: 'designome',
+      recordedChecksum: null,
+      observedChecksum: inspection.block ? sha256(inspection.block) : null,
+      nature: 'unmanaged-marker-collision',
+      refusedOperations: ['overwrite'],
+      safeResolutions: [
+        'Remove or rename the unmanaged markers after review.',
+        'Adopt the block only through an explicit ownership migration.',
+      ],
     };
   }
   if (previous) {
@@ -1136,6 +1197,15 @@ async function inspectBlockFile({
         kind: 'block',
         action: 'conflict',
         reason: 'Managed markers are missing or duplicated.',
+        expectedOwner: 'designome',
+        recordedChecksum: previous.sha256,
+        observedChecksum: inspection.block ? sha256(inspection.block) : null,
+        nature: 'managed-marker-structure-changed',
+        refusedOperations: ['overwrite'],
+        safeResolutions: [
+          'Restore exactly one manifest-owned marker block.',
+          'Review an explicit ownership migration.',
+        ],
       };
     }
     if (sha256(inspection.block) !== previous.sha256) {
@@ -1144,6 +1214,15 @@ async function inspectBlockFile({
         kind: 'block',
         action: 'conflict',
         reason: 'Managed block was modified outside Designome.',
+        expectedOwner: 'designome',
+        recordedChecksum: previous.sha256,
+        observedChecksum: sha256(inspection.block),
+        nature: 'managed-block-modified',
+        refusedOperations: ['overwrite'],
+        safeResolutions: [
+          'Move intentional changes outside the managed block and restore it.',
+          'Review an explicit ownership migration.',
+        ],
       };
     }
   }
@@ -1163,6 +1242,12 @@ async function inspectBlockFile({
       kind: 'block',
       action: 'conflict',
       reason: error.message,
+      expectedOwner: 'designome',
+      recordedChecksum: previous?.sha256 ?? null,
+      observedChecksum: inspection.block ? sha256(inspection.block) : null,
+      nature: 'managed-block-invalid',
+      refusedOperations: ['overwrite'],
+      safeResolutions: ['Repair the marker structure and retry the dry-run.'],
     };
   }
   return {
@@ -1178,6 +1263,7 @@ async function inspectBlockFile({
     blockSha256: sha256(desiredBlock),
     startMarker,
     endMarker,
+    observedChecksum: current === '' ? null : sha256(current),
   };
 }
 
@@ -1191,6 +1277,176 @@ function publicAction(action) {
     ...safe
   } = action;
   return safe;
+}
+
+async function removeEmptyParents(projectRoot, absolutePath) {
+  let current = path.dirname(absolutePath);
+  while (
+    current !== projectRoot &&
+    current.startsWith(`${projectRoot}${path.sep}`)
+  ) {
+    const entries = await fs.readdir(current).catch(() => null);
+    if (!entries || entries.length > 0) break;
+    await fs.rmdir(current).catch(() => {});
+    current = path.dirname(current);
+  }
+}
+
+async function writeTransactionJournal(projectRoot, journal) {
+  await atomicWrite(
+    path.join(projectRoot, transactionRelativePath),
+    jsonText(journal),
+  );
+}
+
+async function rollbackTransaction(projectRoot, journal) {
+  const rollbackErrors = [];
+  for (const backup of [...journal.backups].reverse()) {
+    let absolutePath;
+    try {
+      if (
+        typeof backup.path !== 'string' ||
+        (backup.content !== null && typeof backup.content !== 'string')
+      ) {
+        throw new Error('Transaction backup entry is invalid');
+      }
+      absolutePath = resolveProjectPath(
+        projectRoot,
+        backup.path,
+        'transaction backup path',
+      );
+      if (backup.content === null) {
+        await fs.rm(absolutePath, { force: true });
+        await removeEmptyParents(projectRoot, absolutePath);
+      } else {
+        await atomicWrite(absolutePath, backup.content);
+      }
+    } catch (error) {
+      rollbackErrors.push(`${backup.path}: ${error.message}`);
+    }
+  }
+  if (rollbackErrors.length > 0) {
+    throw new DesignomeError('Installation rollback was incomplete', {
+      code: 'INSTALLATION_ROLLBACK_FAILED',
+      details: rollbackErrors,
+    });
+  }
+}
+
+export async function recoverInterruptedInstallation({ projectPath }) {
+  const projectRoot = await assertProjectRoot(projectPath);
+  const journalPath = path.join(projectRoot, transactionRelativePath);
+  if (!(await pathExists(journalPath))) {
+    return { status: 'not-required', recovered: false };
+  }
+  let journal;
+  try {
+    journal = await readJson(journalPath);
+  } catch (error) {
+    throw new DesignomeError('Interrupted installation journal is unreadable', {
+      code: 'INSTALLATION_JOURNAL_UNREADABLE',
+      details: [error.message],
+    });
+  }
+  if (journal.schemaVersion !== '1.0.0' || !Array.isArray(journal.backups)) {
+    throw new DesignomeError(
+      'Interrupted installation journal is incompatible',
+      {
+        code: 'INSTALLATION_JOURNAL_INCOMPATIBLE',
+        details: { schemaVersion: journal.schemaVersion ?? null },
+      },
+    );
+  }
+  if (journal.owner !== 'designome') {
+    throw new DesignomeError(
+      'Interrupted installation journal owner is invalid',
+      {
+        code: 'INSTALLATION_JOURNAL_INCOMPATIBLE',
+        details: { owner: journal.owner ?? null },
+      },
+    );
+  }
+  await rollbackTransaction(projectRoot, journal);
+  await fs.rm(journalPath, { force: true });
+  await removeEmptyParents(projectRoot, journalPath);
+  return {
+    status: 'recovered',
+    recovered: true,
+    transactionId: journal.transactionId,
+    restoredArtifactCount: journal.backups.length,
+  };
+}
+
+async function prepareInstallation(plan, writeActions, transactionId) {
+  const stagingDirectory = await fs.mkdtemp(
+    path.join(os.tmpdir(), `designome-install-${transactionId}-`),
+  );
+  const prepared = [];
+  try {
+    for (const [index, action] of writeActions.entries()) {
+      if (action.action === 'delete') {
+        prepared.push({ ...action, stagedPath: null });
+        continue;
+      }
+      const stagedPath = path.join(stagingDirectory, String(index));
+      await atomicWrite(stagedPath, action.content);
+      const stagedContent = await fs.readFile(stagedPath, 'utf8');
+      if (stagedContent !== action.content) {
+        throw new DesignomeError(
+          'Prepared installation artifact failed validation',
+          {
+            code: 'INSTALLATION_PREPARATION_INVALID',
+            details: { path: action.path },
+          },
+        );
+      }
+      prepared.push({ ...action, stagedPath });
+    }
+    return { stagingDirectory, prepared };
+  } catch (error) {
+    await fs.rm(stagingDirectory, { force: true, recursive: true });
+    throw error;
+  }
+}
+
+async function assertPlanStillCurrent(projectRoot, action) {
+  const absolutePath = path.join(projectRoot, action.path);
+  const current = await readTextIfExists(absolutePath);
+  const observed = current === null ? null : sha256(current);
+  if (observed !== (action.observedChecksum ?? null)) {
+    throw new DesignomeError('Target changed after installation planning', {
+      code: 'INSTALLATION_PLAN_STALE',
+      details: {
+        path: action.path,
+        plannedChecksum: action.observedChecksum ?? null,
+        observedChecksum: observed,
+        refusedOperations: [action.action],
+        resolution: 'Run a new diagnostic and dry-run before retrying.',
+      },
+    });
+  }
+}
+
+async function verifyAppliedActions(projectRoot, actions) {
+  const errors = [];
+  for (const action of actions) {
+    const absolutePath = path.join(projectRoot, action.path);
+    const current = await readTextIfExists(absolutePath);
+    if (action.action === 'delete') {
+      if (current !== null) errors.push(`${action.path} was not deleted`);
+    } else if (current !== action.content) {
+      errors.push(`${action.path} does not match its prepared content`);
+    }
+  }
+  if (errors.length > 0) {
+    throw new DesignomeError(
+      'Applied installation files failed validation before manifest commit',
+      {
+        code: 'INSTALLATION_APPLY_VERIFICATION_FAILED',
+        details: errors,
+      },
+    );
+  }
 }
 
 export async function planInstallation({
@@ -1394,6 +1650,13 @@ export async function planInstallation({
         'utf8',
       ),
     ],
+    [
+      'contract.json',
+      await fs.readFile(
+        path.join(pluginRoot, 'skills', 'designome-audit', 'contract.json'),
+        'utf8',
+      ),
+    ],
   ]);
   const instructionFiles = await discoverInstructionFiles(
     projectRoot,
@@ -1479,6 +1742,8 @@ export async function planInstallation({
     kind: 'user-owned',
     action: overridesCurrent === null ? 'create' : 'preserve',
     content: overridesCurrent === null ? renderOverridesCss() : null,
+    observedChecksum:
+      overridesCurrent === null ? null : sha256(overridesCurrent),
   });
   const auditConfigPath = path.join(projectRoot, auditConfigRelativePath);
   const auditConfigCurrent = await readTextIfExists(auditConfigPath);
@@ -1487,6 +1752,8 @@ export async function planInstallation({
     kind: 'user-owned',
     action: auditConfigCurrent === null ? 'create' : 'preserve',
     content: auditConfigCurrent === null ? renderAuditConfig() : null,
+    observedChecksum:
+      auditConfigCurrent === null ? null : sha256(auditConfigCurrent),
   });
 
   const conflicts = actions.filter((action) => action.action === 'conflict');
@@ -1574,6 +1841,8 @@ export async function planInstallation({
             ? 'unchanged'
             : 'update',
     content: manifestText,
+    observedChecksum:
+      currentManifestText === null ? null : sha256(currentManifestText),
   };
   actions.push(manifestAction);
 
@@ -1590,13 +1859,46 @@ export async function planInstallation({
       adapter: manifest.adapter,
       actions: actions.map(publicAction),
       conflictCount: conflicts.length,
+      transaction: {
+        schemaVersion: '1.0.0',
+        phases: [
+          'diagnostic',
+          'preflight',
+          'plan',
+          'prepare',
+          'validate-prepared',
+          'apply',
+          'verify',
+          'commit-manifest',
+          'cleanup',
+        ],
+        manifestWrittenLast: true,
+        rollbackOnFailure: true,
+      },
     },
   };
 }
 
 export async function installDesignDna(options) {
+  const transactionPath = path.join(
+    path.resolve(options.projectPath),
+    transactionRelativePath,
+  );
+  const recovery = options.dryRun
+    ? {
+        status: (await pathExists(transactionPath))
+          ? 'recovery-required'
+          : 'not-required',
+        recovered: false,
+        readOnly: true,
+      }
+    : await recoverInterruptedInstallation({
+        projectPath: options.projectPath,
+      });
   const plan = await planInstallation(options);
-  if (plan.status === 'conflict' || options.dryRun) return plan.publicPlan;
+  if (plan.status === 'conflict' || options.dryRun) {
+    return { ...plan.publicPlan, recovery };
+  }
   if (!options.instructionsReviewed) {
     throw new DesignomeError(
       'Writing requires --instructions-reviewed after the dry-run and instruction review',
@@ -1609,49 +1911,137 @@ export async function installDesignDna(options) {
   const writeActions = plan.actions.filter((action) =>
     ['create', 'update', 'delete'].includes(action.action),
   );
-  const backups = [];
+  const transactionId = randomUUID();
+  let prepared;
   try {
-    for (const action of writeActions) {
+    if (options.failureInjection === 'prepare') {
+      throw new Error('Injected preparation failure');
+    }
+    prepared = await prepareInstallation(plan, writeActions, transactionId);
+  } catch (error) {
+    throw new DesignomeError(
+      'Installation preparation failed before target writes',
+      {
+        code: 'INSTALLATION_PREPARATION_FAILED',
+        details: {
+          cause: error.message,
+          projectModified: false,
+          transactionId,
+        },
+      },
+    );
+  }
+
+  const journal = {
+    schemaVersion: '1.0.0',
+    transactionId,
+    owner: 'designome',
+    projectRoot: plan.projectRoot,
+    createdAt: new Date().toISOString(),
+    status: 'applying',
+    currentAction: null,
+    backups: [],
+  };
+  try {
+    await writeTransactionJournal(plan.projectRoot, journal);
+    const appliedBeforeManifest = [];
+    for (const [index, action] of prepared.prepared.entries()) {
       const absolutePath = path.join(plan.projectRoot, action.path);
-      backups.push({
-        path: absolutePath,
+      if (action.kind === 'manifest') {
+        journal.status = 'verifying-before-manifest';
+        await writeTransactionJournal(plan.projectRoot, journal);
+        await verifyAppliedActions(plan.projectRoot, appliedBeforeManifest);
+        journal.status = 'committing-manifest';
+        await writeTransactionJournal(plan.projectRoot, journal);
+      }
+      await assertPlanStillCurrent(plan.projectRoot, action);
+      journal.currentAction = action.path;
+      journal.backups.push({
+        path: action.path,
         content: await readTextIfExists(absolutePath),
       });
+      await writeTransactionJournal(plan.projectRoot, journal);
+      if (options.failureInjection === 'apply' && index === 1) {
+        throw new Error('Injected application failure');
+      }
       if (action.action === 'delete') {
         await fs.rm(absolutePath, { force: true });
       } else {
-        await atomicWrite(absolutePath, action.content);
+        await atomicWrite(
+          absolutePath,
+          await fs.readFile(action.stagedPath, 'utf8'),
+        );
       }
+      if (action.kind !== 'manifest') appliedBeforeManifest.push(action);
     }
   } catch (error) {
-    await rollbackWrites(backups);
+    await rollbackTransaction(plan.projectRoot, journal);
+    await fs.rm(path.join(plan.projectRoot, transactionRelativePath), {
+      force: true,
+    });
+    await removeEmptyParents(
+      plan.projectRoot,
+      path.join(plan.projectRoot, transactionRelativePath),
+    );
     throw new DesignomeError(
       'Installation failed and completed writes were rolled back',
       {
         code: 'INSTALLATION_ROLLED_BACK',
-        details: [error.message],
+        details: {
+          cause: error.message,
+          transactionId,
+          rollback: 'completed',
+          projectModified: false,
+        },
       },
     );
+  } finally {
+    await fs.rm(prepared.stagingDirectory, { force: true, recursive: true });
   }
 
   const verification = await verifyInstallation({
     projectPath: plan.projectRoot,
   });
   if (!verification.valid) {
-    await rollbackWrites(backups);
+    await rollbackTransaction(plan.projectRoot, journal);
+    await fs.rm(path.join(plan.projectRoot, transactionRelativePath), {
+      force: true,
+    });
+    await removeEmptyParents(
+      plan.projectRoot,
+      path.join(plan.projectRoot, transactionRelativePath),
+    );
     throw new DesignomeError(
       'Post-install verification failed and installation was rolled back',
       {
         code: 'POST_INSTALL_VERIFICATION_FAILED',
-        details: verification.errors,
+        details: {
+          verificationErrors: verification.errors,
+          transactionId,
+          rollback: 'completed',
+          projectModified: false,
+        },
       },
     );
   }
+
+  await fs.rm(path.join(plan.projectRoot, transactionRelativePath), {
+    force: true,
+  });
 
   return {
     ...plan.publicPlan,
     status: 'installed',
     verification: 'passed',
+    recovery,
+    transaction: {
+      ...plan.publicPlan.transaction,
+      transactionId,
+      status: 'committed',
+      preparedArtifactCount: writeActions.length,
+      appliedArtifactCount: writeActions.length,
+      rollback: 'not-required',
+    },
   };
 }
 
