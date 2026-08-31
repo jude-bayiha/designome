@@ -17,16 +17,18 @@ Installation converts an accepted Design DNA into technical artifacts for a spec
 | Existing design documentation       | Target-project user                 | Read only when declared; never rewrite or use as source evidence |
 | Existing project CSS and components | Target-project user                 | Do not mine for visual rules or overwrite                        |
 
-## Required sequence
+## Required transactional sequence
 
-1. Resolve and validate the explicit target path.
-2. Read repository and nested agent instructions applicable to planned files.
-3. Inspect technical facts only: framework, package manager, source roots, CSS entry points, aliases, scripts, installed compatible libraries, styling system, and declared design-documentation paths.
-4. Produce `integration-plan.json` and a dry-run diff.
+1. Run a read-only diagnostic.
+2. Resolve and validate the explicit target path and `package.json` prerequisite.
+3. Read repository and nested agent instructions applicable to planned files.
+4. Inspect technical facts only and produce `integration-plan.json` plus dry-run diff.
 5. Stop on ambiguity, prohibited scope, manual modification conflict, or duplicate unmanaged integration.
-6. Write managed files and record their hashes in `.designome/manifest.json`.
-7. Run relevant project checks.
-8. Execute the installer again and require a zero-diff result.
+6. Prepare files in an isolated temporary directory and validate prepared contents.
+7. Journal original content, recheck planned checksums, and apply each path atomically.
+8. Write `.designome/manifest.json` as the last planned target artifact.
+9. Verify the complete installation and rollback every applied action on failure.
+10. Remove transaction and staging artifacts, run project checks, and require a second-run zero diff.
 
 The current helper exposes the plan as JSON on standard output. The invoking skill may save that output in the extraction run as `integration-plan.json`.
 
@@ -77,7 +79,7 @@ Precedence never authorizes deletion or silent rewriting of existing documentati
 
 Installation also exports `designome-audit` to `.agents/skills/designome-audit`. Codex sessions started inside the target repository can therefore discover the audit workflow without relying on global plugin discovery. The exported skill resolves the accepted Design DNA and generated documentation from the project; it never treats implementation code as screenshot evidence.
 
-The installer creates `.designome/audit.config.json` once as a project-owned starting point. Projects may change the URL, routes, viewports, flows, and output directory without triggering a managed-file conflict. Verification requires the file to remain present but never rewrites its contents.
+The installer creates `.designome/audit.config.json` once as a project-owned starting point. Projects may change the URL, routes, viewports, scenarios, LTR or RTL directions, flows, requested audit layers, and output directory without triggering a managed-file conflict. Verification requires the file to remain present but never rewrites its contents.
 
 ## Repository-native styling
 
@@ -140,6 +142,8 @@ Before replacing a managed file, compare its current hash with the manifest. A m
 When a layout upgrade makes a previously managed documentation path obsolete, the installer deletes it only if the previous manifest owns it and its current checksum still matches. A missing or manually edited obsolete file is a blocking conflict. The migration therefore does not weaken managed-file protection or silently discard human edits.
 
 Writes require `--instructions-reviewed`. A conflict blocks the complete installation and returns exit code 2. The manifest is written last, and a failed write or post-install verification rolls completed changes back.
+
+`designome doctor` never repairs or writes. It reports an interrupted transaction as `INSTALLATION_RECOVERY_REQUIRED`. The next write-authorized install or orchestrated resume uses the journal to restore backups before it replans. See [Transactional installation and doctor](transactional-installation.md).
 
 ## Regeneration behavior
 

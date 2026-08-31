@@ -33,7 +33,7 @@ Stop if neither context can be resolved. Never guess which Design DNA or project
      --project <target-project>
    ```
 
-3. Establish available evidence: changed code, rendered screenshots, viewport set, state fixtures, interaction results, and accessibility checks.
+3. Establish available evidence: changed code, rendered screenshots, viewport set, state fixtures, interaction results, accessibility checks, and host-agent perceptual observations.
 4. Initialize or dry-run the executable audit when the helper is available:
 
    ```bash
@@ -45,9 +45,10 @@ Stop if neither context can be resolved. Never guess which Design DNA or project
 
 5. Route relevant matrix concepts and stress tests. Inspect long and unbroken content, nulls, extreme values, states, reflow, localization, modalities, data scale, media failure, visual stability, and motion mode as applicable.
 6. Run repository checks only inside the audited target project. Do not run checks from the Designome plugin source unless the plugin itself is the audit target.
-7. Produce `audit/plan.json`, `audit/evidence.json`, `audit/report.md`, and `audit/findings.json`. Each finding includes rule reference, evidence, severity, certainty, scope, suggested correction, and verification method.
-8. After browser or interaction evidence is populated, evaluate it with `--evidence audit/evidence.json --overwrite`. Keep observed mechanical risks separate from proposed calibration candidates.
-9. State which validation layers actually ran. Propose revisions, but do not modify the implementation without separate authorization.
+7. Read `audit/plan.json`, create an official adapter session with `createCaptureSession(plan)`, and record real host-browser observations through `recordCapture`, `recordInteraction`, `recordConsoleMessage`, `recordAccessibilityCheck`, and `recordPerceptualObservation`. Call `finalize()` to validate, normalize, and write external evidence. Do not assemble internal `audit-evidence.json` manually.
+8. Evaluate the adapter output with `--evidence <adapter-output> --overwrite`. The runtime produces canonical `audit/report.json`, Markdown from the same state, normalized `audit/evidence.json`, and `audit/findings.json`.
+9. Report installation, mechanical, perceptual, and usage layers independently with only `passed`, `failed`, `incomplete`, `not-requested`, or `unavailable`. Keep observed mechanical risks separate from host-agent perceptual observations and proposed calibration candidates.
+10. State which validation layers actually ran. Propose revisions, but do not modify the implementation without separate authorization.
 
 ## Explicit repair mode
 
@@ -63,3 +64,5 @@ Never patch an excluded calibration candidate, mutate accepted Design DNA, insta
 - Distinguish an implementation deviation from an incomplete or contradictory Design DNA.
 - Prefer the smallest corrective change and retain evidence for any proposed Design DNA revision.
 - Prefer the host in-app browser, then an existing target-project Playwright setup. Do not install managed Playwright without explicit authorization.
+- Provider state is canonical: `awaiting-evidence`, `evidence-received`, `running`, then `passed`, `failed`, or `incomplete`. Valid external evidence must never remain labeled as pending or unexecuted.
+- Perceptual comparison belongs to the host agent. Record its provenance, certainty, referenced source and target captures, and limitations; never describe it as a deterministic runtime check.

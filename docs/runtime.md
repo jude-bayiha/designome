@@ -4,6 +4,44 @@ The Designome runtime supports the agent skills with deterministic operations. I
 
 ## Commands
 
+### Run the complete resumable workflow
+
+```bash
+designome run \
+  --source /absolute/reference.png \
+  --project /absolute/target-project \
+  --css-entry src/styles/globals.css
+
+designome run --resume
+designome run --resume --accept-dna
+designome run --resume --host-event implementation-complete
+designome run --resume \
+  --host-event evidence-complete \
+  --evidence /absolute/target-project/.designome/runs/<workflow-id>/audit/external-evidence.json
+```
+
+The state machine persists `workflow-state.json`, never repeats completed steps, and exposes one explicit owner for each runtime, host-agent, or human action. The only mandatory normal-workflow human decision is `--accept-dna`. See [Orchestration and host-agent contract](orchestration-and-host-contract.md).
+
+### Diagnose a target without writing
+
+```bash
+designome doctor \
+  --project /absolute/target-project \
+  --dna /absolute/accepted-design-dna.json
+```
+
+The result always includes `readOnly` and `writesPerformed`. Missing `package.json` returns `PROJECT_PACKAGE_JSON_MISSING` before any target write.
+
+### Initialize extraction separately
+
+```bash
+designome extract \
+  --output .designome/runs/<run-id> \
+  --source /absolute/reference.png
+```
+
+This compatibility command initializes deterministic metadata and returns a host-agent handoff. It does not perform visual reasoning. `init-run` remains available as the lower-level equivalent.
+
 ### Initialize an extraction run
 
 ```bash
@@ -103,14 +141,14 @@ node bin/designome.mjs audit \
   --provider in-app-browser
 ```
 
-The user-owned audit config declares the base URL, routes, viewports, flows, and output directory. The command verifies the managed installation, validates the accepted Design DNA, resolves a browser provider, and initializes `plan.json`, `evidence.json`, `findings.json`, and `report.md`.
+The user-owned audit config declares the base URL, routes, viewports, scenarios, directions, flows, requested layers, and output directory. The command verifies the managed installation, validates the accepted Design DNA, resolves a browser provider, and initializes `plan.json`, `findings.json`, canonical `report.json`, and `report.md`. It does not create final evidence before a provider actually supplies observations.
 
-After the host browser or project runner populates evidence, evaluate it without changing implementation code:
+After the host browser or project runner uses `createCaptureSession(plan)` and finalizes `external-evidence.json`, evaluate it without changing implementation code:
 
 ```bash
 node bin/designome.mjs audit \
   --project <target-project> \
-  --evidence audit/evidence.json \
+  --evidence audit/external-evidence.json \
   --overwrite
 ```
 
@@ -128,14 +166,16 @@ node bin/designome.mjs audit \
 
 The repair plan includes observed finding IDs, excludes proposed calibration candidates, caps the loop at three passes, and forbids accepted Design DNA mutation. It guides the agent; the deterministic helper does not edit implementation source files itself.
 
-Provider resolution never silently installs dependencies. `auto` selects an existing target-project Playwright setup when one is detected, otherwise it produces a static-only plan. `in-app-browser` records that the host agent owns browser execution. `managed-playwright` remains authorization-required unless `--browser-install-authorized` records a separate reviewed setup proposal; the audit command still performs no dependency mutation.
+Provider resolution never silently installs dependencies. `auto` selects an existing target-project Playwright setup when one is detected, otherwise it produces a static-only plan. `in-app-browser` records that the host agent owns browser execution. `managed-playwright` remains `provider-unavailable` unless a separately implemented provider exists; `--browser-install-authorized` only records a reviewed setup proposal and the audit command still performs no dependency mutation.
+
+Provider reports use the validated states `not-requested`, `provider-unavailable`, `awaiting-evidence`, `evidence-received`, `running`, `passed`, `failed`, and `incomplete`. Installation, mechanical, perceptual, and usage layers are reported separately.
 
 ## Exit behavior
 
-| Exit | Meaning                                                  |
-| ---: | -------------------------------------------------------- |
-|    0 | Command completed or installation is valid               |
-|    1 | Invalid input, contract failure, or verification failure |
-|    2 | Installation conflict; no write was performed            |
+| Exit | Meaning                                                                      |
+| ---: | ---------------------------------------------------------------------------- |
+|    0 | Command completed or installation is valid                                   |
+|    1 | Invalid input, diagnostic failure, contract failure, or verification failure |
+|    2 | Installation conflict; no write was performed                                |
 
 Commands emit machine-readable JSON. Errors are emitted as JSON on standard error with a stable code, message, and details array.

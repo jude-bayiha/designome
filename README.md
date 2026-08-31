@@ -10,7 +10,11 @@ The repository now contains the first executable vertical slice:
 - a versioned matrix of eight analysis axes and 18 cross-cutting concepts;
 - 13 modular prompts for evidence intake, analysis, synthesis, integration, and audit;
 - deterministic screenshot metadata, Design DNA validation, installation, and verification commands;
+- one persistent `designome run` workflow with explicit human and host-agent handoffs and deterministic resume;
+- a read-only `designome doctor` plus transactional prepare, journal, apply, verify, manifest, and rollback installation;
 - executable audit planning with explicit browser-provider and evidence-layer boundaries;
+- a versioned browser capture adapter and canonical provider state shared by JSON and Markdown reports;
+- independent installation, mechanical, perceptual, and usage audit layers;
 - bounded repair planning and project-aware shadcn/ui component mapping;
 - a complete 23-file project-local design dossier spanning foundations, components, behavior, and governance, plus repository-native integration context;
 - a project-local `designome-audit` skill that fresh Codex sessions can discover;
@@ -52,6 +56,9 @@ Start with:
 - [Concept matrix](docs/concept-matrix.md)
 - [Target-project installation contract](docs/installation-contract.md)
 - [Rendered audit contract](docs/audit-contract.md)
+- [Orchestration and host-agent contract](docs/orchestration-and-host-contract.md)
+- [Browser evidence adapter](docs/browser-evidence-adapter.md)
+- [Transactional installation and doctor](docs/transactional-installation.md)
 - [Integration and calibration matrix](docs/integration-and-calibration-matrix.md)
 - [Runtime and CLI](docs/runtime.md)
 - [Reference screenshot analysis](docs/reference-analysis.md)
@@ -71,11 +78,12 @@ Husky formats staged files and validates Conventional Commit messages. CI runs t
 
 ## Agent workflow
 
-1. Invoke `$designome-extract` with representative screenshot paths.
-2. Review the generated draft and explicitly accept the Design DNA.
-3. Invoke `$designome-install` with the accepted file and target project.
-4. Ask the coding agent to generate a new interface, such as user management.
-5. Invoke `$designome-audit` against the implementation and accepted rules.
+1. Start `designome run --source <capture> --project <directory>`.
+2. Follow the `$designome-extract` host handoff and resume.
+3. Review and accept the draft Design DNA once.
+4. Let the transactional runtime install it, then follow the host implementation handoff.
+5. Record real browser and perceptual observations through the official adapter.
+6. Resume for a consolidated four-layer audit result.
 
 That forward test measures the actual product outcome: whether extracted knowledge improves a new UI without copying an existing screen.
 
