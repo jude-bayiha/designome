@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.6.0](https://github.com/jude-bayiha/designome/compare/v1.5.0...v1.6.0) (2026-08-31)
+
+
+### Features
+
+* **audit:** normalize external browser evidence ([3d01093](https://github.com/jude-bayiha/designome/commit/3d010930f65f0f6180a73f5e625984540d577178))
+* **installer:** add transactional diagnostics ([c4295ed](https://github.com/jude-bayiha/designome/commit/c4295ed970bb4d230d93b560645789f21f41625b))
+* orchestrate resumable Designome workflows ([7c7809c](https://github.com/jude-bayiha/designome/commit/7c7809c6be3a35ecf7a123e3efe3b2dcaa67b3e6))
+* **repo:** orchestrate resumable workflows ([7aeb39e](https://github.com/jude-bayiha/designome/commit/7aeb39ec84e132f18b307b4b1cdcc65d54096554))
+
 ## [1.5.0](https://github.com/jude-bayiha/designome/compare/v1.4.0...v1.5.0) (2026-08-18)
 
 
