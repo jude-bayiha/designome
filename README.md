@@ -33,6 +33,116 @@ The host agent performs multimodal reasoning with its installed model and accoun
 6. Specialized prompts produce fragments; synthesis resolves the canonical Design DNA.
 7. Generated files, user overrides, and managed guidance remain separate and idempotent.
 
+## Quick start
+
+Requirements: Node.js 24+ and pnpm 11.5.2. From this repository, use
+`pnpm designome <command>` in place of `designome <command>` if the CLI is
+not installed on `PATH`.
+
+Start the complete workflow from a dedicated workspace directory:
+
+```bash
+designome run \
+  --source /absolute/reference.png \
+  --project /absolute/target-project \
+  --workspace /absolute/designome-workspace
+```
+
+The command stops at explicit handoffs instead of pretending that the
+deterministic runtime can perform visual reasoning, generate the interface, or
+control the host browser. Follow the returned JSON handoff, then resume from
+the same workspace:
+
+```bash
+# After the host agent writes the draft Design DNA
+designome run --resume --workspace /absolute/designome-workspace
+
+# The only mandatory human approval in the normal workflow
+designome run --resume \
+  --workspace /absolute/designome-workspace \
+  --accept-dna
+
+# After the host agent implements or modifies the target interface
+designome run --resume \
+  --workspace /absolute/designome-workspace \
+  --host-event implementation-complete
+
+# After the host browser records and finalizes the requested evidence
+designome run --resume \
+  --workspace /absolute/designome-workspace \
+  --host-event evidence-complete \
+  --evidence /absolute/external-evidence.json
+```
+
+Every completed step is persisted in `workflow-state.json`. A later
+`designome run --resume --workspace <directory>` continues from the first
+unfinished or failed step without repeating extraction, acceptance, or another
+completed operation.
+
+Run a read-only project diagnostic independently when needed:
+
+```bash
+designome doctor \
+  --project /absolute/target-project \
+  --dna /absolute/accepted-design-dna.json
+```
+
+`doctor` reports `readOnly: true` and `writesPerformed: false`. A missing
+`package.json`, invalid or unaccepted Design DNA, managed-file conflict, or
+incompatible provider fails before installation writes begin. The standalone
+`extract`, `install`, and `audit` commands remain supported; see
+[Runtime and CLI](docs/runtime.md) for their complete options.
+
+## Browser evidence boundary
+
+The runtime writes a capture plan, the host agent drives its real browser, and
+the versioned `designome/audit` adapter validates and normalizes observations.
+The audit engine only evaluates the finalized evidence:
+
+```js
+import { createCaptureSession } from 'designome/audit';
+
+const session = createCaptureSession(plan, {
+  provider: 'in-app-browser',
+  outputPath: 'audit/external-evidence.json',
+});
+
+await session.recordCapture(capture);
+await session.recordInteraction(interaction);
+await session.recordConsoleMessage(consoleMessage);
+await session.recordAccessibilityCheck(accessibilityCheck);
+await session.recordPerceptualObservation(perceptualObservation);
+await session.finalize();
+```
+
+The adapter writes audit evidence schema `1.0.0`; incompatible versions fail
+closed. Incomplete route, viewport, scenario, direction, or interaction
+coverage fails finalization unless the host deliberately requests an
+`incomplete` report. See the [browser evidence adapter contract](docs/browser-evidence-adapter.md)
+and its [runnable example](examples/browser-adapter.reference.mjs).
+
+## Audit result semantics
+
+Browser-provider execution uses one canonical state in both JSON and Markdown:
+`not-requested`, `provider-unavailable`, `awaiting-evidence`,
+`evidence-received`, `running`, `passed`, `failed`, or `incomplete`. Valid
+external evidence therefore never remains described as pending provider
+execution.
+
+The final result keeps four layers independent:
+
+| Layer        | What it establishes                                                   | Evaluator                         |
+| ------------ | --------------------------------------------------------------------- | --------------------------------- |
+| Installation | Accepted DNA, manifest, ownership, checksums, and artifact integrity  | Deterministic runtime             |
+| Mechanical   | Geometry, overflow, clipping, measurable constraints, console errors  | Runtime over browser observations |
+| Perceptual   | Hierarchy, density, composition, rhythm, palette, and visual fidelity | Host agent, with provenance       |
+| Usage        | Navigation, interactions, focus, states, responsive behavior, LTR/RTL | Browser observations and runtime  |
+
+Each layer is reported as `passed`, `failed`, `incomplete`, `not-requested`,
+or `unavailable`. A passing mechanical layer never implies that perceptual or
+usage evaluation passed. The runtime never modifies the accepted Design DNA
+during audit.
+
 ## Repository map
 
 ```text
@@ -65,8 +175,6 @@ Start with:
 - [Design DNA v0.2 example](examples/design-dna.reference-v0.2.json)
 
 ## Local quality checks
-
-Requirements: Node.js 24+ and pnpm 11.5.2.
 
 ```bash
 pnpm install
