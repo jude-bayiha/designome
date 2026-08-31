@@ -4,6 +4,7 @@ import path from 'node:path';
 
 import { runAudit } from '../src/runtime/audit.mjs';
 import { assertValidDesignDna } from '../src/runtime/design-dna.mjs';
+import { doctorProject } from '../src/runtime/doctor.mjs';
 import { DesignomeError } from '../src/runtime/errors.mjs';
 import { readJson } from '../src/runtime/files.mjs';
 import {
@@ -11,6 +12,10 @@ import {
   verifyInstallation,
 } from '../src/runtime/install.mjs';
 import { initializeRun } from '../src/runtime/run.mjs';
+import {
+  initializeWorkflow,
+  resumeWorkflow,
+} from '../src/runtime/orchestrator.mjs';
 
 function parseArguments(values) {
   const options = new Map();
@@ -30,6 +35,8 @@ function parseArguments(values) {
         'browser-install-authorized',
         'overwrite',
         'require-accepted',
+        'resume',
+        'accept-dna',
         'help',
       ].includes(name)
     ) {
@@ -98,6 +105,15 @@ function printHelp() {
   process.stdout.write(`Designome deterministic helper\n\n`);
   process.stdout.write(`Commands:\n`);
   process.stdout.write(
+    `  run --source <capture> [--source <capture>] --project <dir> [--workspace <dir>] [--provider <name>] [--css-entry <file>]\n`,
+  );
+  process.stdout.write(
+    `  run --resume [--workspace <dir>] [--accept-dna] [--host-event <event>] [--evidence <file>]\n`,
+  );
+  process.stdout.write(
+    `  extract --output <dir> --source <capture> [--source <capture>] [--motion <mode>] [--project <dir>]\n`,
+  );
+  process.stdout.write(
     `  init-run --output <dir> --image <file> [--image <file>] [--motion <mode>] [--project <dir>]\n`,
   );
   process.stdout.write(
@@ -110,6 +126,9 @@ function printHelp() {
     `  install --dna <file> --project <dir> [options] --instructions-reviewed\n`,
   );
   process.stdout.write(`  verify-install --project <dir>\n`);
+  process.stdout.write(
+    `  doctor --project <dir> [--dna <accepted-design-dna.json>]\n`,
+  );
   process.stdout.write(
     `  audit --project <dir> [--config <file>] [--output <dir>] [--provider <name>] [--evidence <file>] [--mode <report|repair>] [--max-passes <1|2|3>] [--implementation-authorized] [--browser-install-authorized] [--dry-run] [--overwrite]\n`,
   );
@@ -128,7 +147,71 @@ async function main() {
   }
 
   let result;
-  if (command === 'init-run') {
+  if (command === 'run') {
+    assertArguments(parsed, [
+      'source',
+      'project',
+      'workspace',
+      'motion',
+      'provider',
+      'css-entry',
+      'resume',
+      'accept-dna',
+      'host-event',
+      'evidence',
+      'help',
+    ]);
+    const resume = Boolean(parsed.options.get('resume'));
+    if (resume) {
+      if (parsed.options.has('source') || parsed.options.has('project')) {
+        throw new DesignomeError(
+          '--resume cannot be combined with --source or --project',
+          { code: 'INVALID_ARGUMENTS' },
+        );
+      }
+      result = await resumeWorkflow({
+        workspacePath: option(parsed, 'workspace', { fallback: process.cwd() }),
+        acceptDesignDna: Boolean(parsed.options.get('accept-dna')),
+        hostEvent: option(parsed, 'host-event', { fallback: null }),
+        evidencePath: option(parsed, 'evidence', { fallback: null }),
+      });
+    } else {
+      if (
+        parsed.options.has('accept-dna') ||
+        parsed.options.has('host-event')
+      ) {
+        throw new DesignomeError(
+          '--accept-dna and --host-event require --resume',
+          { code: 'INVALID_ARGUMENTS' },
+        );
+      }
+      result = await initializeWorkflow({
+        sourcePaths: option(parsed, 'source', {
+          required: true,
+          multiple: true,
+        }),
+        projectPath: option(parsed, 'project', { required: true }),
+        workspacePath: option(parsed, 'workspace', { fallback: process.cwd() }),
+        motionMode: option(parsed, 'motion', { fallback: 'off' }),
+        provider: option(parsed, 'provider', { fallback: 'in-app-browser' }),
+        cssEntry: option(parsed, 'css-entry', { fallback: null }),
+      });
+    }
+  } else if (command === 'extract') {
+    assertArguments(parsed, ['output', 'source', 'motion', 'project', 'help']);
+    result = await initializeRun({
+      outputDirectory: option(parsed, 'output', { required: true }),
+      imagePaths: option(parsed, 'source', { required: true, multiple: true }),
+      motionMode: option(parsed, 'motion', { fallback: 'off' }),
+      targetProjectPath: option(parsed, 'project', { fallback: null }),
+    });
+    result = {
+      ...result,
+      executionOwner: 'host-agent',
+      handoff:
+        'The runtime initialized deterministic evidence metadata. Invoke the designome-extract skill for host-model visual reasoning.',
+    };
+  } else if (command === 'init-run') {
     assertArguments(parsed, ['output', 'image', 'motion', 'project', 'help']);
     result = await initializeRun({
       outputDirectory: option(parsed, 'output', { required: true }),
@@ -195,6 +278,14 @@ async function main() {
       projectPath: option(parsed, 'project', { required: true }),
     });
     if (!result.valid) process.exitCode = 1;
+  } else if (command === 'doctor') {
+    assertArguments(parsed, ['project', 'dna', 'help']);
+    result = await doctorProject({
+      projectPath: option(parsed, 'project', { required: true }),
+      dnaPath: option(parsed, 'dna', { fallback: null }),
+      requireDna: true,
+    });
+    if (result.status !== 'passed') process.exitCode = 1;
   } else if (command === 'audit') {
     assertArguments(parsed, [
       'project',

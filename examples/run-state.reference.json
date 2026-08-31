@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0.0",
+  "workflowId": "workflow-reference",
+  "revision": 3,
+  "owner": "designome",
+  "status": "awaiting-host",
+  "currentStep": "implement-interface",
+  "runDirectory": "/tmp/designome/.designome/runs/workflow-reference",
+  "projectPath": "/tmp/designome/target-project",
+  "sourcePaths": ["/tmp/designome/reference.png"],
+  "dnaPath": "/tmp/designome/.designome/runs/workflow-reference/design-dna.json",
+  "steps": [
+    {
+      "id": "doctor",
+      "owner": "designome-runtime",
+      "status": "completed",
+      "attempts": 1,
+      "artifacts": []
+    },
+    {
+      "id": "initialize-run",
+      "owner": "designome-runtime",
+      "status": "completed",
+      "attempts": 1,
+      "artifacts": ["run-plan.json"]
+    },
+    {
+      "id": "extract-design-dna",
+      "owner": "host-agent",
+      "status": "completed",
+      "attempts": 1,
+      "artifacts": ["design-dna.json"]
+    },
+    {
+      "id": "accept-design-dna",
+      "owner": "human",
+      "status": "completed",
+      "attempts": 1,
+      "artifacts": ["design-dna.json"]
+    },
+    {
+      "id": "install-design-dna",
+      "owner": "designome-runtime",
+      "status": "completed",
+      "attempts": 1,
+      "artifacts": [".designome/manifest.json"]
+    },
+    {
+      "id": "implement-interface",
+      "owner": "host-agent",
+      "status": "awaiting",
+      "attempts": 1,
+      "artifacts": []
+    },
+    {
+      "id": "capture-browser-evidence",
+      "owner": "host-agent",
+      "status": "pending",
+      "attempts": 0,
+      "artifacts": []
+    },
+    {
+      "id": "evaluate-audit",
+      "owner": "designome-runtime",
+      "status": "pending",
+      "attempts": 0,
+      "artifacts": []
+    },
+    {
+      "id": "finalize",
+      "owner": "designome-runtime",
+      "status": "pending",
+      "attempts": 0,
+      "artifacts": []
+    }
+  ]
+}
