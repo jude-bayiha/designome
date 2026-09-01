@@ -9,6 +9,14 @@ Every Designome stage follows this contract.
 - Never use an existing target-project UI, stylesheet, token, or component as evidence for the extracted design.
 - Do not infer exact pixel values, font families, icon packages, breakpoints, easing curves, or implementation libraries unless explicit evidence establishes them.
 
+## Normalized request policy
+
+- The host agent interprets conversational instructions and writes a schema-valid `request-contract.json` before the operation. The deterministic runtime validates and persists that contract; it does not interpret natural language.
+- Normalize only Designome-relevant intent, paths, evidence routing, constraints, preferences, and explicit authorization. Record ambiguous instructions under `interpretation.ambiguities` and meaningless fragments under `interpretation.ignoredFragments`; never convert either into a design claim or permission.
+- Execute paths, modes, preferences, and authorization only when they match the validated request contract. A contract never expands the user's scope.
+- For extraction sources, `only` and `exclude` are hard evidence-routing constraints, `prefer` is a priority, and `all` permits every visibly supported subject. A directive cannot make absent evidence observable.
+- A user-supplied target use case is product context, not screenshot evidence. Keep source observations canonical and express unsupported cross-surface adaptation as `proposed`.
+
 ## Epistemic status
 
 Use exactly one status per claim:

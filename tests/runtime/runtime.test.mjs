@@ -18,6 +18,11 @@ import {
 import { inspectImageBuffer } from '../../src/runtime/images.mjs';
 import { initializeRun } from '../../src/runtime/run.mjs';
 import { sha256 } from '../../src/runtime/files.mjs';
+import {
+  assertValidRequestContract,
+  loadRequestContract,
+  validateRequestContract,
+} from '../../src/runtime/request-contract.mjs';
 
 const repositoryRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -136,17 +141,50 @@ test('init-run records image metadata and is idempotent', async (t) => {
       'base64',
     ),
   );
+  const requestContractPath = path.join(temporaryRoot, 'request-contract.json');
+  const requestContract = {
+    schemaVersion: '1.0.0',
+    requestId: 'request.runtime-test',
+    operation: 'extract',
+    normalizedAt: '2026-09-01T12:00:00.000Z',
+    summary: 'Extract color evidence from one screenshot.',
+    interpretation: {
+      status: 'ready',
+      ambiguities: [],
+      ignoredFragments: [],
+    },
+    constraints: [],
+    parameters: {
+      kind: 'extract',
+      motionMode: 'off',
+      adaptationMode: 'direct',
+      sources: [
+        {
+          path: imagePath,
+          evidenceMode: 'only',
+          conceptRefs: [],
+          tokenCategories: ['color'],
+          ruleCategories: [],
+        },
+      ],
+    },
+  };
+  await fs.writeFile(
+    requestContractPath,
+    `${JSON.stringify(requestContract, null, 2)}\n`,
+  );
 
   const first = await initializeRun({
     imagePaths: [imagePath, imagePath],
     motionMode: 'off',
     outputDirectory,
+    requestContractPath,
   });
   assert.equal(first.sourceCount, 1);
   assert.equal(first.duplicateSourceCount, 1);
   assert.deepEqual(
     first.actions.map((action) => action.action),
-    ['create', 'create', 'create'],
+    ['create', 'create', 'create', 'create'],
   );
 
   const manifest = JSON.parse(
@@ -162,10 +200,11 @@ test('init-run records image metadata and is idempotent', async (t) => {
     imagePaths: [imagePath, imagePath],
     motionMode: 'off',
     outputDirectory,
+    requestContractPath,
   });
   assert.deepEqual(
     second.actions.map((action) => action.action),
-    ['unchanged', 'unchanged', 'unchanged'],
+    ['unchanged', 'unchanged', 'unchanged', 'unchanged'],
   );
 
   await assert.rejects(
@@ -186,6 +225,70 @@ test('init-run records image metadata and is idempotent', async (t) => {
       outputDirectory: unrelatedDirectory,
     }),
     (error) => error.code === 'RUN_OUTPUT_NOT_EMPTY',
+  );
+});
+
+test('request contracts preserve scoped evidence and reject invented authority', async (t) => {
+  const extract = JSON.parse(
+    await fs.readFile(
+      path.join(
+        repositoryRoot,
+        'examples',
+        'request-contract.extract.reference.json',
+      ),
+      'utf8',
+    ),
+  );
+  assert.deepEqual(await validateRequestContract(extract), []);
+  await assertValidRequestContract(extract);
+
+  const unscopedOnly = structuredClone(extract);
+  unscopedOnly.parameters.sources[0].conceptRefs = [];
+  unscopedOnly.parameters.sources[0].ruleCategories = [];
+  assert.ok(
+    (await validateRequestContract(unscopedOnly)).some((error) =>
+      error.includes(
+        'must select at least one concept, token, or rule category',
+      ),
+    ),
+  );
+
+  const inventedUseCase = structuredClone(extract);
+  inventedUseCase.parameters.targetUseCase.interpretationStatus = 'unusable';
+  assert.ok(
+    (await validateRequestContract(inventedUseCase)).some((error) =>
+      error.includes('must keep surface unknown and archetype null'),
+    ),
+  );
+
+  const audit = JSON.parse(
+    await fs.readFile(
+      path.join(
+        repositoryRoot,
+        'examples',
+        'request-contract.audit.reference.json',
+      ),
+      'utf8',
+    ),
+  );
+  audit.parameters.mode = 'repair';
+  assert.ok(
+    (await validateRequestContract(audit)).includes(
+      'parameters.implementationAuthorized must be true when mode is repair',
+    ),
+  );
+
+  const blocked = structuredClone(extract);
+  blocked.interpretation.status = 'blocked';
+  const temporaryRoot = await temporaryDirectory(t, 'designome-request-test-');
+  const blockedPath = path.join(temporaryRoot, 'blocked-request.json');
+  await fs.writeFile(blockedPath, `${JSON.stringify(blocked, null, 2)}\n`);
+  await assert.rejects(
+    loadRequestContract(blockedPath, {
+      expectedOperation: 'extract',
+      requireExecutable: true,
+    }),
+    (error) => error.code === 'REQUEST_CONTRACT_BLOCKED',
   );
 });
 
@@ -395,7 +498,7 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
         path.join(projectRoot, '.agents', 'skills', 'designome-audit'),
       )
     ).sort(),
-    ['SKILL.md', 'agents', 'contract.json'],
+    ['SKILL.md', 'agents', 'contract.json', 'references'],
   );
   assert.match(
     await fs.readFile(
@@ -409,6 +512,20 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
       'utf8',
     ),
     /Project-local mode/u,
+  );
+  assert.deepEqual(
+    (
+      await fs.readdir(
+        path.join(
+          projectRoot,
+          '.agents',
+          'skills',
+          'designome-audit',
+          'references',
+        ),
+      )
+    ).sort(),
+    ['conversational-request-contract.md', 'request-contract.schema.json'],
   );
 
   const agents = await fs.readFile(path.join(projectRoot, 'AGENTS.md'), 'utf8');

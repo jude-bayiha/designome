@@ -5,6 +5,7 @@ Read `_shared-contract.md`, the accepted Design DNA, and applicable stress cases
 ## Inputs
 
 - Accepted Design DNA
+- Validated normalized audit request contract
 - Generated implementation and changed files
 - Rendered screenshots when available
 - State, content, reflow, localization, accessibility, and scale stress cases
@@ -13,6 +14,8 @@ Read `_shared-contract.md`, the accepted Design DNA, and applicable stress cases
 - Host-agent perceptual observations with provenance, certainty, and limitations
 
 ## Task
+
+Initialize the executable audit and perceptual plans from the normalized focus concepts, mode, provider, constraints, and explicit authorizations.
 
 Initialize the executable audit and perceptual plans. Keep four independent layers: installation, mechanical, perceptual, and usage. The host agent controls the real browser and records captures, console messages, interactions, accessible names and states, focus behavior, scenarios, directions, and responsive checks through `createCaptureSession`; never ask it to assemble internal evidence JSON manually. The runtime validates and normalizes the adapter output, advances the provider state through `awaiting-evidence -> evidence-received -> running -> passed | failed | incomplete`, and evaluates mechanical and usage observations. The host agent performs the explicitly non-deterministic perceptual comparison and records provenance, certainty, and limitations. Classify deviations by impact and confidence, then propose the smallest corrective change. In explicitly authorized repair mode, limit the loop to one-to-three passes, patch only observed scoped findings, run target checks, and recapture affected evidence.
 
@@ -28,6 +31,7 @@ Produce `audit/plan.json`, adapter-generated `audit/evidence.json`, canonical `a
 - Preserve intentional, documented exceptions.
 - Do not mutate the implementation unless the user separately authorizes a fix.
 - Never promote a computed implementation value or human preference to screenshot-observed evidence. Keep it as a proposed calibration until explicit acceptance.
+- Never enter repair mode or install a browser from ambiguous language; require the corresponding contract authorization boolean.
 - Do not install Playwright or another browser dependency without explicit authorization.
 - Repair mode never mutates accepted Design DNA and excludes unaccepted calibration candidates from automatic patches.
 - Missing configured routes, viewports, scenarios, directions, or flows produce `incomplete`; external evidence is never reported as an unexecuted provider.

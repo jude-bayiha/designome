@@ -1,5 +1,6 @@
 {
   "matrixVersion": "0.2.0",
+  "requestContractVersion": "1.0.0",
   "epistemicStatuses": ["observed", "inferred", "proposed", "unknown"],
   "axes": [
     {
@@ -978,7 +979,12 @@
       "order": 0,
       "kind": "orchestrator",
       "file": "prompts/00-orchestrator.md",
-      "consumes": ["user request", "screenshots", "run configuration"],
+      "consumes": [
+        "user request",
+        "normalized request contract",
+        "screenshots",
+        "run configuration"
+      ],
       "produces": ["run plan", "stage routing", "completion report"]
     },
     {
@@ -986,11 +992,16 @@
       "order": 1,
       "kind": "intake",
       "file": "prompts/01-source-evidence.md",
-      "consumes": ["screenshots", "known source context"],
+      "consumes": [
+        "screenshots",
+        "normalized request contract",
+        "known source context"
+      ],
       "produces": [
         "source-manifest.json",
         "evidence-index.json",
-        "run-context.json"
+        "run-context.json",
+        "compatibility-report.json"
       ]
     },
     {
@@ -1001,6 +1012,7 @@
       "consumes": [
         "screenshots",
         "source manifest",
+        "normalized request contract",
         "evidence contract",
         "axis 1 matrix slice"
       ],
@@ -1014,6 +1026,7 @@
       "consumes": [
         "screenshots",
         "source manifest",
+        "normalized request contract",
         "evidence contract",
         "axis 2 matrix slice"
       ],
@@ -1027,6 +1040,7 @@
       "consumes": [
         "screenshots",
         "source manifest",
+        "normalized request contract",
         "evidence contract",
         "axis 3 matrix slice",
         "motion mode"
@@ -1041,6 +1055,7 @@
       "consumes": [
         "screenshots",
         "source manifest",
+        "normalized request contract",
         "evidence contract",
         "axis 4 matrix slice"
       ],
@@ -1054,6 +1069,7 @@
       "consumes": [
         "screenshots",
         "source manifest",
+        "normalized request contract",
         "evidence contract",
         "axis 5 matrix slice"
       ],
@@ -1067,6 +1083,7 @@
       "consumes": [
         "screenshots",
         "source manifest",
+        "normalized request contract",
         "evidence contract",
         "axis 6 matrix slice"
       ],
@@ -1080,6 +1097,7 @@
       "consumes": [
         "screenshots",
         "source manifest",
+        "normalized request contract",
         "evidence contract",
         "axis 7 matrix slice"
       ],
@@ -1093,6 +1111,7 @@
       "consumes": [
         "screenshots",
         "source manifest",
+        "normalized request contract",
         "evidence contract",
         "axis 8 matrix slice"
       ],
@@ -1105,6 +1124,7 @@
       "file": "prompts/10-synthesis.md",
       "consumes": [
         "source manifest",
+        "normalized request contract",
         "all axis stage outputs",
         "concept matrix"
       ],
@@ -1122,6 +1142,7 @@
       "file": "prompts/11-project-integration.md",
       "consumes": [
         "accepted Design DNA",
+        "normalized request contract",
         "target project path",
         "integration policy"
       ],
@@ -1141,6 +1162,7 @@
       "file": "prompts/12-generation-audit.md",
       "consumes": [
         "accepted Design DNA",
+        "normalized request contract",
         "generated implementation",
         "rendered screenshots when available",
         "stress cases",

@@ -1657,6 +1657,20 @@ export async function planInstallation({
         'utf8',
       ),
     ],
+    [
+      'references/request-contract.schema.json',
+      await fs.readFile(
+        path.join(pluginRoot, 'schemas', 'request-contract.schema.json'),
+        'utf8',
+      ),
+    ],
+    [
+      'references/conversational-request-contract.md',
+      await fs.readFile(
+        path.join(pluginRoot, 'docs', 'conversational-request-contract.md'),
+        'utf8',
+      ),
+    ],
   ]);
   const instructionFiles = await discoverInstructionFiles(
     projectRoot,

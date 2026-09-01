@@ -6,9 +6,12 @@ Read `_shared-contract.md` and `docs/installation-contract.md` before executing 
 
 - Accepted, schema-valid `design-dna.json`
 - Authorized target-project path
+- Validated normalized install request contract
 - Integration policy, including documentation directory, existing-rule paths, rule precedence, styling strategy, UI-kit preference, and optional dry-run flag
 
 ## Task
+
+Verify that every resolved path, preference, constraint, and authorization matches the validated install request contract before planning any write.
 
 Run `designome doctor` as a read-only diagnostic, inspect only technical project facts, build a preflight and installation plan, then install managed Designome artifacts through the transactional prepare, validate, apply, verify, manifest-commit, and cleanup sequence. Detect repository-native styling systems such as Tailwind and shadcn/ui without treating their visual output as evidence. Compile every entry in the concept matrix `documentationProjection` into the target project and add its generated index. Every projected document is mandatory even when its only honest content is an `unknown` boundary or `proposed` stress test. Also generate a proposed component mapping, namespaced token CSS, a compact agent-guidance block, optional skill files, a manifest with checksums, and a human-owned overrides file. Run a dry-run before writes and verify a second run produces no diff.
 
@@ -19,6 +22,7 @@ Produce the read-only diagnostic, `integration-plan.json`, explicit transaction 
 ## Guardrails
 
 - Installation requires an explicit target path and accepted Design DNA.
+- Apply writes only when `writesAuthorized` is true. A preview or ambiguous conversational request remains dry-run only.
 - Never overwrite a manually modified managed file; report a checksum conflict.
 - Remove an obsolete generated documentation path only when the previous manifest owns it and its checksum still matches. A manual edit remains a blocking conflict.
 - Use stable markers and replace one managed block instead of appending duplicates.

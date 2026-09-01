@@ -18,7 +18,9 @@ Stop if neither context can be resolved. Never guess which Design DNA or project
 
 ## Workflow
 
-1. Validate the Design DNA. In plugin mode, use the bundled helper. In project-local mode, use a `designome` executable already available in the environment when present; otherwise record deterministic validation as unavailable and continue with explicit evidence boundaries:
+1. Interpret the complete conversational request once. Normalize the project and optional Design DNA paths, audit focus concepts, provider, constraints, report or repair mode, and explicit implementation or browser-install authorizations into an `audit` request contract. Ambiguous language never authorizes repair or dependency installation.
+2. In plugin mode, read `../../schemas/request-contract.schema.json` and `../../docs/conversational-request-contract.md`. In project-local mode, read `references/request-contract.schema.json` and `references/conversational-request-contract.md`. Validate the contract with `validate-request --file <request-contract.json> --operation audit` when the helper is available; otherwise preserve it and report deterministic request validation as unavailable.
+3. Validate the Design DNA. In plugin mode, use the bundled helper. In project-local mode, use a `designome` executable already available in the environment when present; otherwise record deterministic validation as unavailable and continue with explicit evidence boundaries:
 
    ```bash
    node <designome-plugin-root>/bin/designome.mjs validate-dna \
@@ -26,29 +28,30 @@ Stop if neither context can be resolved. Never guess which Design DNA or project
      --require-accepted
    ```
 
-2. When Designome is installed, verify managed artifacts with the same available helper. Do not install a package or dependency merely to obtain the command:
+4. When Designome is installed, verify managed artifacts with the same available helper. Do not install a package or dependency merely to obtain the command:
 
    ```bash
    node <designome-plugin-root>/bin/designome.mjs verify-install \
      --project <target-project>
    ```
 
-3. Establish available evidence: changed code, rendered screenshots, viewport set, state fixtures, interaction results, accessibility checks, and host-agent perceptual observations.
-4. Initialize or dry-run the executable audit when the helper is available:
+5. Establish available evidence: changed code, rendered screenshots, viewport set, state fixtures, interaction results, accessibility checks, and host-agent perceptual observations.
+6. Initialize or dry-run the executable audit when the helper is available:
 
    ```bash
    node <designome-plugin-root>/bin/designome.mjs audit \
      --project <target-project> \
+     --request <request-contract.json> \
      --provider <auto|in-app-browser|existing-playwright|managed-playwright|static> \
      --dry-run
    ```
 
-5. Route relevant matrix concepts and stress tests. Inspect long and unbroken content, nulls, extreme values, states, reflow, localization, modalities, data scale, media failure, visual stability, and motion mode as applicable.
-6. Run repository checks only inside the audited target project. Do not run checks from the Designome plugin source unless the plugin itself is the audit target.
-7. Read `audit/plan.json`, create an official adapter session with `createCaptureSession(plan)`, and record real host-browser observations through `recordCapture`, `recordInteraction`, `recordConsoleMessage`, `recordAccessibilityCheck`, and `recordPerceptualObservation`. Call `finalize()` to validate, normalize, and write external evidence. Do not assemble internal `audit-evidence.json` manually.
-8. Evaluate the adapter output with `--evidence <adapter-output> --overwrite`. The runtime produces canonical `audit/report.json`, Markdown from the same state, normalized `audit/evidence.json`, and `audit/findings.json`.
-9. Report installation, mechanical, perceptual, and usage layers independently with only `passed`, `failed`, `incomplete`, `not-requested`, or `unavailable`. Keep observed mechanical risks separate from host-agent perceptual observations and proposed calibration candidates.
-10. State which validation layers actually ran. Propose revisions, but do not modify the implementation without separate authorization.
+7. Route relevant matrix concepts and stress tests from the normalized focus. Inspect long and unbroken content, nulls, extreme values, states, reflow, localization, modalities, data scale, media failure, visual stability, and motion mode as applicable.
+8. Run repository checks only inside the audited target project. Do not run checks from the Designome plugin source unless the plugin itself is the audit target.
+9. Read `audit/plan.json`, create an official adapter session with `createCaptureSession(plan)`, and record real host-browser observations through `recordCapture`, `recordInteraction`, `recordConsoleMessage`, `recordAccessibilityCheck`, and `recordPerceptualObservation`. Call `finalize()` to validate, normalize, and write external evidence. Do not assemble internal `audit-evidence.json` manually.
+10. Evaluate the adapter output with `--evidence <adapter-output> --overwrite`. The runtime produces canonical `audit/report.json`, Markdown from the same state, normalized `audit/evidence.json`, and `audit/findings.json`.
+11. Report installation, mechanical, perceptual, and usage layers independently with only `passed`, `failed`, `incomplete`, `not-requested`, or `unavailable`. Keep observed mechanical risks separate from host-agent perceptual observations and proposed calibration candidates.
+12. State which validation layers actually ran. Propose revisions, but do not modify the implementation without separate authorization.
 
 ## Explicit repair mode
 
@@ -59,6 +62,7 @@ Never patch an excluded calibration candidate, mutate accepted Design DNA, insta
 ## Guardrails
 
 - Do not claim rendered, responsive, keyboard, screen-reader, motion, or runtime proof unless it was executed.
+- Never execute a focus, provider, repair, or dependency action that differs from the validated request contract.
 - Do not report an unaccepted proposal as a defect.
 - Preserve documented exceptions.
 - Distinguish an implementation deviation from an incomplete or contradictory Design DNA.
