@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.7.0](https://github.com/jude-bayiha/designome/compare/v1.6.0...v1.7.0) (2026-09-01)
+
+
+### Features
+
+* normalize conversational skill requests ([0231072](https://github.com/jude-bayiha/designome/commit/02310720d0b3b02c6782fc6a6a462d349b89cd4f))
+* **prompts:** normalize conversational skill intent ([2115df0](https://github.com/jude-bayiha/designome/commit/2115df0057dfef694d43e8987af52a91e3d4b519))
+* **repo:** add normalized request contracts ([738a585](https://github.com/jude-bayiha/designome/commit/738a585c3b79ae23cdcd4e748f87d66a280b23fc))
+
 ## [1.6.0](https://github.com/jude-bayiha/designome/compare/v1.5.0...v1.6.0) (2026-08-31)
 
 
