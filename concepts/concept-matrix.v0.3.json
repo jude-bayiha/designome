@@ -1,0 +1,5208 @@
+{
+  "matrixVersion": "0.3.0",
+  "requestContractVersion": "1.1.0",
+  "designDnaSchemaVersion": "0.3.0",
+  "epistemicStatuses": ["observed", "inferred", "proposed", "unknown"],
+  "tokenCategories": [
+    "color",
+    "space",
+    "size",
+    "typography",
+    "radius",
+    "border",
+    "elevation",
+    "opacity",
+    "layer",
+    "motion",
+    "iconography",
+    "data-visualization",
+    "asset",
+    "other"
+  ],
+  "ruleCategories": [
+    "layout",
+    "typography",
+    "color",
+    "content",
+    "component",
+    "state",
+    "interaction",
+    "navigation",
+    "form",
+    "data-display",
+    "visualization",
+    "responsive",
+    "platform",
+    "accessibility",
+    "localization",
+    "performance",
+    "trust",
+    "ethics",
+    "motion",
+    "media",
+    "governance"
+  ],
+  "axes": [
+    {
+      "id": "axis.spatial-composition",
+      "order": 1,
+      "name": "Spatial composition and layout system",
+      "purpose": "Formalize regions, containment, grids, alignment, rhythm, density, hierarchy, and depth as reusable spatial relationships.",
+      "promptRef": "prompts/02-spatial-composition.md",
+      "focusAreas": [
+        "Regions and containment",
+        "Grid, columns, and containers",
+        "Spacing and vertical rhythm",
+        "Alignment and proportion",
+        "Density, depth, and salience"
+      ],
+      "facets": [
+        {
+          "id": "facet.spatial.regions-containment",
+          "name": "Regions and containment",
+          "question": "Which regions, containers, boundaries, and nesting levels organize the interface?",
+          "inspect": [
+            "page, shell, section, panel, card, inset, and overlay boundaries",
+            "container ownership, edge behavior, and nesting depth",
+            "full-bleed, bounded, sticky, fixed, and scrollable regions"
+          ],
+          "screenshotLimits": [
+            "a crop does not establish the full page boundary",
+            "a static frame does not prove sticky, fixed, or scroll ownership"
+          ]
+        },
+        {
+          "id": "facet.spatial.grid-columns",
+          "name": "Grid, columns, and containers",
+          "question": "Which repeated tracks, gutters, margins, spans, and container relationships explain the visible geometry?",
+          "inspect": [
+            "column count, span relationships, gutters, and outer margins",
+            "nested grids, repeated tracks, and alignment anchors",
+            "content width, readable width, and local overflow regions"
+          ],
+          "screenshotLimits": [
+            "exact grid measurements cannot be recovered from scaled pixels alone",
+            "one viewport does not establish breakpoint-specific tracks"
+          ]
+        },
+        {
+          "id": "facet.spatial.spacing-rhythm",
+          "name": "Spacing and vertical rhythm",
+          "question": "Which gap families and repetition ratios distinguish related, grouped, and separate content?",
+          "inspect": [
+            "intra-control, intra-component, inter-component, section, and page gaps",
+            "repeated spacing families and exceptional gaps",
+            "baseline rhythm, row rhythm, and whitespace distribution"
+          ],
+          "screenshotLimits": [
+            "visual estimates do not prove exact token values",
+            "empty content can imitate intentional whitespace"
+          ]
+        },
+        {
+          "id": "facet.spatial.alignment-proportion",
+          "name": "Alignment and proportion",
+          "question": "Which geometric and optical alignments create order and balance?",
+          "inspect": [
+            "edge, center, baseline, decimal, icon, and optical alignment",
+            "dominant-to-supporting region proportions",
+            "aspect ratios and repeated geometry"
+          ],
+          "screenshotLimits": [
+            "optical alignment is an interpretation unless repeated evidence supports it",
+            "cropping can distort apparent proportion"
+          ]
+        },
+        {
+          "id": "facet.spatial.density-depth-hierarchy",
+          "name": "Density, depth, and salience",
+          "question": "How do whitespace, scale, contrast, depth, and repetition establish perceptual priority?",
+          "inspect": [
+            "information density and control density by region",
+            "salience tiers, focal anchors, and quiet zones",
+            "surface layering, overlap, elevation, and depth cues"
+          ],
+          "screenshotLimits": [
+            "prominence does not prove product priority or usage frequency",
+            "a screenshot cannot prove dynamic elevation or scroll behavior"
+          ]
+        }
+      ],
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.surface-depth-hierarchy",
+        "concept.information-hierarchy",
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow",
+        "concept.visual-stability"
+      ]
+    },
+    {
+      "id": "axis.typography-content-hierarchy",
+      "order": 2,
+      "name": "Typography and content hierarchy",
+      "purpose": "Extract role-based type relationships, readability constraints, numeric treatment, and content behavior without guessing font identity.",
+      "promptRef": "prompts/03-typography-content-hierarchy.md",
+      "focusAreas": [
+        "Type roles and scale",
+        "Metrics and readability",
+        "Emphasis and semantic hierarchy",
+        "Numerals and data typography",
+        "Text overflow and language resilience"
+      ],
+      "facets": [
+        {
+          "id": "facet.type.roles-scale",
+          "name": "Type roles and scale",
+          "question": "Which semantic text roles exist and how are their sizes and weights related?",
+          "inspect": [
+            "display, page title, section title, component title, body, label, metadata, caption, code, and data roles",
+            "relative size, weight, contrast, and spacing hierarchy",
+            "role reuse and intentional exceptions"
+          ],
+          "screenshotLimits": [
+            "font family and exact metrics cannot be identified from resemblance",
+            "a single sample does not establish a complete modular scale"
+          ]
+        },
+        {
+          "id": "facet.type.metrics-readability",
+          "name": "Metrics and readability",
+          "question": "Which relationships among size, line height, measure, tracking, and paragraph spacing preserve readability?",
+          "inspect": [
+            "line-height-to-size relationships and text block measure",
+            "tracking, word spacing, paragraph rhythm, and dense-label treatment",
+            "readability floors and proposed calibration bounds"
+          ],
+          "screenshotLimits": [
+            "computed metrics require implementation evidence",
+            "visual sharpness is affected by capture scale and compression"
+          ]
+        },
+        {
+          "id": "facet.type.emphasis-hierarchy",
+          "name": "Emphasis and semantic hierarchy",
+          "question": "How do weight, color, case, decoration, and placement distinguish importance and meaning?",
+          "inspect": [
+            "strong, subtle, interactive, warning, success, disabled, and placeholder text",
+            "capitalization, sentence case, title case, underlining, and emphasis patterns",
+            "heading continuity and label-value relationships"
+          ],
+          "screenshotLimits": [
+            "visual hierarchy does not establish semantic heading levels",
+            "color alone cannot establish text meaning"
+          ]
+        },
+        {
+          "id": "facet.type.numerals-data",
+          "name": "Numerals and data typography",
+          "question": "How are values, units, signs, decimals, percentages, currencies, dates, and comparisons formatted and aligned?",
+          "inspect": [
+            "tabular versus proportional alignment cues",
+            "unit placement, precision, signs, abbreviations, and large-number formatting",
+            "value, context, comparison, and timeframe hierarchy"
+          ],
+          "screenshotLimits": [
+            "glyph feature support cannot be proven from pixels",
+            "one locale does not establish alternate number or date formats"
+          ]
+        },
+        {
+          "id": "facet.type.overflow-localization",
+          "name": "Text overflow and language resilience",
+          "question": "How should text survive wrapping, clamping, long words, expansion, alternate scripts, and bidirectionality?",
+          "inspect": [
+            "visible wrap, clamp, ellipsis, and growth zones",
+            "label and value collision risks",
+            "script, locale, RTL, and enlarged-text implications"
+          ],
+          "screenshotLimits": [
+            "short text does not prove an overflow policy",
+            "unseen scripts and directions remain proposed or unknown"
+          ]
+        }
+      ],
+      "conceptRefs": [
+        "concept.typographic-system",
+        "concept.information-hierarchy",
+        "concept.data-comparison-context",
+        "concept.content-layout-resilience",
+        "concept.localization-bidirectionality",
+        "concept.content-voice-comprehension"
+      ]
+    },
+    {
+      "id": "axis.color-surface-identity",
+      "order": 3,
+      "name": "Color, surfaces, assets, and visual identity",
+      "purpose": "Extract semantic color relationships, surface hierarchy, shape language, iconography, imagery, and brand expression.",
+      "promptRef": "prompts/04-color-surface-identity.md",
+      "focusAreas": [
+        "Semantic color roles",
+        "Surfaces and depth",
+        "Theme and contrast modes",
+        "Iconography, imagery, and illustration",
+        "Visual identity and brand expression"
+      ],
+      "facets": [
+        {
+          "id": "facet.color.semantic-roles",
+          "name": "Semantic color roles",
+          "question": "Which colors communicate background, content, action, status, selection, data, and focus roles?",
+          "inspect": [
+            "canvas, surface, text, icon, border, action, status, selection, and focus roles",
+            "role pairings and contrast relationships",
+            "shared roles versus component-specific exceptions"
+          ],
+          "screenshotLimits": [
+            "capture pixels do not prove source color values",
+            "color appearance can be altered by compression and display profiles"
+          ]
+        },
+        {
+          "id": "facet.color.surface-depth",
+          "name": "Surfaces and depth",
+          "question": "How do fills, borders, radii, elevation, overlays, and transparency express containment and depth?",
+          "inspect": [
+            "surface tiers and nested surface relationships",
+            "border weight, radius families, shadow softness, and overlay treatment",
+            "flat, raised, inset, selected, disabled, and scrim relationships"
+          ],
+          "screenshotLimits": [
+            "exact blur, opacity, radius, and shadow values are not visually provable",
+            "dynamic elevation cannot be observed in a static frame"
+          ]
+        },
+        {
+          "id": "facet.color.theme-modes",
+          "name": "Theme and contrast modes",
+          "question": "Which theme modes are evidenced and which semantic roles must remain stable across proposed modes?",
+          "inspect": [
+            "light, dark, high-contrast, and branded theme evidence",
+            "surface inversion and semantic role persistence",
+            "contrast-sensitive pairings and non-color coding"
+          ],
+          "screenshotLimits": [
+            "one theme does not establish another theme",
+            "WCAG contrast requires measured implementation values"
+          ]
+        },
+        {
+          "id": "facet.color.iconography-imagery",
+          "name": "Iconography, imagery, and illustration",
+          "question": "Which stroke, fill, geometry, crop, treatment, and semantic-role patterns form the asset grammar?",
+          "inspect": [
+            "icon family, optical size, stroke, corner, cap, bounding box, and alignment",
+            "photo, avatar, illustration, logo, thumbnail, and decorative asset treatment",
+            "crop, ratio, mask, fallback, and placeholder implications"
+          ],
+          "screenshotLimits": [
+            "the exact icon or asset library cannot be identified reliably",
+            "licenses, alt text, source resolution, and fallbacks are not visible"
+          ]
+        },
+        {
+          "id": "facet.color.brand-expression",
+          "name": "Visual identity and brand expression",
+          "question": "Which repeated visual choices establish tone, personality, distinctiveness, and emotional temperature?",
+          "inspect": [
+            "shape language, saturation, contrast, illustration, photography, and decorative motifs",
+            "formal, editorial, technical, playful, premium, restrained, or expressive cues",
+            "brand moments versus neutral utility surfaces"
+          ],
+          "screenshotLimits": [
+            "visual tone does not establish brand strategy or intended audience",
+            "a small sample cannot prove the complete identity system"
+          ]
+        }
+      ],
+      "conceptRefs": [
+        "concept.semantic-color-theme",
+        "concept.surface-depth-hierarchy",
+        "concept.iconographic-coherence",
+        "concept.asset-brand-expression",
+        "concept.visualization-encoding-integrity",
+        "concept.motion-grammar",
+        "concept.asset-media-resilience"
+      ]
+    },
+    {
+      "id": "axis.component-morphology",
+      "order": 4,
+      "name": "Component morphology and composition",
+      "purpose": "Turn repeated controls and content structures into explicit anatomy, variant, state, density, composition, and exception contracts.",
+      "promptRef": "prompts/05-component-morphology.md",
+      "focusAreas": [
+        "Anatomy and slots",
+        "Variants, sizing, and density",
+        "State appearance",
+        "Composition and reuse",
+        "Exceptions and anti-patterns"
+      ],
+      "facets": [
+        {
+          "id": "facet.component.anatomy-slots",
+          "name": "Anatomy and slots",
+          "question": "Which required and optional parts make each repeated component recognizable and functional?",
+          "inspect": [
+            "container, label, icon, value, supporting content, action, status, and media slots",
+            "required, optional, repeatable, and conditional parts",
+            "content ownership and slot order"
+          ],
+          "screenshotLimits": [
+            "repeated appearance does not prove a shared implementation component",
+            "hidden optional slots remain unknown"
+          ]
+        },
+        {
+          "id": "facet.component.variants-sizing-density",
+          "name": "Variants, sizing, and density",
+          "question": "Which size, density, emphasis, intent, and layout variants are visibly coherent?",
+          "inspect": [
+            "compact, default, comfortable, prominent, subtle, and destructive relationships",
+            "height, padding, icon, label, and target-size relationships",
+            "variant selection conditions and unsupported combinations"
+          ],
+          "screenshotLimits": [
+            "one visible instance does not establish a variant family",
+            "target size and DOM box require implementation evidence"
+          ]
+        },
+        {
+          "id": "facet.component.states-appearance",
+          "name": "State appearance",
+          "question": "How does anatomy remain stable across visible or required control and business states?",
+          "inspect": [
+            "default, hover, focus, pressed, selected, disabled, read-only, loading, error, and success appearance",
+            "state-specific icon, text, border, surface, and geometry changes",
+            "non-color state indicators and preserved action access"
+          ],
+          "screenshotLimits": [
+            "unshown states are not observed",
+            "a state-looking appearance does not prove programmatic state"
+          ]
+        },
+        {
+          "id": "facet.component.composition-reuse",
+          "name": "Composition and reuse",
+          "question": "How may components combine, nest, align, repeat, or remain separate without collapsing hierarchy?",
+          "inspect": [
+            "parent-child, sibling, group, toolbar, field, card, list, and section composition",
+            "spacing ownership and nested-surface limits",
+            "repetition, grouping, and responsive transformation"
+          ],
+          "screenshotLimits": [
+            "visual similarity alone does not establish shared component ownership",
+            "unseen combinations remain proposed or unknown"
+          ]
+        },
+        {
+          "id": "facet.component.exceptions-antipatterns",
+          "name": "Exceptions and anti-patterns",
+          "question": "Which deviations are intentional, and which combinations would break meaning, legibility, or consistency?",
+          "inspect": [
+            "one-off emphasis, context-specific variants, and deliberate asymmetry",
+            "invalid nesting, density, duplication, and competing action patterns",
+            "conditions requiring a new component rather than another variant"
+          ],
+          "screenshotLimits": [
+            "rarity does not prove an intentional exception",
+            "an absent combination is not automatically forbidden"
+          ]
+        }
+      ],
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.surface-depth-hierarchy",
+        "concept.iconographic-coherence",
+        "concept.component-anatomy-composition",
+        "concept.state-edge-coverage",
+        "concept.affordance-discoverability",
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow",
+        "concept.platform-conventions",
+        "concept.modality-equivalence",
+        "concept.accessibility-semantics",
+        "concept.motion-grammar",
+        "concept.visual-stability",
+        "concept.asset-media-resilience"
+      ]
+    },
+    {
+      "id": "axis.navigation-task-architecture",
+      "order": 5,
+      "name": "Navigation, information architecture, and task flow",
+      "purpose": "Describe visible orientation, hierarchy, action priority, disclosure, and continuity without inventing unseen product worlds.",
+      "promptRef": "prompts/06-navigation-task-architecture.md",
+      "focusAreas": [
+        "Global and local navigation",
+        "Orientation and current location",
+        "Information hierarchy and reading order",
+        "Action priority and decision points",
+        "Disclosure and context continuity"
+      ],
+      "facets": [
+        {
+          "id": "facet.navigation.global-local",
+          "name": "Global and local navigation",
+          "question": "Which visible structures move between product areas, peer views, and local contexts?",
+          "inspect": [
+            "rails, sidebars, bars, tabs, breadcrumbs, menus, steps, and contextual links",
+            "global versus local scope and nesting",
+            "persistent versus contextual navigation cues"
+          ],
+          "screenshotLimits": [
+            "one screen does not prove destinations or persistence",
+            "visual navigation does not prove route behavior"
+          ]
+        },
+        {
+          "id": "facet.navigation.orientation-location",
+          "name": "Orientation and current location",
+          "question": "How does the interface show where the user is, what scope is active, and what changed?",
+          "inspect": [
+            "selected navigation, headings, breadcrumbs, context labels, and active filters",
+            "parent, peer, child, and return-path cues",
+            "scope, account, workspace, object, and time-context anchors"
+          ],
+          "screenshotLimits": [
+            "active styling does not prove URL or programmatic selection",
+            "cropped context can hide orientation cues"
+          ]
+        },
+        {
+          "id": "facet.navigation.information-reading-order",
+          "name": "Information hierarchy and reading order",
+          "question": "In what order does the visible screen ask users to perceive, understand, decide, and act?",
+          "inspect": [
+            "visual and probable semantic reading order",
+            "overview-to-detail, summary-to-evidence, and problem-to-action sequences",
+            "grouping, chunking, and cognitive load"
+          ],
+          "screenshotLimits": [
+            "visual order does not establish DOM order",
+            "a screenshot cannot prove comprehension or task success"
+          ]
+        },
+        {
+          "id": "facet.navigation.action-priority",
+          "name": "Action priority and decision points",
+          "question": "Which actions are primary, secondary, tertiary, contextual, destructive, or terminal?",
+          "inspect": [
+            "placement, emphasis, grouping, repetition, and consequence cues",
+            "next-step, alternate, cancel, back, save, submit, and destructive actions",
+            "competing actions and dead-end risks"
+          ],
+          "screenshotLimits": [
+            "prominence does not prove frequency or business priority",
+            "real consequences and permissions remain unknown"
+          ]
+        },
+        {
+          "id": "facet.navigation.disclosure-continuity",
+          "name": "Disclosure and context continuity",
+          "question": "How does the interface reveal depth while preserving location, selection, scroll, and task context?",
+          "inspect": [
+            "expanders, drawers, dialogs, inline details, master-detail, and drill-down cues",
+            "trigger-to-result spatial relationship",
+            "back, close, cancel, focus return, and context preservation requirements"
+          ],
+          "screenshotLimits": [
+            "closed content and transitions are not visible",
+            "focus, scroll, and history restoration require executed evidence"
+          ]
+        }
+      ],
+      "conceptRefs": [
+        "concept.affordance-discoverability",
+        "concept.navigation-orientation",
+        "concept.information-hierarchy",
+        "concept.progressive-disclosure",
+        "concept.semantic-responsive-reflow",
+        "concept.spatial-continuity",
+        "concept.accessibility-semantics",
+        "concept.reversibility-forgiveness",
+        "concept.content-voice-comprehension",
+        "concept.ethical-interaction"
+      ]
+    },
+    {
+      "id": "axis.forms-input-workflows",
+      "order": 6,
+      "name": "Forms, input, and workflow integrity",
+      "purpose": "Extract data-entry, selection, validation, formatting, save, and recovery patterns for simple and complex workflows.",
+      "promptRef": "prompts/07-forms-input-workflows.md",
+      "focusAreas": [
+        "Labels, instructions, and help",
+        "Controls and selection models",
+        "Validation and error recovery",
+        "Workflow, save, and reversibility",
+        "Formatting and sensitive data"
+      ],
+      "facets": [
+        {
+          "id": "facet.forms.labels-help",
+          "name": "Labels, instructions, and help",
+          "question": "How are fields named, explained, marked, grouped, and connected to supporting guidance?",
+          "inspect": [
+            "visible labels, legends, descriptions, examples, units, placeholders, and required markers",
+            "instruction placement and progressive help",
+            "field groups, sections, and dependency explanations"
+          ],
+          "screenshotLimits": [
+            "visual proximity does not prove accessible association",
+            "placeholder text does not prove a persistent label"
+          ]
+        },
+        {
+          "id": "facet.forms.controls-selection",
+          "name": "Controls and selection models",
+          "question": "Which input, selection, search, filter, upload, date, and compound-control patterns are visible?",
+          "inspect": [
+            "text, number, select, checkbox, radio, switch, date, file, segmented, combobox, and custom controls",
+            "single, multiple, range, hierarchical, and batch selection",
+            "clear, reset, reveal, browse, and direct-manipulation affordances"
+          ],
+          "screenshotLimits": [
+            "appearance does not prove native versus custom implementation",
+            "keyboard and touch behavior are not visible"
+          ]
+        },
+        {
+          "id": "facet.forms.validation-errors",
+          "name": "Validation and error recovery",
+          "question": "When, where, and how should constraints, errors, warnings, and correction paths appear?",
+          "inspect": [
+            "inline, summary, blocking, advisory, and asynchronous validation cues",
+            "error specificity, preservation of input, and correction focus",
+            "success, partial success, conflict, and retry states"
+          ],
+          "screenshotLimits": [
+            "validation timing and server behavior are not observable in a static frame",
+            "absence of errors does not prove their design"
+          ]
+        },
+        {
+          "id": "facet.forms.workflow-save",
+          "name": "Workflow, save, and reversibility",
+          "question": "How are progress, dependencies, review, submission, autosave, cancellation, and undo represented?",
+          "inspect": [
+            "single-step, staged, wizard, inline edit, bulk edit, review, and confirmation patterns",
+            "dirty, saving, saved, failed, draft, and conflict implications",
+            "cancel, back, undo, discard, and work-preservation requirements"
+          ],
+          "screenshotLimits": [
+            "autosave and persistence cannot be inferred from appearance",
+            "server-side effects and rollback remain unknown"
+          ]
+        },
+        {
+          "id": "facet.forms.formatting-sensitive-data",
+          "name": "Formatting and sensitive data",
+          "question": "How should values survive masks, locale formats, precision, privacy, and mobile keyboard constraints?",
+          "inspect": [
+            "dates, times, currencies, percentages, phone numbers, identifiers, and units",
+            "masked, revealed, copied, generated, and sensitive values",
+            "input mode, autofill, paste, scanning, and virtual-keyboard implications"
+          ],
+          "screenshotLimits": [
+            "actual input mode, autofill, paste, and masking behavior require implementation evidence",
+            "one locale does not establish parsing rules"
+          ]
+        }
+      ],
+      "conceptRefs": [
+        "concept.typographic-system",
+        "concept.state-edge-coverage",
+        "concept.affordance-discoverability",
+        "concept.progressive-disclosure",
+        "concept.form-entry-integrity",
+        "concept.validation-recovery",
+        "concept.content-layout-resilience",
+        "concept.modality-equivalence",
+        "concept.localization-bidirectionality",
+        "concept.accessibility-semantics",
+        "concept.reversibility-forgiveness",
+        "concept.feedback-interruption-budget",
+        "concept.content-voice-comprehension",
+        "concept.trust-permission-transparency",
+        "concept.ethical-interaction"
+      ]
+    },
+    {
+      "id": "axis.data-display-visualization",
+      "order": 7,
+      "name": "Data display, statistics, and visualization",
+      "purpose": "Extract the grammar of metrics, comparisons, tables, lists, charts, legends, precision, uncertainty, and scale.",
+      "promptRef": "prompts/08-data-display-visualization.md",
+      "focusAreas": [
+        "Statistics and KPI anatomy",
+        "Comparison and decision context",
+        "Tables, lists, and dense collections",
+        "Charts and visual encodings",
+        "Scale, uncertainty, and accessible alternatives"
+      ],
+      "facets": [
+        {
+          "id": "facet.data.stats-kpis",
+          "name": "Statistics and KPI anatomy",
+          "question": "How are labels, primary values, units, context, comparison, trend, timeframe, target, and freshness displayed?",
+          "inspect": [
+            "metric label, value, unit, qualifier, trend, delta, baseline, timeframe, target, status, and action",
+            "primary versus supporting metrics and repeated KPI grids",
+            "positive, negative, neutral, unavailable, partial, and stale presentations"
+          ],
+          "screenshotLimits": [
+            "color and arrows do not prove whether a change is beneficial",
+            "metric formulas, freshness, and business meaning remain unknown unless supplied"
+          ]
+        },
+        {
+          "id": "facet.data.comparison-context",
+          "name": "Comparison and decision context",
+          "question": "What baseline, target, period, segment, denominator, ranking, or uncertainty is required to interpret a value?",
+          "inspect": [
+            "absolute versus relative values and period-over-period comparison",
+            "benchmark, target, range, ranking, contribution, and segmentation",
+            "precision, rounding, units, signs, and explanatory context"
+          ],
+          "screenshotLimits": [
+            "a visible delta does not establish its calculation",
+            "missing context cannot be invented from layout"
+          ]
+        },
+        {
+          "id": "facet.data.tables-lists",
+          "name": "Tables, lists, and dense collections",
+          "question": "How do rows, columns, metadata, hierarchy, actions, selection, and navigation preserve scanability at scale?",
+          "inspect": [
+            "column roles, row anatomy, alignment, density, sticky cues, and action placement",
+            "sorting, filtering, grouping, pagination, expansion, selection, and batch-action cues",
+            "empty, partial, loading, error, long-content, and extreme-value behavior"
+          ],
+          "screenshotLimits": [
+            "visible controls do not prove sorting, filtering, pagination, or virtualization",
+            "one dataset does not establish scale behavior"
+          ]
+        },
+        {
+          "id": "facet.data.chart-encoding",
+          "name": "Charts and visual encodings",
+          "question": "Which question, marks, channels, axes, scales, legends, annotations, and interactions define each visualization?",
+          "inspect": [
+            "bar, line, area, point, distribution, part-to-whole, flow, hierarchy, and spatial encodings",
+            "position, length, area, angle, color, shape, size, texture, and ordering channels",
+            "axes, scales, domains, baselines, legends, labels, gridlines, annotations, and reference lines"
+          ],
+          "screenshotLimits": [
+            "data values and scale transforms cannot be reconstructed reliably from pixels",
+            "tooltips, brushing, zoom, selection, and animation require interaction evidence"
+          ]
+        },
+        {
+          "id": "facet.data.scale-uncertainty-access",
+          "name": "Scale, uncertainty, and accessible alternatives",
+          "question": "How should dense series, missing values, uncertainty, small screens, color vision, and non-visual access be handled?",
+          "inspect": [
+            "series count, label collision, sampling, aggregation, and small-multiple implications",
+            "missing, estimated, forecast, confidence, error, and stale data cues",
+            "non-color encoding, text summaries, data tables, focus order, and responsive transformation"
+          ],
+          "screenshotLimits": [
+            "statistical validity and uncertainty cannot be inferred unless visibly explained",
+            "screen-reader and keyboard access require implementation evidence"
+          ]
+        }
+      ],
+      "conceptRefs": [
+        "concept.typographic-system",
+        "concept.semantic-color-theme",
+        "concept.state-edge-coverage",
+        "concept.data-comparison-context",
+        "concept.visualization-encoding-integrity",
+        "concept.data-scale-resilience",
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow",
+        "concept.localization-bidirectionality",
+        "concept.accessibility-semantics",
+        "concept.feedback-interruption-budget",
+        "concept.visual-stability",
+        "concept.content-voice-comprehension",
+        "concept.trust-permission-transparency"
+      ]
+    },
+    {
+      "id": "axis.interaction-state-motion",
+      "order": 8,
+      "name": "Interaction, state machines, feedback, and motion",
+      "purpose": "Define observable and proposed control states, business states, triggers, feedback, exits, modalities, and functional motion.",
+      "promptRef": "prompts/09-interaction-state-motion.md",
+      "focusAreas": [
+        "Control states",
+        "Business and async states",
+        "Feedback, confirmation, and recovery",
+        "Focus, overlays, and modalities",
+        "Motion and spatial continuity"
+      ],
+      "facets": [
+        {
+          "id": "facet.interaction.control-states",
+          "name": "Control states",
+          "question": "Which default, hover, focus, pressed, selected, disabled, read-only, and dragged states are shown or required?",
+          "inspect": [
+            "state cues, anatomy stability, and programmatic-state implications",
+            "pointer, keyboard, touch, stylus, and assistive-input equivalence",
+            "focus visibility and target ownership"
+          ],
+          "screenshotLimits": [
+            "static screenshots do not observe most control states",
+            "visual state does not prove accessible or programmatic state"
+          ]
+        },
+        {
+          "id": "facet.interaction.business-states",
+          "name": "Business and async states",
+          "question": "Which loading, empty, no-results, partial, stale, warning, error, success, conflict, and offline states are necessary?",
+          "inspect": [
+            "state trigger, visible anatomy, message, action, exit, and context preservation",
+            "component-local versus page-level states",
+            "state priority, coexistence, and replacement behavior"
+          ],
+          "screenshotLimits": [
+            "unshown states are proposed or unknown, never observed",
+            "a static image cannot prove async transitions"
+          ]
+        },
+        {
+          "id": "facet.interaction.feedback-recovery",
+          "name": "Feedback, confirmation, and recovery",
+          "question": "How does feedback match the scope, consequence, duration, interruption cost, and recovery path of an action?",
+          "inspect": [
+            "inline feedback, status regions, toasts, banners, dialogs, progress, and optimistic updates",
+            "confirmation, cancellation, retry, undo, escalation, and manual recovery",
+            "message placement, persistence, duplication, and interruption budget"
+          ],
+          "screenshotLimits": [
+            "timing, repetition, announcement, and dismissal are not visible",
+            "visual success does not prove completed backend work"
+          ]
+        },
+        {
+          "id": "facet.interaction.focus-modalities",
+          "name": "Focus, overlays, and modalities",
+          "question": "How must focus, scroll, selection, and context behave across dialogs, drawers, popovers, menus, disclosure, and direct manipulation?",
+          "inspect": [
+            "open, close, escape, outside-click, focus trap, focus return, and scroll lock requirements",
+            "trigger-result relationship and nested overlay risks",
+            "gesture alternatives, keyboard order, and programmatic state"
+          ],
+          "screenshotLimits": [
+            "focus, scroll, gesture, and keyboard behavior require executed evidence",
+            "an open overlay does not reveal its full lifecycle"
+          ]
+        },
+        {
+          "id": "facet.interaction.motion-continuity",
+          "name": "Motion and spatial continuity",
+          "question": "Where can motion explain cause, hierarchy, origin, destination, progress, or continuity without delaying action?",
+          "inspect": [
+            "feedback, transition, enter, exit, reorder, progress, skeleton, and shared-element roles",
+            "duration hierarchy, interruption, layout stability, and reduced-motion alternatives",
+            "spatial origin, destination, focus, and context preservation"
+          ],
+          "screenshotLimits": [
+            "duration, easing, path, and interruption cannot be observed in a still image",
+            "motion absent from evidence remains proposed or unknown"
+          ]
+        }
+      ],
+      "conceptRefs": [
+        "concept.state-edge-coverage",
+        "concept.affordance-discoverability",
+        "concept.progressive-disclosure",
+        "concept.validation-recovery",
+        "concept.platform-conventions",
+        "concept.modality-equivalence",
+        "concept.spatial-continuity",
+        "concept.accessibility-semantics",
+        "concept.reversibility-forgiveness",
+        "concept.feedback-interruption-budget",
+        "concept.motion-grammar",
+        "concept.visual-stability",
+        "concept.ethical-interaction"
+      ]
+    },
+    {
+      "id": "axis.responsive-platform-adaptation",
+      "order": 9,
+      "name": "Responsive, platform, and device adaptation",
+      "purpose": "Preserve hierarchy and action across widths, orientations, safe areas, virtual keyboards, device classes, and platform conventions.",
+      "promptRef": "prompts/10-responsive-platform-adaptation.md",
+      "focusAreas": [
+        "Intrinsic reflow",
+        "Breakpoints and container behavior",
+        "Mobile and native shell",
+        "Orientation and virtual keyboard",
+        "Device and input conventions"
+      ],
+      "facets": [
+        {
+          "id": "facet.adaptation.intrinsic-reflow",
+          "name": "Intrinsic reflow",
+          "question": "Which groups wrap, stack, scroll locally, resize, reorder, collapse, or remain fixed as space changes?",
+          "inspect": [
+            "essential versus secondary content",
+            "intrinsic sizing, wrapping, min/max constraints, and local scroll",
+            "semantic order and preserved task priority"
+          ],
+          "screenshotLimits": [
+            "one viewport does not establish reflow behavior",
+            "cropped screenshots can imitate overflow"
+          ]
+        },
+        {
+          "id": "facet.adaptation.breakpoints-containers",
+          "name": "Breakpoints and container behavior",
+          "question": "What evidence supports transitions between layout regimes and container widths?",
+          "inspect": [
+            "viewport and container-query implications",
+            "navigation, grid, panel, table, chart, and action transformations",
+            "content-driven thresholds rather than device labels alone"
+          ],
+          "screenshotLimits": [
+            "exact breakpoints cannot be inferred from a single width",
+            "device category does not prove CSS or native layout thresholds"
+          ]
+        },
+        {
+          "id": "facet.adaptation.mobile-native-shell",
+          "name": "Mobile and native shell",
+          "question": "Which system bars, safe areas, bottom regions, navigation models, gestures, and native conventions are visibly relevant?",
+          "inspect": [
+            "status bar, navigation bar, home indicator, notch, cutout, and safe-area treatment",
+            "top app bar, bottom navigation, tab bar, sheets, back behavior, and edge gestures",
+            "web-like versus native platform cues"
+          ],
+          "screenshotLimits": [
+            "screen dimensions alone do not prove iOS, Android, or web runtime",
+            "system-owned behavior and haptics are not visible in a static capture"
+          ]
+        },
+        {
+          "id": "facet.adaptation.orientation-keyboard",
+          "name": "Orientation and virtual keyboard",
+          "question": "How should layout, focus, overlays, and actions survive rotation, resize, and on-screen keyboard intrusion?",
+          "inspect": [
+            "portrait, landscape, split-screen, resizable window, and fold implications",
+            "focused field visibility, keyboard avoidance, and anchored actions",
+            "viewport units, safe-area changes, and transient system UI"
+          ],
+          "screenshotLimits": [
+            "unshown orientations and keyboard states remain proposed",
+            "static dimensions do not establish resizable behavior"
+          ]
+        },
+        {
+          "id": "facet.adaptation.device-input-conventions",
+          "name": "Device and input conventions",
+          "question": "Which pointer, touch, keyboard, stylus, remote, and assistive-input assumptions affect layout and interaction?",
+          "inspect": [
+            "target density, hover dependence, shortcuts, gestures, context menus, and precision",
+            "desktop window, tablet, phone, touch laptop, and large-screen implications",
+            "platform-consistent controls and escape routes"
+          ],
+          "screenshotLimits": [
+            "input hardware cannot be certified from screenshots",
+            "visual convention does not prove native behavior"
+          ]
+        }
+      ],
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.navigation-orientation",
+        "concept.data-scale-resilience",
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow",
+        "concept.platform-conventions",
+        "concept.modality-equivalence",
+        "concept.spatial-continuity",
+        "concept.localization-bidirectionality",
+        "concept.motion-grammar",
+        "concept.visual-stability",
+        "concept.asset-media-resilience"
+      ]
+    },
+    {
+      "id": "axis.accessibility-inclusion-localization",
+      "order": 10,
+      "name": "Accessibility, inclusion, and localization",
+      "purpose": "Turn visible accessibility implications into explicit semantics, modality, contrast, zoom, localization, and verification contracts.",
+      "promptRef": "prompts/11-accessibility-inclusion-localization.md",
+      "focusAreas": [
+        "Semantics and names",
+        "Keyboard and focus",
+        "Contrast and non-color meaning",
+        "Zoom, text size, targets, and cognition",
+        "Localization, RTL, and cultural resilience"
+      ],
+      "facets": [
+        {
+          "id": "facet.access.semantics-names",
+          "name": "Semantics and names",
+          "question": "Which headings, landmarks, labels, descriptions, roles, names, values, and states are implied by the visible structure?",
+          "inspect": [
+            "probable heading hierarchy and landmark grouping",
+            "control labels, descriptions, status announcements, and relationships",
+            "tables, charts, lists, forms, dialogs, and custom-control semantics"
+          ],
+          "screenshotLimits": [
+            "DOM roles, names, relationships, and live regions are not visible",
+            "visual order does not prove semantic order"
+          ]
+        },
+        {
+          "id": "facet.access.keyboard-focus",
+          "name": "Keyboard and focus",
+          "question": "What focus order, visibility, containment, shortcuts, skip paths, and return behavior must be verified?",
+          "inspect": [
+            "focus visibility and non-color distinction",
+            "logical order, trapping, restoration, roving focus, and composite widgets",
+            "keyboard equivalents for pointer and gesture actions"
+          ],
+          "screenshotLimits": [
+            "keyboard behavior cannot be certified from pixels",
+            "a shown focus ring may be simulated content"
+          ]
+        },
+        {
+          "id": "facet.access.contrast-noncolor",
+          "name": "Contrast and non-color meaning",
+          "question": "Which text, controls, focus, graphics, status, and data encodings require measured contrast and redundant meaning?",
+          "inspect": [
+            "relative visual contrast and likely risk pairs",
+            "icons, text, shape, pattern, position, and labels supplementing color",
+            "high-contrast and forced-colors implications"
+          ],
+          "screenshotLimits": [
+            "screenshots cannot certify contrast ratios",
+            "display and compression alter apparent contrast"
+          ]
+        },
+        {
+          "id": "facet.access.zoom-text-targets",
+          "name": "Zoom, text size, targets, and cognition",
+          "question": "How must the interface survive enlarged text, zoom, reflow, low precision, reduced motion, and reduced cognitive load?",
+          "inspect": [
+            "text resizing, clipping, overlap, target size, spacing, and reading width",
+            "clear labels, chunking, consistency, time pressure, and error prevention",
+            "motion, transparency, contrast, and sensory preference implications"
+          ],
+          "screenshotLimits": [
+            "actual target boxes and zoom behavior require implementation evidence",
+            "appearance cannot prove cognitive accessibility"
+          ]
+        },
+        {
+          "id": "facet.access.locale-rtl-cultural",
+          "name": "Localization, RTL, and cultural resilience",
+          "question": "How should language expansion, pluralization, formats, scripts, direction, and culturally dependent meaning change the UI?",
+          "inspect": [
+            "long labels, alternate scripts, plural forms, and text expansion",
+            "dates, times, numbers, currencies, names, addresses, and sorting",
+            "logical direction, mirroring, icon directionality, and mixed-direction data"
+          ],
+          "screenshotLimits": [
+            "one locale does not prove localization support",
+            "cultural interpretation cannot be established from layout alone"
+          ]
+        }
+      ],
+      "conceptRefs": [
+        "concept.typographic-system",
+        "concept.semantic-color-theme",
+        "concept.iconographic-coherence",
+        "concept.affordance-discoverability",
+        "concept.navigation-orientation",
+        "concept.form-entry-integrity",
+        "concept.visualization-encoding-integrity",
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow",
+        "concept.platform-conventions",
+        "concept.modality-equivalence",
+        "concept.localization-bidirectionality",
+        "concept.accessibility-semantics",
+        "concept.motion-grammar",
+        "concept.asset-media-resilience"
+      ]
+    },
+    {
+      "id": "axis.content-trust-ethics",
+      "order": 11,
+      "name": "Content design, trust, privacy, and ethics",
+      "purpose": "Extract terminology, voice, actionability, provenance, permission, consequence, consent, and ethical-interaction requirements.",
+      "promptRef": "prompts/12-content-trust-ethics.md",
+      "focusAreas": [
+        "Voice, tone, and terminology",
+        "Actionable microcopy",
+        "Permissions, privacy, and consent",
+        "Provenance, freshness, and uncertainty",
+        "Consequences and ethical interaction"
+      ],
+      "facets": [
+        {
+          "id": "facet.content.voice-terminology",
+          "name": "Voice, tone, and terminology",
+          "question": "Which vocabulary, sentence patterns, tone, capitalization, and naming conventions create a coherent content voice?",
+          "inspect": [
+            "labels, headings, CTA verbs, descriptions, metadata, empty states, and help language",
+            "formal, direct, reassuring, technical, editorial, or conversational tone cues",
+            "term consistency, abbreviations, jargon, and ambiguity"
+          ],
+          "screenshotLimits": [
+            "visible copy does not establish the full voice strategy",
+            "audience and brand intent cannot be inferred with certainty"
+          ]
+        },
+        {
+          "id": "facet.content.actionable-microcopy",
+          "name": "Actionable microcopy",
+          "question": "Do labels and messages explain what happened, why it matters, what changes, and what the user can do next?",
+          "inspect": [
+            "specific action labels, inline guidance, errors, warnings, confirmations, and next steps",
+            "cause, scope, consequence, recovery, and ownership",
+            "ambiguity, blame, dead ends, and repeated messaging"
+          ],
+          "screenshotLimits": [
+            "copy cannot prove the underlying outcome",
+            "unshown errors and edge cases remain proposed or unknown"
+          ]
+        },
+        {
+          "id": "facet.content.permissions-privacy",
+          "name": "Permissions, privacy, and consent",
+          "question": "How are access, collection, sharing, retention, visibility, and consent explained at the decision point?",
+          "inspect": [
+            "permission labels, access badges, privacy explanations, and collection rationale",
+            "scope, actor, audience, duration, reversibility, and alternatives",
+            "consent, opt-in, opt-out, and secondary-use implications"
+          ],
+          "screenshotLimits": [
+            "UI copy does not prove real policy, authorization, or data handling",
+            "absence of explanation does not establish absence of a policy"
+          ]
+        },
+        {
+          "id": "facet.content.provenance-freshness",
+          "name": "Provenance, freshness, and uncertainty",
+          "question": "Where does information come from, when was it updated, what is incomplete, and how confident should users be?",
+          "inspect": [
+            "source, owner, timestamp, sync, stale, partial, estimated, generated, and verified cues",
+            "scope, limitations, confidence, and comparison context",
+            "refresh, inspect, correct, report, and trace actions"
+          ],
+          "screenshotLimits": [
+            "visible provenance labels do not prove data quality",
+            "freshness and generation processes require system evidence"
+          ]
+        },
+        {
+          "id": "facet.content.consequence-ethical",
+          "name": "Consequences and ethical interaction",
+          "question": "Are consequences proportionate and legible without coercion, obstruction, hidden defaults, or deceptive emphasis?",
+          "inspect": [
+            "destructive, financial, privacy, publishing, permission, and irreversible consequences",
+            "confirmation, review, undo, cooling-off, and informed-choice patterns",
+            "asymmetric choices, hidden costs, forced continuity, urgency, and manipulative defaults"
+          ],
+          "screenshotLimits": [
+            "appearance alone cannot establish organizational intent",
+            "real consequences and legal adequacy require authorized review"
+          ]
+        }
+      ],
+      "conceptRefs": [
+        "concept.asset-brand-expression",
+        "concept.information-hierarchy",
+        "concept.form-entry-integrity",
+        "concept.validation-recovery",
+        "concept.data-comparison-context",
+        "concept.localization-bidirectionality",
+        "concept.reversibility-forgiveness",
+        "concept.feedback-interruption-budget",
+        "concept.content-voice-comprehension",
+        "concept.trust-permission-transparency",
+        "concept.ethical-interaction"
+      ]
+    },
+    {
+      "id": "axis.performance-resilience",
+      "order": 12,
+      "name": "Perceived performance and resilience",
+      "purpose": "Keep the interface stable, understandable, recoverable, and work-preserving during delay, scale, failure, and degradation.",
+      "promptRef": "prompts/13-performance-resilience.md",
+      "focusAreas": [
+        "Loading priority and progress",
+        "Visual stability",
+        "Partial, stale, offline, and unavailable data",
+        "Recovery and work preservation",
+        "Scale, media, and rendering cost"
+      ],
+      "facets": [
+        {
+          "id": "facet.performance.loading-priority",
+          "name": "Loading priority and progress",
+          "question": "Which content should appear first, reserve space, stream, defer, or show determinate progress?",
+          "inspect": [
+            "critical versus supporting content and action readiness",
+            "skeleton, placeholder, spinner, progress, optimistic, and incremental patterns",
+            "flash avoidance and timing questions"
+          ],
+          "screenshotLimits": [
+            "pixels cannot prove loading order or latency",
+            "timing thresholds require runtime validation"
+          ]
+        },
+        {
+          "id": "facet.performance.visual-stability",
+          "name": "Visual stability",
+          "question": "Which regions, dimensions, anchors, and scroll positions must remain stable across content and state changes?",
+          "inspect": [
+            "reserved geometry, aspect ratio, min-size, and state-consistent anatomy",
+            "late media, fonts, banners, errors, and dynamic content",
+            "focus, selection, scroll, and viewport stability"
+          ],
+          "screenshotLimits": [
+            "layout shift and flicker require a sequence or runtime measurement",
+            "stable appearance in one frame does not prove stable transitions"
+          ]
+        },
+        {
+          "id": "facet.performance.partial-stale-offline",
+          "name": "Partial, stale, offline, and unavailable data",
+          "question": "How does the UI distinguish what is current, missing, delayed, cached, estimated, or unavailable?",
+          "inspect": [
+            "partial-region versus whole-screen degradation",
+            "stale, sync, offline, unavailable, permission, and dependency states",
+            "continued reading, editing, retry, and freshness cues"
+          ],
+          "screenshotLimits": [
+            "network, cache, and backend behavior are not visible",
+            "an empty region does not identify its failure cause"
+          ]
+        },
+        {
+          "id": "facet.performance.recovery-preservation",
+          "name": "Recovery and work preservation",
+          "question": "How are retry, resume, draft, conflict, rollback, and escalation handled without discarding context or input?",
+          "inspect": [
+            "local retry, page retry, reconnect, resume, restore, and support escalation",
+            "draft, queued, conflict, duplicate, timeout, and partial-success implications",
+            "input, selection, scroll, and navigation-context preservation"
+          ],
+          "screenshotLimits": [
+            "real persistence and rollback require system evidence",
+            "recovery behavior absent from screenshots remains proposed"
+          ]
+        },
+        {
+          "id": "facet.performance.scale-media-cost",
+          "name": "Scale, media, and rendering cost",
+          "question": "Which lists, charts, images, maps, effects, and content volumes risk perceptual or interaction cost?",
+          "inspect": [
+            "long collections, dense charts, media grids, maps, blur, shadows, and animation",
+            "progressive media, placeholders, local scrolling, aggregation, and simplification",
+            "interaction readiness and degradation priorities"
+          ],
+          "screenshotLimits": [
+            "runtime cost, memory, virtualization, and network weight cannot be measured from screenshots",
+            "visual complexity does not prove poor performance"
+          ]
+        }
+      ],
+      "conceptRefs": [
+        "concept.asset-brand-expression",
+        "concept.state-edge-coverage",
+        "concept.validation-recovery",
+        "concept.visualization-encoding-integrity",
+        "concept.data-scale-resilience",
+        "concept.feedback-interruption-budget",
+        "concept.motion-grammar",
+        "concept.visual-stability",
+        "concept.asset-media-resilience"
+      ]
+    },
+    {
+      "id": "axis.system-governance",
+      "order": 13,
+      "name": "Design system grammar and governance",
+      "purpose": "Convert evidence into semantic tokens, component contracts, scoped rules, coverage, provenance, integration guidance, and non-regression checks.",
+      "promptRef": "prompts/14-system-governance.md",
+      "focusAreas": [
+        "Tokens and relationships",
+        "Component and pattern contracts",
+        "Provenance and coverage",
+        "Framework-neutral design-to-code mapping",
+        "Installation, audit, and non-regression"
+      ],
+      "facets": [
+        {
+          "id": "facet.system.tokens-relations",
+          "name": "Tokens and relationships",
+          "question": "Which semantic roles, scales, aliases, modes, and relationships are reusable without inventing exact values?",
+          "inspect": [
+            "color, space, size, type, border, radius, elevation, opacity, layer, motion, icon, asset, and data roles",
+            "role relationships, scales, modes, aliases, and exceptional values",
+            "observed relationships versus proposed implementation bounds"
+          ],
+          "screenshotLimits": [
+            "exact token values require evidence or accepted calibration",
+            "target-project tokens are integration context, not source evidence"
+          ]
+        },
+        {
+          "id": "facet.system.component-contracts",
+          "name": "Component and pattern contracts",
+          "question": "Which anatomy, variants, states, compositions, content limits, and anti-patterns can be generated consistently?",
+          "inspect": [
+            "canonical component and UI-domain patterns",
+            "required parts, variants, states, relationships, and exceptions",
+            "generator guidance versus audit-only requirements"
+          ],
+          "screenshotLimits": [
+            "visual repetition does not prove shared source code",
+            "unseen variants remain proposed or unknown"
+          ]
+        },
+        {
+          "id": "facet.system.provenance-coverage",
+          "name": "Provenance and coverage",
+          "question": "Is every axis facet and UI domain explicitly covered, partial, unknown, or not applicable with traceable evidence?",
+          "inspect": [
+            "evidence, confidence, scope, exceptions, conflicts, and unknowns",
+            "facet coverage and UI-domain applicability",
+            "missing references and next evidence required"
+          ],
+          "screenshotLimits": [
+            "document presence does not prove semantic coverage",
+            "coverage cannot promote unsupported claims"
+          ]
+        },
+        {
+          "id": "facet.system.framework-neutral-mapping",
+          "name": "Framework-neutral design-to-code mapping",
+          "question": "How can the grammar guide implementation without binding extraction to a framework or target-project aesthetics?",
+          "inspect": [
+            "semantic roles, component contracts, validation cases, and integration boundaries",
+            "generated versus guidance-only versus audit-only outputs",
+            "technical adapter opportunities and limitations"
+          ],
+          "screenshotLimits": [
+            "screenshots do not reveal framework or code architecture",
+            "repository conventions cannot become Design DNA observations"
+          ]
+        },
+        {
+          "id": "facet.system.install-audit-nonregression",
+          "name": "Installation, audit, and non-regression",
+          "question": "Which rules require deterministic validation, perceptual review, usage evidence, ownership, migration, and rollback?",
+          "inspect": [
+            "rule strength, verification method, owner, and failure impact",
+            "managed files, overrides, checksums, migration, and rollback",
+            "mechanical, perceptual, usage, and accessibility audit layers"
+          ],
+          "screenshotLimits": [
+            "agent guidance is not mechanical enforcement",
+            "code-level validation does not prove perceptual fidelity or usability"
+          ]
+        }
+      ],
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.typographic-system",
+        "concept.semantic-color-theme",
+        "concept.iconographic-coherence",
+        "concept.component-anatomy-composition",
+        "concept.state-edge-coverage",
+        "concept.accessibility-semantics",
+        "concept.motion-grammar",
+        "concept.asset-media-resilience",
+        "concept.design-to-code-governance"
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "id": "concept.spatial-system",
+      "name": "Spatial system and rhythm",
+      "description": "Preserve region, grid, alignment, spacing, density, and depth relationships across generated layouts.",
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.component-morphology",
+        "axis.responsive-platform-adaptation",
+        "axis.system-governance"
+      ],
+      "inspect": [
+        "regions and nesting",
+        "tracks, gutters, margins, and spans",
+        "gap families, alignment, density, and depth"
+      ],
+      "screenshotLimits": [
+        "exact measurements are not established by scaled pixels",
+        "one viewport cannot prove responsive geometry"
+      ],
+      "stressTests": [
+        "long content and nested panels",
+        "wide and narrow containers",
+        "dense and sparse datasets"
+      ],
+      "outputTargets": [
+        "foundations/spatial-composition.md",
+        "governance/calibration.md"
+      ]
+    },
+    {
+      "id": "concept.typographic-system",
+      "name": "Typographic system and readability",
+      "description": "Keep type roles, hierarchy, metrics, numerals, and overflow behavior coherent and legible.",
+      "axisRefs": [
+        "axis.typography-content-hierarchy",
+        "axis.forms-input-workflows",
+        "axis.data-display-visualization",
+        "axis.accessibility-inclusion-localization",
+        "axis.system-governance"
+      ],
+      "inspect": [
+        "semantic type roles",
+        "size, weight, line height, measure, and tracking relationships",
+        "numeric and multilingual treatment"
+      ],
+      "screenshotLimits": [
+        "font identity and exact metrics are not visually certain",
+        "one language does not prove script or locale resilience"
+      ],
+      "stressTests": [
+        "200 percent text size",
+        "long labels and unbroken strings",
+        "large signed values and alternate number formats"
+      ],
+      "outputTargets": [
+        "foundations/typography.md",
+        "behavior/content-resilience.md"
+      ]
+    },
+    {
+      "id": "concept.semantic-color-theme",
+      "name": "Semantic color and theme roles",
+      "description": "Preserve meaning across canvas, surfaces, text, actions, statuses, focus, selection, and theme modes.",
+      "axisRefs": [
+        "axis.color-surface-identity",
+        "axis.data-display-visualization",
+        "axis.accessibility-inclusion-localization",
+        "axis.system-governance"
+      ],
+      "inspect": [
+        "semantic color roles and pairings",
+        "status and interaction roles",
+        "light, dark, and high-contrast implications"
+      ],
+      "screenshotLimits": [
+        "source values and contrast ratios are not certified from screenshots",
+        "one theme does not establish another"
+      ],
+      "stressTests": [
+        "grayscale and color-vision checks",
+        "dark and forced-colors modes",
+        "overlapping status and selection states"
+      ],
+      "outputTargets": [
+        "foundations/color-and-themes.md",
+        "behavior/accessibility.md"
+      ]
+    },
+    {
+      "id": "concept.surface-depth-hierarchy",
+      "name": "Surface, shape, and depth hierarchy",
+      "description": "Keep fills, borders, radii, elevation, overlays, and transparency proportional to containment and interaction.",
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.color-surface-identity",
+        "axis.component-morphology"
+      ],
+      "inspect": [
+        "surface tiers",
+        "border, radius, shadow, opacity, and overlay relationships",
+        "nested depth and selected states"
+      ],
+      "screenshotLimits": [
+        "exact shadow and opacity values are not visually provable",
+        "static depth does not prove dynamic elevation"
+      ],
+      "stressTests": [
+        "three-level nesting",
+        "selected and disabled surfaces",
+        "overlay over dense content"
+      ],
+      "outputTargets": ["foundations/surfaces-and-depth.md"]
+    },
+    {
+      "id": "concept.iconographic-coherence",
+      "name": "Iconographic coherence",
+      "description": "Prevent mixed, ambiguous, poorly aligned, unlabeled, or directionally incorrect icon language.",
+      "axisRefs": [
+        "axis.color-surface-identity",
+        "axis.component-morphology",
+        "axis.accessibility-inclusion-localization",
+        "axis.system-governance"
+      ],
+      "inspect": [
+        "stroke, fill, caps, corners, optical size, and bounding box",
+        "alignment, color, semantic role, and labeling",
+        "directionality and state treatment"
+      ],
+      "screenshotLimits": [
+        "exact libraries and accessible names are invisible",
+        "RTL behavior cannot be certified"
+      ],
+      "stressTests": [
+        "mixed icon sizes",
+        "icon-only controls",
+        "RTL directional icons",
+        "missing asset fallback"
+      ],
+      "outputTargets": ["foundations/iconography-and-assets.md"]
+    },
+    {
+      "id": "concept.asset-brand-expression",
+      "name": "Asset and brand expression",
+      "description": "Preserve coherent imagery, illustration, photography, logo, avatar, crop, and visual-personality choices.",
+      "axisRefs": [
+        "axis.color-surface-identity",
+        "axis.content-trust-ethics",
+        "axis.performance-resilience"
+      ],
+      "inspect": [
+        "asset roles, ratios, masks, crops, and density",
+        "brand motifs and emotional tone",
+        "fallback and loading implications"
+      ],
+      "screenshotLimits": [
+        "licenses, source quality, alt text, and full identity strategy are not visible",
+        "a loaded asset does not prove fallback behavior"
+      ],
+      "stressTests": [
+        "missing and slow media",
+        "portrait and landscape crops",
+        "brand asset absent or low resolution"
+      ],
+      "outputTargets": [
+        "foundations/visual-identity.md",
+        "patterns/media-and-galleries.md"
+      ]
+    },
+    {
+      "id": "concept.component-anatomy-composition",
+      "name": "Component anatomy and composition",
+      "description": "Prevent components from becoming inconsistent collections of slots, variants, states, and nested structures.",
+      "axisRefs": ["axis.component-morphology", "axis.system-governance"],
+      "inspect": [
+        "required, optional, repeatable, and conditional parts",
+        "variant, density, and composition relationships",
+        "exceptions and anti-patterns"
+      ],
+      "screenshotLimits": [
+        "visual repetition does not prove shared implementation",
+        "unshown variants are not observed"
+      ],
+      "stressTests": [
+        "missing optional slots",
+        "nested components",
+        "compact and enlarged content",
+        "invalid variant combinations"
+      ],
+      "outputTargets": [
+        "components/anatomy.md",
+        "components/variants-and-density.md",
+        "components/composition-and-anti-patterns.md"
+      ]
+    },
+    {
+      "id": "concept.state-edge-coverage",
+      "name": "State and edge-case coverage",
+      "description": "Prevent happy-path-only controls, components, collections, forms, and workflows.",
+      "axisRefs": [
+        "axis.component-morphology",
+        "axis.forms-input-workflows",
+        "axis.data-display-visualization",
+        "axis.interaction-state-motion",
+        "axis.performance-resilience",
+        "axis.system-governance"
+      ],
+      "inspect": [
+        "displayed state, probable trigger, feedback, exit, and preserved context",
+        "control and business state anatomy",
+        "coexisting and nested states"
+      ],
+      "screenshotLimits": [
+        "unshown states and transitions are never observed",
+        "programmatic state is invisible without implementation evidence"
+      ],
+      "stressTests": [
+        "loading, empty, no-results, partial, stale, warning, error, success, conflict, disabled, and offline"
+      ],
+      "outputTargets": [
+        "components/states.md",
+        "behavior/loading-errors-recovery.md"
+      ]
+    },
+    {
+      "id": "concept.affordance-discoverability",
+      "name": "Affordance and discoverability",
+      "description": "Prevent actions that are visually ambiguous, hidden behind unsupported gestures, or inconsistent with their consequence.",
+      "axisRefs": [
+        "axis.component-morphology",
+        "axis.navigation-task-architecture",
+        "axis.forms-input-workflows",
+        "axis.interaction-state-motion",
+        "axis.accessibility-inclusion-localization"
+      ],
+      "inspect": [
+        "interactive shape, contrast, label, icon, placement, and grouping",
+        "primary, secondary, contextual, and destructive cues",
+        "gesture and hover dependencies"
+      ],
+      "screenshotLimits": [
+        "appearance does not prove the full hit region or interaction",
+        "shortcuts and gestures are not visible"
+      ],
+      "stressTests": [
+        "icon-only controls",
+        "touch and keyboard use",
+        "competing primary actions",
+        "hover unavailable"
+      ],
+      "outputTargets": [
+        "patterns/actions-and-controls.md",
+        "behavior/interaction-contracts.md"
+      ]
+    },
+    {
+      "id": "concept.navigation-orientation",
+      "name": "Navigation and orientation",
+      "description": "Preserve current location, hierarchy, scope, return paths, and movement among visible contexts.",
+      "axisRefs": [
+        "axis.navigation-task-architecture",
+        "axis.responsive-platform-adaptation",
+        "axis.accessibility-inclusion-localization"
+      ],
+      "inspect": [
+        "global and local navigation",
+        "active location and scope",
+        "breadcrumbs, tabs, steps, and return paths"
+      ],
+      "screenshotLimits": [
+        "one screen does not prove destinations or persistence",
+        "visual state does not prove routing or focus"
+      ],
+      "stressTests": [
+        "deep location",
+        "small-screen navigation",
+        "keyboard traversal",
+        "long navigation labels"
+      ],
+      "outputTargets": [
+        "patterns/app-shell-and-navigation.md",
+        "behavior/task-and-information-architecture.md"
+      ]
+    },
+    {
+      "id": "concept.information-hierarchy",
+      "name": "Information hierarchy and reading order",
+      "description": "Preserve the intended overview, evidence, decision, and action sequence without relying on accidental geometry.",
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.typography-content-hierarchy",
+        "axis.navigation-task-architecture",
+        "axis.content-trust-ethics"
+      ],
+      "inspect": [
+        "visual order, grouping, salience, and probable semantic order",
+        "summary-to-detail and problem-to-action sequence",
+        "competing focal points"
+      ],
+      "screenshotLimits": [
+        "visual order does not prove DOM order or comprehension",
+        "prominence does not establish product priority"
+      ],
+      "stressTests": [
+        "screen reader order",
+        "narrow reflow",
+        "dense dashboard",
+        "missing summary"
+      ],
+      "outputTargets": ["behavior/task-and-information-architecture.md"]
+    },
+    {
+      "id": "concept.progressive-disclosure",
+      "name": "Progressive disclosure",
+      "description": "Prevent both premature complexity and hidden essential information or actions.",
+      "axisRefs": [
+        "axis.navigation-task-architecture",
+        "axis.forms-input-workflows",
+        "axis.interaction-state-motion"
+      ],
+      "inspect": [
+        "primary and secondary information",
+        "menus, expanders, details, overlays, and staged workflows",
+        "initial density and paths to depth"
+      ],
+      "screenshotLimits": [
+        "closed content and transition behavior are invisible",
+        "placement does not establish usage frequency"
+      ],
+      "stressTests": [
+        "first-time user",
+        "expert repeated use",
+        "small screen",
+        "deeply nested disclosure"
+      ],
+      "outputTargets": [
+        "patterns/overlays-and-disclosure.md",
+        "behavior/interaction-contracts.md"
+      ]
+    },
+    {
+      "id": "concept.form-entry-integrity",
+      "name": "Form and data-entry integrity",
+      "description": "Keep labels, input models, formatting, dependencies, save behavior, and sensitive values understandable and recoverable.",
+      "axisRefs": [
+        "axis.forms-input-workflows",
+        "axis.accessibility-inclusion-localization",
+        "axis.content-trust-ethics"
+      ],
+      "inspect": [
+        "labels, instructions, groups, input and selection models",
+        "format, precision, masking, and dependencies",
+        "save, cancel, draft, and sensitive-data implications"
+      ],
+      "screenshotLimits": [
+        "DOM associations, input modes, parsing, and persistence are invisible",
+        "one state does not establish workflow behavior"
+      ],
+      "stressTests": [
+        "long form",
+        "invalid and partial data",
+        "mobile keyboard",
+        "locale formats",
+        "sensitive value reveal"
+      ],
+      "outputTargets": ["patterns/forms-and-data-entry.md"]
+    },
+    {
+      "id": "concept.validation-recovery",
+      "name": "Validation, error prevention, and recovery",
+      "description": "Prevent vague, destructive, poorly timed, or context-losing validation and failure behavior.",
+      "axisRefs": [
+        "axis.forms-input-workflows",
+        "axis.interaction-state-motion",
+        "axis.content-trust-ethics",
+        "axis.performance-resilience"
+      ],
+      "inspect": [
+        "validation location, timing implication, specificity, and severity",
+        "correction focus and input preservation",
+        "retry, undo, conflict, and escalation"
+      ],
+      "screenshotLimits": [
+        "timing, backend rules, and persistence are not visible",
+        "absence of errors does not prove their design"
+      ],
+      "stressTests": [
+        "multiple errors",
+        "server conflict",
+        "timeout after submission",
+        "partial success",
+        "undo unavailable"
+      ],
+      "outputTargets": [
+        "patterns/forms-and-data-entry.md",
+        "behavior/loading-errors-recovery.md"
+      ]
+    },
+    {
+      "id": "concept.data-comparison-context",
+      "name": "Data comparison and decision context",
+      "description": "Prevent metrics and statistics from appearing precise while omitting units, period, baseline, target, denominator, or freshness.",
+      "axisRefs": [
+        "axis.typography-content-hierarchy",
+        "axis.data-display-visualization",
+        "axis.content-trust-ethics"
+      ],
+      "inspect": [
+        "value, label, unit, timeframe, comparison, target, and freshness anatomy",
+        "precision, rounding, ranking, and segmentation",
+        "positive, negative, and neutral interpretation cues"
+      ],
+      "screenshotLimits": [
+        "formula and business meaning are not derivable from layout",
+        "color or arrows do not prove desirability"
+      ],
+      "stressTests": [
+        "zero and negative values",
+        "large values",
+        "missing baseline",
+        "stale data",
+        "ambiguous trend direction"
+      ],
+      "outputTargets": ["patterns/stats-and-kpis.md"]
+    },
+    {
+      "id": "concept.visualization-encoding-integrity",
+      "name": "Visualization encoding integrity",
+      "description": "Keep chart questions, marks, channels, axes, scales, legends, annotations, uncertainty, and alternatives coherent.",
+      "axisRefs": [
+        "axis.color-surface-identity",
+        "axis.data-display-visualization",
+        "axis.accessibility-inclusion-localization",
+        "axis.performance-resilience"
+      ],
+      "inspect": [
+        "chart purpose, mark, channel, scale, baseline, legend, label, and annotation",
+        "series and comparison semantics",
+        "uncertainty, missing values, interaction, and accessible alternative"
+      ],
+      "screenshotLimits": [
+        "data values and transforms cannot be reconstructed reliably",
+        "tooltips and keyboard navigation are not visible"
+      ],
+      "stressTests": [
+        "many series",
+        "small viewport",
+        "missing values",
+        "color-vision check",
+        "text/table alternative"
+      ],
+      "outputTargets": ["patterns/charts-and-data-visualization.md"]
+    },
+    {
+      "id": "concept.data-scale-resilience",
+      "name": "Data-scale resilience",
+      "description": "Prevent tables, lists, cards, charts, filters, and navigation from working only with sample data.",
+      "axisRefs": [
+        "axis.data-display-visualization",
+        "axis.responsive-platform-adaptation",
+        "axis.performance-resilience"
+      ],
+      "inspect": [
+        "collection density and anatomy",
+        "column, row, series, action, and label priority",
+        "pagination, aggregation, grouping, and overflow implications"
+      ],
+      "screenshotLimits": [
+        "real volume, virtualization, and backend limits are invisible",
+        "one data page does not prove extreme behavior"
+      ],
+      "stressTests": [
+        "no data, one item, thousands of rows, many series, long identifiers, extreme values"
+      ],
+      "outputTargets": [
+        "patterns/tables-and-lists.md",
+        "behavior/content-resilience.md"
+      ]
+    },
+    {
+      "id": "concept.content-layout-resilience",
+      "name": "Content and layout resilience",
+      "description": "Prevent text, values, media, actions, and states from breaking layout under realistic variation.",
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.typography-content-hierarchy",
+        "axis.component-morphology",
+        "axis.forms-input-workflows",
+        "axis.data-display-visualization",
+        "axis.responsive-platform-adaptation",
+        "axis.accessibility-inclusion-localization"
+      ],
+      "inspect": [
+        "wrap, clamp, ellipsis, growth, and overflow zones",
+        "content-container dependencies",
+        "action and status preservation"
+      ],
+      "screenshotLimits": [
+        "short content does not prove overflow policy",
+        "fixed height does not prove zoom or localization resilience"
+      ],
+      "stressTests": [
+        "long and unbroken strings",
+        "nulls",
+        "large values",
+        "enlarged text",
+        "missing media"
+      ],
+      "outputTargets": ["behavior/content-resilience.md"]
+    },
+    {
+      "id": "concept.semantic-responsive-reflow",
+      "name": "Semantic responsiveness and reflow",
+      "description": "Preserve meaning and task priority as regions wrap, stack, scroll, collapse, hide, or reorder.",
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.component-morphology",
+        "axis.navigation-task-architecture",
+        "axis.data-display-visualization",
+        "axis.responsive-platform-adaptation",
+        "axis.accessibility-inclusion-localization"
+      ],
+      "inspect": [
+        "intrinsic groups and containers",
+        "essential versus secondary elements",
+        "wrap, local scroll, reorganization, and order"
+      ],
+      "screenshotLimits": [
+        "one viewport reveals no breakpoint",
+        "unshown hide, collapse, and reorder behavior remains proposed or unknown"
+      ],
+      "stressTests": [
+        "320 CSS pixels",
+        "200 percent zoom",
+        "wide desktop",
+        "split view",
+        "long localization"
+      ],
+      "outputTargets": ["behavior/responsive-reflow.md"]
+    },
+    {
+      "id": "concept.platform-conventions",
+      "name": "Platform and device conventions",
+      "description": "Respect visible web, mobile, desktop, native-shell, safe-area, orientation, keyboard, and system-navigation implications.",
+      "axisRefs": [
+        "axis.component-morphology",
+        "axis.interaction-state-motion",
+        "axis.responsive-platform-adaptation",
+        "axis.accessibility-inclusion-localization"
+      ],
+      "inspect": [
+        "system chrome, safe areas, top and bottom regions",
+        "back, menu, sheet, tab, window, and virtual-keyboard implications",
+        "device and input conventions"
+      ],
+      "screenshotLimits": [
+        "dimensions do not prove platform or runtime",
+        "haptics and system behavior are invisible"
+      ],
+      "stressTests": [
+        "notch and home indicator",
+        "rotation",
+        "virtual keyboard",
+        "desktop resize",
+        "touch and pointer"
+      ],
+      "outputTargets": [
+        "patterns/mobile-native-shell.md",
+        "behavior/platform-adaptation.md"
+      ]
+    },
+    {
+      "id": "concept.modality-equivalence",
+      "name": "Input-modality equivalence",
+      "description": "Ensure pointer, touch, keyboard, stylus, gesture, remote, and assistive-input users can reach equivalent outcomes.",
+      "axisRefs": [
+        "axis.component-morphology",
+        "axis.forms-input-workflows",
+        "axis.interaction-state-motion",
+        "axis.responsive-platform-adaptation",
+        "axis.accessibility-inclusion-localization"
+      ],
+      "inspect": [
+        "visible target size and control grouping",
+        "hover, gesture, drag, and precision dependencies",
+        "probable focus and activation order"
+      ],
+      "screenshotLimits": [
+        "real hit boxes, focus order, gestures, and shortcuts are invisible",
+        "equivalence requires interaction evidence"
+      ],
+      "stressTests": [
+        "keyboard only",
+        "touch only",
+        "zoomed interface",
+        "drag alternative",
+        "hover unavailable"
+      ],
+      "outputTargets": [
+        "behavior/accessibility.md",
+        "behavior/interaction-contracts.md"
+      ]
+    },
+    {
+      "id": "concept.spatial-continuity",
+      "name": "Spatial continuity and context preservation",
+      "description": "Keep location, focus, selection, scroll, and trigger-result relationships understandable across state and view changes.",
+      "axisRefs": [
+        "axis.navigation-task-architecture",
+        "axis.interaction-state-motion",
+        "axis.responsive-platform-adaptation"
+      ],
+      "inspect": [
+        "navigation anchors and active context",
+        "trigger-result spatial relationship",
+        "focus, selection, scroll, and return implications"
+      ],
+      "screenshotLimits": [
+        "focus return and scroll restoration are invisible",
+        "continuity across screens requires a sequence or proposal"
+      ],
+      "stressTests": [
+        "dialog open-close",
+        "master-detail update",
+        "filtering",
+        "back navigation",
+        "reflow during selection"
+      ],
+      "outputTargets": ["behavior/interaction-contracts.md"]
+    },
+    {
+      "id": "concept.localization-bidirectionality",
+      "name": "Localization and bidirectionality resilience",
+      "description": "Prevent English-only geometry, formatting, direction, vocabulary, and sorting assumptions.",
+      "axisRefs": [
+        "axis.typography-content-hierarchy",
+        "axis.forms-input-workflows",
+        "axis.data-display-visualization",
+        "axis.responsive-platform-adaptation",
+        "axis.accessibility-inclusion-localization",
+        "axis.content-trust-ethics"
+      ],
+      "inspect": [
+        "date, number, currency, unit, name, and address formats",
+        "label expansion, scripts, and plurals",
+        "logical direction, mirroring, and mixed-direction content"
+      ],
+      "screenshotLimits": [
+        "one language does not prove internationalization",
+        "RTL, plurals, and alternate formats remain unobserved"
+      ],
+      "stressTests": [
+        "30 to 100 percent text expansion",
+        "Arabic RTL",
+        "mixed LTR identifiers",
+        "alternate date and number formats"
+      ],
+      "outputTargets": ["behavior/localization.md"]
+    },
+    {
+      "id": "concept.accessibility-semantics",
+      "name": "Accessibility semantics and annotations",
+      "description": "Prevent visual accessibility claims without DOM, name, role, state, focus, contrast, zoom, and assistive-technology verification.",
+      "axisRefs": [
+        "axis.component-morphology",
+        "axis.navigation-task-architecture",
+        "axis.forms-input-workflows",
+        "axis.data-display-visualization",
+        "axis.interaction-state-motion",
+        "axis.accessibility-inclusion-localization",
+        "axis.system-governance"
+      ],
+      "inspect": [
+        "visual order and probable semantics",
+        "labels, relative contrast, focus cues, and non-color coding",
+        "tables, charts, forms, overlays, and custom control implications"
+      ],
+      "screenshotLimits": [
+        "conformance cannot be certified without implementation tests",
+        "roles, names, focus order, live regions, and screen-reader behavior remain unknown"
+      ],
+      "stressTests": [
+        "keyboard and screen reader flows",
+        "200 percent zoom",
+        "forced colors",
+        "reduced motion",
+        "chart alternative"
+      ],
+      "outputTargets": ["behavior/accessibility.md"]
+    },
+    {
+      "id": "concept.reversibility-forgiveness",
+      "name": "Reversibility and forgiveness",
+      "description": "Prevent high-cost mistakes and context loss through proportionate confirmation, cancellation, undo, drafts, and recovery.",
+      "axisRefs": [
+        "axis.navigation-task-architecture",
+        "axis.forms-input-workflows",
+        "axis.interaction-state-motion",
+        "axis.content-trust-ethics"
+      ],
+      "inspect": [
+        "consequential actions and visible safeguards",
+        "cancel, back, undo, draft, restore, and review patterns",
+        "precision of consequences"
+      ],
+      "screenshotLimits": [
+        "real undo and rollback are not proven",
+        "server-side effects remain unknown"
+      ],
+      "stressTests": [
+        "accidental destructive action",
+        "partial completion",
+        "navigation with unsaved work",
+        "undo expired"
+      ],
+      "outputTargets": [
+        "behavior/interaction-contracts.md",
+        "behavior/trust-privacy-and-ethics.md"
+      ]
+    },
+    {
+      "id": "concept.feedback-interruption-budget",
+      "name": "Feedback proportionality and interruption budget",
+      "description": "Prevent excessive, missing, duplicated, poorly placed, or inaccessible feedback.",
+      "axisRefs": [
+        "axis.forms-input-workflows",
+        "axis.data-display-visualization",
+        "axis.interaction-state-motion",
+        "axis.content-trust-ethics",
+        "axis.performance-resilience"
+      ],
+      "inspect": [
+        "message placement, intensity, persistence, and actionability",
+        "relationship among cause, scope, consequence, and recovery",
+        "inline, status, toast, banner, and dialog hierarchy"
+      ],
+      "screenshotLimits": [
+        "duration, repetition, announcement, and dismissal are invisible",
+        "appearance does not prove assistive announcement"
+      ],
+      "stressTests": [
+        "rapid repeated actions",
+        "multiple simultaneous failures",
+        "background completion",
+        "screen-reader announcement"
+      ],
+      "outputTargets": [
+        "patterns/messaging-and-notifications.md",
+        "behavior/loading-errors-recovery.md"
+      ]
+    },
+    {
+      "id": "concept.motion-grammar",
+      "name": "Functional motion grammar",
+      "description": "Use motion only to explain feedback, hierarchy, origin, destination, progress, or continuity while remaining interruptible and reducible.",
+      "axisRefs": [
+        "axis.color-surface-identity",
+        "axis.component-morphology",
+        "axis.interaction-state-motion",
+        "axis.responsive-platform-adaptation",
+        "axis.accessibility-inclusion-localization",
+        "axis.performance-resilience",
+        "axis.system-governance"
+      ],
+      "inspect": [
+        "spatial origin and destination",
+        "feedback versus transition hierarchy",
+        "interruption, layout stability, and reduced-motion alternative"
+      ],
+      "screenshotLimits": [
+        "duration, easing, path, and interruption are not observable in a still image",
+        "absent motion remains proposed or unknown"
+      ],
+      "stressTests": [
+        "rapid repeated interaction",
+        "reduced motion",
+        "slow device",
+        "layout reflow during transition"
+      ],
+      "outputTargets": ["foundations/motion.md"]
+    },
+    {
+      "id": "concept.visual-stability",
+      "name": "Visual stability",
+      "description": "Prevent layout shift, flicker, scroll jumps, moving targets, and state-induced geometry loss.",
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.component-morphology",
+        "axis.data-display-visualization",
+        "axis.interaction-state-motion",
+        "axis.responsive-platform-adaptation",
+        "axis.performance-resilience"
+      ],
+      "inspect": [
+        "reserved space and stable dimensions",
+        "loaded versus placeholder anatomy",
+        "focus, scroll, selection, and sticky or overlaid elements"
+      ],
+      "screenshotLimits": [
+        "layout shift and flicker require a sequence or runtime test",
+        "one stable frame does not prove stable transitions"
+      ],
+      "stressTests": [
+        "late media and fonts",
+        "validation messages",
+        "loading-to-data",
+        "banner insertion",
+        "responsive state change"
+      ],
+      "outputTargets": ["behavior/performance-and-stability.md"]
+    },
+    {
+      "id": "concept.asset-media-resilience",
+      "name": "Asset and media resilience",
+      "description": "Prevent broken crops, missing fallbacks, loading shifts, inaccessible media, and inconsistent asset treatment.",
+      "axisRefs": [
+        "axis.color-surface-identity",
+        "axis.component-morphology",
+        "axis.responsive-platform-adaptation",
+        "axis.accessibility-inclusion-localization",
+        "axis.performance-resilience",
+        "axis.system-governance"
+      ],
+      "inspect": [
+        "ratio, crop, density, alignment, and role",
+        "reserved space, fallback, and placeholder implications",
+        "informative versus decorative role"
+      ],
+      "screenshotLimits": [
+        "source files, licenses, alt text, fallbacks, and loading are invisible",
+        "a loaded asset does not reveal failure behavior"
+      ],
+      "stressTests": [
+        "missing image",
+        "slow image",
+        "different aspect ratio",
+        "high zoom",
+        "decorative asset hidden"
+      ],
+      "outputTargets": [
+        "patterns/media-and-galleries.md",
+        "behavior/content-resilience.md"
+      ]
+    },
+    {
+      "id": "concept.content-voice-comprehension",
+      "name": "Content voice and comprehension",
+      "description": "Keep terminology, labels, CTA verbs, explanations, errors, and tone coherent, precise, inclusive, and actionable.",
+      "axisRefs": [
+        "axis.typography-content-hierarchy",
+        "axis.navigation-task-architecture",
+        "axis.forms-input-workflows",
+        "axis.data-display-visualization",
+        "axis.content-trust-ethics"
+      ],
+      "inspect": [
+        "terminology and naming consistency",
+        "voice, tone, sentence shape, and action verbs",
+        "clarity, jargon, ambiguity, and next steps"
+      ],
+      "screenshotLimits": [
+        "visible copy does not establish comprehension or complete content strategy",
+        "audience intent remains inferred"
+      ],
+      "stressTests": [
+        "novice user",
+        "translated copy",
+        "error and empty states",
+        "destructive action",
+        "ambiguous domain term"
+      ],
+      "outputTargets": ["behavior/content-and-voice.md"]
+    },
+    {
+      "id": "concept.trust-permission-transparency",
+      "name": "Trust, permission, privacy, and transparency",
+      "description": "Make access, source, freshness, uncertainty, collection, sharing, consequences, and control legible at the decision point.",
+      "axisRefs": [
+        "axis.forms-input-workflows",
+        "axis.data-display-visualization",
+        "axis.content-trust-ethics"
+      ],
+      "inspect": [
+        "provenance, freshness, scope, and limitations",
+        "permission, privacy, consent, sharing, and audience",
+        "consequence, reversibility, and ownership"
+      ],
+      "screenshotLimits": [
+        "real policy, data processing, and permissions are invisible",
+        "UI claims do not prove backend enforcement"
+      ],
+      "stressTests": [
+        "stale or generated data",
+        "permission denied",
+        "sharing scope",
+        "consent decline",
+        "high-impact action"
+      ],
+      "outputTargets": ["behavior/trust-privacy-and-ethics.md"]
+    },
+    {
+      "id": "concept.ethical-interaction",
+      "name": "Ethical interaction and informed choice",
+      "description": "Prevent deceptive emphasis, forced continuity, hidden defaults, obstruction, manufactured urgency, and disproportionate friction.",
+      "axisRefs": [
+        "axis.navigation-task-architecture",
+        "axis.forms-input-workflows",
+        "axis.interaction-state-motion",
+        "axis.content-trust-ethics"
+      ],
+      "inspect": [
+        "choice symmetry and default visibility",
+        "cost, consequence, urgency, consent, opt-out, and cancellation",
+        "friction proportionality and user control"
+      ],
+      "screenshotLimits": [
+        "appearance alone does not establish intent or legal compliance",
+        "business rules and consequences require authorized evidence"
+      ],
+      "stressTests": [
+        "decline versus accept",
+        "cancel subscription",
+        "delete or publish",
+        "hidden recurring effect",
+        "time pressure"
+      ],
+      "outputTargets": ["behavior/trust-privacy-and-ethics.md"]
+    },
+    {
+      "id": "concept.design-to-code-governance",
+      "name": "Design-to-code and non-regression contract",
+      "description": "Turn the extracted grammar into framework-neutral, installable, auditable, versioned, and override-safe guidance.",
+      "axisRefs": ["axis.system-governance"],
+      "inspect": [
+        "tokens, relations, component and domain contracts",
+        "rule strength, evidence, confidence, exceptions, coverage, and calibration",
+        "installation ownership, checksums, migration, rollback, and audit layers"
+      ],
+      "screenshotLimits": [
+        "screenshots do not reveal framework or code structure",
+        "guidance is not mechanical enforcement and code match is not perceptual proof"
+      ],
+      "stressTests": [
+        "novel screen generation",
+        "manual override",
+        "upgrade migration",
+        "visual regression",
+        "usage flow"
+      ],
+      "outputTargets": [
+        "governance/rules.md",
+        "governance/coverage.md",
+        "governance/integration.md"
+      ]
+    }
+  ],
+  "uiDomains": [
+    {
+      "id": "domain.app-shell-navigation",
+      "name": "Application shell and navigation",
+      "description": "Persistent and contextual structures that orient users and connect visible product areas.",
+      "detectionCues": [
+        "sidebar",
+        "navigation rail",
+        "top bar",
+        "tabs",
+        "breadcrumb",
+        "workspace switcher"
+      ],
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.component-morphology",
+        "axis.navigation-task-architecture",
+        "axis.responsive-platform-adaptation"
+      ],
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.navigation-orientation",
+        "concept.information-hierarchy",
+        "concept.semantic-responsive-reflow"
+      ],
+      "inspect": [
+        "shell regions and ownership",
+        "global and local navigation",
+        "current location and scope",
+        "collapse and small-screen transformation"
+      ],
+      "screenshotLimits": [
+        "one screen does not prove persistence or destinations"
+      ],
+      "stressTests": [
+        "deep active location",
+        "long labels",
+        "small-screen navigation",
+        "keyboard traversal"
+      ]
+    },
+    {
+      "id": "domain.marketing-editorial",
+      "name": "Marketing and editorial content",
+      "description": "Heroes, narratives, feature sections, proof, calls to action, and long-form content composition.",
+      "detectionCues": [
+        "hero",
+        "headline",
+        "feature section",
+        "testimonial",
+        "logo cloud",
+        "call to action",
+        "article"
+      ],
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.typography-content-hierarchy",
+        "axis.color-surface-identity",
+        "axis.navigation-task-architecture",
+        "axis.content-trust-ethics"
+      ],
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.typographic-system",
+        "concept.asset-brand-expression",
+        "concept.information-hierarchy",
+        "concept.content-voice-comprehension"
+      ],
+      "inspect": [
+        "headline and supporting copy hierarchy",
+        "section rhythm and narrative progression",
+        "proof and trust cues",
+        "primary and secondary calls to action"
+      ],
+      "screenshotLimits": [
+        "a screenshot does not establish campaign strategy, conversion, or audience"
+      ],
+      "stressTests": [
+        "long headline",
+        "missing imagery",
+        "multiple calls to action",
+        "mobile reading order"
+      ]
+    },
+    {
+      "id": "domain.actions-controls",
+      "name": "Actions and controls",
+      "description": "Buttons, icon buttons, links, menus, toggles, segmented controls, and action groups.",
+      "detectionCues": [
+        "button",
+        "icon button",
+        "link",
+        "menu",
+        "toggle",
+        "segmented control",
+        "toolbar"
+      ],
+      "axisRefs": [
+        "axis.component-morphology",
+        "axis.navigation-task-architecture",
+        "axis.interaction-state-motion",
+        "axis.accessibility-inclusion-localization"
+      ],
+      "conceptRefs": [
+        "concept.component-anatomy-composition",
+        "concept.affordance-discoverability",
+        "concept.modality-equivalence",
+        "concept.accessibility-semantics"
+      ],
+      "inspect": [
+        "anatomy, emphasis, size, and intent",
+        "primary, secondary, destructive, and contextual hierarchy",
+        "label and icon rules",
+        "control states and target implications"
+      ],
+      "screenshotLimits": [
+        "appearance does not prove activation, target size, or accessible name"
+      ],
+      "stressTests": [
+        "icon only",
+        "loading action",
+        "long label",
+        "disabled and destructive states"
+      ]
+    },
+    {
+      "id": "domain.forms-data-entry",
+      "name": "Forms and data entry",
+      "description": "Inputs, selections, validation, uploads, staged workflows, editing, and save behavior.",
+      "detectionCues": [
+        "input",
+        "textarea",
+        "select",
+        "checkbox",
+        "radio",
+        "switch",
+        "date picker",
+        "upload",
+        "form"
+      ],
+      "axisRefs": [
+        "axis.typography-content-hierarchy",
+        "axis.component-morphology",
+        "axis.forms-input-workflows",
+        "axis.interaction-state-motion",
+        "axis.accessibility-inclusion-localization",
+        "axis.content-trust-ethics"
+      ],
+      "conceptRefs": [
+        "concept.form-entry-integrity",
+        "concept.validation-recovery",
+        "concept.content-layout-resilience",
+        "concept.accessibility-semantics",
+        "concept.reversibility-forgiveness"
+      ],
+      "inspect": [
+        "labels, instructions, groups, and controls",
+        "validation, error, and success behavior",
+        "formatting, sensitive values, and locale",
+        "save, cancel, draft, and recovery"
+      ],
+      "screenshotLimits": [
+        "static captures do not prove validation timing, associations, persistence, or keyboard behavior"
+      ],
+      "stressTests": [
+        "multiple errors",
+        "mobile keyboard",
+        "long form",
+        "partial save",
+        "locale-sensitive values"
+      ]
+    },
+    {
+      "id": "domain.search-filter-sort",
+      "name": "Search, filter, and sort",
+      "description": "Query, refinement, scope, active criteria, result counts, no-results, and reset patterns.",
+      "detectionCues": [
+        "search field",
+        "filter",
+        "sort",
+        "facet",
+        "query",
+        "result count",
+        "active chip"
+      ],
+      "axisRefs": [
+        "axis.component-morphology",
+        "axis.navigation-task-architecture",
+        "axis.forms-input-workflows",
+        "axis.data-display-visualization",
+        "axis.interaction-state-motion"
+      ],
+      "conceptRefs": [
+        "concept.affordance-discoverability",
+        "concept.progressive-disclosure",
+        "concept.state-edge-coverage",
+        "concept.data-scale-resilience",
+        "concept.spatial-continuity"
+      ],
+      "inspect": [
+        "query and scope",
+        "filter representation and active criteria",
+        "result feedback, no-results, and reset",
+        "small-screen disclosure and preserved context"
+      ],
+      "screenshotLimits": [
+        "controls do not prove query behavior, debounce, sorting, or result semantics"
+      ],
+      "stressTests": [
+        "no results",
+        "many active filters",
+        "long facet labels",
+        "small screen",
+        "slow query"
+      ]
+    },
+    {
+      "id": "domain.tables-lists",
+      "name": "Tables and lists",
+      "description": "Dense and repeated collections with rows, columns, hierarchy, actions, selection, and navigation.",
+      "detectionCues": [
+        "table",
+        "row",
+        "column",
+        "list",
+        "data grid",
+        "pagination",
+        "batch action"
+      ],
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.typography-content-hierarchy",
+        "axis.component-morphology",
+        "axis.data-display-visualization",
+        "axis.responsive-platform-adaptation",
+        "axis.performance-resilience"
+      ],
+      "conceptRefs": [
+        "concept.data-scale-resilience",
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow",
+        "concept.state-edge-coverage",
+        "concept.visual-stability"
+      ],
+      "inspect": [
+        "row and column anatomy",
+        "alignment, density, priority, and actions",
+        "sorting, grouping, selection, and pagination cues",
+        "overflow and small-screen transformation"
+      ],
+      "screenshotLimits": [
+        "one dataset does not prove scale, sorting, pagination, or virtualization"
+      ],
+      "stressTests": [
+        "zero, one, and many rows",
+        "long identifiers",
+        "many columns",
+        "selection and batch action",
+        "mobile width"
+      ]
+    },
+    {
+      "id": "domain.cards-collections",
+      "name": "Cards and collections",
+      "description": "Repeated bounded summaries, media items, tiles, and heterogeneous collections.",
+      "detectionCues": [
+        "card",
+        "tile",
+        "grid of cards",
+        "summary card",
+        "media card"
+      ],
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.component-morphology",
+        "axis.data-display-visualization",
+        "axis.responsive-platform-adaptation"
+      ],
+      "conceptRefs": [
+        "concept.component-anatomy-composition",
+        "concept.spatial-system",
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow"
+      ],
+      "inspect": [
+        "card anatomy and action ownership",
+        "grid, list, and featured variants",
+        "equal versus content-driven height",
+        "selection, loading, empty, and overflow behavior"
+      ],
+      "screenshotLimits": [
+        "repeated rectangles do not prove one component family"
+      ],
+      "stressTests": [
+        "mixed content length",
+        "missing media",
+        "selected card",
+        "one and many cards",
+        "narrow container"
+      ]
+    },
+    {
+      "id": "domain.stats-kpis",
+      "name": "Statistics and KPIs",
+      "description": "Primary values, supporting context, trends, comparisons, targets, timeframes, and freshness.",
+      "detectionCues": [
+        "KPI",
+        "metric",
+        "statistic",
+        "summary value",
+        "trend",
+        "delta",
+        "target"
+      ],
+      "axisRefs": [
+        "axis.typography-content-hierarchy",
+        "axis.color-surface-identity",
+        "axis.component-morphology",
+        "axis.data-display-visualization",
+        "axis.content-trust-ethics"
+      ],
+      "conceptRefs": [
+        "concept.data-comparison-context",
+        "concept.typographic-system",
+        "concept.semantic-color-theme",
+        "concept.state-edge-coverage",
+        "concept.trust-permission-transparency"
+      ],
+      "inspect": [
+        "label, value, unit, context, trend, comparison, timeframe, target, and freshness",
+        "numeric precision and alignment",
+        "positive, negative, neutral, missing, and stale states",
+        "grid hierarchy and drill-down action"
+      ],
+      "screenshotLimits": [
+        "layout does not establish formula, business meaning, desirability, or freshness"
+      ],
+      "stressTests": [
+        "zero and negative values",
+        "large values",
+        "missing comparison",
+        "stale metric",
+        "ambiguous positive color"
+      ]
+    },
+    {
+      "id": "domain.charts-data-visualization",
+      "name": "Charts and data visualization",
+      "description": "Visual encodings, axes, scales, legends, labels, annotations, interaction, uncertainty, and alternatives.",
+      "detectionCues": [
+        "chart",
+        "graph",
+        "plot",
+        "axis",
+        "legend",
+        "series",
+        "sparkline",
+        "visualization"
+      ],
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.typography-content-hierarchy",
+        "axis.color-surface-identity",
+        "axis.data-display-visualization",
+        "axis.interaction-state-motion",
+        "axis.accessibility-inclusion-localization",
+        "axis.performance-resilience"
+      ],
+      "conceptRefs": [
+        "concept.visualization-encoding-integrity",
+        "concept.data-comparison-context",
+        "concept.semantic-color-theme",
+        "concept.data-scale-resilience",
+        "concept.accessibility-semantics"
+      ],
+      "inspect": [
+        "question and comparison",
+        "marks and encoding channels",
+        "axes, scales, baselines, legends, labels, and annotations",
+        "interaction, uncertainty, missing values, and accessible alternative"
+      ],
+      "screenshotLimits": [
+        "pixels do not prove exact data, scale transforms, tooltips, or keyboard access"
+      ],
+      "stressTests": [
+        "many series",
+        "missing data",
+        "small viewport",
+        "color-vision check",
+        "table or text alternative"
+      ]
+    },
+    {
+      "id": "domain.status-progress",
+      "name": "Status and progress",
+      "description": "Badges, indicators, progress, health, severity, state, and lifecycle communication.",
+      "detectionCues": [
+        "badge",
+        "status",
+        "progress bar",
+        "stepper",
+        "health",
+        "severity",
+        "state label"
+      ],
+      "axisRefs": [
+        "axis.typography-content-hierarchy",
+        "axis.color-surface-identity",
+        "axis.component-morphology",
+        "axis.data-display-visualization",
+        "axis.interaction-state-motion",
+        "axis.accessibility-inclusion-localization"
+      ],
+      "conceptRefs": [
+        "concept.semantic-color-theme",
+        "concept.state-edge-coverage",
+        "concept.feedback-interruption-budget",
+        "concept.accessibility-semantics",
+        "concept.content-voice-comprehension"
+      ],
+      "inspect": [
+        "label, icon, color, shape, and placement",
+        "determinate, indeterminate, lifecycle, and severity meaning",
+        "compact and verbose variants",
+        "non-color and announced equivalents"
+      ],
+      "screenshotLimits": [
+        "color and animation do not prove meaning, progress, or announcement"
+      ],
+      "stressTests": [
+        "unknown status",
+        "long label",
+        "indeterminate progress",
+        "multiple statuses",
+        "forced colors"
+      ]
+    },
+    {
+      "id": "domain.overlays-disclosure",
+      "name": "Overlays and disclosure",
+      "description": "Dialogs, drawers, sheets, popovers, menus, tooltips, expanders, and inline detail.",
+      "detectionCues": [
+        "dialog",
+        "modal",
+        "drawer",
+        "sheet",
+        "popover",
+        "tooltip",
+        "accordion",
+        "expand"
+      ],
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.component-morphology",
+        "axis.navigation-task-architecture",
+        "axis.interaction-state-motion",
+        "axis.responsive-platform-adaptation",
+        "axis.accessibility-inclusion-localization"
+      ],
+      "conceptRefs": [
+        "concept.progressive-disclosure",
+        "concept.spatial-continuity",
+        "concept.modality-equivalence",
+        "concept.accessibility-semantics",
+        "concept.reversibility-forgiveness"
+      ],
+      "inspect": [
+        "trigger and placement",
+        "anatomy, hierarchy, and action ownership",
+        "open, close, cancel, escape, focus, and scroll requirements",
+        "nested and small-screen behavior"
+      ],
+      "screenshotLimits": [
+        "an open overlay does not reveal its lifecycle, focus, dismissal, or responsive behavior"
+      ],
+      "stressTests": [
+        "keyboard open-close",
+        "nested overlay",
+        "long content",
+        "small screen",
+        "destructive confirmation"
+      ]
+    },
+    {
+      "id": "domain.media-galleries",
+      "name": "Media and galleries",
+      "description": "Images, video, audio, thumbnails, avatars, logos, galleries, previews, and crops.",
+      "detectionCues": [
+        "image",
+        "video",
+        "avatar",
+        "thumbnail",
+        "gallery",
+        "logo",
+        "preview"
+      ],
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.color-surface-identity",
+        "axis.component-morphology",
+        "axis.responsive-platform-adaptation",
+        "axis.accessibility-inclusion-localization",
+        "axis.performance-resilience"
+      ],
+      "conceptRefs": [
+        "concept.asset-brand-expression",
+        "concept.asset-media-resilience",
+        "concept.content-layout-resilience",
+        "concept.visual-stability",
+        "concept.accessibility-semantics"
+      ],
+      "inspect": [
+        "role, ratio, crop, mask, and alignment",
+        "caption, action, selection, and preview anatomy",
+        "loading, missing, error, and fallback behavior",
+        "alternative text and responsive media implications"
+      ],
+      "screenshotLimits": [
+        "source quality, license, alt text, controls, and loading are not visible"
+      ],
+      "stressTests": [
+        "missing media",
+        "alternate ratio",
+        "slow loading",
+        "keyboard gallery",
+        "high zoom"
+      ]
+    },
+    {
+      "id": "domain.messaging-notifications",
+      "name": "Messaging and notifications",
+      "description": "Conversation, activity, alerts, toasts, banners, inboxes, and unread state.",
+      "detectionCues": [
+        "message",
+        "chat",
+        "notification",
+        "toast",
+        "banner",
+        "inbox",
+        "activity feed"
+      ],
+      "axisRefs": [
+        "axis.typography-content-hierarchy",
+        "axis.component-morphology",
+        "axis.data-display-visualization",
+        "axis.interaction-state-motion",
+        "axis.content-trust-ethics",
+        "axis.performance-resilience"
+      ],
+      "conceptRefs": [
+        "concept.feedback-interruption-budget",
+        "concept.state-edge-coverage",
+        "concept.content-voice-comprehension",
+        "concept.trust-permission-transparency",
+        "concept.visual-stability"
+      ],
+      "inspect": [
+        "sender, time, status, body, attachment, and action anatomy",
+        "unread, pending, sent, failed, edited, deleted, and grouped states",
+        "priority, interruption, dismissal, and retention",
+        "provenance, privacy, and delivery implications"
+      ],
+      "screenshotLimits": [
+        "delivery, read state, timing, and announcement are not proven by appearance"
+      ],
+      "stressTests": [
+        "long conversation",
+        "failed send",
+        "multiple alerts",
+        "offline draft",
+        "screen-reader announcement"
+      ]
+    },
+    {
+      "id": "domain.calendars-timelines",
+      "name": "Calendars and timelines",
+      "description": "Date grids, schedules, events, ranges, time zones, dependencies, and chronological narratives.",
+      "detectionCues": [
+        "calendar",
+        "schedule",
+        "timeline",
+        "date grid",
+        "event",
+        "appointment",
+        "Gantt"
+      ],
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.typography-content-hierarchy",
+        "axis.component-morphology",
+        "axis.forms-input-workflows",
+        "axis.data-display-visualization",
+        "axis.responsive-platform-adaptation",
+        "axis.accessibility-inclusion-localization"
+      ],
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.localization-bidirectionality",
+        "concept.data-scale-resilience",
+        "concept.modality-equivalence",
+        "concept.content-layout-resilience"
+      ],
+      "inspect": [
+        "time scale and granularity",
+        "event anatomy, overlap, range, status, and dependency",
+        "navigation, selection, creation, and editing cues",
+        "locale, time zone, keyboard, and small-screen behavior"
+      ],
+      "screenshotLimits": [
+        "real scheduling logic, drag behavior, conflicts, and time-zone rules are not visible"
+      ],
+      "stressTests": [
+        "overlapping events",
+        "time-zone change",
+        "dense day",
+        "keyboard selection",
+        "small screen"
+      ]
+    },
+    {
+      "id": "domain.maps-spatial",
+      "name": "Maps and spatial UI",
+      "description": "Maps, layers, markers, clusters, regions, routes, legends, and location detail.",
+      "detectionCues": [
+        "map",
+        "marker",
+        "cluster",
+        "route",
+        "geospatial",
+        "location",
+        "layer control"
+      ],
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.color-surface-identity",
+        "axis.component-morphology",
+        "axis.data-display-visualization",
+        "axis.interaction-state-motion",
+        "axis.responsive-platform-adaptation",
+        "axis.accessibility-inclusion-localization",
+        "axis.performance-resilience"
+      ],
+      "conceptRefs": [
+        "concept.visualization-encoding-integrity",
+        "concept.modality-equivalence",
+        "concept.spatial-continuity",
+        "concept.asset-media-resilience",
+        "concept.visual-stability"
+      ],
+      "inspect": [
+        "base map and overlay hierarchy",
+        "marker, cluster, region, route, legend, and detail anatomy",
+        "zoom, pan, selection, search, and location cues",
+        "non-map alternative, loading, privacy, and scale implications"
+      ],
+      "screenshotLimits": [
+        "map data, permissions, gestures, and accessible alternatives are not proven"
+      ],
+      "stressTests": [
+        "many markers",
+        "no location permission",
+        "keyboard navigation",
+        "offline tiles",
+        "list alternative"
+      ]
+    },
+    {
+      "id": "domain.commerce-transactions",
+      "name": "Commerce and transactions",
+      "description": "Products, prices, carts, totals, checkout, payment, orders, and consequential confirmation.",
+      "detectionCues": [
+        "product",
+        "price",
+        "cart",
+        "checkout",
+        "payment",
+        "order",
+        "subtotal",
+        "invoice"
+      ],
+      "axisRefs": [
+        "axis.typography-content-hierarchy",
+        "axis.component-morphology",
+        "axis.navigation-task-architecture",
+        "axis.forms-input-workflows",
+        "axis.data-display-visualization",
+        "axis.content-trust-ethics",
+        "axis.performance-resilience"
+      ],
+      "conceptRefs": [
+        "concept.data-comparison-context",
+        "concept.form-entry-integrity",
+        "concept.validation-recovery",
+        "concept.trust-permission-transparency",
+        "concept.ethical-interaction",
+        "concept.reversibility-forgiveness"
+      ],
+      "inspect": [
+        "product, price, quantity, subtotal, discount, tax, total, and status hierarchy",
+        "step, review, payment, confirmation, and recovery",
+        "fees, recurrence, scope, privacy, and consequence disclosure",
+        "empty, unavailable, failed, partial, and duplicate states"
+      ],
+      "screenshotLimits": [
+        "screenshots do not prove inventory, payment, tax, refund, or legal behavior"
+      ],
+      "stressTests": [
+        "price change",
+        "payment failure",
+        "out of stock",
+        "recurring charge",
+        "duplicate submission"
+      ]
+    },
+    {
+      "id": "domain.authentication-onboarding",
+      "name": "Authentication and onboarding",
+      "description": "Sign-in, verification, account recovery, setup, guidance, permissions, and first-run progression.",
+      "detectionCues": [
+        "sign in",
+        "login",
+        "verification",
+        "password",
+        "onboarding",
+        "setup",
+        "welcome",
+        "recovery"
+      ],
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.typography-content-hierarchy",
+        "axis.component-morphology",
+        "axis.navigation-task-architecture",
+        "axis.forms-input-workflows",
+        "axis.interaction-state-motion",
+        "axis.content-trust-ethics",
+        "axis.accessibility-inclusion-localization"
+      ],
+      "conceptRefs": [
+        "concept.form-entry-integrity",
+        "concept.validation-recovery",
+        "concept.progressive-disclosure",
+        "concept.trust-permission-transparency",
+        "concept.reversibility-forgiveness",
+        "concept.content-voice-comprehension"
+      ],
+      "inspect": [
+        "identity and recovery fields",
+        "step, progress, skip, back, and completion cues",
+        "error, lockout, verification, and recovery states",
+        "permission, privacy, and expectation setting"
+      ],
+      "screenshotLimits": [
+        "actual authentication, security, lockout, and recovery behavior are not visible"
+      ],
+      "stressTests": [
+        "invalid credentials",
+        "expired code",
+        "password manager",
+        "skip and resume",
+        "small screen"
+      ]
+    },
+    {
+      "id": "domain.settings-configuration",
+      "name": "Settings and configuration",
+      "description": "Grouped preferences, defaults, inheritance, scopes, save models, destructive controls, and advanced options.",
+      "detectionCues": [
+        "settings",
+        "preferences",
+        "configuration",
+        "toggle group",
+        "save changes",
+        "advanced"
+      ],
+      "axisRefs": [
+        "axis.component-morphology",
+        "axis.navigation-task-architecture",
+        "axis.forms-input-workflows",
+        "axis.interaction-state-motion",
+        "axis.content-trust-ethics",
+        "axis.accessibility-inclusion-localization"
+      ],
+      "conceptRefs": [
+        "concept.form-entry-integrity",
+        "concept.progressive-disclosure",
+        "concept.reversibility-forgiveness",
+        "concept.trust-permission-transparency",
+        "concept.content-voice-comprehension"
+      ],
+      "inspect": [
+        "scope, grouping, dependency, default, inheritance, and reset",
+        "immediate, staged, autosave, and draft behavior",
+        "advanced, destructive, permission, and privacy settings",
+        "changed, saving, saved, failed, and conflict states"
+      ],
+      "screenshotLimits": [
+        "persistence, inheritance, permissions, and side effects are not visible"
+      ],
+      "stressTests": [
+        "unsaved navigation",
+        "dependent settings",
+        "permission denied",
+        "reset defaults",
+        "long descriptions"
+      ]
+    },
+    {
+      "id": "domain.mobile-native-shell",
+      "name": "Mobile native shell",
+      "description": "Status and navigation bars, safe areas, top and bottom app regions, sheets, gestures, and mobile system conventions.",
+      "detectionCues": [
+        "status bar",
+        "home indicator",
+        "bottom navigation",
+        "tab bar",
+        "app bar",
+        "safe area",
+        "mobile sheet"
+      ],
+      "axisRefs": [
+        "axis.spatial-composition",
+        "axis.component-morphology",
+        "axis.navigation-task-architecture",
+        "axis.interaction-state-motion",
+        "axis.responsive-platform-adaptation",
+        "axis.accessibility-inclusion-localization"
+      ],
+      "conceptRefs": [
+        "concept.platform-conventions",
+        "concept.navigation-orientation",
+        "concept.modality-equivalence",
+        "concept.semantic-responsive-reflow",
+        "concept.spatial-continuity"
+      ],
+      "inspect": [
+        "system-owned and app-owned regions",
+        "safe-area and edge treatment",
+        "top app bar, tabs, bottom navigation, sheet, and back patterns",
+        "orientation, virtual keyboard, gesture, and target implications"
+      ],
+      "screenshotLimits": [
+        "dimensions and chrome do not prove platform runtime, haptics, or back behavior"
+      ],
+      "stressTests": [
+        "notch and home indicator",
+        "rotation",
+        "virtual keyboard",
+        "gesture alternative",
+        "large text"
+      ]
+    },
+    {
+      "id": "domain.files-content-management",
+      "name": "Files and content management",
+      "description": "Upload, preview, version, folder, metadata, selection, transfer, processing, and content lifecycle.",
+      "detectionCues": [
+        "file",
+        "folder",
+        "upload",
+        "download",
+        "attachment",
+        "document",
+        "version",
+        "processing"
+      ],
+      "axisRefs": [
+        "axis.component-morphology",
+        "axis.navigation-task-architecture",
+        "axis.forms-input-workflows",
+        "axis.data-display-visualization",
+        "axis.interaction-state-motion",
+        "axis.content-trust-ethics",
+        "axis.performance-resilience"
+      ],
+      "conceptRefs": [
+        "concept.data-scale-resilience",
+        "concept.validation-recovery",
+        "concept.state-edge-coverage",
+        "concept.trust-permission-transparency",
+        "concept.asset-media-resilience",
+        "concept.reversibility-forgiveness"
+      ],
+      "inspect": [
+        "file and folder anatomy, type, size, owner, version, and status",
+        "upload, transfer, processing, preview, rename, move, download, and delete cues",
+        "selection, batch action, navigation, and conflict behavior",
+        "permission, provenance, retention, failure, and recovery"
+      ],
+      "screenshotLimits": [
+        "real file operations, limits, permissions, and processing are not visible"
+      ],
+      "stressTests": [
+        "large upload",
+        "duplicate name",
+        "processing failure",
+        "missing preview",
+        "batch selection"
+      ]
+    }
+  ],
+  "documentationLayoutVersion": "2.0.0",
+  "documentationProjection": [
+    {
+      "path": "foundations/spatial-composition.md",
+      "title": "Spatial composition",
+      "purpose": "Document regions, grids, containers, spacing rhythm, alignment, density, hierarchy, and depth.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.information-hierarchy",
+        "concept.semantic-responsive-reflow"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": ["space", "size", "layer"],
+      "ruleCategories": ["layout", "responsive"]
+    },
+    {
+      "path": "foundations/typography.md",
+      "title": "Typography",
+      "purpose": "Document semantic type roles, hierarchy, metrics, numerals, readability, and language resilience.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.typographic-system",
+        "concept.content-layout-resilience",
+        "concept.localization-bidirectionality"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": ["typography", "size", "space"],
+      "ruleCategories": ["typography", "content", "localization"]
+    },
+    {
+      "path": "foundations/color-and-themes.md",
+      "title": "Color and themes",
+      "purpose": "Document semantic color roles, pairings, statuses, selections, focus, and evidenced or proposed theme modes.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.semantic-color-theme",
+        "concept.accessibility-semantics"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": ["color", "opacity"],
+      "ruleCategories": ["color", "accessibility"]
+    },
+    {
+      "path": "foundations/surfaces-and-depth.md",
+      "title": "Surfaces and depth",
+      "purpose": "Document surface tiers, borders, radii, elevation, transparency, overlays, and depth relationships.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.surface-depth-hierarchy",
+        "concept.spatial-system"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": [
+        "color",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer"
+      ],
+      "ruleCategories": ["layout", "color", "component"]
+    },
+    {
+      "path": "foundations/iconography-and-assets.md",
+      "title": "Iconography and assets",
+      "purpose": "Document icon geometry, alignment, semantic roles, labels, directionality, crops, ratios, masks, and fallbacks.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.iconographic-coherence",
+        "concept.asset-media-resilience"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": ["iconography", "asset", "size", "color"],
+      "ruleCategories": ["component", "media", "accessibility"]
+    },
+    {
+      "path": "foundations/visual-identity.md",
+      "title": "Visual identity",
+      "purpose": "Document repeated shape, saturation, imagery, illustration, photography, and decorative choices that establish visual personality.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.asset-brand-expression",
+        "concept.surface-depth-hierarchy",
+        "concept.content-voice-comprehension"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": ["color", "asset", "radius", "other"],
+      "ruleCategories": ["color", "media", "content"]
+    },
+    {
+      "path": "foundations/motion.md",
+      "title": "Motion",
+      "purpose": "Separate observed motion evidence from proposed functional transition, continuity, interruption, and reduced-motion contracts.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.motion-grammar",
+        "concept.spatial-continuity",
+        "concept.visual-stability"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": ["motion"],
+      "ruleCategories": [
+        "motion",
+        "interaction",
+        "accessibility",
+        "performance"
+      ]
+    },
+    {
+      "path": "components/catalogue.md",
+      "title": "Component catalogue",
+      "purpose": "Inventory reusable component patterns supported by accepted Design DNA.",
+      "renderer": "component-catalogue",
+      "conceptRefs": [
+        "concept.component-anatomy-composition",
+        "concept.design-to-code-governance"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "components/anatomy.md",
+      "title": "Component anatomy",
+      "purpose": "Record required, optional, repeatable, and conditional component parts with their roles and constraints.",
+      "renderer": "component-anatomy",
+      "conceptRefs": [
+        "concept.component-anatomy-composition",
+        "concept.content-layout-resilience"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "components/variants-and-density.md",
+      "title": "Component variants and density",
+      "purpose": "Document size, density, emphasis, intent, layout variants, and unsupported combinations.",
+      "renderer": "component-variants",
+      "conceptRefs": [
+        "concept.component-anatomy-composition",
+        "concept.spatial-system",
+        "concept.modality-equivalence"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "components/states.md",
+      "title": "Component states",
+      "purpose": "Expose control and business state coverage, triggers, feedback, exits, and programmatic verification needs.",
+      "renderer": "component-states",
+      "conceptRefs": [
+        "concept.state-edge-coverage",
+        "concept.accessibility-semantics",
+        "concept.visual-stability"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "components/composition-and-anti-patterns.md",
+      "title": "Component composition and anti-patterns",
+      "purpose": "Document valid nesting, grouping, spacing ownership, responsive composition, exceptions, and invalid combinations.",
+      "renderer": "component-composition",
+      "conceptRefs": [
+        "concept.component-anatomy-composition",
+        "concept.spatial-system",
+        "concept.semantic-responsive-reflow"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "components/component-mapping.md",
+      "title": "Component mapping",
+      "purpose": "Map Designome patterns onto repository-native primitives as proposed technical guidance.",
+      "renderer": "component-mapping",
+      "conceptRefs": ["concept.design-to-code-governance"],
+      "uiDomainRefs": [],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "patterns/app-shell-and-navigation.md",
+      "title": "Application shell and navigation",
+      "purpose": "Persistent and contextual structures that orient users and connect visible product areas.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.navigation-orientation",
+        "concept.information-hierarchy",
+        "concept.semantic-responsive-reflow"
+      ],
+      "uiDomainRefs": ["domain.app-shell-navigation"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/marketing-and-editorial.md",
+      "title": "Marketing and editorial content",
+      "purpose": "Heroes, narratives, feature sections, proof, calls to action, and long-form content composition.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.typographic-system",
+        "concept.asset-brand-expression",
+        "concept.information-hierarchy",
+        "concept.content-voice-comprehension"
+      ],
+      "uiDomainRefs": ["domain.marketing-editorial"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/actions-and-controls.md",
+      "title": "Actions and controls",
+      "purpose": "Buttons, icon buttons, links, menus, toggles, segmented controls, and action groups.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.component-anatomy-composition",
+        "concept.affordance-discoverability",
+        "concept.modality-equivalence",
+        "concept.accessibility-semantics"
+      ],
+      "uiDomainRefs": ["domain.actions-controls"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/forms-and-data-entry.md",
+      "title": "Forms and data entry",
+      "purpose": "Inputs, selections, validation, uploads, staged workflows, editing, and save behavior.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.form-entry-integrity",
+        "concept.validation-recovery",
+        "concept.content-layout-resilience",
+        "concept.accessibility-semantics",
+        "concept.reversibility-forgiveness"
+      ],
+      "uiDomainRefs": ["domain.forms-data-entry"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/search-filter-and-sort.md",
+      "title": "Search, filter, and sort",
+      "purpose": "Query, refinement, scope, active criteria, result counts, no-results, and reset patterns.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.affordance-discoverability",
+        "concept.progressive-disclosure",
+        "concept.state-edge-coverage",
+        "concept.data-scale-resilience",
+        "concept.spatial-continuity"
+      ],
+      "uiDomainRefs": ["domain.search-filter-sort"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/tables-and-lists.md",
+      "title": "Tables and lists",
+      "purpose": "Dense and repeated collections with rows, columns, hierarchy, actions, selection, and navigation.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.data-scale-resilience",
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow",
+        "concept.state-edge-coverage",
+        "concept.visual-stability"
+      ],
+      "uiDomainRefs": ["domain.tables-lists"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/cards-and-collections.md",
+      "title": "Cards and collections",
+      "purpose": "Repeated bounded summaries, media items, tiles, and heterogeneous collections.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.component-anatomy-composition",
+        "concept.spatial-system",
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow"
+      ],
+      "uiDomainRefs": ["domain.cards-collections"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/stats-and-kpis.md",
+      "title": "Statistics and KPIs",
+      "purpose": "Primary values, supporting context, trends, comparisons, targets, timeframes, and freshness.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.data-comparison-context",
+        "concept.typographic-system",
+        "concept.semantic-color-theme",
+        "concept.state-edge-coverage",
+        "concept.trust-permission-transparency"
+      ],
+      "uiDomainRefs": ["domain.stats-kpis"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/charts-and-data-visualization.md",
+      "title": "Charts and data visualization",
+      "purpose": "Visual encodings, axes, scales, legends, labels, annotations, interaction, uncertainty, and alternatives.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.visualization-encoding-integrity",
+        "concept.data-comparison-context",
+        "concept.semantic-color-theme",
+        "concept.data-scale-resilience",
+        "concept.accessibility-semantics"
+      ],
+      "uiDomainRefs": ["domain.charts-data-visualization"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/status-and-progress.md",
+      "title": "Status and progress",
+      "purpose": "Badges, indicators, progress, health, severity, state, and lifecycle communication.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.semantic-color-theme",
+        "concept.state-edge-coverage",
+        "concept.feedback-interruption-budget",
+        "concept.accessibility-semantics",
+        "concept.content-voice-comprehension"
+      ],
+      "uiDomainRefs": ["domain.status-progress"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/overlays-and-disclosure.md",
+      "title": "Overlays and disclosure",
+      "purpose": "Dialogs, drawers, sheets, popovers, menus, tooltips, expanders, and inline detail.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.progressive-disclosure",
+        "concept.spatial-continuity",
+        "concept.modality-equivalence",
+        "concept.accessibility-semantics",
+        "concept.reversibility-forgiveness"
+      ],
+      "uiDomainRefs": ["domain.overlays-disclosure"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/media-and-galleries.md",
+      "title": "Media and galleries",
+      "purpose": "Images, video, audio, thumbnails, avatars, logos, galleries, previews, and crops.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.asset-brand-expression",
+        "concept.asset-media-resilience",
+        "concept.content-layout-resilience",
+        "concept.visual-stability",
+        "concept.accessibility-semantics"
+      ],
+      "uiDomainRefs": ["domain.media-galleries"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/messaging-and-notifications.md",
+      "title": "Messaging and notifications",
+      "purpose": "Conversation, activity, alerts, toasts, banners, inboxes, and unread state.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.feedback-interruption-budget",
+        "concept.state-edge-coverage",
+        "concept.content-voice-comprehension",
+        "concept.trust-permission-transparency",
+        "concept.visual-stability"
+      ],
+      "uiDomainRefs": ["domain.messaging-notifications"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/calendars-and-timelines.md",
+      "title": "Calendars and timelines",
+      "purpose": "Date grids, schedules, events, ranges, time zones, dependencies, and chronological narratives.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.localization-bidirectionality",
+        "concept.data-scale-resilience",
+        "concept.modality-equivalence",
+        "concept.content-layout-resilience"
+      ],
+      "uiDomainRefs": ["domain.calendars-timelines"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/maps-and-spatial-ui.md",
+      "title": "Maps and spatial UI",
+      "purpose": "Maps, layers, markers, clusters, regions, routes, legends, and location detail.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.visualization-encoding-integrity",
+        "concept.modality-equivalence",
+        "concept.spatial-continuity",
+        "concept.asset-media-resilience",
+        "concept.visual-stability"
+      ],
+      "uiDomainRefs": ["domain.maps-spatial"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/commerce-and-transactions.md",
+      "title": "Commerce and transactions",
+      "purpose": "Products, prices, carts, totals, checkout, payment, orders, and consequential confirmation.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.data-comparison-context",
+        "concept.form-entry-integrity",
+        "concept.validation-recovery",
+        "concept.trust-permission-transparency",
+        "concept.ethical-interaction",
+        "concept.reversibility-forgiveness"
+      ],
+      "uiDomainRefs": ["domain.commerce-transactions"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/authentication-and-onboarding.md",
+      "title": "Authentication and onboarding",
+      "purpose": "Sign-in, verification, account recovery, setup, guidance, permissions, and first-run progression.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.form-entry-integrity",
+        "concept.validation-recovery",
+        "concept.progressive-disclosure",
+        "concept.trust-permission-transparency",
+        "concept.reversibility-forgiveness",
+        "concept.content-voice-comprehension"
+      ],
+      "uiDomainRefs": ["domain.authentication-onboarding"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/settings-and-configuration.md",
+      "title": "Settings and configuration",
+      "purpose": "Grouped preferences, defaults, inheritance, scopes, save models, destructive controls, and advanced options.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.form-entry-integrity",
+        "concept.progressive-disclosure",
+        "concept.reversibility-forgiveness",
+        "concept.trust-permission-transparency",
+        "concept.content-voice-comprehension"
+      ],
+      "uiDomainRefs": ["domain.settings-configuration"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/mobile-native-shell.md",
+      "title": "Mobile native shell",
+      "purpose": "Status and navigation bars, safe areas, top and bottom app regions, sheets, gestures, and mobile system conventions.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.platform-conventions",
+        "concept.navigation-orientation",
+        "concept.modality-equivalence",
+        "concept.semantic-responsive-reflow",
+        "concept.spatial-continuity"
+      ],
+      "uiDomainRefs": ["domain.mobile-native-shell"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "patterns/files-and-content-management.md",
+      "title": "Files and content management",
+      "purpose": "Upload, preview, version, folder, metadata, selection, transfer, processing, and content lifecycle.",
+      "renderer": "ui-domain",
+      "conceptRefs": [
+        "concept.data-scale-resilience",
+        "concept.validation-recovery",
+        "concept.state-edge-coverage",
+        "concept.trust-permission-transparency",
+        "concept.asset-media-resilience",
+        "concept.reversibility-forgiveness"
+      ],
+      "uiDomainRefs": ["domain.files-content-management"],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "behavior/task-and-information-architecture.md",
+      "title": "Task and information architecture",
+      "purpose": "Document visible orientation, reading order, action priority, disclosure, and continuity without inventing unseen journeys.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.navigation-orientation",
+        "concept.information-hierarchy",
+        "concept.progressive-disclosure",
+        "concept.spatial-continuity"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": [],
+      "ruleCategories": ["navigation", "content", "interaction"]
+    },
+    {
+      "path": "behavior/interaction-contracts.md",
+      "title": "Interaction contracts",
+      "purpose": "Document affordance, modalities, state, focus, overlay, continuity, reversibility, and feedback expectations.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.affordance-discoverability",
+        "concept.modality-equivalence",
+        "concept.spatial-continuity",
+        "concept.reversibility-forgiveness",
+        "concept.feedback-interruption-budget"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": ["motion"],
+      "ruleCategories": ["interaction", "state", "motion"]
+    },
+    {
+      "path": "behavior/responsive-reflow.md",
+      "title": "Responsive reflow",
+      "purpose": "Turn visible composition into intrinsic reflow priorities, transformations, and explicit width and zoom stress tests.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.semantic-responsive-reflow",
+        "concept.content-layout-resilience",
+        "concept.spatial-system"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": ["space", "size"],
+      "ruleCategories": ["responsive", "layout"]
+    },
+    {
+      "path": "behavior/platform-adaptation.md",
+      "title": "Platform adaptation",
+      "purpose": "Document web, mobile, desktop, safe-area, orientation, virtual-keyboard, and device-input implications.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.platform-conventions",
+        "concept.modality-equivalence",
+        "concept.semantic-responsive-reflow"
+      ],
+      "uiDomainRefs": ["domain.mobile-native-shell"],
+      "tokenCategories": ["size", "space"],
+      "ruleCategories": ["platform", "responsive", "interaction"]
+    },
+    {
+      "path": "behavior/accessibility.md",
+      "title": "Accessibility",
+      "purpose": "Record evidenced visual implications and required verification for semantics, names, focus, contrast, zoom, targets, alternatives, and motion.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.accessibility-semantics",
+        "concept.modality-equivalence",
+        "concept.semantic-color-theme",
+        "concept.motion-grammar"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": ["color", "size", "motion"],
+      "ruleCategories": ["accessibility", "interaction"]
+    },
+    {
+      "path": "behavior/localization.md",
+      "title": "Localization",
+      "purpose": "Keep language, expansion, formats, scripts, direction, mirroring, and cultural assumptions explicit.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.localization-bidirectionality",
+        "concept.typographic-system",
+        "concept.content-layout-resilience"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": ["typography", "size", "space"],
+      "ruleCategories": ["localization", "content", "responsive"]
+    },
+    {
+      "path": "behavior/content-and-voice.md",
+      "title": "Content and voice",
+      "purpose": "Document terminology, tone, naming, CTA verbs, instructions, messages, precision, and comprehension requirements.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.content-voice-comprehension",
+        "concept.typographic-system",
+        "concept.information-hierarchy"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": ["typography"],
+      "ruleCategories": ["content", "trust"]
+    },
+    {
+      "path": "behavior/trust-privacy-and-ethics.md",
+      "title": "Trust, privacy, and ethics",
+      "purpose": "Document provenance, freshness, permissions, consent, consequences, reversibility, and ethical-choice requirements.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.trust-permission-transparency",
+        "concept.ethical-interaction",
+        "concept.reversibility-forgiveness"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": [],
+      "ruleCategories": ["trust", "ethics", "content", "interaction"]
+    },
+    {
+      "path": "behavior/content-resilience.md",
+      "title": "Content resilience",
+      "purpose": "Define stress cases for long, empty, dense, missing, multilingual, media-dependent, and extreme content.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.content-layout-resilience",
+        "concept.data-scale-resilience",
+        "concept.asset-media-resilience",
+        "concept.typographic-system"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": ["space", "size", "typography", "asset"],
+      "ruleCategories": ["layout", "content", "responsive", "media"]
+    },
+    {
+      "path": "behavior/loading-errors-recovery.md",
+      "title": "Loading, errors, and recovery",
+      "purpose": "Describe state completeness, validation, feedback, work preservation, retry, offline, and degradation expectations.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.state-edge-coverage",
+        "concept.validation-recovery",
+        "concept.feedback-interruption-budget",
+        "concept.visual-stability"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": ["motion", "size"],
+      "ruleCategories": ["state", "interaction", "performance", "content"]
+    },
+    {
+      "path": "behavior/performance-and-stability.md",
+      "title": "Performance and stability",
+      "purpose": "Document loading priority, reserved geometry, large-data and media cost, visual stability, and measurable runtime checks.",
+      "renderer": "generic",
+      "conceptRefs": [
+        "concept.visual-stability",
+        "concept.data-scale-resilience",
+        "concept.asset-media-resilience",
+        "concept.motion-grammar"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": ["size", "motion", "asset"],
+      "ruleCategories": ["performance", "layout", "media"]
+    },
+    {
+      "path": "governance/coverage.md",
+      "title": "Grammar coverage",
+      "purpose": "Expose every axis facet and UI-domain coverage status, evidence boundary, gap, and next verification step.",
+      "renderer": "coverage",
+      "conceptRefs": ["concept.design-to-code-governance"],
+      "uiDomainRefs": [
+        "domain.app-shell-navigation",
+        "domain.marketing-editorial",
+        "domain.actions-controls",
+        "domain.forms-data-entry",
+        "domain.search-filter-sort",
+        "domain.tables-lists",
+        "domain.cards-collections",
+        "domain.stats-kpis",
+        "domain.charts-data-visualization",
+        "domain.status-progress",
+        "domain.overlays-disclosure",
+        "domain.media-galleries",
+        "domain.messaging-notifications",
+        "domain.calendars-timelines",
+        "domain.maps-spatial",
+        "domain.commerce-transactions",
+        "domain.authentication-onboarding",
+        "domain.settings-configuration",
+        "domain.mobile-native-shell",
+        "domain.files-content-management"
+      ],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "governance/rules.md",
+      "title": "Rules",
+      "purpose": "Publish accepted Design DNA rules with requirements, validation, evidence, scope, and exceptions.",
+      "renderer": "rules",
+      "conceptRefs": ["concept.design-to-code-governance"],
+      "uiDomainRefs": [],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    {
+      "path": "governance/evidence-and-confidence.md",
+      "title": "Evidence and confidence",
+      "purpose": "Make screenshot evidence, claim confidence, source directives, and inference boundaries auditable.",
+      "renderer": "evidence",
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.typographic-system",
+        "concept.semantic-color-theme",
+        "concept.surface-depth-hierarchy",
+        "concept.iconographic-coherence",
+        "concept.asset-brand-expression",
+        "concept.component-anatomy-composition",
+        "concept.state-edge-coverage",
+        "concept.affordance-discoverability",
+        "concept.navigation-orientation",
+        "concept.information-hierarchy",
+        "concept.progressive-disclosure",
+        "concept.form-entry-integrity",
+        "concept.validation-recovery",
+        "concept.data-comparison-context",
+        "concept.visualization-encoding-integrity",
+        "concept.data-scale-resilience",
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow",
+        "concept.platform-conventions",
+        "concept.modality-equivalence",
+        "concept.spatial-continuity",
+        "concept.localization-bidirectionality",
+        "concept.accessibility-semantics",
+        "concept.reversibility-forgiveness",
+        "concept.feedback-interruption-budget",
+        "concept.motion-grammar",
+        "concept.visual-stability",
+        "concept.asset-media-resilience",
+        "concept.content-voice-comprehension",
+        "concept.trust-permission-transparency",
+        "concept.ethical-interaction",
+        "concept.design-to-code-governance"
+      ],
+      "uiDomainRefs": [
+        "domain.app-shell-navigation",
+        "domain.marketing-editorial",
+        "domain.actions-controls",
+        "domain.forms-data-entry",
+        "domain.search-filter-sort",
+        "domain.tables-lists",
+        "domain.cards-collections",
+        "domain.stats-kpis",
+        "domain.charts-data-visualization",
+        "domain.status-progress",
+        "domain.overlays-disclosure",
+        "domain.media-galleries",
+        "domain.messaging-notifications",
+        "domain.calendars-timelines",
+        "domain.maps-spatial",
+        "domain.commerce-transactions",
+        "domain.authentication-onboarding",
+        "domain.settings-configuration",
+        "domain.mobile-native-shell",
+        "domain.files-content-management"
+      ],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "governance/unknowns-and-exceptions.md",
+      "title": "Unknowns and exceptions",
+      "purpose": "Centralize unresolved questions, claim exceptions, impact, missing evidence, and resolution plans.",
+      "renderer": "unknowns",
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.typographic-system",
+        "concept.semantic-color-theme",
+        "concept.surface-depth-hierarchy",
+        "concept.iconographic-coherence",
+        "concept.asset-brand-expression",
+        "concept.component-anatomy-composition",
+        "concept.state-edge-coverage",
+        "concept.affordance-discoverability",
+        "concept.navigation-orientation",
+        "concept.information-hierarchy",
+        "concept.progressive-disclosure",
+        "concept.form-entry-integrity",
+        "concept.validation-recovery",
+        "concept.data-comparison-context",
+        "concept.visualization-encoding-integrity",
+        "concept.data-scale-resilience",
+        "concept.content-layout-resilience",
+        "concept.semantic-responsive-reflow",
+        "concept.platform-conventions",
+        "concept.modality-equivalence",
+        "concept.spatial-continuity",
+        "concept.localization-bidirectionality",
+        "concept.accessibility-semantics",
+        "concept.reversibility-forgiveness",
+        "concept.feedback-interruption-budget",
+        "concept.motion-grammar",
+        "concept.visual-stability",
+        "concept.asset-media-resilience",
+        "concept.content-voice-comprehension",
+        "concept.trust-permission-transparency",
+        "concept.ethical-interaction",
+        "concept.design-to-code-governance"
+      ],
+      "uiDomainRefs": [
+        "domain.app-shell-navigation",
+        "domain.marketing-editorial",
+        "domain.actions-controls",
+        "domain.forms-data-entry",
+        "domain.search-filter-sort",
+        "domain.tables-lists",
+        "domain.cards-collections",
+        "domain.stats-kpis",
+        "domain.charts-data-visualization",
+        "domain.status-progress",
+        "domain.overlays-disclosure",
+        "domain.media-galleries",
+        "domain.messaging-notifications",
+        "domain.calendars-timelines",
+        "domain.maps-spatial",
+        "domain.commerce-transactions",
+        "domain.authentication-onboarding",
+        "domain.settings-configuration",
+        "domain.mobile-native-shell",
+        "domain.files-content-management"
+      ],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "governance/calibration.md",
+      "title": "Calibration",
+      "purpose": "Separate accepted bounded values from audit-only measurements and proposed refinements.",
+      "renderer": "calibration",
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.typographic-system",
+        "concept.semantic-color-theme",
+        "concept.design-to-code-governance"
+      ],
+      "uiDomainRefs": [],
+      "tokenCategories": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ],
+      "ruleCategories": [
+        "layout",
+        "typography",
+        "color",
+        "component",
+        "accessibility"
+      ]
+    },
+    {
+      "path": "governance/source-routing.md",
+      "title": "Source routing",
+      "purpose": "Record per-source evidence directives, detected UI domains, compatibility, excluded evidence, and routing limitations.",
+      "renderer": "source-routing",
+      "conceptRefs": ["concept.design-to-code-governance"],
+      "uiDomainRefs": [
+        "domain.app-shell-navigation",
+        "domain.marketing-editorial",
+        "domain.actions-controls",
+        "domain.forms-data-entry",
+        "domain.search-filter-sort",
+        "domain.tables-lists",
+        "domain.cards-collections",
+        "domain.stats-kpis",
+        "domain.charts-data-visualization",
+        "domain.status-progress",
+        "domain.overlays-disclosure",
+        "domain.media-galleries",
+        "domain.messaging-notifications",
+        "domain.calendars-timelines",
+        "domain.maps-spatial",
+        "domain.commerce-transactions",
+        "domain.authentication-onboarding",
+        "domain.settings-configuration",
+        "domain.mobile-native-shell",
+        "domain.files-content-management"
+      ],
+      "tokenCategories": [],
+      "ruleCategories": []
+    },
+    {
+      "path": "governance/integration.md",
+      "title": "Integration",
+      "purpose": "Explain styling context, rule precedence, component strategy, managed ownership, migrations, and target-project boundaries.",
+      "renderer": "integration",
+      "conceptRefs": ["concept.design-to-code-governance"],
+      "uiDomainRefs": [],
+      "tokenCategories": [],
+      "ruleCategories": []
+    }
+  ],
+  "promptStages": [
+    {
+      "id": "prompt.orchestrator",
+      "order": 0,
+      "kind": "orchestrator",
+      "file": "prompts/00-orchestrator.md",
+      "consumes": [
+        "conversational user request",
+        "screenshot paths",
+        "optional target project"
+      ],
+      "produces": [
+        "validated request-contract.json",
+        "run plan",
+        "stage routing and acceptance gates"
+      ]
+    },
+    {
+      "id": "prompt.source-evidence",
+      "order": 1,
+      "kind": "intake",
+      "file": "prompts/01-source-evidence.md",
+      "consumes": [
+        "validated request contract",
+        "screenshots",
+        "source manifest",
+        "UI-domain taxonomy"
+      ],
+      "produces": [
+        "evidence index",
+        "source UI-domain classification",
+        "source-family compatibility report"
+      ]
+    },
+    {
+      "id": "prompt.spatial-composition",
+      "order": 2,
+      "kind": "axis",
+      "file": "prompts/02-spatial-composition.md",
+      "consumes": [
+        "normalized request contract",
+        "source directives",
+        "evidence index",
+        "axis.spatial-composition matrix slice",
+        "applicable UI-domain slices"
+      ],
+      "produces": [
+        "axis.spatial-composition facet-coverage fragment",
+        "axis.spatial-composition claims",
+        "unknowns and handoffs"
+      ]
+    },
+    {
+      "id": "prompt.typography-content-hierarchy",
+      "order": 3,
+      "kind": "axis",
+      "file": "prompts/03-typography-content-hierarchy.md",
+      "consumes": [
+        "normalized request contract",
+        "source directives",
+        "evidence index",
+        "axis.typography-content-hierarchy matrix slice",
+        "applicable UI-domain slices"
+      ],
+      "produces": [
+        "axis.typography-content-hierarchy facet-coverage fragment",
+        "axis.typography-content-hierarchy claims",
+        "unknowns and handoffs"
+      ]
+    },
+    {
+      "id": "prompt.color-surface-identity",
+      "order": 4,
+      "kind": "axis",
+      "file": "prompts/04-color-surface-identity.md",
+      "consumes": [
+        "normalized request contract",
+        "source directives",
+        "evidence index",
+        "axis.color-surface-identity matrix slice",
+        "applicable UI-domain slices"
+      ],
+      "produces": [
+        "axis.color-surface-identity facet-coverage fragment",
+        "axis.color-surface-identity claims",
+        "unknowns and handoffs"
+      ]
+    },
+    {
+      "id": "prompt.component-morphology",
+      "order": 5,
+      "kind": "axis",
+      "file": "prompts/05-component-morphology.md",
+      "consumes": [
+        "normalized request contract",
+        "source directives",
+        "evidence index",
+        "axis.component-morphology matrix slice",
+        "applicable UI-domain slices"
+      ],
+      "produces": [
+        "axis.component-morphology facet-coverage fragment",
+        "axis.component-morphology claims",
+        "unknowns and handoffs"
+      ]
+    },
+    {
+      "id": "prompt.navigation-task-architecture",
+      "order": 6,
+      "kind": "axis",
+      "file": "prompts/06-navigation-task-architecture.md",
+      "consumes": [
+        "normalized request contract",
+        "source directives",
+        "evidence index",
+        "axis.navigation-task-architecture matrix slice",
+        "applicable UI-domain slices"
+      ],
+      "produces": [
+        "axis.navigation-task-architecture facet-coverage fragment",
+        "axis.navigation-task-architecture claims",
+        "unknowns and handoffs"
+      ]
+    },
+    {
+      "id": "prompt.forms-input-workflows",
+      "order": 7,
+      "kind": "axis",
+      "file": "prompts/07-forms-input-workflows.md",
+      "consumes": [
+        "normalized request contract",
+        "source directives",
+        "evidence index",
+        "axis.forms-input-workflows matrix slice",
+        "applicable UI-domain slices"
+      ],
+      "produces": [
+        "axis.forms-input-workflows facet-coverage fragment",
+        "axis.forms-input-workflows claims",
+        "unknowns and handoffs"
+      ]
+    },
+    {
+      "id": "prompt.data-display-visualization",
+      "order": 8,
+      "kind": "axis",
+      "file": "prompts/08-data-display-visualization.md",
+      "consumes": [
+        "normalized request contract",
+        "source directives",
+        "evidence index",
+        "axis.data-display-visualization matrix slice",
+        "applicable UI-domain slices"
+      ],
+      "produces": [
+        "axis.data-display-visualization facet-coverage fragment",
+        "axis.data-display-visualization claims",
+        "unknowns and handoffs"
+      ]
+    },
+    {
+      "id": "prompt.interaction-state-motion",
+      "order": 9,
+      "kind": "axis",
+      "file": "prompts/09-interaction-state-motion.md",
+      "consumes": [
+        "normalized request contract",
+        "source directives",
+        "evidence index",
+        "axis.interaction-state-motion matrix slice",
+        "applicable UI-domain slices"
+      ],
+      "produces": [
+        "axis.interaction-state-motion facet-coverage fragment",
+        "axis.interaction-state-motion claims",
+        "unknowns and handoffs"
+      ]
+    },
+    {
+      "id": "prompt.responsive-platform-adaptation",
+      "order": 10,
+      "kind": "axis",
+      "file": "prompts/10-responsive-platform-adaptation.md",
+      "consumes": [
+        "normalized request contract",
+        "source directives",
+        "evidence index",
+        "axis.responsive-platform-adaptation matrix slice",
+        "applicable UI-domain slices"
+      ],
+      "produces": [
+        "axis.responsive-platform-adaptation facet-coverage fragment",
+        "axis.responsive-platform-adaptation claims",
+        "unknowns and handoffs"
+      ]
+    },
+    {
+      "id": "prompt.accessibility-inclusion-localization",
+      "order": 11,
+      "kind": "axis",
+      "file": "prompts/11-accessibility-inclusion-localization.md",
+      "consumes": [
+        "normalized request contract",
+        "source directives",
+        "evidence index",
+        "axis.accessibility-inclusion-localization matrix slice",
+        "applicable UI-domain slices"
+      ],
+      "produces": [
+        "axis.accessibility-inclusion-localization facet-coverage fragment",
+        "axis.accessibility-inclusion-localization claims",
+        "unknowns and handoffs"
+      ]
+    },
+    {
+      "id": "prompt.content-trust-ethics",
+      "order": 12,
+      "kind": "axis",
+      "file": "prompts/12-content-trust-ethics.md",
+      "consumes": [
+        "normalized request contract",
+        "source directives",
+        "evidence index",
+        "axis.content-trust-ethics matrix slice",
+        "applicable UI-domain slices"
+      ],
+      "produces": [
+        "axis.content-trust-ethics facet-coverage fragment",
+        "axis.content-trust-ethics claims",
+        "unknowns and handoffs"
+      ]
+    },
+    {
+      "id": "prompt.performance-resilience",
+      "order": 13,
+      "kind": "axis",
+      "file": "prompts/13-performance-resilience.md",
+      "consumes": [
+        "normalized request contract",
+        "source directives",
+        "evidence index",
+        "axis.performance-resilience matrix slice",
+        "applicable UI-domain slices"
+      ],
+      "produces": [
+        "axis.performance-resilience facet-coverage fragment",
+        "axis.performance-resilience claims",
+        "unknowns and handoffs"
+      ]
+    },
+    {
+      "id": "prompt.system-governance",
+      "order": 14,
+      "kind": "axis",
+      "file": "prompts/14-system-governance.md",
+      "consumes": [
+        "normalized request contract",
+        "source directives",
+        "evidence index",
+        "axis.system-governance matrix slice",
+        "applicable UI-domain slices"
+      ],
+      "produces": [
+        "axis.system-governance facet-coverage fragment",
+        "axis.system-governance claims",
+        "unknowns and handoffs"
+      ]
+    },
+    {
+      "id": "prompt.synthesis",
+      "order": 15,
+      "kind": "synthesis",
+      "file": "prompts/15-synthesis.md",
+      "consumes": [
+        "all axis fragments",
+        "source directives",
+        "evidence index",
+        "compatibility report",
+        "concept matrix"
+      ],
+      "produces": [
+        "design-dna.json",
+        "design-rules.md",
+        "confidence-report.md",
+        "unknowns.md",
+        "coverage-report.md"
+      ]
+    },
+    {
+      "id": "prompt.project-integration",
+      "order": 16,
+      "kind": "integration",
+      "file": "prompts/16-project-integration.md",
+      "consumes": [
+        "accepted Design DNA",
+        "authorized target project",
+        "integration policy"
+      ],
+      "produces": [
+        "transactional installation plan",
+        "project-local design dossier",
+        "namespaced token adapter",
+        "manifest and rollback state"
+      ]
+    },
+    {
+      "id": "prompt.generation-audit",
+      "order": 17,
+      "kind": "audit",
+      "file": "prompts/17-generation-audit.md",
+      "consumes": [
+        "accepted Design DNA",
+        "normalized audit request",
+        "generated implementation",
+        "host-browser evidence"
+      ],
+      "produces": [
+        "four-layer audit report",
+        "findings",
+        "repair proposal",
+        "calibration candidates"
+      ]
+    }
+  ]
+}
