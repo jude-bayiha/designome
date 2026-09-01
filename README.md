@@ -7,8 +7,8 @@ Designome turns UI screenshots into an evidence-backed **Design DNA** that an ex
 The repository now contains the first executable vertical slice:
 
 - a Codex plugin manifest with `designome-extract`, `designome-install`, and `designome-audit` skills;
-- a versioned matrix of eight analysis axes and 18 cross-cutting concepts;
-- 13 modular prompts for evidence intake, analysis, synthesis, integration, and audit;
+- a v0.3 grammar with 13 specialist axes, 65 mandatory facets, 33 cross-cutting concepts, and 20 routable UI domains;
+- 18 modular prompts for evidence intake, specialist analysis, synthesis, integration, and audit;
 - deterministic screenshot metadata, Design DNA validation, installation, and verification commands;
 - one persistent `designome run` workflow with explicit human and host-agent handoffs and deterministic resume;
 - a read-only `designome doctor` plus transactional prepare, journal, apply, verify, manifest, and rollback installation;
@@ -16,7 +16,7 @@ The repository now contains the first executable vertical slice:
 - a versioned browser capture adapter and canonical provider state shared by JSON and Markdown reports;
 - independent installation, mechanical, perceptual, and usage audit layers;
 - bounded repair planning and project-aware shadcn/ui component mapping;
-- a complete 23-file project-local design dossier spanning foundations, components, behavior, and governance, plus repository-native integration context;
+- a complete 52-file project-local design dossier spanning foundations, typed components, 20 UI-domain patterns, behavior, coverage, source routing, and governance;
 - a project-local `designome-audit` skill that fresh Codex sessions can discover;
 - idempotent managed CSS and agent guidance with checksums and user-owned overrides;
 - repository quality, commit, CI, and release guardrails.
@@ -38,7 +38,7 @@ The host agent performs multimodal reasoning with its installed model and accoun
 
 `$designome-extract`, `$designome-install`, and `$designome-audit` accept ordinary instructions. The host agent converts relevant intent, paths, constraints, evidence routing, preferences, and explicit authorization into `request-contract.json`; the deterministic runtime validates that contract and rejects mismatched execution inputs.
 
-Extraction requests may assign captures to specific subjects and request either direct destination fidelity or explicit cross-surface adaptation. For example:
+Extraction requests may assign captures to axes, concepts, recognizable UI parts, token categories, or rule categories and request either direct destination fidelity or explicit cross-surface adaptation. For example:
 
 ```text
 $designome-extract for a corporate website.
@@ -46,7 +46,7 @@ Use dashboard-1.png only for statistics and charts.
 Use theme.png only for colors and surfaces.
 ```
 
-Direct mode requires matching destination references before claiming destination-specific accuracy. Adaptation mode keeps unsupported destination rules proposed. See the [conversational request contract](docs/conversational-request-contract.md).
+Direct mode requires matching destination references before claiming destination-specific accuracy: dashboard evidence does not establish corporate marketing composition, and desktop/web evidence does not establish a mobile-native shell. The scoped statistics or theme grammar can still be reused. Adaptation mode keeps unsupported destination rules proposed. Nonsensical optional text is recorded and ignored rather than becoming intent. See the [conversational request contract](docs/conversational-request-contract.md).
 
 ## Quick start
 
@@ -187,7 +187,8 @@ Start with:
 - [Integration and calibration matrix](docs/integration-and-calibration-matrix.md)
 - [Runtime and CLI](docs/runtime.md)
 - [Reference screenshot analysis](docs/reference-analysis.md)
-- [Design DNA v0.2 example](examples/design-dna.reference-v0.2.json)
+- [v0.3 prompt forward test](docs/v0.3-forward-test.md)
+- [Design DNA v0.3 example](examples/design-dna.reference-v0.3.json)
 
 ## Local quality checks
 

@@ -36,40 +36,70 @@ The current helper exposes the plan as JSON on standard output. The invoking ski
 
 ## Project-local design documentation
 
-Installation writes human-readable documentation inside the target repository. The default directory is `docs/designome`; repository instructions may select another visible project-relative directory with `--docs-dir`. The concept matrix owns a versioned, mandatory projection. The installer always writes its index plus all 22 projected documents:
+Installation writes human-readable documentation inside the target repository. The default directory is `docs/designome`; repository instructions may select another visible project-relative directory with `--docs-dir`. The v0.3 concept matrix owns a versioned, mandatory projection. The installer always writes its index plus all 51 projected documents (52 files total):
 
 ```text
 docs/designome/
 ├── README.md
 ├── foundations/
-│   ├── colors-and-surfaces.md
+│   ├── spatial-composition.md
 │   ├── typography.md
-│   ├── spacing-and-layout.md
-│   ├── iconography.md
+│   ├── color-and-themes.md
+│   ├── surfaces-and-depth.md
+│   ├── iconography-and-assets.md
+│   ├── visual-identity.md
 │   └── motion.md
 ├── components/
 │   ├── catalogue.md
 │   ├── anatomy.md
+│   ├── variants-and-density.md
 │   ├── states.md
-│   ├── data-display.md
-│   ├── forms-and-filters.md
+│   ├── composition-and-anti-patterns.md
 │   └── component-mapping.md
+├── patterns/
+│   ├── app-shell-and-navigation.md
+│   ├── marketing-and-editorial.md
+│   ├── actions-and-controls.md
+│   ├── forms-and-data-entry.md
+│   ├── search-filter-and-sort.md
+│   ├── tables-and-lists.md
+│   ├── cards-and-collections.md
+│   ├── stats-and-kpis.md
+│   ├── charts-and-data-visualization.md
+│   ├── status-and-progress.md
+│   ├── overlays-and-disclosure.md
+│   ├── media-and-galleries.md
+│   ├── messaging-and-notifications.md
+│   ├── calendars-and-timelines.md
+│   ├── maps-and-spatial-ui.md
+│   ├── commerce-and-transactions.md
+│   ├── authentication-and-onboarding.md
+│   ├── settings-and-configuration.md
+│   ├── mobile-native-shell.md
+│   └── files-and-content-management.md
 ├── behavior/
+│   ├── task-and-information-architecture.md
 │   ├── interaction-contracts.md
 │   ├── responsive-reflow.md
-│   ├── content-resilience.md
+│   ├── platform-adaptation.md
 │   ├── accessibility.md
 │   ├── localization.md
-│   └── loading-errors-recovery.md
+│   ├── content-and-voice.md
+│   ├── trust-privacy-and-ethics.md
+│   ├── content-resilience.md
+│   ├── loading-errors-recovery.md
+│   └── performance-and-stability.md
 └── governance/
+    ├── coverage.md
     ├── rules.md
     ├── evidence-and-confidence.md
     ├── unknowns-and-exceptions.md
     ├── calibration.md
+    ├── source-routing.md
     └── integration.md
 ```
 
-Completeness is structural, not evidentiary inflation. A projected document may contain only `unknown` boundaries and `proposed` stress tests when the accepted Design DNA does not support a stronger claim. It must still exist so agents and humans have a stable place to extend, review, and regenerate the subject.
+Completeness is structural, not evidentiary inflation. The pattern documents expose the 20 UI-domain inspection contracts; `governance/coverage.md` exposes all 65 facets and 20 domain records; `governance/source-routing.md` preserves each screenshot directive. A projected document may contain only `unknown` boundaries and `proposed` stress tests when the accepted Design DNA does not support a stronger claim. It must still exist so agents and humans have a stable place to review and regenerate the subject.
 
 Generated documentation is managed and checksum-protected. Existing project documentation is user-owned. Declare existing paths with repeatable `--existing-rules` options and resolve one precedence policy:
 

@@ -25,7 +25,7 @@ designome run \
   --css-entry src/styles/globals.css
 ```
 
-The command creates `.designome/runs/<workflow-id>/workflow-state.json`. Every step records an owner, status, attempts, artifacts, timestamps, and an actionable error. `designome run --resume` loads `.designome/active-run.json`, validates version `1.0.0`, and resumes the first non-completed step.
+The command creates `.designome/runs/<workflow-id>/workflow-state.json`. Every step records an owner, status, attempts, artifacts, timestamps, and an actionable error. `run-plan.json` separately records request-routed axes/domains, all five facet IDs for each axis stage, and whether final visual routing is deferred to source evidence. `designome run --resume` loads `.designome/active-run.json`, validates version `1.0.0`, and resumes the first non-completed step.
 
 The ordered steps are:
 
@@ -38,6 +38,8 @@ The ordered steps are:
 7. `capture-browser-evidence` — host-agent and adapter handoff
 8. `evaluate-audit`
 9. `finalize`
+
+Inside `extract-design-dna`, the host follows the 18-stage v0.3 prompt plan: orchestration, source evidence, 13 independently routed specialist axes, synthesis, optional integration, and later audit. An all-purpose source defers specialist admission until visible regions are classified. A request made exclusively of `only` directives can pre-route the affected axes and UI domains. System governance always runs, and final synthesis still emits all 65 facet and 20 domain coverage records.
 
 The state machine uses `pending`, `in-progress`, `awaiting`, `completed`, `failed`, and `skipped` per step. Workflow state uses `running`, `awaiting-human`, `awaiting-host`, `failed`, or `completed`. Completed steps are not rerun. A failed deterministic step is replanned and retried on resume.
 

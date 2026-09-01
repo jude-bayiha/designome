@@ -1,4 +1,4 @@
-# Product foundation — Designome v0.2
+# Product foundation — Designome v0.3
 
 ## Product thesis
 
@@ -63,13 +63,15 @@ No Python, NumPy, OpenCV, OCR engine, vector database, training pipeline, or sta
 | Static screenshots imply false accessibility confidence      | Separate visible cues from DOM, keyboard, assistive-technology, and runtime verification         |
 | Automated repair silently changes product or design intent   | Explicit authorization, bounded passes, finding IDs, stop conditions, and immutable accepted DNA |
 
-## v0.2 deliverables
+## v0.3 deliverables
 
 This specification slice is complete when:
 
-- the eight-axis matrix and cross-cutting concepts validate;
+- the 13-axis, 65-facet, 33-concept, and 20-UI-domain matrix validates;
 - all modular prompt files follow the shared output contract;
-- the Design DNA example validates against the v0.2 schema;
+- the Design DNA example validates against the v0.3 schema with complete facet/domain coverage;
+- conversational intent and per-source subject routing validate against request contract v1.1;
+- installation projects the complete 52-file design dossier;
 - installation has an explicit idempotency and ownership contract;
 - repository content and delivery metadata are English;
 - local checks pass twice without changing tracked files.

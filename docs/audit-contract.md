@@ -1,6 +1,6 @@
 # Rendered audit contract
 
-Designome audits accepted Design DNA against implementation evidence without turning implementation values into screenshot evidence. The executable helper initializes deterministic artifacts and evaluates normalized measurements; the host agent or a target-project browser runner performs the actual navigation and capture work.
+Designome audits accepted Design DNA against implementation evidence without turning implementation values into screenshot evidence. Request contract v1.1 can focus the audit by axes, concepts, and UI domains while retaining applicable exceptions, stress tests, and coverage gaps. The executable helper initializes deterministic artifacts and evaluates normalized measurements; the host agent or a target-project browser runner performs the actual navigation and capture work.
 
 ## Four independent audit layers
 

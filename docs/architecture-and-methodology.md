@@ -1,127 +1,182 @@
-# Architecture and methodology — Designome v0.2
+# Architecture and methodology — Designome v0.3
 
 ## Architecture principles
 
-- The host coding agent performs multimodal reasoning; Designome supplies contracts and workflow.
-- Screenshots remain immutable inputs and the only source of visual truth.
-- Every artifact is serializable, versioned, and traceable to a prompt stage.
-- Observations, inferences, proposals, and unknowns never share a status.
+- The host coding agent performs multimodal and perceptual reasoning; Designome supplies versioned contracts, specialized prompts, and deterministic workflow.
+- Screenshots are immutable inputs and the only source of visual truth.
+- Every claim has exactly one status: `observed`, `inferred`, `proposed`, or `unknown`.
+- Evidence, confidence, scope, exceptions, screenshot limits, and validation survive every stage.
 - Framework-neutral extraction is separate from target-specific installation.
-- Generated content is replaceable; human overrides are preserved.
-- Missing evidence produces an unknown or proposal, never a fabricated observation.
-- Deterministic runtime work, host-agent reasoning, browser execution, and human acceptance use explicit persisted handoffs.
-- Conversational requests are normalized once by the host agent and validated deterministically before stage routing.
+- A target project is a technical destination, never Design DNA evidence.
+- Missing evidence produces explicit coverage gaps, not fabricated completeness.
+- Natural language is normalized once into a validated contract before specialist routing.
+- Host reasoning, deterministic runtime work, human acceptance, implementation, and browser execution use explicit persisted handoffs.
+- Generated artifacts are checksum-managed; human overrides remain separate.
 
 ## Modular pipeline
 
 ```mermaid
 flowchart LR
-    A["Conversational request"] --> B["Host normalization plus runtime validation"]
-    B --> C["Doctor and run initialization"]
-    C --> D["Host-agent screenshot extraction"]
-    D --> E["02-09 Eight axis analyses"]
-    E --> F["10 Synthesis"]
+    A["Conversation and screenshots"] --> B["Request contract v1.1"]
+    B --> C["Runtime validation and run initialization"]
+    C --> D["01 Source evidence, classification, compatibility, routing"]
+    D --> E["02-14 Routed specialist axes, five facets each"]
+    E --> F["15 Canonical synthesis and complete coverage"]
     F --> G["Human acceptance"]
-    G --> H["Transactional installation"]
-    H --> I["Host-agent UI task"]
-    I --> J["Host browser plus capture adapter"]
-    J --> K["Four-layer audit"]
-    K --> L["Consolidated result"]
+    G --> H["16 Transactional project integration"]
+    H --> I["Host-agent implementation"]
+    I --> J["Host browser and evidence adapter"]
+    J --> K["17 Four-layer generation audit"]
 ```
 
-`00-orchestrator.md` validates inputs and routes stages. It does not perform every analysis itself. Each stage reads the shared contract, its matrix slice, and the minimum upstream artifacts it needs.
+`00-orchestrator.md` normalizes intent, validates the request, creates the run plan, and routes work. It does not duplicate specialist analysis. `01-source-evidence.md` decides which visible regions are admitted to which axes and UI domains. The 13 axis prompts inspect five stable facets each. `15-synthesis.md` is the only stage allowed to resolve fragments into canonical Design DNA.
 
 ## Stage responsibilities
 
-| Stage                         | Responsibility                                               | Main output                                         |
-| ----------------------------- | ------------------------------------------------------------ | --------------------------------------------------- |
-| 00 Orchestrator               | Normalize request, persist state, route, pause, and report   | request contract, run plan, workflow state          |
-| 01 Source evidence            | Route source evidence and assess target compatibility        | source manifest, evidence index, compatibility      |
-| 02 Perceptual foundations     | Composition, rhythm, hierarchy, visual language              | axis fragment                                       |
-| 03 Task architecture          | Orientation, priority, disclosure, context                   | axis fragment                                       |
-| 04 Interactions and states    | Controls, business states, feedback, optional motion         | state fragment and coverage table                   |
-| 05 Business and data patterns | Components, tables, forms, filters, data scale               | pattern fragment                                    |
-| 06 Adaptation and inclusion   | Reflow, localization, modalities, accessibility implications | adaptation fragment                                 |
-| 07 Performance and resilience | Loading, stability, degradation, recovery                    | resilience fragment                                 |
-| 08 Content, trust, privacy    | Language, consequences, provenance, permissions              | content fragment                                    |
-| 09 System and governance      | Tokens, contracts, exceptions, enforcement                   | governance fragment                                 |
-| 10 Synthesis                  | Resolve claims into one canonical contract                   | `design-dna.json` and reports                       |
-| 11 Integration                | Diagnose and install accepted artifacts transactionally      | managed files, manifest, transaction result         |
-| 12 Generation audit           | Plan adapter capture and four independent audit layers       | evidence, canonical report, findings, and proposals |
+| Stage                                   | Responsibility                                                                                           | Main output                                           |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| 00 Orchestrator                         | Normalize conversation, validate paths/scope, plan routing, persist handoffs                             | request contract, run plan, workflow state            |
+| 01 Source evidence                      | Describe visible regions, classify surfaces, detect UI domains, enforce directives, assess compatibility | evidence index, compatibility report, routed evidence |
+| 02 Spatial composition                  | Regions, grids, rhythm, alignment, density, depth                                                        | five-facet axis fragment                              |
+| 03 Typography/content hierarchy         | Type roles, readability, numeric treatment, wrapping, truncation                                         | five-facet axis fragment                              |
+| 04 Color/surface/identity               | Semantic color, themes, surfaces, shape, icons, imagery, brand                                           | five-facet axis fragment                              |
+| 05 Component morphology                 | Anatomy, variants, states, composition, constraints, anti-patterns                                       | typed component fragment                              |
+| 06 Navigation/task architecture         | Orientation, hierarchy, priorities, disclosure, continuity                                               | five-facet axis fragment                              |
+| 07 Forms/input workflows                | Labels, controls, validation, formatting, save/recovery, sensitive data                                  | five-facet axis fragment                              |
+| 08 Data display/visualization           | KPIs, context, tables, charts, scales, uncertainty, alternatives                                         | five-facet axis fragment                              |
+| 09 Interaction/state/motion             | States, triggers, feedback, exits, focus, modalities, motion                                             | five-facet axis fragment                              |
+| 10 Responsive/platform adaptation       | Reflow, containers, mobile/native shell, orientation, input conventions                                  | five-facet axis fragment                              |
+| 11 Accessibility/inclusion/localization | Semantics, order, contrast, zoom, modality, localization, verification                                   | five-facet axis fragment                              |
+| 12 Content/trust/ethics                 | Voice, actionability, provenance, permission, consequence, informed choice                               | five-facet axis fragment                              |
+| 13 Performance/resilience               | Loading, stability, scale, degradation, work preservation, recovery                                      | five-facet axis fragment                              |
+| 14 System/governance                    | Tokens, contracts, provenance, coverage, integration, non-regression                                     | five-facet axis fragment                              |
+| 15 Synthesis                            | Resolve duplication/conflict and materialize the canonical grammar                                       | Design DNA, rules, confidence, unknowns, coverage     |
+| 16 Integration                          | Diagnose and install accepted artifacts transactionally                                                  | managed dossier, CSS bridge, manifest, verification   |
+| 17 Generation audit                     | Evaluate accepted grammar against real implementation evidence                                           | canonical report, findings, repair proposal           |
 
-## Evidence and claim model
+## Evidence and source-routing model
 
-Every canonical claim contains:
+Every source has:
 
-- a stable ID and one testable statement;
-- matrix concept references;
-- one epistemic status;
+- stable identity, kind, dimensions/hash, limitations, and path;
+- evidence-backed surface/archetype classification with confidence and basis;
+- detected UI domains;
+- the normalized per-source directive that controls evidence admission.
+
+Every evidence region has a visible summary, source reference, limitations, concepts, and UI domains. Visible summaries do not contain interpretations. Claims refer back to these region IDs.
+
+The directive modes are:
+
+- `all`: all visibly supported subjects;
+- `only`: selected axes, concepts, domains, token categories, or rule categories only;
+- `prefer`: selected subjects receive priority without hiding other visible evidence;
+- `exclude`: selected subjects are prohibited.
+
+Source routing is applied before each specialist sees evidence. It therefore supports using two dashboard captures only for statistics while using a third capture only for color and surface treatment.
+
+## Destination compatibility
+
+The optional use-case sentence never rewrites source truth. Direct mode requires representative destination-family evidence before destination-specific accuracy is claimed. Adapt mode permits transfer while preserving every absent destination pattern as `proposed`.
+
+Examples:
+
+- dashboard references can establish KPI/chart grammar but not corporate marketing composition;
+- a website capture can establish visible web hierarchy but not mobile-native safe-area or gesture behavior;
+- a narrow screenshot does not prove native mobile solely from its dimensions;
+- unrecognized optional text is ignored and recorded rather than interpreted creatively.
+
+The compatibility report keeps matching evidence, transferable scoped evidence, missing source families, and proposed adaptation separate.
+
+## Canonical claim model
+
+Every token, rule, and component claim contains:
+
+- a stable ID and testable statement;
+- concept and UI-domain routing;
+- exactly one epistemic status;
 - confidence score and basis;
-- evidence references when observed or inferred;
-- explicit scope and exceptions;
-- an implementation validation method and status.
+- evidence references for `observed` and `inferred`;
+- scope and exceptions;
+- validation method and status.
 
-Confidence and status are independent. A direct observation can have low confidence because of crop or compression. An unknown can have high certainty because the relevant state is absent.
+Confidence and status are independent. A direct observation may have low confidence because of crop or compression. An `unknown` can be certain because the relevant behavior is absent.
 
-Accepted range values may add a preferred implementation value and either a `bounded` or `audit-only` strategy. This makes forward-test calibration executable without reclassifying a human preference or computed implementation value as screenshot evidence.
+Tokens add semantic role, applicable targets, relationships, and an exact/range/relationship/unknown value. Exact values require defensible evidence. Bounded preferred values may be used for forward-test calibration without being promoted to observed.
 
-## Status promotion
+Rules add category, strength, requirements, applicable targets, rationale, failure modes, dependencies, and validation cases.
+
+Components add:
+
+- purpose and UI-domain routing;
+- typed anatomy with required/optional/conditional parts;
+- variants with purpose, conditions, differences, status, and evidence;
+- state contracts with trigger, behavior, feedback, exit/recovery, programmatic state, validation, and evidence;
+- composition, content, adaptation, accessibility, and anti-pattern contracts;
+- token/rule references and one evidence-backed canonical claim.
+
+## Status admission and promotion
 
 | Status     | Admission rule                                                                        | Promotion path                                 |
 | ---------- | ------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| `observed` | Directly visible or explicitly supplied; localized evidence required                  | Remains scoped to its evidence                 |
+| `observed` | Directly visible or explicitly supplied; localized evidence required                  | Remains scoped to that evidence                |
 | `inferred` | Best explanation of repeated visible relationships; evidence and uncertainty required | Human review or further evidence               |
-| `proposed` | Useful behavior or rule absent from the screenshots                                   | Forward test and explicit acceptance           |
+| `proposed` | Useful destination, resilience, or implementation contract absent from screenshots    | Forward test and explicit acceptance           |
 | `unknown`  | Insufficient evidence for a defensible claim                                          | New evidence or an authorized product decision |
 
-Synthesis may merge compatible claims and preserve scoped exceptions. It must expose contradictions and may never promote status merely because several prompts repeated the same unsupported idea.
+Repeated unsupported statements never increase status. Synthesis merges compatible claims, retains scoped exceptions, exposes conflicts, and rejects evidence leakage.
+
+## Complete coverage model
+
+Design DNA v0.3 contains:
+
+- 13 axis coverage entries;
+- exactly five facet entries per axis, for 65 total;
+- 20 UI-domain coverage entries.
+
+Each facet record carries coverage status, epistemic status, summary, evidence/artifact references, gaps, and validation. Each domain record adds applicability. Unsupported specialist questions stay visible as `unknown`; non-detected and irrelevant UI domains can be `not-applicable`.
+
+Coverage completeness is structural honesty, not a claim that a static screenshot proved interaction, accessibility, responsiveness, data meaning, performance, or runtime behavior.
 
 ## Motion modes
 
 - `off`: no motion output.
-- `observed-only`: retain motion only when the user supplies a sequence, recording, specification, or implementation evidence.
-- `auto`: propose functional motion where it clarifies state or spatial continuity.
+- `observed-only`: retain motion only from a sequence, recording, explicit specification, or implementation evidence.
+- `auto`: propose functional motion for state or spatial continuity.
 
-Static screenshots never establish timing, easing, path, interruption, or reduced-motion behavior. In `auto`, those rules remain `proposed` and must be functional, interruptible, layout-stable, and compatible with `prefers-reduced-motion`.
+Static screenshots never establish duration, easing, path, interruption, or reduced-motion behavior. Auto-mode motion remains `proposed`, interruptible, layout-stable, and compatible with reduced motion.
 
 ## Extraction and installation boundary
 
-Extraction may run without a target project. When a target path is supplied, the integration stage may inspect:
+Extraction may run without a target. Integration can inspect only technical facts:
 
-- package manager and framework;
-- source and CSS entry points;
-- aliases and build scripts;
-- installed icon or motion libraries;
-- applicable repository and nested agent instructions;
-- declared existing design-documentation paths and precedence;
-- styling-system dependencies and directives such as Tailwind.
+- package manager, framework, source roots, aliases, and scripts;
+- CSS entry and styling system;
+- already installed technical libraries;
+- applicable repository instructions;
+- declared existing design-documentation paths and precedence.
 
-It may not treat existing CSS, components, tokens, or rendered UI as Design DNA evidence. Technical compatibility can change the export shape, never the extracted design meaning.
+Existing CSS, components, tokens, documentation, or rendered target UI cannot support a Design DNA visual claim. They affect adapter shape only.
 
-## Run artifacts
+## Run and installed artifacts
 
 ```text
 .designome/runs/<run-id>/
+├── request-contract.json
+├── run-context.json
 ├── run-plan.json
 ├── workflow-state.json
-├── request-contract.json
 ├── source-manifest.json
 ├── evidence-index.json
 ├── compatibility-report.json
 ├── stages/
-│   ├── 02-perceptual-foundations.json
-│   └── ...
+│   ├── 02-spatial-composition.json
+│   ├── ...
+│   └── 14-system-governance.json
 ├── design-dna.json
 ├── design-rules.md
 ├── confidence-report.md
 ├── unknowns.md
-├── integration-plan.json
-├── docs/designome/ (or a repository-configured target directory)
-│   ├── README.md
-│   ├── foundations/ (5 documents)
-│   ├── components/ (6 documents)
-│   ├── behavior/ (6 documents)
-│   └── governance/ (5 documents)
+├── coverage-report.md
 └── audit/
     ├── plan.json
     ├── evidence.json
@@ -130,44 +185,42 @@ It may not treat existing CSS, components, tokens, or rendered UI as Design DNA 
     └── findings.json
 ```
 
-Run artifacts are local working evidence and should not be committed by default. Accepted, sanitized outputs may be promoted deliberately.
+An accepted installation projects 52 documentation files:
+
+```text
+docs/designome/
+├── README.md
+├── foundations/ (7)
+├── components/ (6)
+├── patterns/ (20)
+├── behavior/ (11)
+└── governance/ (7)
+```
+
+The project also receives the accepted Design DNA, namespaced token CSS, a user-owned override file, project-local audit skill, managed guidance, manifest, and user-owned audit configuration.
+
+Run artifacts are local evidence and are not committed by default. Accepted sanitized outputs may be promoted deliberately.
 
 ## Validation layers
 
-1. **Structural:** JSON Schema, JSON parsing, matrix references, prompt headings, and workflow YAML.
-2. **Semantic:** claim evidence, status rules, concept coverage, conflicts, and unresolved unknowns.
-3. **Installation:** read-only doctor, transactional preflight, checksums, rollback, manifest integrity, and second-run no diff.
-4. **Mechanical:** rendered geometry and objective browser measurements.
-5. **Perceptual:** explicitly host-agent evaluation with provenance, certainty, and limitations.
-6. **Usage:** executed interactions, keyboard, focus, accessibility semantics, responsive scenarios, localization direction, and recovery.
+1. **Structural:** JSON Schema, parsing, exact matrix cardinality, cross-references, prompt structure, and skill metadata.
+2. **Semantic:** status/evidence rules, typed artifacts, dependencies, exact axis/facet/domain coverage, and unresolved unknowns.
+3. **Installation:** read-only doctor, dry-run, staging, journal, atomic apply, checksums, rollback, manifest integrity, and second-run no diff.
+4. **Mechanical:** geometry, overflow, clipping, measurable constraints, and console evidence.
+5. **Perceptual:** host-agent comparison with provenance, certainty, source/target captures, and limitations.
+6. **Usage:** executed interactions, keyboard/focus, accessibility semantics, responsive scenarios, directions, states, and recovery.
 
-Reports must state which layers actually ran. Static inspection is not rendered or interaction proof.
-
-Rendered measurements are normalized through the [audit contract](audit-contract.md). Observed implementation risks, accepted Design DNA deviations, and proposed calibration candidates remain separate result classes.
-
-## Repository dependency rule
-
-The concept matrix and Design DNA schema are canonical contracts. Prompts consume them. The installer consumes only accepted Design DNA. Audits consume accepted Design DNA plus implementation evidence. No artifact may silently become a new source of visual truth.
+Reports state which layers ran. Static inspection is not rendered, interaction, accessibility, or perceptual proof.
 
 ## Executable runtime boundary
 
-The plugin packages three compatible agent entry points plus one orchestrated CLI:
-
-- `designome-extract` performs multimodal evidence and synthesis work;
-- `designome-install` reviews technical compatibility and invokes managed installation;
-- `designome-audit` separates static, rendered, interaction, and accessibility evidence.
-- `designome run` coordinates those responsibilities through persistent resumable state without duplicating their visual reasoning or installation logic.
-
 The dependency-light Node runtime performs only deterministic work:
 
-- PNG, JPEG, GIF, and WebP metadata plus SHA-256 hashing;
-- idempotent run initialization and input fingerprinting;
-- semantic Design DNA reference and evidence checks;
-- CSS entry discovery or explicit selection;
-- generated CSS, user-owned overrides, and managed `AGENTS.md` blocks;
-- a matrix-projected 23-file design dossier and styling-adapter context;
-- audit configuration validation, browser-provider resolution, and evidence artifact initialization;
-- official browser evidence normalization and provider-state validation;
-- transactional manifest checksums, conflict diagnostics, interruption recovery, rollback, and verification.
+- image metadata and hashes;
+- request/Design DNA validation and input fingerprinting;
+- explicit run-plan routing metadata;
+- installation planning, rendering, staging, journaling, atomic writes, checksums, rollback, and verification;
+- projection of the 52-file dossier;
+- audit planning, evidence normalization, and result evaluation.
 
-The runtime cannot interpret screenshot design intent. Skills cannot bypass runtime ownership checks. This boundary keeps model reasoning flexible and file mutation predictable.
+The host agent performs screenshot reasoning, writes evidence and Design DNA, implements the target UI, drives an available browser, and records perceptual observations. The human accepts the draft Design DNA. These ownership boundaries are never collapsed.
