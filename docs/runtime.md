@@ -4,11 +4,22 @@ The Designome runtime supports the agent skills with deterministic operations. I
 
 ## Commands
 
+### Validate a normalized conversational request
+
+```bash
+designome validate-request \
+  --file /absolute/request-contract.json \
+  --operation extract
+```
+
+The host agent interprets the conversation and writes the contract. Runtime semantic validation checks operation-specific paths, modes, authorization, source directives, matrix concept references, and token or rule categories. Repository validation also checks the complete JSON Schema. The runtime never interprets the original natural-language request.
+
 ### Run the complete resumable workflow
 
 ```bash
 designome run \
   --source /absolute/reference.png \
+  --request /absolute/request-contract.json \
   --project /absolute/target-project \
   --css-entry src/styles/globals.css
 
@@ -37,6 +48,7 @@ The result always includes `readOnly` and `writesPerformed`. Missing `package.js
 ```bash
 designome extract \
   --output .designome/runs/<run-id> \
+  --request /absolute/request-contract.json \
   --source /absolute/reference.png
 ```
 
@@ -47,6 +59,7 @@ This compatibility command initializes deterministic metadata and returns a host
 ```bash
 node bin/designome.mjs init-run \
   --output .designome/runs/<run-id> \
+  --request /absolute/request-contract.json \
   --motion off \
   --image /absolute/path/reference-1.png \
   --image /absolute/path/reference-2.jpeg
@@ -55,6 +68,7 @@ node bin/designome.mjs init-run \
 The command validates input paths, deduplicates identical images, reads PNG/JPEG/GIF/WebP dimensions from binary signatures, computes SHA-256 hashes, fingerprints the configuration, and writes:
 
 - `source-manifest.json`;
+- `request-contract.json` when supplied;
 - `run-context.json`;
 - `run-plan.json`;
 - an empty `stages/` directory.

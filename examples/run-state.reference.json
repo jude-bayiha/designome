@@ -8,6 +8,7 @@
   "runDirectory": "/tmp/designome/.designome/runs/workflow-reference",
   "projectPath": "/tmp/designome/target-project",
   "sourcePaths": ["/tmp/designome/reference.png"],
+  "requestContractPath": null,
   "dnaPath": "/tmp/designome/.designome/runs/workflow-reference/design-dna.json",
   "steps": [
     {

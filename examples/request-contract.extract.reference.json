@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0.0",
+  "requestId": "request.extract-corporate",
+  "operation": "extract",
+  "normalizedAt": "2026-09-01T12:00:00.000Z",
+  "summary": "Extract a reusable visual system for a corporate website while limiting dashboard captures to data presentation evidence.",
+  "interpretation": {
+    "status": "partial",
+    "ambiguities": [
+      "The supplied references do not establish corporate hero, public navigation, or footer patterns."
+    ],
+    "ignoredFragments": ["jjjggjgmsmssnfndndndnsnddjdjd"]
+  },
+  "constraints": [
+    "Do not use dashboard density as evidence for corporate page composition."
+  ],
+  "parameters": {
+    "kind": "extract",
+    "motionMode": "off",
+    "adaptationMode": "direct",
+    "targetUseCase": {
+      "raw": "for a corporate website",
+      "interpretationStatus": "usable",
+      "source": "user",
+      "surface": "website",
+      "archetype": "corporate"
+    },
+    "sources": [
+      {
+        "path": "/tmp/dashboard-stats.png",
+        "evidenceMode": "only",
+        "conceptRefs": ["concept.data-scale-resilience"],
+        "tokenCategories": [],
+        "ruleCategories": ["content"],
+        "note": "Use only for statistics and data-visualization treatment."
+      },
+      {
+        "path": "/tmp/theme.png",
+        "evidenceMode": "only",
+        "conceptRefs": [],
+        "tokenCategories": ["color", "border", "elevation"],
+        "ruleCategories": [],
+        "note": "Use only for theme, color, contrast, and surfaces."
+      }
+    ]
+  }
+}

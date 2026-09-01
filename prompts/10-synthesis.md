@@ -5,12 +5,15 @@ Read `_shared-contract.md`, the full concept matrix, and every completed stage f
 ## Inputs
 
 - Source manifest and evidence index
+- Normalized request contract and compatibility report
 - Completed axis-stage JSON fragments
 - Concept matrix and run configuration
 
 ## Task
 
-Merge compatible claims, keep scoped exceptions, resolve or expose conflicts, normalize concept references, and assign stable rule IDs. Promote no claim beyond its evidence. Separate canonical rules, proposals, unknowns, and implementation validation. Run an operationality check: every required rule must identify affected roles, a testable relationship or accepted bound, and a concrete rendered or static verification method.
+Merge compatible claims admitted by the source directives, keep scoped exceptions, resolve or expose conflicts, normalize concept references, and assign stable rule IDs. Promote no claim beyond its evidence. Separate canonical rules, proposals, unknowns, and implementation validation. Run an operationality check: every required rule must identify affected roles, a testable relationship or accepted bound, and a concrete rendered or static verification method.
+
+Keep the canonical source Design DNA independent from the requested destination. When the compatibility report permits adaptation, add destination-scoped proposals without rewriting source observations. In `direct` mode, do not claim destination accuracy when matching reference families are missing. In `adapt` mode, preserve every unevidenced destination pattern as `proposed` with an explicit forward test.
 
 Preserve enough normalized detail to populate every entry in `documentationProjection`: foundations, component catalogue, anatomy and states, behavior contracts, evidence, unknowns, calibration, and integration. Route each accepted claim through its concept references. When screenshots do not establish a subject, record an `unknown` or a clearly labeled `proposed` stress test instead of omitting the subject or fabricating an observation.
 

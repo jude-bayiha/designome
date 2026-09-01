@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0.0",
+  "requestId": "request.install-reference",
+  "operation": "install",
+  "normalizedAt": "2026-09-01T12:00:00.000Z",
+  "summary": "Install the accepted Design DNA using the target project's existing styling conventions.",
+  "interpretation": {
+    "status": "ready",
+    "ambiguities": [],
+    "ignoredFragments": []
+  },
+  "constraints": ["Preserve existing project-owned overrides."],
+  "parameters": {
+    "kind": "install",
+    "projectPath": "/tmp/target-project",
+    "dnaPath": "/tmp/design-dna.json",
+    "writesAuthorized": true,
+    "options": {
+      "cssEntry": null,
+      "scope": ":root",
+      "documentationDirectory": "docs/designome",
+      "rulePrecedence": "complement",
+      "existingRulePaths": [],
+      "stylingStrategy": "auto",
+      "uiKitPreference": "auto"
+    }
+  }
+}

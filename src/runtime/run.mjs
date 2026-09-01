@@ -13,6 +13,7 @@ import {
   writeJsonIfChanged,
 } from './files.mjs';
 import { loadConceptMatrix } from './design-dna.mjs';
+import { loadRequestContract } from './request-contract.mjs';
 
 const motionModes = new Set(['off', 'observed-only', 'auto']);
 
@@ -21,6 +22,7 @@ export async function initializeRun({
   motionMode = 'off',
   outputDirectory,
   targetProjectPath = null,
+  requestContractPath = null,
 }) {
   if (!Array.isArray(imagePaths) || imagePaths.length === 0) {
     throw new DesignomeError('At least one --image is required', {
@@ -79,6 +81,34 @@ export async function initializeRun({
     }
   }
 
+  const request = requestContractPath
+    ? await loadRequestContract(requestContractPath, {
+        expectedOperation: 'extract',
+        requireExecutable: true,
+      })
+    : null;
+  if (request) {
+    const contractSources = request.contract.parameters.sources
+      .map((source) => path.resolve(source.path))
+      .sort();
+    const requestedSources = [
+      ...new Set(imagePaths.map((item) => path.resolve(item))),
+    ].sort();
+    const mismatches = [];
+    if (request.contract.parameters.motionMode !== motionMode) {
+      mismatches.push('motionMode does not match the normalized request');
+    }
+    if (JSON.stringify(contractSources) !== JSON.stringify(requestedSources)) {
+      mismatches.push('source paths do not match the normalized request');
+    }
+    if (mismatches.length > 0) {
+      throw new DesignomeError('Run inputs do not match the request contract', {
+        code: 'REQUEST_INPUT_MISMATCH',
+        details: mismatches,
+      });
+    }
+  }
+
   const sources = [];
   const seenHashes = new Set();
   for (const imagePath of imagePaths) {
@@ -95,6 +125,7 @@ export async function initializeRun({
       sources: sources.map((source) => source.contentHash),
       motionMode,
       targetProjectPath: resolvedTarget,
+      requestContract: request?.contract ?? null,
       matrixVersion: matrix.matrixVersion,
       toolVersion: packageJson.version,
     }),
@@ -132,6 +163,9 @@ export async function initializeRun({
     toolVersion: packageJson.version,
     motionMode,
     targetProjectPath: resolvedTarget,
+    requestContractPath: request
+      ? path.join(resolvedOutput, 'request-contract.json')
+      : null,
   };
   const runPlan = {
     schemaVersion: '0.1.0',
@@ -172,6 +206,15 @@ export async function initializeRun({
       sourceManifest,
     ),
   });
+  if (request) {
+    actions.push({
+      path: path.join(resolvedOutput, 'request-contract.json'),
+      action: await writeJsonIfChanged(
+        path.join(resolvedOutput, 'request-contract.json'),
+        request.contract,
+      ),
+    });
+  }
   actions.push({
     path: contextPath,
     action: await writeJsonIfChanged(contextPath, runContext),

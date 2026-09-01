@@ -16,14 +16,18 @@ Read completely before installation:
 1. `../../prompts/_shared-contract.md`
 2. `../../prompts/11-project-integration.md`
 3. `../../docs/installation-contract.md`
-4. The accepted Design DNA supplied by the user
+4. `../../schemas/request-contract.schema.json`
+5. `../../docs/conversational-request-contract.md`
+6. The accepted Design DNA supplied by the user
 
 ## Workflow
 
-1. Require an explicit target-project path and a Design DNA whose status is `accepted`. Confirm that source paths and notes contain no secret or private metadata that must be removed before the accepted file is copied into the target.
-2. Inspect technical facts only: framework, package manager, source roots, CSS entry points, aliases, scripts, installed compatible libraries, styling systems such as Tailwind, existing UI-documentation paths, and applicable agent instructions.
-3. Read every `AGENTS.md` that applies to the planned target files. Resolve the documentation directory, rule precedence (`complement`, `existing-first`, or `designome-first`), declared existing-rule paths, and styling strategy before writing. Natural-language instructions are resolved by the agent and passed explicitly to the deterministic helper.
-4. Run the read-only diagnostic before the dry-run:
+1. Interpret the complete conversational request once. Normalize the target and Design DNA paths, constraints, integration preferences, and explicit write authorization into an `install` request contract. Ambiguous language never grants writes or permission to initialize dependencies.
+2. Validate the contract with `validate-request --file <request-contract.json> --operation install`. Stop before target writes when its interpretation is blocked.
+3. Require an explicit target-project path and a Design DNA whose status is `accepted`. Confirm that source paths and notes contain no secret or private metadata that must be removed before the accepted file is copied into the target.
+4. Inspect technical facts only: framework, package manager, source roots, CSS entry points, aliases, scripts, installed compatible libraries, styling systems such as Tailwind, existing UI-documentation paths, and applicable agent instructions.
+5. Read every `AGENTS.md` that applies to the planned target files. Resolve the documentation directory, rule precedence (`complement`, `existing-first`, or `designome-first`), declared existing-rule paths, and styling strategy before writing. Pass the validated contract explicitly to the deterministic helper.
+6. Run the read-only diagnostic before the dry-run:
 
    ```bash
    node <designome-plugin-root>/bin/designome.mjs doctor \
@@ -31,12 +35,13 @@ Read completely before installation:
      --dna <accepted-design-dna.json>
    ```
 
-5. Run a dry-run. Pass `--css-entry` when discovery is absent or ambiguous:
+7. Run a dry-run. Pass `--css-entry` when discovery is absent or ambiguous:
 
    ```bash
    node <designome-plugin-root>/bin/designome.mjs install \
      --dna <accepted-design-dna.json> \
      --project <target-project> \
+     --request <request-contract.json> \
      [--css-entry <project-relative-css-entry>] \
      [--scope <css-selector>] \
      [--docs-dir <project-relative-directory>] \
@@ -47,22 +52,23 @@ Read completely before installation:
      --dry-run
    ```
 
-6. Review every planned create, update, delete, preserve, unchanged, and conflict action. A delete is valid only for obsolete documentation owned by the previous manifest whose checksum still matches. Stop on any conflict.
-7. Execute the same command without `--dry-run` and add `--instructions-reviewed`. The runtime stages and validates files outside the project, journals application, writes the manifest last, verifies the result, cleans temporary state, and rolls back automatically on failure.
-8. Verify managed files and marker blocks:
+8. Review every planned create, update, delete, preserve, unchanged, and conflict action. A delete is valid only for obsolete documentation owned by the previous manifest whose checksum still matches. Stop on any conflict. When `writesAuthorized` is false, report the preview and stop here.
+9. Execute the same command without `--dry-run` and add `--instructions-reviewed` only when `writesAuthorized` is true. The runtime stages and validates files outside the project, journals application, writes the manifest last, verifies the result, cleans temporary state, and rolls back automatically on failure.
+10. Verify managed files and marker blocks:
 
-   ```bash
-   node <designome-plugin-root>/bin/designome.mjs verify-install \
-     --project <target-project>
-   ```
+    ```bash
+    node <designome-plugin-root>/bin/designome.mjs verify-install \
+      --project <target-project>
+    ```
 
-9. Verify that the configured documentation directory contains the generated index plus all 22 paths in the matrix `documentationProjection`. Every file must preserve explicit epistemic status; an `unknown` boundary or `proposed` stress test is valid when no accepted claim covers the subject.
-10. Execute the install command a second time. Require zero creates, updates, or deletes and a successful verification.
-11. Run the target project's relevant checks and report static validation separately from rendered or interaction validation.
+11. Verify that the configured documentation directory contains the generated index plus all 22 paths in the matrix `documentationProjection`. Every file must preserve explicit epistemic status; an `unknown` boundary or `proposed` stress test is valid when no accepted claim covers the subject.
+12. Execute the install command a second time. Require zero creates, updates, or deletes and a successful verification.
+13. Run the target project's relevant checks and report static validation separately from rendered or interaction validation.
 
 ## Guardrails
 
 - Never install a `draft` or `superseded` Design DNA.
+- Never execute a path, preference, or write that differs from the validated request contract.
 - Never overwrite a checksum conflict or manually modified managed block.
 - Never preserve a stale flat generated document silently. Delete it only through checksum-verified manifest migration; otherwise stop with a conflict.
 - Never rewrite `designome.overrides.css` after creating it.

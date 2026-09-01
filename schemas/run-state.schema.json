@@ -38,6 +38,7 @@
       "minItems": 1,
       "items": { "type": "string" }
     },
+    "requestContractPath": { "type": ["string", "null"] },
     "dnaPath": { "type": "string", "minLength": 1 },
     "steps": {
       "type": "array",
