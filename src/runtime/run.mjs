@@ -167,13 +167,94 @@ export async function initializeRun({
       ? path.join(resolvedOutput, 'request-contract.json')
       : null,
   };
+  const requestParameters = request?.contract.parameters ?? null;
+  const routedAxisRefs = new Set(requestParameters?.focusAxisRefs ?? []);
+  const routedUiDomainRefs = new Set(
+    requestParameters?.focusUiDomainRefs ?? [],
+  );
+  let requiresVisualRouting = request === null;
+  for (const directive of requestParameters?.sources ?? []) {
+    for (const axisRef of directive.axisRefs) routedAxisRefs.add(axisRef);
+    for (const uiDomainRef of directive.uiDomainRefs) {
+      routedUiDomainRefs.add(uiDomainRef);
+    }
+    for (const conceptRef of directive.conceptRefs) {
+      const concept = matrix.concepts.find((item) => item.id === conceptRef);
+      for (const axisRef of concept?.axisRefs ?? []) {
+        routedAxisRefs.add(axisRef);
+      }
+    }
+    for (const uiDomainRef of directive.uiDomainRefs) {
+      const uiDomain = matrix.uiDomains.find((item) => item.id === uiDomainRef);
+      for (const axisRef of uiDomain?.axisRefs ?? []) {
+        routedAxisRefs.add(axisRef);
+      }
+    }
+    if (
+      directive.evidenceMode !== 'only' ||
+      (directive.axisRefs.length === 0 &&
+        directive.conceptRefs.length === 0 &&
+        directive.uiDomainRefs.length === 0)
+    ) {
+      requiresVisualRouting = true;
+    }
+  }
+  for (const uiDomainRef of requestParameters?.focusUiDomainRefs ?? []) {
+    const uiDomain = matrix.uiDomains.find((item) => item.id === uiDomainRef);
+    for (const axisRef of uiDomain?.axisRefs ?? []) {
+      routedAxisRefs.add(axisRef);
+    }
+  }
   const runPlan = {
-    schemaVersion: '0.1.0',
+    schemaVersion: '0.2.0',
     runId,
     createdAt,
+    routing: {
+      status: requiresVisualRouting
+        ? 'awaiting-source-evidence'
+        : 'contract-routed',
+      requestedAxisRefs: [...routedAxisRefs],
+      requestedUiDomainRefs: [...routedUiDomainRefs],
+      resolutionStage: 'prompt.source-evidence',
+      rule: 'Source evidence may add visually supported axes and UI domains. Per-source evidence directives remain hard admission boundaries.',
+    },
     stages: matrix.promptStages.map((stage) => {
       let enabled = true;
       let reason = 'Required by the modular extraction workflow.';
+      let routing = null;
+      if (stage.kind === 'axis') {
+        const axis = matrix.axes.find(
+          (candidate) => candidate.promptRef === stage.file,
+        );
+        const systemRequired = axis?.id === 'axis.system-governance';
+        const explicitlyRouted = axis ? routedAxisRefs.has(axis.id) : false;
+        enabled = systemRequired || explicitlyRouted || requiresVisualRouting;
+        reason = systemRequired
+          ? 'System governance always runs to preserve provenance, coverage, and handoff integrity.'
+          : explicitlyRouted
+            ? 'The normalized request routes evidence or global focus to this axis.'
+            : requiresVisualRouting
+              ? 'Source evidence must first determine whether visible regions route to this axis.'
+              : 'No admitted source selector or global focus routes to this axis.';
+        routing = {
+          axisRef: axis?.id ?? null,
+          facetRefs: axis?.facets.map((facet) => facet.id) ?? [],
+          requestedUiDomainRefs: axis
+            ? [...routedUiDomainRefs].filter((uiDomainRef) =>
+                matrix.uiDomains
+                  .find((uiDomain) => uiDomain.id === uiDomainRef)
+                  ?.axisRefs.includes(axis.id),
+              )
+            : [],
+          admission: systemRequired
+            ? 'required'
+            : explicitlyRouted
+              ? 'contract'
+              : requiresVisualRouting
+                ? 'source-evidence'
+                : 'not-routed',
+        };
+      }
       if (stage.kind === 'integration') {
         enabled = Boolean(resolvedTarget);
         reason = enabled
@@ -192,6 +273,7 @@ export async function initializeRun({
         enabled,
         status: enabled ? 'pending' : 'skipped',
         reason,
+        ...(routing ? { routing } : {}),
         produces: stage.produces,
       };
     }),

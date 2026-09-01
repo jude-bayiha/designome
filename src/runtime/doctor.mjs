@@ -116,7 +116,7 @@ async function inspectManifest(projectRoot) {
     };
   }
   const conflicts = [];
-  if (!['0.1.0', '0.2.0'].includes(manifest.schemaVersion)) {
+  if (!['0.1.0', '0.2.0', '0.3.0'].includes(manifest.schemaVersion)) {
     conflicts.push({
       path: '.designome/manifest.json',
       nature: 'unsupported-manifest-version',

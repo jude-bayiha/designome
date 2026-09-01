@@ -1,12 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:designome:schema:request-contract:1.0.0",
+  "$id": "urn:designome:schema:request-contract:1.1.0",
   "title": "Designome normalized request contract",
   "description": "A host-agent normalization of conversational instructions into bounded Designome operation parameters.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schemaVersion",
+    "matrixVersion",
     "requestId",
     "operation",
     "normalizedAt",
@@ -16,7 +17,8 @@
     "parameters"
   ],
   "properties": {
-    "schemaVersion": { "const": "1.0.0" },
+    "schemaVersion": { "const": "1.1.0" },
+    "matrixVersion": { "const": "0.3.0" },
     "requestId": { "$ref": "#/$defs/identifier" },
     "operation": { "enum": ["extract", "install", "audit"] },
     "normalizedAt": { "type": "string", "format": "date-time" },
@@ -53,6 +55,22 @@
         "pattern": "^concept\\.[a-z][a-z0-9-]*$"
       }
     },
+    "axisList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^axis\\.[a-z][a-z0-9-]*$"
+      }
+    },
+    "uiDomainList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^domain\\.[a-z][a-z0-9-]*$"
+      }
+    },
     "tokenCategoryList": {
       "type": "array",
       "uniqueItems": true,
@@ -65,7 +83,12 @@
           "radius",
           "border",
           "elevation",
+          "opacity",
+          "layer",
           "motion",
+          "iconography",
+          "data-visualization",
+          "asset",
           "other"
         ]
       }
@@ -76,14 +99,25 @@
       "items": {
         "enum": [
           "layout",
+          "typography",
+          "color",
           "content",
+          "component",
           "state",
           "interaction",
+          "navigation",
+          "form",
+          "data-display",
+          "visualization",
           "responsive",
+          "platform",
           "accessibility",
+          "localization",
           "performance",
           "trust",
+          "ethics",
           "motion",
+          "media",
           "governance"
         ]
       }
@@ -134,14 +168,18 @@
       "required": [
         "path",
         "evidenceMode",
+        "axisRefs",
         "conceptRefs",
+        "uiDomainRefs",
         "tokenCategories",
         "ruleCategories"
       ],
       "properties": {
         "path": { "$ref": "#/$defs/nonEmptyString" },
         "evidenceMode": { "enum": ["all", "only", "prefer", "exclude"] },
+        "axisRefs": { "$ref": "#/$defs/axisList" },
         "conceptRefs": { "$ref": "#/$defs/conceptList" },
+        "uiDomainRefs": { "$ref": "#/$defs/uiDomainList" },
         "tokenCategories": { "$ref": "#/$defs/tokenCategoryList" },
         "ruleCategories": { "$ref": "#/$defs/ruleCategoryList" },
         "note": { "$ref": "#/$defs/nonEmptyString" }
@@ -150,11 +188,20 @@
     "extractParameters": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "motionMode", "adaptationMode", "sources"],
+      "required": [
+        "kind",
+        "motionMode",
+        "adaptationMode",
+        "focusAxisRefs",
+        "focusUiDomainRefs",
+        "sources"
+      ],
       "properties": {
         "kind": { "const": "extract" },
         "motionMode": { "enum": ["off", "observed-only", "auto"] },
         "adaptationMode": { "enum": ["direct", "adapt"] },
+        "focusAxisRefs": { "$ref": "#/$defs/axisList" },
+        "focusUiDomainRefs": { "$ref": "#/$defs/uiDomainList" },
         "targetUseCase": { "$ref": "#/$defs/targetUseCase" },
         "sources": {
           "type": "array",
@@ -220,7 +267,9 @@
         "projectPath",
         "mode",
         "provider",
+        "focusAxisRefs",
         "focusConceptRefs",
+        "focusUiDomainRefs",
         "implementationAuthorized",
         "browserInstallAuthorized"
       ],
@@ -238,7 +287,9 @@
             "static"
           ]
         },
+        "focusAxisRefs": { "$ref": "#/$defs/axisList" },
         "focusConceptRefs": { "$ref": "#/$defs/conceptList" },
+        "focusUiDomainRefs": { "$ref": "#/$defs/uiDomainList" },
         "implementationAuthorized": { "type": "boolean" },
         "browserInstallAuthorized": { "type": "boolean" }
       }

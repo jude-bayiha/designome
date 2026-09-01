@@ -30,31 +30,16 @@ const repositoryRoot = path.resolve(
   '..',
 );
 
+const conceptMatrix = JSON.parse(
+  await fs.readFile(
+    path.join(repositoryRoot, 'concepts', 'concept-matrix.v0.3.json'),
+    'utf8',
+  ),
+);
 const expectedDocumentationPaths = [
   'README.md',
-  'behavior/accessibility.md',
-  'behavior/content-resilience.md',
-  'behavior/interaction-contracts.md',
-  'behavior/loading-errors-recovery.md',
-  'behavior/localization.md',
-  'behavior/responsive-reflow.md',
-  'components/anatomy.md',
-  'components/catalogue.md',
-  'components/component-mapping.md',
-  'components/data-display.md',
-  'components/forms-and-filters.md',
-  'components/states.md',
-  'foundations/colors-and-surfaces.md',
-  'foundations/iconography.md',
-  'foundations/motion.md',
-  'foundations/spacing-and-layout.md',
-  'foundations/typography.md',
-  'governance/calibration.md',
-  'governance/evidence-and-confidence.md',
-  'governance/integration.md',
-  'governance/rules.md',
-  'governance/unknowns-and-exceptions.md',
-];
+  ...conceptMatrix.documentationProjection.map((entry) => entry.path),
+].sort();
 
 async function listFiles(directory, prefix = '') {
   const entries = await fs.readdir(directory, { withFileTypes: true });
@@ -81,7 +66,7 @@ async function temporaryDirectory(t, prefix) {
 async function referenceDna() {
   return JSON.parse(
     await fs.readFile(
-      path.join(repositoryRoot, 'examples', 'design-dna.reference-v0.2.json'),
+      path.join(repositoryRoot, 'examples', 'design-dna.reference-v0.3.json'),
       'utf8',
     ),
   );
@@ -228,6 +213,82 @@ test('init-run records image metadata and is idempotent', async (t) => {
   );
 });
 
+test('init-run narrows only-scoped sources to matrix axes and UI domains', async (t) => {
+  const temporaryRoot = await temporaryDirectory(t, 'designome-routing-test-');
+  const imagePath = path.join(temporaryRoot, 'stats.png');
+  await fs.writeFile(
+    imagePath,
+    Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Zl1sAAAAASUVORK5CYII=',
+      'base64',
+    ),
+  );
+  const request = JSON.parse(
+    await fs.readFile(
+      path.join(
+        repositoryRoot,
+        'examples',
+        'request-contract.extract.reference.json',
+      ),
+      'utf8',
+    ),
+  );
+  request.parameters.sources = [
+    {
+      path: imagePath,
+      evidenceMode: 'only',
+      axisRefs: ['axis.data-display-visualization'],
+      conceptRefs: [],
+      uiDomainRefs: ['domain.stats-kpis'],
+      tokenCategories: [],
+      ruleCategories: [],
+      note: 'Use only for statistics and KPI grammar.',
+    },
+  ];
+  request.parameters.focusAxisRefs = [];
+  request.parameters.focusUiDomainRefs = [];
+  const requestPath = path.join(temporaryRoot, 'request.json');
+  await fs.writeFile(requestPath, `${JSON.stringify(request, null, 2)}\n`);
+  const outputDirectory = path.join(temporaryRoot, 'run');
+
+  await initializeRun({
+    imagePaths: [imagePath],
+    motionMode: 'off',
+    outputDirectory,
+    requestContractPath: requestPath,
+  });
+
+  const plan = JSON.parse(
+    await fs.readFile(path.join(outputDirectory, 'run-plan.json'), 'utf8'),
+  );
+  assert.equal(plan.schemaVersion, '0.2.0');
+  assert.equal(plan.routing.status, 'contract-routed');
+  assert.deepEqual(plan.routing.requestedUiDomainRefs, ['domain.stats-kpis']);
+  assert.equal(
+    plan.stages.find((stage) => stage.id === 'prompt.spatial-composition')
+      .enabled,
+    false,
+  );
+  assert.deepEqual(
+    plan.stages.find(
+      (stage) => stage.id === 'prompt.data-display-visualization',
+    ).routing,
+    {
+      axisRef: 'axis.data-display-visualization',
+      facetRefs: conceptMatrix.axes
+        .find((axis) => axis.id === 'axis.data-display-visualization')
+        .facets.map((facet) => facet.id),
+      requestedUiDomainRefs: ['domain.stats-kpis'],
+      admission: 'contract',
+    },
+  );
+  assert.equal(
+    plan.stages.find((stage) => stage.id === 'prompt.system-governance').routing
+      .admission,
+    'required',
+  );
+});
+
 test('request contracts preserve scoped evidence and reject invented authority', async (t) => {
   const extract = JSON.parse(
     await fs.readFile(
@@ -243,12 +304,15 @@ test('request contracts preserve scoped evidence and reject invented authority',
   await assertValidRequestContract(extract);
 
   const unscopedOnly = structuredClone(extract);
+  unscopedOnly.parameters.sources[0].axisRefs = [];
   unscopedOnly.parameters.sources[0].conceptRefs = [];
+  unscopedOnly.parameters.sources[0].uiDomainRefs = [];
+  unscopedOnly.parameters.sources[0].tokenCategories = [];
   unscopedOnly.parameters.sources[0].ruleCategories = [];
   assert.ok(
     (await validateRequestContract(unscopedOnly)).some((error) =>
       error.includes(
-        'must select at least one concept, token, or rule category',
+        'must select at least one axis, concept, UI domain, token, or rule category',
       ),
     ),
   );
@@ -338,6 +402,74 @@ test('runtime Design DNA validation enforces evidence and acceptance', async () 
   assert.ok(
     (await validateDesignDna(preferredOutsideRange)).includes(
       'tokens[0].value.preferred must be within the range',
+    ),
+  );
+
+  const leakedOnlySource = structuredClone(dna);
+  leakedOnlySource.sources[0].directive = {
+    evidenceMode: 'only',
+    axisRefs: ['axis.forms-input-workflows'],
+    conceptRefs: [],
+    uiDomainRefs: [],
+    tokenCategories: [],
+    ruleCategories: [],
+  };
+  assert.ok(
+    (await validateDesignDna(leakedOnlySource)).includes(
+      'tokens[0].claim.evidenceRefs uses source.ed-1 outside its only directive',
+    ),
+  );
+
+  const leakedOnlyDomain = structuredClone(dna);
+  leakedOnlyDomain.sources[0].directive = {
+    evidenceMode: 'only',
+    axisRefs: [],
+    conceptRefs: [],
+    uiDomainRefs: ['domain.stats-kpis'],
+    tokenCategories: [],
+    ruleCategories: [],
+  };
+  assert.ok(
+    (await validateDesignDna(leakedOnlyDomain)).includes(
+      'tokens[0].claim.uiDomainRefs leaks source.ed-1 evidence outside its only UI domains',
+    ),
+  );
+
+  const leakedExcludedSource = structuredClone(dna);
+  leakedExcludedSource.sources[0].directive = {
+    evidenceMode: 'exclude',
+    axisRefs: [],
+    conceptRefs: [],
+    uiDomainRefs: ['domain.stats-kpis'],
+    tokenCategories: [],
+    ruleCategories: [],
+  };
+  assert.ok(
+    (await validateDesignDna(leakedExcludedSource)).includes(
+      'tokens[0].claim.evidenceRefs uses source.ed-1 for a subject excluded by its directive',
+    ),
+  );
+
+  const missingAxisCoverage = structuredClone(dna);
+  missingAxisCoverage.coverage.axes.pop();
+  const missingAxisErrors = await validateDesignDna(missingAxisCoverage);
+  assert.ok(
+    missingAxisErrors.includes(
+      'coverage.axes must contain exactly 13 axis records',
+    ),
+  );
+  assert.ok(
+    missingAxisErrors.includes(
+      'coverage.axes is missing axis.system-governance',
+    ),
+  );
+
+  const duplicateDomainCoverage = structuredClone(dna);
+  duplicateDomainCoverage.coverage.uiDomains[1].domainRef =
+    duplicateDomainCoverage.coverage.uiDomains[0].domainRef;
+  assert.ok(
+    (await validateDesignDna(duplicateDomainCoverage)).includes(
+      'coverage.uiDomains contains duplicate domain domain.app-shell-navigation',
     ),
   );
 
@@ -451,6 +583,7 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
     await listFiles(path.join(projectRoot, 'docs', 'ui', 'generated')),
     expectedDocumentationPaths,
   );
+  assert.equal(expectedDocumentationPaths.length, 52);
   for (const documentationPath of expectedDocumentationPaths) {
     const content = await fs.readFile(
       path.join(projectRoot, 'docs', 'ui', 'generated', documentationPath),

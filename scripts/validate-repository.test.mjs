@@ -21,7 +21,7 @@ test('the repository contracts are internally consistent', () => {
 test('the matrix lint detects a missing cross reference', () => {
   const matrix = JSON.parse(
     fs.readFileSync(
-      path.join(rootDirectory, 'concepts', 'concept-matrix.v0.2.json'),
+      path.join(rootDirectory, 'concepts', 'concept-matrix.v0.3.json'),
       'utf8',
     ),
   );
@@ -30,7 +30,7 @@ test('the matrix lint detects a missing cross reference', () => {
   const errors = collectMatrixReferenceErrors(matrix, rootDirectory);
   assert.ok(
     errors.includes(
-      'axis.perceptual-foundations references missing concept concept.missing',
+      'axis.spatial-composition references missing concept concept.missing',
     ),
   );
 });

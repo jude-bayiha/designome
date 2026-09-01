@@ -30,7 +30,9 @@ export function collectMatrixReferenceErrors(matrix, rootDirectory) {
   const errors = [];
   const axisIds = new Set();
   const axisOrders = new Set();
+  const facetIds = new Set();
   const conceptIds = new Set();
+  const uiDomainIds = new Set();
   const promptIds = new Set();
   const promptOrders = new Set();
   const documentationPaths = new Set();
@@ -41,17 +43,48 @@ export function collectMatrixReferenceErrors(matrix, rootDirectory) {
       errors.push(`duplicate axis order: ${axis.order}`);
     axisIds.add(axis.id);
     axisOrders.add(axis.order);
+    const facetNames = [];
+    for (const facet of axis.facets ?? []) {
+      if (facetIds.has(facet.id))
+        errors.push(`duplicate facet id: ${facet.id}`);
+      facetIds.add(facet.id);
+      facetNames.push(facet.name);
+    }
+    if (JSON.stringify(axis.focusAreas) !== JSON.stringify(facetNames)) {
+      errors.push(`${axis.id}.focusAreas must match its facet names in order`);
+    }
   }
 
-  const expectedOrders = Array.from({ length: 8 }, (_, index) => index + 1);
+  const expectedOrders = Array.from(
+    { length: matrix.axes.length },
+    (_, index) => index + 1,
+  );
   if (expectedOrders.some((order) => !axisOrders.has(order))) {
-    errors.push('axis orders must contain every integer from 1 to 8');
+    errors.push(
+      `axis orders must contain every integer from 1 to ${matrix.axes.length}`,
+    );
   }
 
   for (const concept of matrix.concepts) {
     if (conceptIds.has(concept.id))
       errors.push(`duplicate concept id: ${concept.id}`);
     conceptIds.add(concept.id);
+  }
+
+  for (const domain of matrix.uiDomains ?? []) {
+    if (uiDomainIds.has(domain.id))
+      errors.push(`duplicate UI domain id: ${domain.id}`);
+    uiDomainIds.add(domain.id);
+    for (const axisRef of domain.axisRefs) {
+      if (!axisIds.has(axisRef)) {
+        errors.push(`${domain.id} references missing axis ${axisRef}`);
+      }
+    }
+    for (const conceptRef of domain.conceptRefs) {
+      if (!conceptIds.has(conceptRef)) {
+        errors.push(`${domain.id} references missing concept ${conceptRef}`);
+      }
+    }
   }
 
   for (const entry of matrix.documentationProjection) {
@@ -64,11 +97,19 @@ export function collectMatrixReferenceErrors(matrix, rootDirectory) {
         errors.push(`${entry.path} references missing concept ${conceptRef}`);
       }
     }
+    for (const uiDomainRef of entry.uiDomainRefs ?? []) {
+      if (!uiDomainIds.has(uiDomainRef)) {
+        errors.push(
+          `${entry.path} references missing UI domain ${uiDomainRef}`,
+        );
+      }
+    }
   }
 
   for (const requiredDirectory of [
     'foundations/',
     'components/',
+    'patterns/',
     'behavior/',
     'governance/',
   ]) {
@@ -117,6 +158,40 @@ export function collectMatrixReferenceErrors(matrix, rootDirectory) {
     const promptPath = path.join(rootDirectory, prompt.file);
     if (!fs.existsSync(promptPath))
       errors.push(`${prompt.id} references missing file ${prompt.file}`);
+  }
+
+  const expectedPromptOrders = Array.from(
+    { length: matrix.promptStages.length },
+    (_, index) => index,
+  );
+  if (
+    expectedPromptOrders.some((order) => !promptOrders.has(order)) ||
+    promptOrders.size !== expectedPromptOrders.length
+  ) {
+    errors.push(
+      `prompt orders must contain every integer from 0 to ${matrix.promptStages.length - 1}`,
+    );
+  }
+
+  for (const axis of matrix.axes) {
+    const stage = matrix.promptStages.find(
+      (candidate) => candidate.file === axis.promptRef,
+    );
+    if (!stage || stage.kind !== 'axis') {
+      errors.push(
+        `${axis.id} prompt ${axis.promptRef} must be registered as an axis stage`,
+      );
+    }
+  }
+
+  for (const domain of matrix.uiDomains ?? []) {
+    if (
+      !matrix.documentationProjection.some((entry) =>
+        entry.uiDomainRefs.includes(domain.id),
+      )
+    ) {
+      errors.push(`${domain.id} has no documentation projection`);
+    }
   }
 
   return errors;
@@ -302,7 +377,7 @@ function validatePluginSurface(rootDirectory) {
         if (
           contract.schemaVersion !== '1.0.0' ||
           contract.runtimeContractVersion !== '1.0.0' ||
-          contract.requestContractVersion !== '1.0.0'
+          contract.requestContractVersion !== '1.1.0'
         ) {
           errors.push(`${skillName} has an incompatible runtime contract`);
         }
@@ -337,7 +412,7 @@ export function validateRepository(rootDirectory = repositoryRoot) {
   const matrixPath = path.join(
     rootDirectory,
     'concepts',
-    'concept-matrix.v0.2.json',
+    'concept-matrix.v0.3.json',
   );
   const dnaSchemaPath = path.join(
     rootDirectory,
@@ -347,7 +422,7 @@ export function validateRepository(rootDirectory = repositoryRoot) {
   const dnaExamplePath = path.join(
     rootDirectory,
     'examples',
-    'design-dna.reference-v0.2.json',
+    'design-dna.reference-v0.3.json',
   );
   const integrationPolicySchemaPath = path.join(
     rootDirectory,

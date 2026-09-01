@@ -1,5 +1,6 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
+  "matrixVersion": "0.3.0",
   "requestId": "request.audit-reference",
   "operation": "audit",
   "normalizedAt": "2026-09-01T12:00:00.000Z",
@@ -16,9 +17,18 @@
     "dnaPath": null,
     "mode": "report",
     "provider": "in-app-browser",
+    "focusAxisRefs": [
+      "axis.data-display-visualization",
+      "axis.responsive-platform-adaptation"
+    ],
     "focusConceptRefs": [
       "concept.semantic-responsive-reflow",
       "concept.data-scale-resilience"
+    ],
+    "focusUiDomainRefs": [
+      "domain.stats-kpis",
+      "domain.charts-data-visualization",
+      "domain.tables-lists"
     ],
     "implementationAuthorized": false,
     "browserInstallAuthorized": false
