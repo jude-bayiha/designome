@@ -12,6 +12,7 @@ import {
   verifyInstallation,
 } from '../src/runtime/install.mjs';
 import { initializeRun } from '../src/runtime/run.mjs';
+import { loadRequestContract } from '../src/runtime/request-contract.mjs';
 import {
   initializeWorkflow,
   resumeWorkflow,
@@ -101,26 +102,61 @@ function assertArguments(parsed, allowedOptions) {
   }
 }
 
+function assertSamePath(actual, expected, label) {
+  if (path.resolve(actual) !== path.resolve(expected)) {
+    throw new DesignomeError(`${label} does not match the request contract`, {
+      code: 'REQUEST_INPUT_MISMATCH',
+      details: {
+        actual: path.resolve(actual),
+        expected: path.resolve(expected),
+      },
+    });
+  }
+}
+
+function assertSameValue(actual, expected, label) {
+  if (actual !== expected) {
+    throw new DesignomeError(`${label} does not match the request contract`, {
+      code: 'REQUEST_INPUT_MISMATCH',
+      details: { actual, expected },
+    });
+  }
+}
+
+function assertSameStringList(actual, expected, label) {
+  const actualValues = [...actual].sort();
+  const expectedValues = [...expected].sort();
+  if (JSON.stringify(actualValues) !== JSON.stringify(expectedValues)) {
+    throw new DesignomeError(`${label} does not match the request contract`, {
+      code: 'REQUEST_INPUT_MISMATCH',
+      details: { actual: actualValues, expected: expectedValues },
+    });
+  }
+}
+
 function printHelp() {
   process.stdout.write(`Designome deterministic helper\n\n`);
   process.stdout.write(`Commands:\n`);
   process.stdout.write(
-    `  run --source <capture> [--source <capture>] --project <dir> [--workspace <dir>] [--provider <name>] [--css-entry <file>]\n`,
+    `  run --source <capture> [--source <capture>] --project <dir> [--workspace <dir>] [--request <normalized-request.json>] [--provider <name>] [--css-entry <file>]\n`,
   );
   process.stdout.write(
     `  run --resume [--workspace <dir>] [--accept-dna] [--host-event <event>] [--evidence <file>]\n`,
   );
   process.stdout.write(
-    `  extract --output <dir> --source <capture> [--source <capture>] [--motion <mode>] [--project <dir>]\n`,
+    `  extract --output <dir> --source <capture> [--source <capture>] [--request <normalized-request.json>] [--motion <mode>] [--project <dir>]\n`,
   );
   process.stdout.write(
-    `  init-run --output <dir> --image <file> [--image <file>] [--motion <mode>] [--project <dir>]\n`,
+    `  init-run --output <dir> --image <file> [--image <file>] [--request <normalized-request.json>] [--motion <mode>] [--project <dir>]\n`,
+  );
+  process.stdout.write(
+    `  validate-request --file <normalized-request.json> [--operation <extract|install|audit>]\n`,
   );
   process.stdout.write(
     `  validate-dna --file <design-dna.json> [--require-accepted]\n`,
   );
   process.stdout.write(
-    `  install --dna <file> --project <dir> [--css-entry <file>] [--scope <selector>] [--docs-dir <dir>] [--rule-precedence <mode>] [--existing-rules <path>] [--styling <strategy>] [--ui-kit <auto|none|shadcn>] --dry-run\n`,
+    `  install --dna <file> --project <dir> [--request <normalized-request.json>] [--css-entry <file>] [--scope <selector>] [--docs-dir <dir>] [--rule-precedence <mode>] [--existing-rules <path>] [--styling <strategy>] [--ui-kit <auto|none|shadcn>] --dry-run\n`,
   );
   process.stdout.write(
     `  install --dna <file> --project <dir> [options] --instructions-reviewed\n`,
@@ -130,7 +166,7 @@ function printHelp() {
     `  doctor --project <dir> [--dna <accepted-design-dna.json>]\n`,
   );
   process.stdout.write(
-    `  audit --project <dir> [--config <file>] [--output <dir>] [--provider <name>] [--evidence <file>] [--mode <report|repair>] [--max-passes <1|2|3>] [--implementation-authorized] [--browser-install-authorized] [--dry-run] [--overwrite]\n`,
+    `  audit --project <dir> [--request <normalized-request.json>] [--config <file>] [--output <dir>] [--provider <name>] [--evidence <file>] [--mode <report|repair>] [--max-passes <1|2|3>] [--implementation-authorized] [--browser-install-authorized] [--dry-run] [--overwrite]\n`,
   );
 }
 
@@ -150,6 +186,7 @@ async function main() {
   if (command === 'run') {
     assertArguments(parsed, [
       'source',
+      'request',
       'project',
       'workspace',
       'motion',
@@ -163,9 +200,13 @@ async function main() {
     ]);
     const resume = Boolean(parsed.options.get('resume'));
     if (resume) {
-      if (parsed.options.has('source') || parsed.options.has('project')) {
+      if (
+        parsed.options.has('source') ||
+        parsed.options.has('project') ||
+        parsed.options.has('request')
+      ) {
         throw new DesignomeError(
-          '--resume cannot be combined with --source or --project',
+          '--resume cannot be combined with --source, --project, or --request',
           { code: 'INVALID_ARGUMENTS' },
         );
       }
@@ -195,15 +236,24 @@ async function main() {
         motionMode: option(parsed, 'motion', { fallback: 'off' }),
         provider: option(parsed, 'provider', { fallback: 'in-app-browser' }),
         cssEntry: option(parsed, 'css-entry', { fallback: null }),
+        requestContractPath: option(parsed, 'request', { fallback: null }),
       });
     }
   } else if (command === 'extract') {
-    assertArguments(parsed, ['output', 'source', 'motion', 'project', 'help']);
+    assertArguments(parsed, [
+      'output',
+      'source',
+      'request',
+      'motion',
+      'project',
+      'help',
+    ]);
     result = await initializeRun({
       outputDirectory: option(parsed, 'output', { required: true }),
       imagePaths: option(parsed, 'source', { required: true, multiple: true }),
       motionMode: option(parsed, 'motion', { fallback: 'off' }),
       targetProjectPath: option(parsed, 'project', { fallback: null }),
+      requestContractPath: option(parsed, 'request', { fallback: null }),
     });
     result = {
       ...result,
@@ -212,13 +262,37 @@ async function main() {
         'The runtime initialized deterministic evidence metadata. Invoke the designome-extract skill for host-model visual reasoning.',
     };
   } else if (command === 'init-run') {
-    assertArguments(parsed, ['output', 'image', 'motion', 'project', 'help']);
+    assertArguments(parsed, [
+      'output',
+      'image',
+      'request',
+      'motion',
+      'project',
+      'help',
+    ]);
     result = await initializeRun({
       outputDirectory: option(parsed, 'output', { required: true }),
       imagePaths: option(parsed, 'image', { required: true, multiple: true }),
       motionMode: option(parsed, 'motion', { fallback: 'off' }),
       targetProjectPath: option(parsed, 'project', { fallback: null }),
+      requestContractPath: option(parsed, 'request', { fallback: null }),
     });
+  } else if (command === 'validate-request') {
+    assertArguments(parsed, ['file', 'operation', 'help']);
+    const request = await loadRequestContract(
+      option(parsed, 'file', { required: true }),
+      {
+        expectedOperation: option(parsed, 'operation', { fallback: null }),
+      },
+    );
+    result = {
+      valid: true,
+      validationLayer: 'runtime-semantic',
+      file: request.absolutePath,
+      requestId: request.contract.requestId,
+      operation: request.contract.operation,
+      interpretationStatus: request.contract.interpretation.status,
+    };
   } else if (command === 'validate-dna') {
     assertArguments(parsed, ['file', 'require-accepted', 'help']);
     const filePath = path.resolve(option(parsed, 'file', { required: true }));
@@ -238,6 +312,7 @@ async function main() {
     assertArguments(parsed, [
       'dna',
       'project',
+      'request',
       'css-entry',
       'scope',
       'docs-dir',
@@ -249,7 +324,7 @@ async function main() {
       'instructions-reviewed',
       'help',
     ]);
-    result = await installDesignDna({
+    const installInput = {
       dnaPath: option(parsed, 'dna', { required: true }),
       projectPath: option(parsed, 'project', { required: true }),
       cssEntry: option(parsed, 'css-entry', { fallback: null }),
@@ -270,7 +345,63 @@ async function main() {
       instructionsReviewed: Boolean(
         parsed.options.get('instructions-reviewed'),
       ),
-    });
+    };
+    const installRequestPath = option(parsed, 'request', { fallback: null });
+    if (installRequestPath) {
+      const request = await loadRequestContract(installRequestPath, {
+        expectedOperation: 'install',
+        requireExecutable: true,
+      });
+      const parameters = request.contract.parameters;
+      assertSamePath(
+        installInput.projectPath,
+        parameters.projectPath,
+        'project',
+      );
+      assertSamePath(installInput.dnaPath, parameters.dnaPath, 'Design DNA');
+      assertSameValue(
+        installInput.cssEntry,
+        parameters.options.cssEntry,
+        'CSS entry',
+      );
+      assertSameValue(
+        installInput.scope,
+        parameters.options.scope,
+        'CSS scope',
+      );
+      assertSameValue(
+        installInput.documentationDirectory,
+        parameters.options.documentationDirectory,
+        'documentation directory',
+      );
+      assertSameValue(
+        installInput.rulePrecedence,
+        parameters.options.rulePrecedence,
+        'rule precedence',
+      );
+      assertSameValue(
+        installInput.stylingStrategy,
+        parameters.options.stylingStrategy,
+        'styling strategy',
+      );
+      assertSameValue(
+        installInput.uiKitPreference,
+        parameters.options.uiKitPreference,
+        'UI kit preference',
+      );
+      assertSameStringList(
+        installInput.existingRulePaths,
+        parameters.options.existingRulePaths,
+        'existing rule paths',
+      );
+      if (!installInput.dryRun && !parameters.writesAuthorized) {
+        throw new DesignomeError(
+          'The request contract does not authorize installation writes',
+          { code: 'REQUEST_AUTHORIZATION_MISSING' },
+        );
+      }
+    }
+    result = await installDesignDna(installInput);
     if (result.status === 'conflict') process.exitCode = 2;
   } else if (command === 'verify-install') {
     assertArguments(parsed, ['project', 'help']);
@@ -289,6 +420,7 @@ async function main() {
   } else if (command === 'audit') {
     assertArguments(parsed, [
       'project',
+      'request',
       'config',
       'output',
       'evidence',
@@ -301,7 +433,7 @@ async function main() {
       'overwrite',
       'help',
     ]);
-    result = await runAudit({
+    const auditInput = {
       projectPath: option(parsed, 'project', { required: true }),
       configPath: option(parsed, 'config', {
         fallback: '.designome/audit.config.json',
@@ -319,7 +451,33 @@ async function main() {
       ),
       dryRun: Boolean(parsed.options.get('dry-run')),
       overwrite: Boolean(parsed.options.get('overwrite')),
-    });
+    };
+    const auditRequestPath = option(parsed, 'request', { fallback: null });
+    if (auditRequestPath) {
+      const request = await loadRequestContract(auditRequestPath, {
+        expectedOperation: 'audit',
+        requireExecutable: true,
+      });
+      const parameters = request.contract.parameters;
+      assertSamePath(auditInput.projectPath, parameters.projectPath, 'project');
+      assertSameValue(auditInput.mode, parameters.mode, 'audit mode');
+      assertSameValue(
+        auditInput.provider,
+        parameters.provider,
+        'audit provider',
+      );
+      assertSameValue(
+        auditInput.implementationAuthorized,
+        parameters.implementationAuthorized,
+        'implementation authorization',
+      );
+      assertSameValue(
+        auditInput.browserInstallAuthorized,
+        parameters.browserInstallAuthorized,
+        'browser installation authorization',
+      );
+    }
+    result = await runAudit(auditInput);
   } else {
     throw new DesignomeError(`Unknown command: ${command}`, {
       code: 'UNKNOWN_COMMAND',

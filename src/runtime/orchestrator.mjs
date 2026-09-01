@@ -200,6 +200,7 @@ export async function initializeWorkflow({
   motionMode = 'off',
   provider = 'in-app-browser',
   cssEntry = null,
+  requestContractPath = null,
 } = {}) {
   if (!Array.isArray(sourcePaths) || sourcePaths.length === 0) {
     throw new DesignomeError('designome run requires at least one --source', {
@@ -234,6 +235,7 @@ export async function initializeWorkflow({
     motionMode,
     outputDirectory: runDirectory,
     targetProjectPath: resolvedProject,
+    requestContractPath,
   });
   const createdAt = now();
   const state = {
@@ -249,6 +251,9 @@ export async function initializeWorkflow({
     runDirectory,
     projectPath: resolvedProject,
     sourcePaths: sourcePaths.map((sourcePath) => path.resolve(sourcePath)),
+    requestContractPath: requestContractPath
+      ? path.join(runDirectory, 'request-contract.json')
+      : null,
     dnaPath: path.join(runDirectory, 'design-dna.json'),
     auditOutputDirectory: toPosixPath(
       path.join('.designome', 'runs', workflowId, 'audit'),
@@ -262,17 +267,23 @@ export async function initializeWorkflow({
     finalResult: null,
   };
   completeStep(state, 'doctor', []);
-  completeStep(state, 'initialize-run', [
+  const initializationArtifacts = [
     path.join(runDirectory, 'source-manifest.json'),
     path.join(runDirectory, 'run-context.json'),
     path.join(runDirectory, 'run-plan.json'),
-  ]);
+  ];
+  if (requestContractPath) {
+    initializationArtifacts.push(
+      path.join(runDirectory, 'request-contract.json'),
+    );
+  }
+  completeStep(state, 'initialize-run', initializationArtifacts);
   awaitStep(state, 'extract-design-dna', {
     owner: 'host-agent',
     type: 'extract-design-dna',
     skill: 'designome-extract',
     responsibility:
-      'Inspect the source screenshots with the host multimodal model and write a draft Design DNA. The deterministic runtime does not perform visual reasoning.',
+      'Apply the validated request contract, inspect the source screenshots with the host multimodal model, write the compatibility report, and write a draft Design DNA. The deterministic runtime does not perform visual reasoning.',
     expectedArtifact: state.dnaPath,
     resumeCommand: 'designome run --resume',
   });

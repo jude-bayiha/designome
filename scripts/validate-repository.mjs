@@ -301,7 +301,8 @@ function validatePluginSurface(rootDirectory) {
         const contract = readJson(contractPath);
         if (
           contract.schemaVersion !== '1.0.0' ||
-          contract.runtimeContractVersion !== '1.0.0'
+          contract.runtimeContractVersion !== '1.0.0' ||
+          contract.requestContractVersion !== '1.0.0'
         ) {
           errors.push(`${skillName} has an incompatible runtime contract`);
         }
@@ -418,6 +419,19 @@ export function validateRepository(rootDirectory = repositoryRoot) {
     'examples',
     'run-state.reference.json',
   );
+  const requestContractSchemaPath = path.join(
+    rootDirectory,
+    'schemas',
+    'request-contract.schema.json',
+  );
+  const requestContractExamplePaths = ['extract', 'install', 'audit'].map(
+    (operation) =>
+      path.join(
+        rootDirectory,
+        'examples',
+        `request-contract.${operation}.reference.json`,
+      ),
+  );
 
   try {
     const matrixSchema = readJson(matrixSchemaPath);
@@ -439,6 +453,24 @@ export function validateRepository(rootDirectory = repositoryRoot) {
       errors.push(...formatAjvErrors('Design DNA example', validateDna.errors));
   } catch (error) {
     errors.push(`Design DNA validation failed: ${error.message}`);
+  }
+
+  try {
+    const requestContractSchema = readJson(requestContractSchemaPath);
+    const validateRequestContract = ajv.compile(requestContractSchema);
+    for (const examplePath of requestContractExamplePaths) {
+      const example = readJson(examplePath);
+      if (!validateRequestContract(example)) {
+        errors.push(
+          ...formatAjvErrors(
+            `request contract ${path.basename(examplePath)}`,
+            validateRequestContract.errors,
+          ),
+        );
+      }
+    }
+  } catch (error) {
+    errors.push(`request contract validation failed: ${error.message}`);
   }
 
   try {

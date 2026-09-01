@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0.0",
+  "requestId": "request.audit-reference",
+  "operation": "audit",
+  "normalizedAt": "2026-09-01T12:00:00.000Z",
+  "summary": "Audit responsive reflow and data-scale resilience without modifying the implementation.",
+  "interpretation": {
+    "status": "ready",
+    "ambiguities": [],
+    "ignoredFragments": []
+  },
+  "constraints": ["Report findings only."],
+  "parameters": {
+    "kind": "audit",
+    "projectPath": "/tmp/target-project",
+    "dnaPath": null,
+    "mode": "report",
+    "provider": "in-app-browser",
+    "focusConceptRefs": [
+      "concept.semantic-responsive-reflow",
+      "concept.data-scale-resilience"
+    ],
+    "implementationAuthorized": false,
+    "browserInstallAuthorized": false
+  }
+}

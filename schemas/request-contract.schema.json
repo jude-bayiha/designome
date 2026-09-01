@@ -1,0 +1,247 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:designome:schema:request-contract:1.0.0",
+  "title": "Designome normalized request contract",
+  "description": "A host-agent normalization of conversational instructions into bounded Designome operation parameters.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "requestId",
+    "operation",
+    "normalizedAt",
+    "summary",
+    "interpretation",
+    "constraints",
+    "parameters"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "requestId": { "$ref": "#/$defs/identifier" },
+    "operation": { "enum": ["extract", "install", "audit"] },
+    "normalizedAt": { "type": "string", "format": "date-time" },
+    "summary": { "$ref": "#/$defs/nonEmptyString" },
+    "interpretation": { "$ref": "#/$defs/interpretation" },
+    "constraints": { "$ref": "#/$defs/stringList" },
+    "parameters": {
+      "oneOf": [
+        { "$ref": "#/$defs/extractParameters" },
+        { "$ref": "#/$defs/installParameters" },
+        { "$ref": "#/$defs/auditParameters" }
+      ]
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "stringList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/nonEmptyString" }
+    },
+    "conceptList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^concept\\.[a-z][a-z0-9-]*$"
+      }
+    },
+    "tokenCategoryList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "color",
+          "space",
+          "size",
+          "typography",
+          "radius",
+          "border",
+          "elevation",
+          "motion",
+          "other"
+        ]
+      }
+    },
+    "ruleCategoryList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "layout",
+          "content",
+          "state",
+          "interaction",
+          "responsive",
+          "accessibility",
+          "performance",
+          "trust",
+          "motion",
+          "governance"
+        ]
+      }
+    },
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "ambiguities", "ignoredFragments"],
+      "properties": {
+        "status": { "enum": ["ready", "partial", "blocked"] },
+        "ambiguities": { "$ref": "#/$defs/stringList" },
+        "ignoredFragments": { "$ref": "#/$defs/stringList" }
+      }
+    },
+    "targetUseCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw",
+        "interpretationStatus",
+        "source",
+        "surface",
+        "archetype"
+      ],
+      "properties": {
+        "raw": { "$ref": "#/$defs/nonEmptyString" },
+        "interpretationStatus": {
+          "enum": ["usable", "ambiguous", "unusable"]
+        },
+        "source": { "enum": ["user", "inferred", "unspecified"] },
+        "surface": {
+          "enum": [
+            "website",
+            "web-app",
+            "mobile-app",
+            "desktop-app",
+            "other",
+            "unknown"
+          ]
+        },
+        "archetype": { "type": ["string", "null"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "sourceInstruction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "evidenceMode",
+        "conceptRefs",
+        "tokenCategories",
+        "ruleCategories"
+      ],
+      "properties": {
+        "path": { "$ref": "#/$defs/nonEmptyString" },
+        "evidenceMode": { "enum": ["all", "only", "prefer", "exclude"] },
+        "conceptRefs": { "$ref": "#/$defs/conceptList" },
+        "tokenCategories": { "$ref": "#/$defs/tokenCategoryList" },
+        "ruleCategories": { "$ref": "#/$defs/ruleCategoryList" },
+        "note": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "extractParameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "motionMode", "adaptationMode", "sources"],
+      "properties": {
+        "kind": { "const": "extract" },
+        "motionMode": { "enum": ["off", "observed-only", "auto"] },
+        "adaptationMode": { "enum": ["direct", "adapt"] },
+        "targetUseCase": { "$ref": "#/$defs/targetUseCase" },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/sourceInstruction" }
+        }
+      }
+    },
+    "installOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cssEntry",
+        "scope",
+        "documentationDirectory",
+        "rulePrecedence",
+        "existingRulePaths",
+        "stylingStrategy",
+        "uiKitPreference"
+      ],
+      "properties": {
+        "cssEntry": { "type": ["string", "null"] },
+        "scope": { "$ref": "#/$defs/nonEmptyString" },
+        "documentationDirectory": { "$ref": "#/$defs/nonEmptyString" },
+        "rulePrecedence": {
+          "enum": ["complement", "existing-first", "designome-first"]
+        },
+        "existingRulePaths": { "$ref": "#/$defs/stringList" },
+        "stylingStrategy": {
+          "enum": [
+            "auto",
+            "css-variables",
+            "tailwind-utilities",
+            "shadcn-components"
+          ]
+        },
+        "uiKitPreference": { "enum": ["auto", "none", "shadcn"] }
+      }
+    },
+    "installParameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "projectPath",
+        "dnaPath",
+        "writesAuthorized",
+        "options"
+      ],
+      "properties": {
+        "kind": { "const": "install" },
+        "projectPath": { "$ref": "#/$defs/nonEmptyString" },
+        "dnaPath": { "$ref": "#/$defs/nonEmptyString" },
+        "writesAuthorized": { "type": "boolean" },
+        "options": { "$ref": "#/$defs/installOptions" }
+      }
+    },
+    "auditParameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "projectPath",
+        "mode",
+        "provider",
+        "focusConceptRefs",
+        "implementationAuthorized",
+        "browserInstallAuthorized"
+      ],
+      "properties": {
+        "kind": { "const": "audit" },
+        "projectPath": { "$ref": "#/$defs/nonEmptyString" },
+        "dnaPath": { "type": ["string", "null"] },
+        "mode": { "enum": ["report", "repair"] },
+        "provider": {
+          "enum": [
+            "auto",
+            "in-app-browser",
+            "existing-playwright",
+            "managed-playwright",
+            "static"
+          ]
+        },
+        "focusConceptRefs": { "$ref": "#/$defs/conceptList" },
+        "implementationAuthorized": { "type": "boolean" },
+        "browserInstallAuthorized": { "type": "boolean" }
+      }
+    }
+  }
+}
