@@ -10,21 +10,23 @@
 - Generated content is replaceable; human overrides are preserved.
 - Missing evidence produces an unknown or proposal, never a fabricated observation.
 - Deterministic runtime work, host-agent reasoning, browser execution, and human acceptance use explicit persisted handoffs.
+- Conversational requests are normalized once by the host agent and validated deterministically before stage routing.
 
 ## Modular pipeline
 
 ```mermaid
 flowchart LR
-    A["designome run"] --> B["Doctor and run initialization"]
-    B --> C["Host-agent screenshot extraction"]
-    C --> D["02-09 Eight axis analyses"]
-    D --> E["10 Synthesis"]
-    E --> F["Human acceptance"]
-    F --> G["Transactional installation"]
-    G --> H["Host-agent UI task"]
-    H --> I["Host browser plus capture adapter"]
-    I --> J["Four-layer audit"]
-    J --> K["Consolidated result"]
+    A["Conversational request"] --> B["Host normalization plus runtime validation"]
+    B --> C["Doctor and run initialization"]
+    C --> D["Host-agent screenshot extraction"]
+    D --> E["02-09 Eight axis analyses"]
+    E --> F["10 Synthesis"]
+    F --> G["Human acceptance"]
+    G --> H["Transactional installation"]
+    H --> I["Host-agent UI task"]
+    I --> J["Host browser plus capture adapter"]
+    J --> K["Four-layer audit"]
+    K --> L["Consolidated result"]
 ```
 
 `00-orchestrator.md` validates inputs and routes stages. It does not perform every analysis itself. Each stage reads the shared contract, its matrix slice, and the minimum upstream artifacts it needs.
@@ -33,8 +35,8 @@ flowchart LR
 
 | Stage                         | Responsibility                                               | Main output                                         |
 | ----------------------------- | ------------------------------------------------------------ | --------------------------------------------------- |
-| 00 Orchestrator               | Persist state, route owners, pause, resume, and report       | `run-plan.json`, `workflow-state.json`              |
-| 01 Source evidence            | Inventory screenshots and stable evidence regions            | source manifest and evidence index                  |
+| 00 Orchestrator               | Normalize request, persist state, route, pause, and report   | request contract, run plan, workflow state          |
+| 01 Source evidence            | Route source evidence and assess target compatibility        | source manifest, evidence index, compatibility      |
 | 02 Perceptual foundations     | Composition, rhythm, hierarchy, visual language              | axis fragment                                       |
 | 03 Task architecture          | Orientation, priority, disclosure, context                   | axis fragment                                       |
 | 04 Interactions and states    | Controls, business states, feedback, optional motion         | state fragment and coverage table                   |
@@ -102,8 +104,10 @@ It may not treat existing CSS, components, tokens, or rendered UI as Design DNA 
 .designome/runs/<run-id>/
 ├── run-plan.json
 ├── workflow-state.json
+├── request-contract.json
 ├── source-manifest.json
 ├── evidence-index.json
+├── compatibility-report.json
 ├── stages/
 │   ├── 02-perceptual-foundations.json
 │   └── ...

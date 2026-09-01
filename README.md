@@ -31,7 +31,22 @@ The host agent performs multimodal reasoning with its installed model and accoun
 4. Static screenshots do not prove motion, responsive behavior, accessibility semantics, or runtime states.
 5. A target project is an integration destination, never an implicit design source.
 6. Specialized prompts produce fragments; synthesis resolves the canonical Design DNA.
-7. Generated files, user overrides, and managed guidance remain separate and idempotent.
+7. Conversational skill requests are normalized once into a validated request contract before execution.
+8. Generated files, user overrides, and managed guidance remain separate and idempotent.
+
+## Conversational requests
+
+`$designome-extract`, `$designome-install`, and `$designome-audit` accept ordinary instructions. The host agent converts relevant intent, paths, constraints, evidence routing, preferences, and explicit authorization into `request-contract.json`; the deterministic runtime validates that contract and rejects mismatched execution inputs.
+
+Extraction requests may assign captures to specific subjects and request either direct destination fidelity or explicit cross-surface adaptation. For example:
+
+```text
+$designome-extract for a corporate website.
+Use dashboard-1.png only for statistics and charts.
+Use theme.png only for colors and surfaces.
+```
+
+Direct mode requires matching destination references before claiming destination-specific accuracy. Adaptation mode keeps unsupported destination rules proposed. See the [conversational request contract](docs/conversational-request-contract.md).
 
 ## Quick start
 

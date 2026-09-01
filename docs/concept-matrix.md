@@ -2,6 +2,8 @@
 
 The [v0.2 matrix](../concepts/concept-matrix.v0.2.json) routes screenshot analysis through eight complementary axes and 18 cross-cutting concepts. An axis defines a focused pass. A concept defines a concern that must remain coherent across several passes and later implementation.
 
+The matrix also declares `requestContractVersion`. Every prompt stage consumes the normalized request contract needed for its bounded work. Per-source directives are applied before axis analysis, so a capture restricted to colors or data patterns cannot become evidence for unrelated layout claims.
+
 ## Eight axes
 
 |   # | Axis                                 | Primary question                                                           |

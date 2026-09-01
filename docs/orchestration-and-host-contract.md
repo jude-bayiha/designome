@@ -7,7 +7,7 @@
 | Actor             | Responsibilities                                                                                                                                                                                                 |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Designome runtime | Environment diagnostic, run initialization, semantic validation, persistent state transitions, transactional installation, capture plan, evidence normalization checks, mechanical evaluation, report generation |
-| Host agent        | Screenshot reasoning through `designome-extract`, target-interface implementation, real browser control, interaction execution, perceptual comparison                                                            |
+| Host agent        | Conversational request normalization, screenshot reasoning through `designome-extract`, target-interface implementation, real browser control, interaction execution, perceptual comparison                      |
 | Human             | One mandatory normal-workflow decision: accept or reject the draft Design DNA                                                                                                                                    |
 | Browser adapter   | Stable typed recording surface that normalizes host-browser observations into audit evidence 1.0                                                                                                                 |
 
@@ -20,6 +20,7 @@ Start a run from the directory that should own the local active-run pointer:
 ```bash
 designome run \
   --source /absolute/reference.png \
+  --request /absolute/request-contract.json \
   --project /absolute/target-project \
   --css-entry src/styles/globals.css
 ```

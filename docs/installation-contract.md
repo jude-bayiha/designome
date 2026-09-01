@@ -2,6 +2,8 @@
 
 Installation converts an accepted Design DNA into technical artifacts for a specific project. It is optional for extraction and mandatory before Designome writes to a target project.
 
+The host agent first normalizes conversational installation instructions into a validated request contract. The target path, Design DNA path, integration preferences, and write authorization passed to the runtime must match that contract. Ambiguity never authorizes a target write.
+
 ## Ownership boundary
 
 | Artifact                            | Owner                               | Rewrite policy                                                   |
