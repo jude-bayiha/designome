@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:designome:schema:design-dna:0.2.0",
+  "$id": "urn:designome:schema:design-dna:0.3.0",
   "title": "Designome Design DNA",
-  "description": "Framework-neutral, evidence-backed design guidance extracted from screenshots.",
+  "description": "Framework-neutral, evidence-backed design grammar with facet and UI-domain coverage.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -18,12 +18,13 @@
     "tokens",
     "rules",
     "componentPatterns",
+    "coverage",
     "motion",
     "unknowns"
   ],
   "properties": {
-    "schemaVersion": { "const": "0.2.0" },
-    "conceptMatrixVersion": { "const": "0.2.0" },
+    "schemaVersion": { "const": "0.3.0" },
+    "conceptMatrixVersion": { "const": "0.3.0" },
     "documentId": { "$ref": "#/$defs/identifier" },
     "name": { "$ref": "#/$defs/nonEmptyString" },
     "description": { "type": "string" },
@@ -52,6 +53,7 @@
       "type": "array",
       "items": { "$ref": "#/$defs/componentPattern" }
     },
+    "coverage": { "$ref": "#/$defs/coverage" },
     "motion": { "$ref": "#/$defs/motionPolicy" },
     "unknowns": {
       "type": "array",
@@ -81,6 +83,80 @@
       "uniqueItems": true,
       "items": { "$ref": "#/$defs/nonEmptyString" }
     },
+    "axisRef": {
+      "type": "string",
+      "pattern": "^axis\\.[a-z][a-z0-9-]*$"
+    },
+    "facetRef": {
+      "type": "string",
+      "pattern": "^facet\\.[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$"
+    },
+    "conceptRef": {
+      "type": "string",
+      "pattern": "^concept\\.[a-z][a-z0-9-]*$"
+    },
+    "uiDomainRef": {
+      "type": "string",
+      "pattern": "^domain\\.[a-z][a-z0-9-]*$"
+    },
+    "axisRefList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/axisRef" }
+    },
+    "conceptRefList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/conceptRef" }
+    },
+    "uiDomainRefList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/uiDomainRef" }
+    },
+    "tokenCategory": {
+      "enum": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ]
+    },
+    "ruleCategory": {
+      "enum": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
     "revision": {
       "type": "object",
       "additionalProperties": false,
@@ -100,10 +176,78 @@
         "height": { "type": "integer", "minimum": 1 }
       }
     },
+    "sourceClassification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "surface",
+        "archetype",
+        "epistemicStatus",
+        "confidence",
+        "basis"
+      ],
+      "properties": {
+        "surface": {
+          "enum": [
+            "website",
+            "web-app",
+            "mobile-app",
+            "desktop-app",
+            "other",
+            "unknown"
+          ]
+        },
+        "archetype": { "type": ["string", "null"] },
+        "epistemicStatus": {
+          "enum": ["observed", "inferred", "proposed", "unknown"]
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "basis": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "sourceDirective": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceMode",
+        "axisRefs",
+        "conceptRefs",
+        "uiDomainRefs",
+        "tokenCategories",
+        "ruleCategories"
+      ],
+      "properties": {
+        "evidenceMode": { "enum": ["all", "only", "prefer", "exclude"] },
+        "axisRefs": { "$ref": "#/$defs/axisRefList" },
+        "conceptRefs": { "$ref": "#/$defs/conceptRefList" },
+        "uiDomainRefs": { "$ref": "#/$defs/uiDomainRefList" },
+        "tokenCategories": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/tokenCategory" }
+        },
+        "ruleCategories": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/ruleCategory" }
+        },
+        "note": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "kind", "label", "path", "dimensions", "limitations"],
+      "required": [
+        "id",
+        "kind",
+        "label",
+        "path",
+        "dimensions",
+        "limitations",
+        "classification",
+        "detectedUiDomainRefs",
+        "directive"
+      ],
       "properties": {
         "id": { "$ref": "#/$defs/identifier" },
         "kind": { "const": "screenshot" },
@@ -114,7 +258,10 @@
           "type": "string",
           "pattern": "^sha256:[a-f0-9]{64}$"
         },
-        "limitations": { "$ref": "#/$defs/stringList" }
+        "limitations": { "$ref": "#/$defs/stringList" },
+        "classification": { "$ref": "#/$defs/sourceClassification" },
+        "detectedUiDomainRefs": { "$ref": "#/$defs/uiDomainRefList" },
+        "directive": { "$ref": "#/$defs/sourceDirective" }
       }
     },
     "evidence": {
@@ -125,6 +272,8 @@
         "sourceRef",
         "region",
         "visibleSummary",
+        "conceptRefs",
+        "uiDomainRefs",
         "limitations"
       ],
       "properties": {
@@ -132,6 +281,8 @@
         "sourceRef": { "$ref": "#/$defs/identifier" },
         "region": { "$ref": "#/$defs/nonEmptyString" },
         "visibleSummary": { "$ref": "#/$defs/nonEmptyString" },
+        "conceptRefs": { "$ref": "#/$defs/conceptRefList" },
+        "uiDomainRefs": { "$ref": "#/$defs/uiDomainRefList" },
         "limitations": { "$ref": "#/$defs/stringList" }
       }
     },
@@ -150,7 +301,9 @@
       "required": ["method", "status"],
       "properties": {
         "method": { "$ref": "#/$defs/nonEmptyString" },
-        "status": { "enum": ["pending", "passed", "failed", "not-applicable"] }
+        "status": {
+          "enum": ["pending", "passed", "failed", "not-applicable"]
+        }
       }
     },
     "claim": {
@@ -159,6 +312,7 @@
       "required": [
         "statement",
         "conceptRefs",
+        "uiDomainRefs",
         "epistemicStatus",
         "confidence",
         "evidenceRefs",
@@ -168,7 +322,8 @@
       ],
       "properties": {
         "statement": { "$ref": "#/$defs/nonEmptyString" },
-        "conceptRefs": { "$ref": "#/$defs/identifierList" },
+        "conceptRefs": { "$ref": "#/$defs/conceptRefList" },
+        "uiDomainRefs": { "$ref": "#/$defs/uiDomainRefList" },
         "epistemicStatus": {
           "enum": ["observed", "inferred", "proposed", "unknown"]
         },
@@ -182,7 +337,9 @@
         {
           "if": {
             "properties": {
-              "epistemicStatus": { "enum": ["observed", "inferred"] }
+              "epistemicStatus": {
+                "enum": ["observed", "inferred"]
+              }
             },
             "required": ["epistemicStatus"]
           },
@@ -238,27 +395,50 @@
         }
       ]
     },
+    "tokenRelationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "expression"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "scale",
+            "alias",
+            "pair",
+            "contrast",
+            "derived",
+            "mode",
+            "exception"
+          ]
+        },
+        "targetRef": { "$ref": "#/$defs/identifier" },
+        "expression": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
     "token": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "name", "category", "value", "claim"],
+      "required": [
+        "id",
+        "name",
+        "category",
+        "role",
+        "appliesTo",
+        "value",
+        "relationships",
+        "claim"
+      ],
       "properties": {
         "id": { "$ref": "#/$defs/identifier" },
         "name": { "$ref": "#/$defs/nonEmptyString" },
-        "category": {
-          "enum": [
-            "color",
-            "space",
-            "size",
-            "typography",
-            "radius",
-            "border",
-            "elevation",
-            "motion",
-            "other"
-          ]
-        },
+        "category": { "$ref": "#/$defs/tokenCategory" },
+        "role": { "$ref": "#/$defs/nonEmptyString" },
+        "appliesTo": { "$ref": "#/$defs/stringList" },
         "value": { "$ref": "#/$defs/designValue" },
+        "relationships": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/tokenRelationship" }
+        },
         "claim": { "$ref": "#/$defs/claim" }
       }
     },
@@ -270,42 +450,133 @@
         "name",
         "category",
         "strength",
+        "appliesTo",
+        "rationale",
         "requirements",
+        "failureModes",
         "validationCases",
+        "dependsOn",
         "claim"
       ],
       "properties": {
         "id": { "$ref": "#/$defs/identifier" },
         "name": { "$ref": "#/$defs/nonEmptyString" },
-        "category": {
-          "enum": [
-            "layout",
-            "content",
-            "state",
-            "interaction",
-            "responsive",
-            "accessibility",
-            "performance",
-            "trust",
-            "motion",
-            "governance"
-          ]
-        },
+        "category": { "$ref": "#/$defs/ruleCategory" },
         "strength": { "enum": ["required", "recommended", "avoid"] },
+        "appliesTo": { "$ref": "#/$defs/stringList" },
+        "rationale": { "$ref": "#/$defs/nonEmptyString" },
         "requirements": { "$ref": "#/$defs/stringList" },
+        "failureModes": { "$ref": "#/$defs/stringList" },
         "validationCases": { "$ref": "#/$defs/stringList" },
+        "dependsOn": { "$ref": "#/$defs/identifierList" },
         "claim": { "$ref": "#/$defs/claim" }
       }
+    },
+    "componentPart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "requirement",
+        "purpose",
+        "contentConstraints",
+        "tokenRefs"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "requirement": {
+          "enum": ["required", "optional", "conditional", "repeatable"]
+        },
+        "purpose": { "$ref": "#/$defs/nonEmptyString" },
+        "contentConstraints": { "$ref": "#/$defs/stringList" },
+        "tokenRefs": { "$ref": "#/$defs/identifierList" }
+      }
+    },
+    "componentVariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "purpose",
+        "conditions",
+        "differences",
+        "epistemicStatus",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "purpose": { "$ref": "#/$defs/nonEmptyString" },
+        "conditions": { "$ref": "#/$defs/stringList" },
+        "differences": { "$ref": "#/$defs/stringList" },
+        "epistemicStatus": {
+          "enum": ["observed", "inferred", "proposed", "unknown"]
+        },
+        "evidenceRefs": { "$ref": "#/$defs/identifierList" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "epistemicStatus": {
+                "enum": ["observed", "inferred"]
+              }
+            },
+            "required": ["epistemicStatus"]
+          },
+          "then": {
+            "properties": {
+              "evidenceRefs": { "minItems": 1 }
+            }
+          }
+        }
+      ]
     },
     "componentState": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "status", "behavior"],
+      "required": [
+        "name",
+        "epistemicStatus",
+        "trigger",
+        "behavior",
+        "feedback",
+        "exit",
+        "programmaticState",
+        "validationCases",
+        "evidenceRefs"
+      ],
       "properties": {
         "name": { "$ref": "#/$defs/nonEmptyString" },
-        "status": { "enum": ["observed", "inferred", "proposed", "unknown"] },
-        "behavior": { "$ref": "#/$defs/nonEmptyString" }
-      }
+        "epistemicStatus": {
+          "enum": ["observed", "inferred", "proposed", "unknown"]
+        },
+        "trigger": { "$ref": "#/$defs/nonEmptyString" },
+        "behavior": { "$ref": "#/$defs/nonEmptyString" },
+        "feedback": { "$ref": "#/$defs/nonEmptyString" },
+        "exit": { "$ref": "#/$defs/nonEmptyString" },
+        "programmaticState": { "$ref": "#/$defs/nonEmptyString" },
+        "validationCases": { "$ref": "#/$defs/stringList" },
+        "evidenceRefs": { "$ref": "#/$defs/identifierList" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "epistemicStatus": {
+                "enum": ["observed", "inferred"]
+              }
+            },
+            "required": ["epistemicStatus"]
+          },
+          "then": {
+            "properties": {
+              "evidenceRefs": { "minItems": 1 }
+            }
+          }
+        }
+      ]
     },
     "componentPattern": {
       "type": "object",
@@ -313,9 +584,16 @@
       "required": [
         "id",
         "name",
+        "purpose",
+        "uiDomainRefs",
         "anatomy",
         "variants",
         "states",
+        "compositionRules",
+        "contentConstraints",
+        "adaptationRules",
+        "accessibilityRequirements",
+        "antiPatterns",
         "ruleRefs",
         "tokenRefs",
         "claim"
@@ -323,15 +601,165 @@
       "properties": {
         "id": { "$ref": "#/$defs/identifier" },
         "name": { "$ref": "#/$defs/nonEmptyString" },
-        "anatomy": { "$ref": "#/$defs/stringList" },
-        "variants": { "$ref": "#/$defs/stringList" },
+        "purpose": { "$ref": "#/$defs/nonEmptyString" },
+        "uiDomainRefs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/uiDomainRef" }
+        },
+        "anatomy": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/componentPart" }
+        },
+        "variants": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/componentVariant" }
+        },
         "states": {
           "type": "array",
+          "minItems": 1,
           "items": { "$ref": "#/$defs/componentState" }
         },
+        "compositionRules": { "$ref": "#/$defs/stringList" },
+        "contentConstraints": { "$ref": "#/$defs/stringList" },
+        "adaptationRules": { "$ref": "#/$defs/stringList" },
+        "accessibilityRequirements": { "$ref": "#/$defs/stringList" },
+        "antiPatterns": { "$ref": "#/$defs/stringList" },
         "ruleRefs": { "$ref": "#/$defs/identifierList" },
         "tokenRefs": { "$ref": "#/$defs/identifierList" },
         "claim": { "$ref": "#/$defs/claim" }
+      }
+    },
+    "facetCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "facetRef",
+        "coverageStatus",
+        "epistemicStatus",
+        "summary",
+        "evidenceRefs",
+        "artifactRefs",
+        "gaps",
+        "validation"
+      ],
+      "properties": {
+        "facetRef": { "$ref": "#/$defs/facetRef" },
+        "coverageStatus": {
+          "enum": ["complete", "partial", "unknown", "not-applicable"]
+        },
+        "epistemicStatus": {
+          "enum": ["observed", "inferred", "proposed", "unknown"]
+        },
+        "summary": { "$ref": "#/$defs/nonEmptyString" },
+        "evidenceRefs": { "$ref": "#/$defs/identifierList" },
+        "artifactRefs": { "$ref": "#/$defs/identifierList" },
+        "gaps": { "$ref": "#/$defs/stringList" },
+        "validation": { "$ref": "#/$defs/validation" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "epistemicStatus": {
+                "enum": ["observed", "inferred"]
+              }
+            },
+            "required": ["epistemicStatus"]
+          },
+          "then": {
+            "properties": {
+              "evidenceRefs": { "minItems": 1 }
+            }
+          }
+        }
+      ]
+    },
+    "axisCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["axisRef", "coverageStatus", "facets"],
+      "properties": {
+        "axisRef": { "$ref": "#/$defs/axisRef" },
+        "coverageStatus": {
+          "enum": ["complete", "partial", "unknown", "not-applicable"]
+        },
+        "facets": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": { "$ref": "#/$defs/facetCoverage" }
+        }
+      }
+    },
+    "uiDomainCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "domainRef",
+        "applicability",
+        "coverageStatus",
+        "epistemicStatus",
+        "summary",
+        "evidenceRefs",
+        "artifactRefs",
+        "gaps",
+        "validation"
+      ],
+      "properties": {
+        "domainRef": { "$ref": "#/$defs/uiDomainRef" },
+        "applicability": {
+          "enum": ["detected", "requested", "not-detected", "unknown"]
+        },
+        "coverageStatus": {
+          "enum": ["complete", "partial", "unknown", "not-applicable"]
+        },
+        "epistemicStatus": {
+          "enum": ["observed", "inferred", "proposed", "unknown"]
+        },
+        "summary": { "$ref": "#/$defs/nonEmptyString" },
+        "evidenceRefs": { "$ref": "#/$defs/identifierList" },
+        "artifactRefs": { "$ref": "#/$defs/identifierList" },
+        "gaps": { "$ref": "#/$defs/stringList" },
+        "validation": { "$ref": "#/$defs/validation" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "epistemicStatus": {
+                "enum": ["observed", "inferred"]
+              }
+            },
+            "required": ["epistemicStatus"]
+          },
+          "then": {
+            "properties": {
+              "evidenceRefs": { "minItems": 1 }
+            }
+          }
+        }
+      ]
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["axes", "uiDomains"],
+      "properties": {
+        "axes": {
+          "type": "array",
+          "minItems": 13,
+          "maxItems": 13,
+          "items": { "$ref": "#/$defs/axisCoverage" }
+        },
+        "uiDomains": {
+          "type": "array",
+          "minItems": 20,
+          "maxItems": 20,
+          "items": { "$ref": "#/$defs/uiDomainCoverage" }
+        }
       }
     },
     "motionPolicy": {
@@ -346,13 +774,30 @@
     "unknown": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "question", "impact", "resolutionPlan", "conceptRefs"],
+      "required": [
+        "id",
+        "question",
+        "impact",
+        "resolutionPlan",
+        "missingEvidence",
+        "axisRefs",
+        "conceptRefs",
+        "uiDomainRefs"
+      ],
       "properties": {
         "id": { "$ref": "#/$defs/identifier" },
         "question": { "$ref": "#/$defs/nonEmptyString" },
         "impact": { "enum": ["low", "medium", "high"] },
         "resolutionPlan": { "$ref": "#/$defs/nonEmptyString" },
-        "conceptRefs": { "$ref": "#/$defs/identifierList" }
+        "missingEvidence": { "$ref": "#/$defs/stringList" },
+        "axisRefs": { "$ref": "#/$defs/axisRefList" },
+        "conceptRefs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/conceptRef" }
+        },
+        "uiDomainRefs": { "$ref": "#/$defs/uiDomainRefList" }
       }
     }
   }

@@ -16,15 +16,15 @@ Read completely before analysis:
 1. `../../prompts/_shared-contract.md`
 2. `../../prompts/00-orchestrator.md`
 3. `../../prompts/01-source-evidence.md`
-4. `../../concepts/concept-matrix.v0.2.json`
+4. `../../concepts/concept-matrix.v0.3.json`
 5. `../../schemas/request-contract.schema.json`
 6. `../../docs/conversational-request-contract.md`
 
-Read each axis prompt only when the orchestrator routes that axis. Read `../../prompts/10-synthesis.md` before synthesis and `../../schemas/design-dna.schema.json` before writing Design DNA.
+Read each axis prompt only when the orchestrator routes that axis. Read `../../prompts/15-synthesis.md` before synthesis and `../../schemas/design-dna.schema.json` before writing Design DNA.
 
 ## Workflow
 
-1. Interpret the complete conversational request once. Normalize its screenshot paths, target use case, adaptation mode, motion mode, constraints, and per-source evidence directives into an `extract` request contract. Use `all` for unrestricted captures, `only` or `exclude` as hard routing, and `prefer` as a priority. Map ordinary language such as "colors" or "statistics" to canonical concept references and token or rule categories. Record unclear instructions as ambiguities and meaningless text as ignored fragments; never guess a use case from nonsense.
+1. Interpret the complete conversational request once. Normalize its screenshot paths, optional target-use-case sentence, adaptation mode, motion mode, constraints, global focus, and per-source evidence directives into an `extract` request contract. Map ordinary language to canonical axis, concept, UI-domain, token-category, and rule-category references. Use `all` for unrestricted captures, `only` or `exclude` as hard routing, and `prefer` as a priority. A phrase such as "for a corporate website" is usable intent; a fragment such as "jjjggjgmsmssnfndndndnsnddjdjd" is an ignored fragment and never becomes a use case, selector, claim, or permission.
 2. Validate the request contract before visual analysis:
 
    ```bash
@@ -44,18 +44,19 @@ Read each axis prompt only when the orchestrator routes that axis. Read `../../p
      --image <absolute-image-path> [--image <another-path>]
    ```
 
-5. Inspect every screenshot and write `evidence-index.json` with stable region IDs. Keep interpretations out of evidence descriptions. Infer likely source surfaces or page families with evidence and confidence, then write `compatibility-report.json` against the requested use case.
-6. In `direct` mode, do not claim destination accuracy when matching source families are missing. Tell the user which references are needed and continue only with source-grounded base extraction. In explicit `adapt` mode, keep cross-surface additions `proposed`.
-7. Execute the routed axis prompts independently. Enforce each source directive before admitting evidence and write each shared-contract JSON result under `stages/`.
-8. Run synthesis. Produce `design-dna.json`, `design-rules.md`, `confidence-report.md`, and `unknowns.md`.
-9. Validate the candidate:
+5. Inspect every screenshot and write `evidence-index.json` with stable region IDs. Keep interpretations out of visible summaries. Classify each source surface (`website`, `web-app`, `mobile-app`, `desktop-app`, `other`, or `unknown`), infer an archetype only when visible structure supports it, record confidence and basis, and detect every applicable UI domain. A narrow capture may suggest mobile, but dimensions alone do not prove native mobile, responsive web, or WebView.
+6. Write `compatibility-report.json` against the requested use case. In `direct` mode, do not claim destination accuracy when matching source families are missing. Say this concretely: a corporate website needs representative corporate/marketing website captures; a mobile app needs representative mobile-app captures. A dashboard capture may still contribute only its explicitly routed statistics, charts, colors, components, or other visible subjects. In explicit `adapt` mode, preserve source observations and keep cross-surface additions `proposed` with a forward-test requirement.
+7. Apply per-source routing before every claim. For example, "capture 1 and 2 only for stats, capture 3 only for the theme and colors" maps the first sources to `domain.stats-kpis` and relevant data-display selectors, and the third to the color/surface axis and requested token categories. A source may support several visible UI domains. `only` never leaks into unrelated facets; `exclude` can never be used to support the excluded subject.
+8. Execute the routed axis prompts independently. Run every axis required by admitted visual evidence or global focus, and always run system governance. Evaluate all five facets of each selected axis. Every unselected or unsupported facet must still appear in final coverage as `unknown` or `not-applicable`; do not silently omit it.
+9. Run synthesis. Produce `design-dna.json`, `design-rules.md`, `confidence-report.md`, `unknowns.md`, and `coverage-report.md`. The canonical Design DNA must contain exact coverage records for all 13 axes, all 65 facets, and all 20 UI domains, including domains that are not applicable.
+10. Validate the candidate:
 
-   ```bash
-   node <designome-plugin-root>/bin/designome.mjs validate-dna \
-     --file <run-directory>/design-dna.json
-   ```
+    ```bash
+    node <designome-plugin-root>/bin/designome.mjs validate-dna \
+      --file <run-directory>/design-dna.json
+    ```
 
-10. Report request interpretation, source compatibility, coverage, conflicts, unknowns, unperformed validation, and the exact files produced. Leave the Design DNA as `draft` until the user explicitly accepts it.
+11. Report request interpretation, per-source routing, source-to-destination compatibility, detected UI domains, facet and domain coverage, conflicts, unknowns, unperformed validation, and the exact files produced. Leave the Design DNA as `draft` until the user explicitly accepts it.
 
 When invoked from `designome run`, write the draft to the `expectedArtifact` path in the current host handoff, then call `designome run --resume`. The runtime detects and validates the artifact deterministically. It does not perform this skill's visual reasoning.
 
@@ -67,7 +68,9 @@ When invoked from `designome run`, write the draft to the `expectedArtifact` pat
 - Never identify exact fonts, icon packages, CSS values, breakpoints, motion curves, or implementation libraries from resemblance alone.
 - Do not create page inventories, role families, speculative screens, or target-project visual rules.
 - Never let a target use case rewrite source observations. Destination-specific rules absent from matching captures remain proposed.
+- Never imply that a dashboard establishes a corporate marketing architecture, or that a desktop/web capture establishes a mobile-native shell. Reuse only explicitly routed visible grammar.
 - Never use a capture outside its `only` or `exclude` evidence boundary, even when another prompt would normally inspect it.
+- Do not reduce deep extraction to palette, spacing, and generic components. Preserve typed component anatomy, variants, states, composition, content constraints, adaptation, accessibility, anti-patterns, data meaning, trust boundaries, and coverage gaps whenever supported.
 - A target-project path may inform later technical installation, never extraction.
 - Do not install artifacts from this skill.
 - Never mark the draft accepted on behalf of the human. The orchestrated workflow records the one mandatory human acceptance separately.

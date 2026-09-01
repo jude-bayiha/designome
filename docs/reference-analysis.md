@@ -72,4 +72,4 @@ The following are robustness proposals, not visible behavior:
 - Large numbers of chart marks need a text or table alternative.
 - Short sample content hides overflow and localization failures.
 
-The schema-valid [v0.2 example](../examples/design-dna.reference-v0.2.json) demonstrates how these categories remain separate. It intentionally uses relative token relationships instead of pretending to know exact production values.
+The schema-valid [v0.3 example](../examples/design-dna.reference-v0.3.json) demonstrates how these categories remain separate while adding typed source classification, UI-domain routing, component anatomy/variants/states/composition, and complete 13-axis/65-facet/20-domain coverage. It intentionally uses relative token relationships instead of pretending to know exact production values.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
   "runtimeContractVersion": "1.0.0",
-  "requestContractVersion": "1.0.0",
+  "requestContractVersion": "1.1.0",
   "executionOwner": "designome-runtime"
 }

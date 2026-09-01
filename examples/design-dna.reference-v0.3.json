@@ -1,0 +1,3417 @@
+{
+  "schemaVersion": "0.3.0",
+  "conceptMatrixVersion": "0.3.0",
+  "documentId": "dna.reference-dashboard-v0.3",
+  "name": "Reference analytics dashboard Design DNA v0.3",
+  "description": "A deep grammar example with dedicated KPI, chart, collection, component, UI-domain, and facet-coverage contracts.",
+  "status": "draft",
+  "createdAt": "2026-08-10T00:00:00Z",
+  "revision": {
+    "number": 2,
+    "previousDocumentId": "dna.reference-dashboard-v0.2",
+    "changeSummary": "Add v0.3 specialist grammar, typed components, UI-domain routing, and explicit facet coverage."
+  },
+  "sources": [
+    {
+      "id": "source.ed-1",
+      "kind": "screenshot",
+      "label": "Dashboard overview with navigation and analytics",
+      "path": "/home/mrjudenq/Desktop/ed-1.jpeg",
+      "dimensions": {
+        "width": 3072,
+        "height": 4096
+      },
+      "contentHash": "sha256:af65121a2d22602919b1e89b660ae6a1a34b23448a64ae9d5c9aceaffbcc60f3",
+      "limitations": [
+        "Static screenshot",
+        "Some brand text is blurred",
+        "The right side is cropped"
+      ],
+      "classification": {
+        "surface": "web-app",
+        "archetype": "analytics-dashboard",
+        "epistemicStatus": "inferred",
+        "confidence": 0.96,
+        "basis": "Persistent application navigation, dense metrics, charts, data rows, and utility actions are visible."
+      },
+      "detectedUiDomainRefs": [
+        "domain.app-shell-navigation",
+        "domain.actions-controls",
+        "domain.tables-lists",
+        "domain.cards-collections",
+        "domain.stats-kpis",
+        "domain.charts-data-visualization",
+        "domain.status-progress"
+      ],
+      "directive": {
+        "evidenceMode": "all",
+        "axisRefs": [],
+        "conceptRefs": [],
+        "uiDomainRefs": [],
+        "tokenCategories": [],
+        "ruleCategories": []
+      }
+    },
+    {
+      "id": "source.ed-2",
+      "kind": "screenshot",
+      "label": "Dashboard overview showing the right-side content",
+      "path": "/home/mrjudenq/Desktop/ed2.jpeg",
+      "dimensions": {
+        "width": 3072,
+        "height": 4096
+      },
+      "contentHash": "sha256:5e6327c0782adf63748a21dfffd8eea1e8f0215818cbfc6a8aa062dd1b8ddee9",
+      "limitations": [
+        "Static screenshot",
+        "The left side is cropped",
+        "No interaction state is demonstrated"
+      ],
+      "classification": {
+        "surface": "web-app",
+        "archetype": "analytics-dashboard",
+        "epistemicStatus": "inferred",
+        "confidence": 0.96,
+        "basis": "Persistent application navigation, dense metrics, charts, data rows, and utility actions are visible."
+      },
+      "detectedUiDomainRefs": [
+        "domain.app-shell-navigation",
+        "domain.actions-controls",
+        "domain.tables-lists",
+        "domain.cards-collections",
+        "domain.stats-kpis",
+        "domain.charts-data-visualization",
+        "domain.status-progress"
+      ],
+      "directive": {
+        "evidenceMode": "all",
+        "axisRefs": [],
+        "conceptRefs": [],
+        "uiDomainRefs": [],
+        "tokenCategories": [],
+        "ruleCategories": []
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "id": "evidence.app-shell",
+      "sourceRef": "source.ed-1",
+      "region": "Left navigation and main canvas",
+      "visibleSummary": "A persistent vertical navigation rail is visually separated from a light main content canvas.",
+      "limitations": ["Persistence across routes is inferred from one view"],
+      "conceptRefs": [
+        "concept.spatial-system",
+        "concept.navigation-orientation",
+        "concept.information-hierarchy"
+      ],
+      "uiDomainRefs": ["domain.app-shell-navigation", "domain.actions-controls"]
+    },
+    {
+      "id": "evidence.summary-cards",
+      "sourceRef": "source.ed-2",
+      "region": "Top summary area",
+      "visibleSummary": "Summary cards repeat a header, icon, primary value, supporting text, and optional trailing action.",
+      "limitations": ["Loading, empty, and error variants are not shown"],
+      "conceptRefs": [
+        "concept.component-anatomy-composition",
+        "concept.data-comparison-context",
+        "concept.typographic-system"
+      ],
+      "uiDomainRefs": ["domain.cards-collections", "domain.stats-kpis"]
+    },
+    {
+      "id": "evidence.performance-grid",
+      "sourceRef": "source.ed-2",
+      "region": "Performance metrics row",
+      "visibleSummary": "Metric cells use repeated anatomy and compact positive, negative, or neutral comparisons.",
+      "limitations": ["Color values and icon sources are not measured"],
+      "conceptRefs": [
+        "concept.data-comparison-context",
+        "concept.typographic-system",
+        "concept.semantic-color-theme"
+      ],
+      "uiDomainRefs": ["domain.stats-kpis", "domain.status-progress"]
+    },
+    {
+      "id": "evidence.revenue-chart",
+      "sourceRef": "source.ed-2",
+      "region": "Revenue over time card",
+      "visibleSummary": "A large dotted area chart receives more space than adjacent analytics and includes title, total, average, legend, axes, and date labels.",
+      "limitations": [
+        "Tooltip, keyboard access, and small-screen behavior are not shown"
+      ],
+      "conceptRefs": [
+        "concept.visualization-encoding-integrity",
+        "concept.data-comparison-context",
+        "concept.data-scale-resilience"
+      ],
+      "uiDomainRefs": [
+        "domain.charts-data-visualization",
+        "domain.cards-collections"
+      ]
+    },
+    {
+      "id": "evidence.campaign-table",
+      "sourceRef": "source.ed-2",
+      "region": "Campaign rows",
+      "visibleSummary": "Rows align waiting items, live posts, budget use, revenue, and a review action into stable columns.",
+      "limitations": [
+        "Long content, sorting, and large data volumes are not shown"
+      ],
+      "conceptRefs": [
+        "concept.data-scale-resilience",
+        "concept.content-layout-resilience",
+        "concept.component-anatomy-composition"
+      ],
+      "uiDomainRefs": [
+        "domain.tables-lists",
+        "domain.actions-controls",
+        "domain.status-progress"
+      ]
+    }
+  ],
+  "tokens": [
+    {
+      "id": "token.surface-hierarchy",
+      "name": "Surface hierarchy",
+      "category": "color",
+      "value": {
+        "kind": "relationship",
+        "expression": "cards are lighter than the canvas and separated with subtle borders rather than strong shadow"
+      },
+      "claim": {
+        "statement": "The interface uses low-contrast nested surfaces to establish containment.",
+        "conceptRefs": ["concept.visual-stability"],
+        "epistemicStatus": "observed",
+        "confidence": {
+          "score": 0.92,
+          "basis": "The relationship repeats across navigation, summary cards, charts, and table rows."
+        },
+        "evidenceRefs": [
+          "evidence.app-shell",
+          "evidence.summary-cards",
+          "evidence.revenue-chart"
+        ],
+        "scope": ["application shell", "cards", "data regions"],
+        "exceptions": ["The primary action uses a saturated blue fill"],
+        "validation": {
+          "method": "Compare generated surfaces against reference screenshots at matched scale.",
+          "status": "pending"
+        },
+        "uiDomainRefs": [
+          "domain.app-shell-navigation",
+          "domain.cards-collections",
+          "domain.stats-kpis",
+          "domain.charts-data-visualization"
+        ]
+      },
+      "role": "Separate canvas, navigation, cards, charts, and rows through restrained semantic surface tiers.",
+      "appliesTo": ["application shell", "cards", "charts", "data rows"],
+      "relationships": []
+    },
+    {
+      "id": "token.spacing-rhythm",
+      "name": "Repeated spacing rhythm",
+      "category": "space",
+      "value": {
+        "kind": "relationship",
+        "expression": "internal card padding is smaller than the gaps between major dashboard sections"
+      },
+      "claim": {
+        "statement": "Spacing establishes nested hierarchy through repeated relative intervals.",
+        "conceptRefs": ["concept.content-layout-resilience"],
+        "epistemicStatus": "inferred",
+        "confidence": {
+          "score": 0.78,
+          "basis": "The same relative rhythm appears across multiple containers, but source scale prevents exact measurement."
+        },
+        "evidenceRefs": [
+          "evidence.summary-cards",
+          "evidence.performance-grid",
+          "evidence.revenue-chart"
+        ],
+        "scope": ["dashboard composition"],
+        "exceptions": [],
+        "validation": {
+          "method": "Measure representative screenshot intervals and test candidate token ratios.",
+          "status": "pending"
+        },
+        "uiDomainRefs": [
+          "domain.app-shell-navigation",
+          "domain.cards-collections",
+          "domain.stats-kpis",
+          "domain.charts-data-visualization"
+        ]
+      },
+      "role": "Express repeated internal, peer, group, section, and page spacing relationships.",
+      "appliesTo": ["component anatomy", "component groups", "sections"],
+      "relationships": []
+    },
+    {
+      "id": "token.type.metric-hierarchy",
+      "name": "Metric typography hierarchy",
+      "category": "typography",
+      "role": "Separate metric label, primary value, unit, comparison, and timeframe.",
+      "appliesTo": ["KPI cards", "performance metrics", "chart summaries"],
+      "value": {
+        "kind": "relationship",
+        "expression": "primary values dominate labels; units and comparisons remain legible but subordinate; comparable values align consistently"
+      },
+      "relationships": [
+        {
+          "kind": "pair",
+          "targetRef": "token.spacing-rhythm",
+          "expression": "value-to-context spacing is tighter than spacing between independent metrics"
+        }
+      ],
+      "claim": {
+        "statement": "Metrics use a stable label-value-context hierarchy that supports rapid comparison.",
+        "conceptRefs": [
+          "concept.typographic-system",
+          "concept.data-comparison-context"
+        ],
+        "uiDomainRefs": [
+          "domain.stats-kpis",
+          "domain.charts-data-visualization"
+        ],
+        "epistemicStatus": "observed",
+        "confidence": {
+          "score": 0.9,
+          "basis": "The hierarchy repeats across summary cards, compact metrics, and the chart header."
+        },
+        "evidenceRefs": [
+          "evidence.summary-cards",
+          "evidence.performance-grid",
+          "evidence.revenue-chart"
+        ],
+        "scope": ["statistics", "chart summaries"],
+        "exceptions": [],
+        "validation": {
+          "method": "Compare the generated role relationship against matched reference regions and the routed matrix stress cases.",
+          "status": "pending"
+        }
+      }
+    },
+    {
+      "id": "token.data.chart-separation",
+      "name": "Chart series separation",
+      "category": "data-visualization",
+      "role": "Keep primary series, supporting series, axes, grid, labels, and annotations distinguishable.",
+      "appliesTo": ["time-series charts", "legends", "annotations"],
+      "value": {
+        "kind": "relationship",
+        "expression": "primary data marks have the strongest contrast; secondary series, axes, gridlines, and annotations descend in salience"
+      },
+      "relationships": [],
+      "claim": {
+        "statement": "The revenue chart uses a clear salience order among data marks, legend, axes, and support.",
+        "conceptRefs": ["concept.visualization-encoding-integrity"],
+        "uiDomainRefs": ["domain.charts-data-visualization"],
+        "epistemicStatus": "observed",
+        "confidence": {
+          "score": 0.9,
+          "basis": "The primary area and line are more salient than axes, labels, legend support, and grid structure."
+        },
+        "evidenceRefs": ["evidence.revenue-chart"],
+        "scope": ["time-series visualization"],
+        "exceptions": [],
+        "validation": {
+          "method": "Compare the generated role relationship against matched reference regions and the routed matrix stress cases.",
+          "status": "pending"
+        }
+      }
+    }
+  ],
+  "rules": [
+    {
+      "id": "rule.card-anatomy",
+      "name": "Stable card anatomy",
+      "category": "layout",
+      "strength": "required",
+      "requirements": [
+        "Keep header identity separate from the primary value area",
+        "Align comparable values consistently",
+        "Reserve trailing actions without shifting the value"
+      ],
+      "validationCases": [
+        "Card with no action",
+        "Card with a long title",
+        "Card with two lines of supporting text"
+      ],
+      "claim": {
+        "statement": "Analytic cards repeat a recognizable header and value anatomy.",
+        "conceptRefs": [
+          "concept.content-layout-resilience",
+          "concept.visual-stability"
+        ],
+        "epistemicStatus": "observed",
+        "confidence": {
+          "score": 0.94,
+          "basis": "The pattern repeats across summary and performance sections."
+        },
+        "evidenceRefs": ["evidence.summary-cards", "evidence.performance-grid"],
+        "scope": ["analytic cards", "metric cells"],
+        "exceptions": ["Large chart cards add legends and axes"],
+        "validation": {
+          "method": "Render all card variants together and compare anatomy alignment.",
+          "status": "pending"
+        },
+        "uiDomainRefs": [
+          "domain.app-shell-navigation",
+          "domain.cards-collections",
+          "domain.stats-kpis",
+          "domain.charts-data-visualization"
+        ]
+      },
+      "appliesTo": ["analytic cards", "metric cells"],
+      "rationale": "Analytic cards repeat a recognizable header and value anatomy.",
+      "failureModes": [
+        "The generated pattern loses hierarchy, legibility, state meaning, or action access under declared stress cases."
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "rule.content-overflow",
+      "name": "Resilient content overflow",
+      "category": "content",
+      "strength": "required",
+      "requirements": [
+        "Allow descriptive text to wrap or clamp without hiding adjacent actions",
+        "Expose full meaningful values through an accessible detail mechanism",
+        "Never let unbroken content expand the page unexpectedly"
+      ],
+      "validationCases": [
+        "Two-hundred-character description",
+        "Unbroken identifier",
+        "Localized label expanded by one hundred percent",
+        "Text enlarged to two hundred percent"
+      ],
+      "claim": {
+        "statement": "Components should preserve hierarchy and action access under long or unbroken content; this behavior is proposed because the screenshots show only short examples.",
+        "conceptRefs": [
+          "concept.content-layout-resilience",
+          "concept.localization-bidirectionality"
+        ],
+        "epistemicStatus": "proposed",
+        "confidence": {
+          "score": 0.9,
+          "basis": "The rule is necessary for robust implementation but is not visible in the source."
+        },
+        "evidenceRefs": [],
+        "scope": ["cards", "tables", "navigation labels", "actions"],
+        "exceptions": [
+          "Identifiers whose full value is required may use a scrollable or copyable region"
+        ],
+        "validation": {
+          "method": "Run content expansion, unbroken-string, localization, and text-zoom stress tests.",
+          "status": "pending"
+        },
+        "uiDomainRefs": ["domain.tables-lists"]
+      },
+      "appliesTo": ["cards", "tables", "navigation labels", "actions"],
+      "rationale": "Components should preserve hierarchy and action access under long or unbroken content; this behavior is proposed because the screenshots show only short examples.",
+      "failureModes": [
+        "The generated pattern loses hierarchy, legibility, state meaning, or action access under declared stress cases."
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "rule.business-states",
+      "name": "Explicit business states",
+      "category": "state",
+      "strength": "required",
+      "requirements": [
+        "Define loading, empty, no-results, partial, error, warning, success, stale, and disabled behavior as applicable",
+        "Preserve card geometry when state content changes",
+        "Pair blocking failures with an actionable recovery path"
+      ],
+      "validationCases": [
+        "Near-instant load",
+        "Slow load",
+        "One widget fails",
+        "All data fails",
+        "No matching campaign"
+      ],
+      "claim": {
+        "statement": "Missing business states should preserve the visible component anatomy; these states are proposed because no alternate state is shown.",
+        "conceptRefs": [
+          "concept.state-edge-coverage",
+          "concept.feedback-interruption-budget",
+          "concept.visual-stability"
+        ],
+        "epistemicStatus": "proposed",
+        "confidence": {
+          "score": 0.9,
+          "basis": "The screenshots establish stable containers, while robust state behavior remains absent."
+        },
+        "evidenceRefs": [],
+        "scope": ["summary cards", "charts", "campaign table"],
+        "exceptions": [],
+        "validation": {
+          "method": "Render every applicable state and compare geometry, message actionability, and recovery.",
+          "status": "pending"
+        },
+        "uiDomainRefs": [
+          "domain.stats-kpis",
+          "domain.charts-data-visualization",
+          "domain.tables-lists"
+        ]
+      },
+      "appliesTo": ["summary cards", "charts", "campaign table"],
+      "rationale": "Missing business states should preserve the visible component anatomy; these states are proposed because no alternate state is shown.",
+      "failureModes": [
+        "The generated pattern loses hierarchy, legibility, state meaning, or action access under declared stress cases."
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "rule.semantic-reflow",
+      "name": "Priority-preserving reflow",
+      "category": "responsive",
+      "strength": "required",
+      "requirements": [
+        "Keep the page title and primary action discoverable",
+        "Stack summary cards before compressing their content",
+        "Give wide data regions a deliberate scroll, collapse, or alternative representation"
+      ],
+      "validationCases": [
+        "Three-hundred-twenty-pixel viewport",
+        "Four-hundred-percent zoom",
+        "Long localized labels",
+        "Wide table"
+      ],
+      "claim": {
+        "statement": "The dashboard should reflow by semantic priority; this is proposed because both screenshots show a large desktop layout.",
+        "conceptRefs": [
+          "concept.semantic-responsive-reflow",
+          "concept.data-scale-resilience"
+        ],
+        "epistemicStatus": "proposed",
+        "confidence": {
+          "score": 0.82,
+          "basis": "The visual hierarchy establishes priority, but no narrow viewport is supplied."
+        },
+        "evidenceRefs": [],
+        "scope": ["dashboard layout"],
+        "exceptions": [
+          "Dense data regions may use bounded horizontal scrolling when equivalent content remains accessible"
+        ],
+        "validation": {
+          "method": "Run viewport and zoom tests while checking order, access, and overflow.",
+          "status": "pending"
+        },
+        "uiDomainRefs": [
+          "domain.app-shell-navigation",
+          "domain.charts-data-visualization",
+          "domain.tables-lists"
+        ]
+      },
+      "appliesTo": ["dashboard layout"],
+      "rationale": "The dashboard should reflow by semantic priority; this is proposed because both screenshots show a large desktop layout.",
+      "failureModes": [
+        "The generated pattern loses hierarchy, legibility, state meaning, or action access under declared stress cases."
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "rule.kpi.context",
+      "name": "KPI decision context",
+      "category": "data-display",
+      "strength": "required",
+      "appliesTo": ["KPI cards", "performance metrics"],
+      "rationale": "A value without unit, comparison, timeframe, target, or freshness can look precise while remaining ambiguous.",
+      "requirements": [
+        "Expose metric label and primary value",
+        "Show applicable unit, timeframe, comparison, target, qualifier, and freshness",
+        "Keep beneficial, adverse, neutral, missing, and stale meaning independent from color alone"
+      ],
+      "failureModes": [
+        "The value or delta cannot be interpreted without hidden business knowledge",
+        "Color or arrow direction is the only desirability cue"
+      ],
+      "validationCases": [
+        "zero, negative, very large, missing, stale, and ambiguous-trend values"
+      ],
+      "dependsOn": [],
+      "claim": {
+        "statement": "Statistics preserve label, value, context, and comparison as distinct but connected roles.",
+        "conceptRefs": [
+          "concept.data-comparison-context",
+          "concept.typographic-system"
+        ],
+        "uiDomainRefs": ["domain.stats-kpis"],
+        "epistemicStatus": "observed",
+        "confidence": {
+          "score": 0.9,
+          "basis": "Repeated metrics show stable label, value, context, and comparison positions."
+        },
+        "evidenceRefs": ["evidence.summary-cards", "evidence.performance-grid"],
+        "scope": ["KPI cards", "performance metrics"],
+        "exceptions": [],
+        "validation": {
+          "method": "Compare the generated role relationship against matched reference regions and the routed matrix stress cases.",
+          "status": "pending"
+        }
+      }
+    },
+    {
+      "id": "rule.chart.encoding-context",
+      "name": "Chart encoding and context",
+      "category": "visualization",
+      "strength": "required",
+      "appliesTo": ["time-series charts"],
+      "rationale": "A reusable chart needs a question, comparison, encoding, scale context, and accessible alternative, not only visual styling.",
+      "requirements": [
+        "Preserve title, summary, series identity, axes, scale context, labels, legend, and references as applicable",
+        "Keep primary data marks more salient than supporting grid and axes",
+        "Provide a proposed text summary and data alternative until implemented accessibility is verified"
+      ],
+      "failureModes": [
+        "Series cannot be distinguished or compared",
+        "Baseline, period, units, legend, or non-color meaning is missing"
+      ],
+      "validationCases": [
+        "many series, missing values, narrow width, enlarged text, and color-vision simulation"
+      ],
+      "dependsOn": [],
+      "claim": {
+        "statement": "Chart hierarchy keeps the comparison legible while supporting context remains available.",
+        "conceptRefs": [
+          "concept.visualization-encoding-integrity",
+          "concept.accessibility-semantics"
+        ],
+        "uiDomainRefs": ["domain.charts-data-visualization"],
+        "epistemicStatus": "observed",
+        "confidence": {
+          "score": 0.9,
+          "basis": "The revenue chart visibly combines a dominant plot with title, summary, axes, labels, and legend."
+        },
+        "evidenceRefs": ["evidence.revenue-chart"],
+        "scope": ["time-series charts"],
+        "exceptions": [],
+        "validation": {
+          "method": "Compare the generated role relationship against matched reference regions and the routed matrix stress cases.",
+          "status": "pending"
+        }
+      }
+    }
+  ],
+  "componentPatterns": [
+    {
+      "id": "component.metric-card",
+      "name": "Metric card",
+      "anatomy": [
+        {
+          "id": "part.semantic-icon",
+          "name": "semantic icon",
+          "requirement": "required",
+          "purpose": "Carry the semantic icon role without displacing higher-priority content.",
+          "contentConstraints": [
+            "Preserve legibility under long, missing, or extreme content."
+          ],
+          "tokenRefs": []
+        },
+        {
+          "id": "part.label",
+          "name": "label",
+          "requirement": "required",
+          "purpose": "Carry the label role without displacing higher-priority content.",
+          "contentConstraints": [
+            "Preserve legibility under long, missing, or extreme content."
+          ],
+          "tokenRefs": []
+        },
+        {
+          "id": "part.primary-value",
+          "name": "primary value",
+          "requirement": "required",
+          "purpose": "Carry the primary value role without displacing higher-priority content.",
+          "contentConstraints": [
+            "Preserve legibility under long, missing, or extreme content."
+          ],
+          "tokenRefs": []
+        },
+        {
+          "id": "part.comparison-or-supporting-text",
+          "name": "comparison or supporting text",
+          "requirement": "conditional",
+          "purpose": "Carry the comparison or supporting text role without displacing higher-priority content.",
+          "contentConstraints": [
+            "Preserve legibility under long, missing, or extreme content."
+          ],
+          "tokenRefs": []
+        },
+        {
+          "id": "part.optional-action",
+          "name": "optional action",
+          "requirement": "conditional",
+          "purpose": "Carry the optional action role without displacing higher-priority content.",
+          "contentConstraints": [
+            "Preserve legibility under long, missing, or extreme content."
+          ],
+          "tokenRefs": []
+        }
+      ],
+      "variants": [
+        {
+          "name": "summary with action",
+          "purpose": "Adapt the pattern for the summary with action context.",
+          "conditions": [
+            "Use only when visible content and hierarchy match this purpose."
+          ],
+          "differences": [
+            "Preserve canonical anatomy while adjusting density or emphasis."
+          ],
+          "epistemicStatus": "inferred",
+          "evidenceRefs": [
+            "evidence.summary-cards",
+            "evidence.performance-grid"
+          ]
+        },
+        {
+          "name": "compact performance metric",
+          "purpose": "Adapt the pattern for the compact performance metric context.",
+          "conditions": [
+            "Use only when visible content and hierarchy match this purpose."
+          ],
+          "differences": [
+            "Preserve canonical anatomy while adjusting density or emphasis."
+          ],
+          "epistemicStatus": "inferred",
+          "evidenceRefs": [
+            "evidence.summary-cards",
+            "evidence.performance-grid"
+          ]
+        }
+      ],
+      "states": [
+        {
+          "name": "stable",
+          "epistemicStatus": "observed",
+          "trigger": "The referenced screenshot shows this state.",
+          "behavior": "Show the current value and supporting comparison in a stable card frame.",
+          "feedback": "Explain the state without collapsing component anatomy.",
+          "exit": "Return to the applicable stable state.",
+          "programmaticState": "Expose the corresponding state semantically when interactive.",
+          "validationCases": [
+            "Verify content, geometry, focus, and non-color meaning."
+          ],
+          "evidenceRefs": [
+            "evidence.summary-cards",
+            "evidence.performance-grid"
+          ]
+        },
+        {
+          "name": "loading",
+          "epistemicStatus": "proposed",
+          "trigger": "The implementation enters the named condition.",
+          "behavior": "Reserve the stable geometry and avoid a flash for near-instant results.",
+          "feedback": "Explain the state without collapsing component anatomy.",
+          "exit": "Return to the applicable stable state.",
+          "programmaticState": "Expose the corresponding state semantically when interactive.",
+          "validationCases": [
+            "Verify content, geometry, focus, and non-color meaning."
+          ],
+          "evidenceRefs": []
+        },
+        {
+          "name": "error",
+          "epistemicStatus": "proposed",
+          "trigger": "The implementation enters the named condition.",
+          "behavior": "Keep the label and frame, explain the failure, and offer proportionate recovery.",
+          "feedback": "Explain the state without collapsing component anatomy.",
+          "exit": "Offer proportionate retry or recovery.",
+          "programmaticState": "Expose the corresponding state semantically when interactive.",
+          "validationCases": [
+            "Verify content, geometry, focus, and non-color meaning."
+          ],
+          "evidenceRefs": []
+        }
+      ],
+      "ruleRefs": [
+        "rule.card-anatomy",
+        "rule.content-overflow",
+        "rule.business-states"
+      ],
+      "tokenRefs": ["token.surface-hierarchy", "token.spacing-rhythm"],
+      "claim": {
+        "statement": "Metric cards are a reusable family with stable identity and value regions.",
+        "conceptRefs": [
+          "concept.state-edge-coverage",
+          "concept.content-layout-resilience"
+        ],
+        "epistemicStatus": "observed",
+        "confidence": {
+          "score": 0.93,
+          "basis": "Several visible cards share the same semantic anatomy."
+        },
+        "evidenceRefs": [
+          "evidence.summary-cards",
+          "evidence.performance-grid",
+          "evidence.revenue-chart"
+        ],
+        "scope": ["dashboard metrics"],
+        "exceptions": [
+          "Visualization cards extend the anatomy with legends and axes"
+        ],
+        "validation": {
+          "method": "Render the family matrix across variants, states, and long content.",
+          "status": "pending"
+        },
+        "uiDomainRefs": ["domain.cards-collections", "domain.stats-kpis"]
+      },
+      "purpose": "Summarize one decision-relevant metric with context and optional action.",
+      "uiDomainRefs": ["domain.cards-collections", "domain.stats-kpis"],
+      "compositionRules": [
+        "The component owns internal spacing; its parent owns spacing between peers.",
+        "Do not nest an equally elevated surface unless hierarchy remains explicit."
+      ],
+      "contentConstraints": [
+        "Support long labels, large values, missing support, and localized text."
+      ],
+      "adaptationRules": [
+        "Preserve primary content and action access before reducing or reordering support."
+      ],
+      "accessibilityRequirements": [
+        "Expose a coherent name, reading order, state, and non-color meaning."
+      ],
+      "antiPatterns": [
+        "Do not reuse solely because unrelated content has similar surface geometry."
+      ]
+    },
+    {
+      "id": "component.data-row",
+      "name": "Campaign data row",
+      "anatomy": [
+        {
+          "id": "part.campaign-identity",
+          "name": "campaign identity",
+          "requirement": "required",
+          "purpose": "Carry the campaign identity role without displacing higher-priority content.",
+          "contentConstraints": [
+            "Preserve legibility under long, missing, or extreme content."
+          ],
+          "tokenRefs": []
+        },
+        {
+          "id": "part.waiting-status",
+          "name": "waiting status",
+          "requirement": "required",
+          "purpose": "Carry the waiting status role without displacing higher-priority content.",
+          "contentConstraints": [
+            "Preserve legibility under long, missing, or extreme content."
+          ],
+          "tokenRefs": []
+        },
+        {
+          "id": "part.live-post-count",
+          "name": "live-post count",
+          "requirement": "required",
+          "purpose": "Carry the live-post count role without displacing higher-priority content.",
+          "contentConstraints": [
+            "Preserve legibility under long, missing, or extreme content."
+          ],
+          "tokenRefs": []
+        },
+        {
+          "id": "part.budget-progress",
+          "name": "budget progress",
+          "requirement": "required",
+          "purpose": "Carry the budget progress role without displacing higher-priority content.",
+          "contentConstraints": [
+            "Preserve legibility under long, missing, or extreme content."
+          ],
+          "tokenRefs": []
+        },
+        {
+          "id": "part.revenue",
+          "name": "revenue",
+          "requirement": "required",
+          "purpose": "Carry the revenue role without displacing higher-priority content.",
+          "contentConstraints": [
+            "Preserve legibility under long, missing, or extreme content."
+          ],
+          "tokenRefs": []
+        },
+        {
+          "id": "part.review-action",
+          "name": "review action",
+          "requirement": "required",
+          "purpose": "Carry the review action role without displacing higher-priority content.",
+          "contentConstraints": [
+            "Preserve legibility under long, missing, or extreme content."
+          ],
+          "tokenRefs": []
+        }
+      ],
+      "variants": [
+        {
+          "name": "default row",
+          "purpose": "Adapt the pattern for the default row context.",
+          "conditions": [
+            "Use only when visible content and hierarchy match this purpose."
+          ],
+          "differences": [
+            "Preserve canonical anatomy while adjusting density or emphasis."
+          ],
+          "epistemicStatus": "inferred",
+          "evidenceRefs": ["evidence.campaign-table"]
+        },
+        {
+          "name": "row requiring attention",
+          "purpose": "Adapt the pattern for the row requiring attention context.",
+          "conditions": [
+            "Use only when visible content and hierarchy match this purpose."
+          ],
+          "differences": [
+            "Preserve canonical anatomy while adjusting density or emphasis."
+          ],
+          "epistemicStatus": "inferred",
+          "evidenceRefs": ["evidence.campaign-table"]
+        }
+      ],
+      "states": [
+        {
+          "name": "stable",
+          "epistemicStatus": "observed",
+          "trigger": "The referenced screenshot shows this state.",
+          "behavior": "Align comparable values in consistent columns with a trailing review action.",
+          "feedback": "Explain the state without collapsing component anatomy.",
+          "exit": "Return to the applicable stable state.",
+          "programmaticState": "Expose the corresponding state semantically when interactive.",
+          "validationCases": [
+            "Verify content, geometry, focus, and non-color meaning."
+          ],
+          "evidenceRefs": ["evidence.campaign-table"]
+        },
+        {
+          "name": "long content",
+          "epistemicStatus": "proposed",
+          "trigger": "The implementation enters the named condition.",
+          "behavior": "Keep the action reachable while names and labels wrap or clamp deliberately.",
+          "feedback": "Explain the state without collapsing component anatomy.",
+          "exit": "Return to the applicable stable state.",
+          "programmaticState": "Expose the corresponding state semantically when interactive.",
+          "validationCases": [
+            "Verify content, geometry, focus, and non-color meaning."
+          ],
+          "evidenceRefs": []
+        }
+      ],
+      "ruleRefs": ["rule.content-overflow", "rule.semantic-reflow"],
+      "tokenRefs": ["token.surface-hierarchy", "token.spacing-rhythm"],
+      "claim": {
+        "statement": "Campaign data is presented as comparison-friendly rows with a consistent trailing action.",
+        "conceptRefs": [
+          "concept.data-scale-resilience",
+          "concept.affordance-discoverability"
+        ],
+        "epistemicStatus": "observed",
+        "confidence": {
+          "score": 0.9,
+          "basis": "Multiple visible rows repeat the column and action structure."
+        },
+        "evidenceRefs": ["evidence.campaign-table"],
+        "scope": ["campaign table"],
+        "exceptions": [],
+        "validation": {
+          "method": "Stress the row with long names, extreme values, narrow containers, and keyboard navigation.",
+          "status": "pending"
+        },
+        "uiDomainRefs": ["domain.tables-lists", "domain.status-progress"]
+      },
+      "purpose": "Align campaign identity, comparable values, statuses, progress, and review action.",
+      "uiDomainRefs": ["domain.tables-lists", "domain.status-progress"],
+      "compositionRules": [
+        "The component owns internal spacing; its parent owns spacing between peers.",
+        "Do not nest an equally elevated surface unless hierarchy remains explicit."
+      ],
+      "contentConstraints": [
+        "Support long labels, large values, missing support, and localized text."
+      ],
+      "adaptationRules": [
+        "Preserve primary content and action access before reducing or reordering support."
+      ],
+      "accessibilityRequirements": [
+        "Expose a coherent name, reading order, state, and non-color meaning."
+      ],
+      "antiPatterns": [
+        "Do not reuse solely because unrelated content has similar surface geometry."
+      ]
+    },
+    {
+      "id": "component.chart-card",
+      "name": "Time-series chart card",
+      "purpose": "Combine chart question, summary, plot, axes, legend, and contextual action within a stable analysis region.",
+      "uiDomainRefs": [
+        "domain.cards-collections",
+        "domain.charts-data-visualization"
+      ],
+      "anatomy": [
+        {
+          "id": "part.title",
+          "name": "Title",
+          "requirement": "required",
+          "purpose": "State the chart question or subject.",
+          "contentConstraints": [
+            "Remain legible at narrow width and enlarged text."
+          ],
+          "tokenRefs": []
+        },
+        {
+          "id": "part.summary",
+          "name": "Summary value and context",
+          "requirement": "required",
+          "purpose": "Provide primary value, period, and comparison context.",
+          "contentConstraints": [
+            "Remain legible at narrow width and enlarged text."
+          ],
+          "tokenRefs": []
+        },
+        {
+          "id": "part.plot",
+          "name": "Plot region",
+          "requirement": "required",
+          "purpose": "Encode the time-series comparison.",
+          "contentConstraints": [
+            "Remain legible at narrow width and enlarged text."
+          ],
+          "tokenRefs": []
+        },
+        {
+          "id": "part.axes",
+          "name": "Axes and scale context",
+          "requirement": "required",
+          "purpose": "Make time and value position interpretable.",
+          "contentConstraints": [
+            "Remain legible at narrow width and enlarged text."
+          ],
+          "tokenRefs": []
+        },
+        {
+          "id": "part.legend",
+          "name": "Legend",
+          "requirement": "conditional",
+          "purpose": "Identify multiple encodings.",
+          "contentConstraints": [
+            "Remain legible at narrow width and enlarged text."
+          ],
+          "tokenRefs": []
+        }
+      ],
+      "variants": [
+        {
+          "name": "primary analysis chart",
+          "purpose": "Give one decision-relevant visualization dominant space.",
+          "conditions": [
+            "Use when the chart is primary evidence in its region."
+          ],
+          "differences": [
+            "Use full context and the strongest data-mark hierarchy."
+          ],
+          "epistemicStatus": "observed",
+          "evidenceRefs": ["evidence.revenue-chart"]
+        }
+      ],
+      "states": [
+        {
+          "name": "populated",
+          "epistemicStatus": "observed",
+          "trigger": "Data is available in the reference capture.",
+          "behavior": "Show summary, plot, axes, legend, and visible context.",
+          "feedback": "Keep primary series and summary dominant.",
+          "exit": "Move to another explicit state without collapsing reserved geometry.",
+          "programmaticState": "Expose chart title, summary, and data alternative.",
+          "validationCases": [
+            "Verify scale context and non-color series meaning."
+          ],
+          "evidenceRefs": ["evidence.revenue-chart"]
+        },
+        {
+          "name": "loading",
+          "epistemicStatus": "proposed",
+          "trigger": "The chart enters the loading condition.",
+          "behavior": "Preserve title and geometry while explaining the loading state.",
+          "feedback": "Provide a proportionate message and applicable next action.",
+          "exit": "Return to populated state or a clear recovery path.",
+          "programmaticState": "Expose state text and applicable status semantics.",
+          "validationCases": [
+            "Verify geometry, alternative, focus, and recovery."
+          ],
+          "evidenceRefs": []
+        },
+        {
+          "name": "empty",
+          "epistemicStatus": "proposed",
+          "trigger": "The chart enters the empty condition.",
+          "behavior": "Preserve title and geometry while explaining the empty state.",
+          "feedback": "Provide a proportionate message and applicable next action.",
+          "exit": "Return to populated state or a clear recovery path.",
+          "programmaticState": "Expose state text and applicable status semantics.",
+          "validationCases": [
+            "Verify geometry, alternative, focus, and recovery."
+          ],
+          "evidenceRefs": []
+        },
+        {
+          "name": "error",
+          "epistemicStatus": "proposed",
+          "trigger": "The chart enters the error condition.",
+          "behavior": "Preserve title and geometry while explaining the error state.",
+          "feedback": "Provide a proportionate message and applicable next action.",
+          "exit": "Return to populated state or a clear recovery path.",
+          "programmaticState": "Expose state text and applicable status semantics.",
+          "validationCases": [
+            "Verify geometry, alternative, focus, and recovery."
+          ],
+          "evidenceRefs": []
+        },
+        {
+          "name": "stale",
+          "epistemicStatus": "proposed",
+          "trigger": "The chart enters the stale condition.",
+          "behavior": "Preserve title and geometry while explaining the stale state.",
+          "feedback": "Provide a proportionate message and applicable next action.",
+          "exit": "Return to populated state or a clear recovery path.",
+          "programmaticState": "Expose state text and applicable status semantics.",
+          "validationCases": [
+            "Verify geometry, alternative, focus, and recovery."
+          ],
+          "evidenceRefs": []
+        }
+      ],
+      "compositionRules": [
+        "The card owns title, summary, plot, scale context, legend, and annotations.",
+        "Adjacent analytics remain subordinate to the primary chart."
+      ],
+      "contentConstraints": [
+        "Support long titles, large values, many dates, missing values, and multiple series."
+      ],
+      "adaptationRules": [
+        "Preserve question, summary, essential comparison, and accessible alternative before secondary detail."
+      ],
+      "accessibilityRequirements": [
+        "Provide a concise text summary and accessible data alternative.",
+        "Do not use color as the only series distinction."
+      ],
+      "antiPatterns": [
+        "Do not reproduce appearance without question, comparison, scale context, and alternative."
+      ],
+      "ruleRefs": ["rule.chart.encoding-context"],
+      "tokenRefs": [
+        "token.surface-hierarchy",
+        "token.type.metric-hierarchy",
+        "token.data.chart-separation"
+      ],
+      "claim": {
+        "statement": "The revenue visualization combines a stable card, summary hierarchy, dominant plot, axes, labels, and legend support.",
+        "conceptRefs": [
+          "concept.component-anatomy-composition",
+          "concept.visualization-encoding-integrity"
+        ],
+        "uiDomainRefs": [
+          "domain.cards-collections",
+          "domain.charts-data-visualization"
+        ],
+        "epistemicStatus": "observed",
+        "confidence": {
+          "score": 0.9,
+          "basis": "The complete anatomy is visible in the dominant revenue region."
+        },
+        "evidenceRefs": ["evidence.revenue-chart"],
+        "scope": ["primary revenue visualization"],
+        "exceptions": [],
+        "validation": {
+          "method": "Compare the generated role relationship against matched reference regions and the routed matrix stress cases.",
+          "status": "pending"
+        }
+      }
+    }
+  ],
+  "motion": {
+    "mode": "off",
+    "rules": []
+  },
+  "unknowns": [
+    {
+      "id": "unknown.responsive-behavior",
+      "question": "How do navigation, charts, and wide campaign data reflow at narrow widths?",
+      "impact": "high",
+      "resolutionPlan": "Obtain narrow-viewport references or validate the proposed semantic reflow in a rendered prototype.",
+      "conceptRefs": [
+        "concept.semantic-responsive-reflow",
+        "concept.data-scale-resilience"
+      ],
+      "axisRefs": ["axis.responsive-platform-adaptation"],
+      "uiDomainRefs": [
+        "domain.app-shell-navigation",
+        "domain.charts-data-visualization",
+        "domain.tables-lists"
+      ],
+      "missingEvidence": [
+        "narrow, intermediate, and zoomed viewport references"
+      ]
+    },
+    {
+      "id": "unknown.interaction-states",
+      "question": "What are the intended focus, hover, pressed, loading, empty, error, and stale states?",
+      "impact": "high",
+      "resolutionPlan": "Obtain state references or treat generated behavior as explicit proposals and forward-test every state.",
+      "conceptRefs": [
+        "concept.state-edge-coverage",
+        "concept.modality-equivalence"
+      ],
+      "axisRefs": ["axis.interaction-state-motion"],
+      "uiDomainRefs": [
+        "domain.actions-controls",
+        "domain.stats-kpis",
+        "domain.charts-data-visualization",
+        "domain.tables-lists"
+      ],
+      "missingEvidence": ["state captures or executed interaction evidence"]
+    },
+    {
+      "id": "unknown.icon-source",
+      "question": "Which icon library, if any, is authoritative?",
+      "impact": "medium",
+      "resolutionPlan": "Keep icon rules geometry-based until the product owner supplies a library or accepts a proposed mapping.",
+      "conceptRefs": ["concept.iconographic-coherence"],
+      "axisRefs": ["axis.color-surface-identity", "axis.system-governance"],
+      "uiDomainRefs": [
+        "domain.app-shell-navigation",
+        "domain.actions-controls",
+        "domain.stats-kpis"
+      ],
+      "missingEvidence": ["authorized icon-source specification"]
+    },
+    {
+      "id": "unknown.metric-semantics",
+      "question": "Which KPI changes are beneficial, what baselines are used, and how fresh are the values?",
+      "impact": "high",
+      "resolutionPlan": "Obtain definitions and freshness contracts from an authorized owner; keep visual comparison independent from business desirability.",
+      "missingEvidence": [
+        "metric definitions",
+        "comparison formulas",
+        "desirability semantics",
+        "freshness contract"
+      ],
+      "axisRefs": [
+        "axis.data-display-visualization",
+        "axis.content-trust-ethics"
+      ],
+      "conceptRefs": [
+        "concept.data-comparison-context",
+        "concept.trust-permission-transparency"
+      ],
+      "uiDomainRefs": ["domain.stats-kpis"]
+    }
+  ],
+  "coverage": {
+    "axes": [
+      {
+        "axisRef": "axis.spatial-composition",
+        "coverageStatus": "partial",
+        "facets": [
+          {
+            "facetRef": "facet.spatial.regions-containment",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial regions and containment grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell", "evidence.summary-cards"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "a crop does not establish the full page boundary",
+              "a static frame does not prove sticky, fixed, or scroll ownership"
+            ],
+            "validation": {
+              "method": "Forward-test regions and containment on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.spatial.grid-columns",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial grid, columns, and containers grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell", "evidence.summary-cards"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "exact grid measurements cannot be recovered from scaled pixels alone",
+              "one viewport does not establish breakpoint-specific tracks"
+            ],
+            "validation": {
+              "method": "Forward-test grid, columns, and containers on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.spatial.spacing-rhythm",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial spacing and vertical rhythm grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell", "evidence.summary-cards"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "visual estimates do not prove exact token values",
+              "empty content can imitate intentional whitespace"
+            ],
+            "validation": {
+              "method": "Forward-test spacing and vertical rhythm on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.spatial.alignment-proportion",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial alignment and proportion grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell", "evidence.summary-cards"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "optical alignment is an interpretation unless repeated evidence supports it",
+              "cropping can distort apparent proportion"
+            ],
+            "validation": {
+              "method": "Forward-test alignment and proportion on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.spatial.density-depth-hierarchy",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial density, depth, and salience grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell", "evidence.summary-cards"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "prominence does not prove product priority or usage frequency",
+              "a screenshot cannot prove dynamic elevation or scroll behavior"
+            ],
+            "validation": {
+              "method": "Forward-test density, depth, and salience on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          }
+        ]
+      },
+      {
+        "axisRef": "axis.typography-content-hierarchy",
+        "coverageStatus": "partial",
+        "facets": [
+          {
+            "facetRef": "facet.type.roles-scale",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial type roles and scale grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.performance-grid"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "font family and exact metrics cannot be identified from resemblance",
+              "a single sample does not establish a complete modular scale"
+            ],
+            "validation": {
+              "method": "Forward-test type roles and scale on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.type.metrics-readability",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial metrics and readability grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.performance-grid"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "computed metrics require implementation evidence",
+              "visual sharpness is affected by capture scale and compression"
+            ],
+            "validation": {
+              "method": "Forward-test metrics and readability on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.type.emphasis-hierarchy",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial emphasis and semantic hierarchy grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.performance-grid"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "visual hierarchy does not establish semantic heading levels",
+              "color alone cannot establish text meaning"
+            ],
+            "validation": {
+              "method": "Forward-test emphasis and semantic hierarchy on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.type.numerals-data",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial numerals and data typography grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.performance-grid"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "glyph feature support cannot be proven from pixels",
+              "one locale does not establish alternate number or date formats"
+            ],
+            "validation": {
+              "method": "Forward-test numerals and data typography on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.type.overflow-localization",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial text overflow and language resilience grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.performance-grid"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "short text does not prove an overflow policy",
+              "unseen scripts and directions remain proposed or unknown"
+            ],
+            "validation": {
+              "method": "Forward-test text overflow and language resilience on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          }
+        ]
+      },
+      {
+        "axisRef": "axis.color-surface-identity",
+        "coverageStatus": "partial",
+        "facets": [
+          {
+            "facetRef": "facet.color.semantic-roles",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial semantic color roles grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell", "evidence.revenue-chart"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "capture pixels do not prove source color values",
+              "color appearance can be altered by compression and display profiles"
+            ],
+            "validation": {
+              "method": "Forward-test semantic color roles on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.color.surface-depth",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial surfaces and depth grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell", "evidence.revenue-chart"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "exact blur, opacity, radius, and shadow values are not visually provable",
+              "dynamic elevation cannot be observed in a static frame"
+            ],
+            "validation": {
+              "method": "Forward-test surfaces and depth on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.color.theme-modes",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial theme and contrast modes grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell", "evidence.revenue-chart"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "one theme does not establish another theme",
+              "WCAG contrast requires measured implementation values"
+            ],
+            "validation": {
+              "method": "Forward-test theme and contrast modes on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.color.iconography-imagery",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial iconography, imagery, and illustration grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell", "evidence.revenue-chart"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "the exact icon or asset library cannot be identified reliably",
+              "licenses, alt text, source resolution, and fallbacks are not visible"
+            ],
+            "validation": {
+              "method": "Forward-test iconography, imagery, and illustration on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.color.brand-expression",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial visual identity and brand expression grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell", "evidence.revenue-chart"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "visual tone does not establish brand strategy or intended audience",
+              "a small sample cannot prove the complete identity system"
+            ],
+            "validation": {
+              "method": "Forward-test visual identity and brand expression on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          }
+        ]
+      },
+      {
+        "axisRef": "axis.component-morphology",
+        "coverageStatus": "partial",
+        "facets": [
+          {
+            "facetRef": "facet.component.anatomy-slots",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial anatomy and slots grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "repeated appearance does not prove a shared implementation component",
+              "hidden optional slots remain unknown"
+            ],
+            "validation": {
+              "method": "Forward-test anatomy and slots on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.component.variants-sizing-density",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial variants, sizing, and density grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "one visible instance does not establish a variant family",
+              "target size and DOM box require implementation evidence"
+            ],
+            "validation": {
+              "method": "Forward-test variants, sizing, and density on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.component.states-appearance",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial state appearance grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "unshown states are not observed",
+              "a state-looking appearance does not prove programmatic state"
+            ],
+            "validation": {
+              "method": "Forward-test state appearance on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.component.composition-reuse",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial composition and reuse grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "visual similarity alone does not establish shared component ownership",
+              "unseen combinations remain proposed or unknown"
+            ],
+            "validation": {
+              "method": "Forward-test composition and reuse on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.component.exceptions-antipatterns",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial exceptions and anti-patterns grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "rarity does not prove an intentional exception",
+              "an absent combination is not automatically forbidden"
+            ],
+            "validation": {
+              "method": "Forward-test exceptions and anti-patterns on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          }
+        ]
+      },
+      {
+        "axisRef": "axis.navigation-task-architecture",
+        "coverageStatus": "partial",
+        "facets": [
+          {
+            "facetRef": "facet.navigation.global-local",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial global and local navigation grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "one screen does not prove destinations or persistence",
+              "visual navigation does not prove route behavior"
+            ],
+            "validation": {
+              "method": "Forward-test global and local navigation on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.navigation.orientation-location",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial orientation and current location grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "active styling does not prove URL or programmatic selection",
+              "cropped context can hide orientation cues"
+            ],
+            "validation": {
+              "method": "Forward-test orientation and current location on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.navigation.information-reading-order",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial information hierarchy and reading order grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "visual order does not establish DOM order",
+              "a screenshot cannot prove comprehension or task success"
+            ],
+            "validation": {
+              "method": "Forward-test information hierarchy and reading order on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.navigation.action-priority",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial action priority and decision points grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "prominence does not prove frequency or business priority",
+              "real consequences and permissions remain unknown"
+            ],
+            "validation": {
+              "method": "Forward-test action priority and decision points on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.navigation.disclosure-continuity",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial disclosure and context continuity grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.app-shell"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "closed content and transitions are not visible",
+              "focus, scroll, and history restoration require executed evidence"
+            ],
+            "validation": {
+              "method": "Forward-test disclosure and context continuity on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          }
+        ]
+      },
+      {
+        "axisRef": "axis.forms-input-workflows",
+        "coverageStatus": "unknown",
+        "facets": [
+          {
+            "facetRef": "facet.forms.labels-help",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish labels, instructions, and help; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "visual proximity does not prove accessible association",
+              "placeholder text does not prove a persistent label"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for labels, instructions, and help.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.forms.controls-selection",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish controls and selection models; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "appearance does not prove native versus custom implementation",
+              "keyboard and touch behavior are not visible"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for controls and selection models.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.forms.validation-errors",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish validation and error recovery; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "validation timing and server behavior are not observable in a static frame",
+              "absence of errors does not prove their design"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for validation and error recovery.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.forms.workflow-save",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish workflow, save, and reversibility; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "autosave and persistence cannot be inferred from appearance",
+              "server-side effects and rollback remain unknown"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for workflow, save, and reversibility.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.forms.formatting-sensitive-data",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish formatting and sensitive data; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "actual input mode, autofill, paste, and masking behavior require implementation evidence",
+              "one locale does not establish parsing rules"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for formatting and sensitive data.",
+              "status": "pending"
+            }
+          }
+        ]
+      },
+      {
+        "axisRef": "axis.data-display-visualization",
+        "coverageStatus": "partial",
+        "facets": [
+          {
+            "facetRef": "facet.data.stats-kpis",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial statistics and kpi anatomy grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.performance-grid",
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "color and arrows do not prove whether a change is beneficial",
+              "metric formulas, freshness, and business meaning remain unknown unless supplied"
+            ],
+            "validation": {
+              "method": "Forward-test statistics and kpi anatomy on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.data.comparison-context",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial comparison and decision context grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.performance-grid",
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "a visible delta does not establish its calculation",
+              "missing context cannot be invented from layout"
+            ],
+            "validation": {
+              "method": "Forward-test comparison and decision context on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.data.tables-lists",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial tables, lists, and dense collections grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.performance-grid",
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "visible controls do not prove sorting, filtering, pagination, or virtualization",
+              "one dataset does not establish scale behavior"
+            ],
+            "validation": {
+              "method": "Forward-test tables, lists, and dense collections on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.data.chart-encoding",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial charts and visual encodings grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.performance-grid",
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "data values and scale transforms cannot be reconstructed reliably from pixels",
+              "tooltips, brushing, zoom, selection, and animation require interaction evidence"
+            ],
+            "validation": {
+              "method": "Forward-test charts and visual encodings on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.data.scale-uncertainty-access",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial scale, uncertainty, and accessible alternatives grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.summary-cards",
+              "evidence.performance-grid",
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "statistical validity and uncertainty cannot be inferred unless visibly explained",
+              "screen-reader and keyboard access require implementation evidence"
+            ],
+            "validation": {
+              "method": "Forward-test scale, uncertainty, and accessible alternatives on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          }
+        ]
+      },
+      {
+        "axisRef": "axis.interaction-state-motion",
+        "coverageStatus": "unknown",
+        "facets": [
+          {
+            "facetRef": "facet.interaction.control-states",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish control states; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "static screenshots do not observe most control states",
+              "visual state does not prove accessible or programmatic state"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for control states.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.interaction.business-states",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish business and async states; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "unshown states are proposed or unknown, never observed",
+              "a static image cannot prove async transitions"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for business and async states.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.interaction.feedback-recovery",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish feedback, confirmation, and recovery; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "timing, repetition, announcement, and dismissal are not visible",
+              "visual success does not prove completed backend work"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for feedback, confirmation, and recovery.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.interaction.focus-modalities",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish focus, overlays, and modalities; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "focus, scroll, gesture, and keyboard behavior require executed evidence",
+              "an open overlay does not reveal its full lifecycle"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for focus, overlays, and modalities.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.interaction.motion-continuity",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish motion and spatial continuity; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "duration, easing, path, and interruption cannot be observed in a still image",
+              "motion absent from evidence remains proposed or unknown"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for motion and spatial continuity.",
+              "status": "pending"
+            }
+          }
+        ]
+      },
+      {
+        "axisRef": "axis.responsive-platform-adaptation",
+        "coverageStatus": "unknown",
+        "facets": [
+          {
+            "facetRef": "facet.adaptation.intrinsic-reflow",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish intrinsic reflow; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "one viewport does not establish reflow behavior",
+              "cropped screenshots can imitate overflow"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for intrinsic reflow.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.adaptation.breakpoints-containers",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish breakpoints and container behavior; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "exact breakpoints cannot be inferred from a single width",
+              "device category does not prove CSS or native layout thresholds"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for breakpoints and container behavior.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.adaptation.mobile-native-shell",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish mobile and native shell; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "screen dimensions alone do not prove iOS, Android, or web runtime",
+              "system-owned behavior and haptics are not visible in a static capture"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for mobile and native shell.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.adaptation.orientation-keyboard",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish orientation and virtual keyboard; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "unshown orientations and keyboard states remain proposed",
+              "static dimensions do not establish resizable behavior"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for orientation and virtual keyboard.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.adaptation.device-input-conventions",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish device and input conventions; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "input hardware cannot be certified from screenshots",
+              "visual convention does not prove native behavior"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for device and input conventions.",
+              "status": "pending"
+            }
+          }
+        ]
+      },
+      {
+        "axisRef": "axis.accessibility-inclusion-localization",
+        "coverageStatus": "partial",
+        "facets": [
+          {
+            "facetRef": "facet.access.semantics-names",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial semantics and names grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "DOM roles, names, relationships, and live regions are not visible",
+              "visual order does not prove semantic order"
+            ],
+            "validation": {
+              "method": "Forward-test semantics and names on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.access.keyboard-focus",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial keyboard and focus grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "keyboard behavior cannot be certified from pixels",
+              "a shown focus ring may be simulated content"
+            ],
+            "validation": {
+              "method": "Forward-test keyboard and focus on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.access.contrast-noncolor",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial contrast and non-color meaning grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "screenshots cannot certify contrast ratios",
+              "display and compression alter apparent contrast"
+            ],
+            "validation": {
+              "method": "Forward-test contrast and non-color meaning on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.access.zoom-text-targets",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial zoom, text size, targets, and cognition grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "actual target boxes and zoom behavior require implementation evidence",
+              "appearance cannot prove cognitive accessibility"
+            ],
+            "validation": {
+              "method": "Forward-test zoom, text size, targets, and cognition on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.access.locale-rtl-cultural",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial localization, rtl, and cultural resilience grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "one locale does not prove localization support",
+              "cultural interpretation cannot be established from layout alone"
+            ],
+            "validation": {
+              "method": "Forward-test localization, rtl, and cultural resilience on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          }
+        ]
+      },
+      {
+        "axisRef": "axis.content-trust-ethics",
+        "coverageStatus": "partial",
+        "facets": [
+          {
+            "facetRef": "facet.content.voice-terminology",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial voice, tone, and terminology grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.performance-grid"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "visible copy does not establish the full voice strategy",
+              "audience and brand intent cannot be inferred with certainty"
+            ],
+            "validation": {
+              "method": "Forward-test voice, tone, and terminology on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.content.actionable-microcopy",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial actionable microcopy grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.performance-grid"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "copy cannot prove the underlying outcome",
+              "unshown errors and edge cases remain proposed or unknown"
+            ],
+            "validation": {
+              "method": "Forward-test actionable microcopy on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.content.permissions-privacy",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial permissions, privacy, and consent grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.performance-grid"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "UI copy does not prove real policy, authorization, or data handling",
+              "absence of explanation does not establish absence of a policy"
+            ],
+            "validation": {
+              "method": "Forward-test permissions, privacy, and consent on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.content.provenance-freshness",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial provenance, freshness, and uncertainty grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.performance-grid"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "visible provenance labels do not prove data quality",
+              "freshness and generation processes require system evidence"
+            ],
+            "validation": {
+              "method": "Forward-test provenance, freshness, and uncertainty on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.content.consequence-ethical",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial consequences and ethical interaction grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": ["evidence.performance-grid"],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "appearance alone cannot establish organizational intent",
+              "real consequences and legal adequacy require authorized review"
+            ],
+            "validation": {
+              "method": "Forward-test consequences and ethical interaction on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          }
+        ]
+      },
+      {
+        "axisRef": "axis.performance-resilience",
+        "coverageStatus": "unknown",
+        "facets": [
+          {
+            "facetRef": "facet.performance.loading-priority",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish loading priority and progress; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "pixels cannot prove loading order or latency",
+              "timing thresholds require runtime validation"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for loading priority and progress.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.performance.visual-stability",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish visual stability; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "layout shift and flicker require a sequence or runtime measurement",
+              "stable appearance in one frame does not prove stable transitions"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for visual stability.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.performance.partial-stale-offline",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish partial, stale, offline, and unavailable data; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "network, cache, and backend behavior are not visible",
+              "an empty region does not identify its failure cause"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for partial, stale, offline, and unavailable data.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.performance.recovery-preservation",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish recovery and work preservation; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "real persistence and rollback require system evidence",
+              "recovery behavior absent from screenshots remains proposed"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for recovery and work preservation.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.performance.scale-media-cost",
+            "coverageStatus": "unknown",
+            "epistemicStatus": "unknown",
+            "summary": "The static dashboard does not establish scale, media, and rendering cost; preserve it as unknown.",
+            "evidenceRefs": [],
+            "artifactRefs": [],
+            "gaps": [
+              "runtime cost, memory, virtualization, and network weight cannot be measured from screenshots",
+              "visual complexity does not prove poor performance"
+            ],
+            "validation": {
+              "method": "Obtain matching evidence or execute a test for scale, media, and rendering cost.",
+              "status": "pending"
+            }
+          }
+        ]
+      },
+      {
+        "axisRef": "axis.system-governance",
+        "coverageStatus": "partial",
+        "facets": [
+          {
+            "facetRef": "facet.system.tokens-relations",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial tokens and relationships grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.app-shell",
+              "evidence.summary-cards",
+              "evidence.performance-grid",
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "exact token values require evidence or accepted calibration",
+              "target-project tokens are integration context, not source evidence"
+            ],
+            "validation": {
+              "method": "Forward-test tokens and relationships on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.system.component-contracts",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial component and pattern contracts grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.app-shell",
+              "evidence.summary-cards",
+              "evidence.performance-grid",
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "visual repetition does not prove shared source code",
+              "unseen variants remain proposed or unknown"
+            ],
+            "validation": {
+              "method": "Forward-test component and pattern contracts on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.system.provenance-coverage",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial provenance and coverage grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.app-shell",
+              "evidence.summary-cards",
+              "evidence.performance-grid",
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "document presence does not prove semantic coverage",
+              "coverage cannot promote unsupported claims"
+            ],
+            "validation": {
+              "method": "Forward-test provenance and coverage on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.system.framework-neutral-mapping",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial framework-neutral design-to-code mapping grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.app-shell",
+              "evidence.summary-cards",
+              "evidence.performance-grid",
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "screenshots do not reveal framework or code architecture",
+              "repository conventions cannot become Design DNA observations"
+            ],
+            "validation": {
+              "method": "Forward-test framework-neutral design-to-code mapping on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          },
+          {
+            "facetRef": "facet.system.install-audit-nonregression",
+            "coverageStatus": "partial",
+            "epistemicStatus": "inferred",
+            "summary": "The dashboard supports a partial installation, audit, and non-regression grammar; exact values and unshown behavior remain outside observation.",
+            "evidenceRefs": [
+              "evidence.app-shell",
+              "evidence.summary-cards",
+              "evidence.performance-grid",
+              "evidence.revenue-chart",
+              "evidence.campaign-table"
+            ],
+            "artifactRefs": [
+              "token.surface-hierarchy",
+              "token.spacing-rhythm",
+              "token.type.metric-hierarchy",
+              "token.data.chart-separation",
+              "rule.card-anatomy",
+              "rule.content-overflow",
+              "rule.business-states",
+              "rule.semantic-reflow",
+              "rule.kpi.context",
+              "rule.chart.encoding-context",
+              "component.metric-card",
+              "component.data-row",
+              "component.chart-card"
+            ],
+            "gaps": [
+              "agent guidance is not mechanical enforcement",
+              "code-level validation does not prove perceptual fidelity or usability"
+            ],
+            "validation": {
+              "method": "Forward-test installation, audit, and non-regression on a novel dashboard at wide and narrow widths.",
+              "status": "pending"
+            }
+          }
+        ]
+      }
+    ],
+    "uiDomains": [
+      {
+        "domainRef": "domain.app-shell-navigation",
+        "applicability": "detected",
+        "coverageStatus": "partial",
+        "epistemicStatus": "inferred",
+        "summary": "Application shell and navigation is visibly relevant, but static references cover only listed regions and states.",
+        "evidenceRefs": ["evidence.app-shell"],
+        "artifactRefs": [
+          "token.surface-hierarchy",
+          "token.spacing-rhythm",
+          "rule.card-anatomy",
+          "rule.semantic-reflow"
+        ],
+        "gaps": ["one screen does not prove persistence or destinations"],
+        "validation": {
+          "method": "Run the matrix stress tests for Application shell and navigation.",
+          "status": "pending"
+        }
+      },
+      {
+        "domainRef": "domain.marketing-editorial",
+        "applicability": "not-detected",
+        "coverageStatus": "not-applicable",
+        "epistemicStatus": "unknown",
+        "summary": "Marketing and editorial content is not established by the supplied references.",
+        "evidenceRefs": [],
+        "artifactRefs": [],
+        "gaps": [
+          "Provide matching screenshots before using this domain as evidence."
+        ],
+        "validation": {
+          "method": "Supply matching references if this domain becomes required.",
+          "status": "not-applicable"
+        }
+      },
+      {
+        "domainRef": "domain.actions-controls",
+        "applicability": "detected",
+        "coverageStatus": "partial",
+        "epistemicStatus": "inferred",
+        "summary": "Actions and controls is visibly relevant, but static references cover only listed regions and states.",
+        "evidenceRefs": ["evidence.app-shell", "evidence.campaign-table"],
+        "artifactRefs": [],
+        "gaps": [
+          "appearance does not prove activation, target size, or accessible name"
+        ],
+        "validation": {
+          "method": "Run the matrix stress tests for Actions and controls.",
+          "status": "pending"
+        }
+      },
+      {
+        "domainRef": "domain.forms-data-entry",
+        "applicability": "not-detected",
+        "coverageStatus": "not-applicable",
+        "epistemicStatus": "unknown",
+        "summary": "Forms and data entry is not established by the supplied references.",
+        "evidenceRefs": [],
+        "artifactRefs": [],
+        "gaps": [
+          "Provide matching screenshots before using this domain as evidence."
+        ],
+        "validation": {
+          "method": "Supply matching references if this domain becomes required.",
+          "status": "not-applicable"
+        }
+      },
+      {
+        "domainRef": "domain.search-filter-sort",
+        "applicability": "not-detected",
+        "coverageStatus": "not-applicable",
+        "epistemicStatus": "unknown",
+        "summary": "Search, filter, and sort is not established by the supplied references.",
+        "evidenceRefs": [],
+        "artifactRefs": [],
+        "gaps": [
+          "Provide matching screenshots before using this domain as evidence."
+        ],
+        "validation": {
+          "method": "Supply matching references if this domain becomes required.",
+          "status": "not-applicable"
+        }
+      },
+      {
+        "domainRef": "domain.tables-lists",
+        "applicability": "detected",
+        "coverageStatus": "partial",
+        "epistemicStatus": "inferred",
+        "summary": "Tables and lists is visibly relevant, but static references cover only listed regions and states.",
+        "evidenceRefs": ["evidence.campaign-table"],
+        "artifactRefs": [
+          "rule.content-overflow",
+          "rule.business-states",
+          "rule.semantic-reflow",
+          "component.data-row"
+        ],
+        "gaps": [
+          "one dataset does not prove scale, sorting, pagination, or virtualization"
+        ],
+        "validation": {
+          "method": "Run the matrix stress tests for Tables and lists.",
+          "status": "pending"
+        }
+      },
+      {
+        "domainRef": "domain.cards-collections",
+        "applicability": "detected",
+        "coverageStatus": "partial",
+        "epistemicStatus": "inferred",
+        "summary": "Cards and collections is visibly relevant, but static references cover only listed regions and states.",
+        "evidenceRefs": ["evidence.summary-cards", "evidence.revenue-chart"],
+        "artifactRefs": [
+          "token.surface-hierarchy",
+          "token.spacing-rhythm",
+          "rule.card-anatomy",
+          "component.metric-card",
+          "component.chart-card"
+        ],
+        "gaps": ["repeated rectangles do not prove one component family"],
+        "validation": {
+          "method": "Run the matrix stress tests for Cards and collections.",
+          "status": "pending"
+        }
+      },
+      {
+        "domainRef": "domain.stats-kpis",
+        "applicability": "detected",
+        "coverageStatus": "partial",
+        "epistemicStatus": "inferred",
+        "summary": "Statistics and KPIs is visibly relevant, but static references cover only listed regions and states.",
+        "evidenceRefs": ["evidence.summary-cards", "evidence.performance-grid"],
+        "artifactRefs": [
+          "token.surface-hierarchy",
+          "token.spacing-rhythm",
+          "token.type.metric-hierarchy",
+          "rule.card-anatomy",
+          "rule.business-states",
+          "rule.kpi.context",
+          "component.metric-card"
+        ],
+        "gaps": [
+          "layout does not establish formula, business meaning, desirability, or freshness"
+        ],
+        "validation": {
+          "method": "Run the matrix stress tests for Statistics and KPIs.",
+          "status": "pending"
+        }
+      },
+      {
+        "domainRef": "domain.charts-data-visualization",
+        "applicability": "detected",
+        "coverageStatus": "partial",
+        "epistemicStatus": "inferred",
+        "summary": "Charts and data visualization is visibly relevant, but static references cover only listed regions and states.",
+        "evidenceRefs": ["evidence.revenue-chart"],
+        "artifactRefs": [
+          "token.surface-hierarchy",
+          "token.spacing-rhythm",
+          "token.type.metric-hierarchy",
+          "token.data.chart-separation",
+          "rule.card-anatomy",
+          "rule.business-states",
+          "rule.semantic-reflow",
+          "rule.chart.encoding-context",
+          "component.chart-card"
+        ],
+        "gaps": [
+          "pixels do not prove exact data, scale transforms, tooltips, or keyboard access"
+        ],
+        "validation": {
+          "method": "Run the matrix stress tests for Charts and data visualization.",
+          "status": "pending"
+        }
+      },
+      {
+        "domainRef": "domain.status-progress",
+        "applicability": "detected",
+        "coverageStatus": "partial",
+        "epistemicStatus": "inferred",
+        "summary": "Status and progress is visibly relevant, but static references cover only listed regions and states.",
+        "evidenceRefs": [
+          "evidence.performance-grid",
+          "evidence.campaign-table"
+        ],
+        "artifactRefs": ["component.data-row"],
+        "gaps": [
+          "color and animation do not prove meaning, progress, or announcement"
+        ],
+        "validation": {
+          "method": "Run the matrix stress tests for Status and progress.",
+          "status": "pending"
+        }
+      },
+      {
+        "domainRef": "domain.overlays-disclosure",
+        "applicability": "not-detected",
+        "coverageStatus": "not-applicable",
+        "epistemicStatus": "unknown",
+        "summary": "Overlays and disclosure is not established by the supplied references.",
+        "evidenceRefs": [],
+        "artifactRefs": [],
+        "gaps": [
+          "Provide matching screenshots before using this domain as evidence."
+        ],
+        "validation": {
+          "method": "Supply matching references if this domain becomes required.",
+          "status": "not-applicable"
+        }
+      },
+      {
+        "domainRef": "domain.media-galleries",
+        "applicability": "not-detected",
+        "coverageStatus": "not-applicable",
+        "epistemicStatus": "unknown",
+        "summary": "Media and galleries is not established by the supplied references.",
+        "evidenceRefs": [],
+        "artifactRefs": [],
+        "gaps": [
+          "Provide matching screenshots before using this domain as evidence."
+        ],
+        "validation": {
+          "method": "Supply matching references if this domain becomes required.",
+          "status": "not-applicable"
+        }
+      },
+      {
+        "domainRef": "domain.messaging-notifications",
+        "applicability": "not-detected",
+        "coverageStatus": "not-applicable",
+        "epistemicStatus": "unknown",
+        "summary": "Messaging and notifications is not established by the supplied references.",
+        "evidenceRefs": [],
+        "artifactRefs": [],
+        "gaps": [
+          "Provide matching screenshots before using this domain as evidence."
+        ],
+        "validation": {
+          "method": "Supply matching references if this domain becomes required.",
+          "status": "not-applicable"
+        }
+      },
+      {
+        "domainRef": "domain.calendars-timelines",
+        "applicability": "not-detected",
+        "coverageStatus": "not-applicable",
+        "epistemicStatus": "unknown",
+        "summary": "Calendars and timelines is not established by the supplied references.",
+        "evidenceRefs": [],
+        "artifactRefs": [],
+        "gaps": [
+          "Provide matching screenshots before using this domain as evidence."
+        ],
+        "validation": {
+          "method": "Supply matching references if this domain becomes required.",
+          "status": "not-applicable"
+        }
+      },
+      {
+        "domainRef": "domain.maps-spatial",
+        "applicability": "not-detected",
+        "coverageStatus": "not-applicable",
+        "epistemicStatus": "unknown",
+        "summary": "Maps and spatial UI is not established by the supplied references.",
+        "evidenceRefs": [],
+        "artifactRefs": [],
+        "gaps": [
+          "Provide matching screenshots before using this domain as evidence."
+        ],
+        "validation": {
+          "method": "Supply matching references if this domain becomes required.",
+          "status": "not-applicable"
+        }
+      },
+      {
+        "domainRef": "domain.commerce-transactions",
+        "applicability": "not-detected",
+        "coverageStatus": "not-applicable",
+        "epistemicStatus": "unknown",
+        "summary": "Commerce and transactions is not established by the supplied references.",
+        "evidenceRefs": [],
+        "artifactRefs": [],
+        "gaps": [
+          "Provide matching screenshots before using this domain as evidence."
+        ],
+        "validation": {
+          "method": "Supply matching references if this domain becomes required.",
+          "status": "not-applicable"
+        }
+      },
+      {
+        "domainRef": "domain.authentication-onboarding",
+        "applicability": "not-detected",
+        "coverageStatus": "not-applicable",
+        "epistemicStatus": "unknown",
+        "summary": "Authentication and onboarding is not established by the supplied references.",
+        "evidenceRefs": [],
+        "artifactRefs": [],
+        "gaps": [
+          "Provide matching screenshots before using this domain as evidence."
+        ],
+        "validation": {
+          "method": "Supply matching references if this domain becomes required.",
+          "status": "not-applicable"
+        }
+      },
+      {
+        "domainRef": "domain.settings-configuration",
+        "applicability": "not-detected",
+        "coverageStatus": "not-applicable",
+        "epistemicStatus": "unknown",
+        "summary": "Settings and configuration is not established by the supplied references.",
+        "evidenceRefs": [],
+        "artifactRefs": [],
+        "gaps": [
+          "Provide matching screenshots before using this domain as evidence."
+        ],
+        "validation": {
+          "method": "Supply matching references if this domain becomes required.",
+          "status": "not-applicable"
+        }
+      },
+      {
+        "domainRef": "domain.mobile-native-shell",
+        "applicability": "not-detected",
+        "coverageStatus": "not-applicable",
+        "epistemicStatus": "unknown",
+        "summary": "Mobile native shell is not established by the supplied references.",
+        "evidenceRefs": [],
+        "artifactRefs": [],
+        "gaps": [
+          "Provide matching screenshots before using this domain as evidence."
+        ],
+        "validation": {
+          "method": "Supply matching references if this domain becomes required.",
+          "status": "not-applicable"
+        }
+      },
+      {
+        "domainRef": "domain.files-content-management",
+        "applicability": "not-detected",
+        "coverageStatus": "not-applicable",
+        "epistemicStatus": "unknown",
+        "summary": "Files and content management is not established by the supplied references.",
+        "evidenceRefs": [],
+        "artifactRefs": [],
+        "gaps": [
+          "Provide matching screenshots before using this domain as evidence."
+        ],
+        "validation": {
+          "method": "Supply matching references if this domain becomes required.",
+          "status": "not-applicable"
+        }
+      }
+    ]
+  }
+}

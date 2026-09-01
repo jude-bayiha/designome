@@ -14,7 +14,7 @@ Resolve paths relative to this `SKILL.md`. The plugin root is `../..`. Convert i
 Read completely before installation:
 
 1. `../../prompts/_shared-contract.md`
-2. `../../prompts/11-project-integration.md`
+2. `../../prompts/16-project-integration.md`
 3. `../../docs/installation-contract.md`
 4. `../../schemas/request-contract.schema.json`
 5. `../../docs/conversational-request-contract.md`
@@ -61,7 +61,7 @@ Read completely before installation:
       --project <target-project>
     ```
 
-11. Verify that the configured documentation directory contains the generated index plus all 22 paths in the matrix `documentationProjection`. Every file must preserve explicit epistemic status; an `unknown` boundary or `proposed` stress test is valid when no accepted claim covers the subject.
+11. Verify that the configured documentation directory contains the generated index plus all 51 paths in the v0.3 matrix `documentationProjection` (52 files total). The dossier must include foundations, typed component contracts, 20 UI-domain pattern documents, behavior, coverage, source routing, and governance. Every file must preserve explicit epistemic status; an `unknown` boundary or `proposed` stress test is valid when no accepted claim covers the subject.
 12. Execute the install command a second time. Require zero creates, updates, or deletes and a successful verification.
 13. Run the target project's relevant checks and report static validation separately from rendered or interaction validation.
 

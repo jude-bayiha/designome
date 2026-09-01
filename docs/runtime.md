@@ -12,7 +12,7 @@ designome validate-request \
   --operation extract
 ```
 
-The host agent interprets the conversation and writes the contract. Runtime semantic validation checks operation-specific paths, modes, authorization, source directives, matrix concept references, and token or rule categories. Repository validation also checks the complete JSON Schema. The runtime never interprets the original natural-language request.
+The host agent interprets the conversation and writes request contract v1.1. Runtime semantic validation checks operation-specific paths, modes, authorization, global axis/domain focus, per-source axis/concept/UI-domain directives, and token/rule categories against matrix v0.3. Repository validation also checks the complete JSON Schema. The runtime never interprets the original natural-language request. Legacy v1.0 request artifacts are migrated in memory with empty axis/domain selectors.
 
 ### Run the complete resumable workflow
 
@@ -70,7 +70,7 @@ The command validates input paths, deduplicates identical images, reads PNG/JPEG
 - `source-manifest.json`;
 - `request-contract.json` when supplied;
 - `run-context.json`;
-- `run-plan.json`;
+- `run-plan.json`, including contract-routed axes/domains or an explicit source-evidence routing deferral;
 - an empty `stages/` directory.
 
 Repeating the same command returns `unchanged`. Reusing the directory with different inputs fails instead of silently replacing the run.
@@ -84,7 +84,7 @@ node bin/designome.mjs validate-dna \
   --require-accepted
 ```
 
-Runtime validation checks versions, unique identities, source and evidence references, matrix concepts, claim evidence requirements, component references, motion rules, and acceptance status. Repository CI additionally validates the complete JSON Schema with Ajv.
+Runtime validation supports current Design DNA v0.3 and legacy v0.2. For v0.3 it checks source classification/directives, evidence routing, typed token/rule/component contracts, dependencies, claim evidence requirements, motion, and exact coverage of all 13 axes, 65 facets, and 20 UI domains. Repository CI additionally validates the complete JSON Schema with Ajv.
 
 ### Install accepted Design DNA
 
@@ -125,7 +125,7 @@ docs/designome/ (or the configured documentation directory)
 AGENTS.md managed guidance block
 ```
 
-The documentation directory contains `README.md` plus the 22 mandatory paths declared by `documentationProjection` in the concept matrix. They are grouped under `foundations/`, `components/`, `behavior/`, and `governance/`. A subject with no accepted visual claim still receives an honest `unknown` boundary or `proposed` stress-test contract; the runtime never fills the gap with fabricated observation.
+The documentation directory contains `README.md` plus the 51 mandatory paths declared by `documentationProjection` in matrix v0.3 (52 files total). They are grouped under `foundations/`, `components/`, `patterns/`, `behavior/`, and `governance/`. Specialized renderers expose component variants/composition, every UI domain, complete facet/domain coverage, and source routing. A subject with no accepted visual claim still receives an honest `unknown` boundary or `proposed` stress-test contract; the runtime never fills the gap with fabricated observation.
 
 The installer detects Tailwind from project dependencies and CSS directives when `--styling auto` is used. It records the resolved adapter and rule-precedence policy in the manifest and generated integration documentation. Existing rule paths are read-only context and are never rewritten.
 

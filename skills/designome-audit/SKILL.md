@@ -11,14 +11,14 @@ Compare implementation evidence with accepted Design DNA. Keep static, rendered,
 
 This skill works from either the Designome plugin or an installed target project.
 
-- Plugin mode: when `../../prompts/12-generation-audit.md` exists, resolve the plugin root as `../..`. Read the shared contract, audit prompt, concept matrix, accepted Design DNA, and relevant generated files. Read only the axis prompts needed to interpret affected concepts.
-- Project-local mode: when `../../../.designome/design-dna.json` exists, resolve the project root as `../../..`. Read the accepted Design DNA plus the generated documentation index, `governance/integration.md`, `governance/rules.md`, `components/states.md`, and the behavior document relevant to each audited finding under the documentation directory recorded in `.designome/manifest.json`.
+- Plugin mode: when `../../prompts/17-generation-audit.md` exists, resolve the plugin root as `../..`. Read the shared contract, audit prompt, v0.3 concept matrix, accepted Design DNA, and relevant generated files. Read only the axis prompts needed to interpret affected axes, concepts, or UI domains.
+- Project-local mode: when `../../../.designome/design-dna.json` exists, resolve the project root as `../../..`. Read the accepted Design DNA plus the generated documentation index, `governance/coverage.md`, `governance/integration.md`, `governance/rules.md`, `components/states.md`, and every `patterns/` or `behavior/` document routed to the audited finding under the documentation directory recorded in `.designome/manifest.json`.
 
 Stop if neither context can be resolved. Never guess which Design DNA or project is in scope.
 
 ## Workflow
 
-1. Interpret the complete conversational request once. Normalize the project and optional Design DNA paths, audit focus concepts, provider, constraints, report or repair mode, and explicit implementation or browser-install authorizations into an `audit` request contract. Ambiguous language never authorizes repair or dependency installation.
+1. Interpret the complete conversational request once. Normalize the project and optional Design DNA paths, focus axes, concepts, UI domains, provider, constraints, report or repair mode, and explicit implementation or browser-install authorizations into an `audit` request contract. Ambiguous language never authorizes repair or dependency installation.
 2. In plugin mode, read `../../schemas/request-contract.schema.json` and `../../docs/conversational-request-contract.md`. In project-local mode, read `references/request-contract.schema.json` and `references/conversational-request-contract.md`. Validate the contract with `validate-request --file <request-contract.json> --operation audit` when the helper is available; otherwise preserve it and report deterministic request validation as unavailable.
 3. Validate the Design DNA. In plugin mode, use the bundled helper. In project-local mode, use a `designome` executable already available in the environment when present; otherwise record deterministic validation as unavailable and continue with explicit evidence boundaries:
 
@@ -46,7 +46,7 @@ Stop if neither context can be resolved. Never guess which Design DNA or project
      --dry-run
    ```
 
-7. Route relevant matrix concepts and stress tests from the normalized focus. Inspect long and unbroken content, nulls, extreme values, states, reflow, localization, modalities, data scale, media failure, visual stability, and motion mode as applicable.
+7. Route the relevant axes, five-facet slices, UI-domain inspection contracts, concepts, and stress tests from the normalized focus. Inspect long and unbroken content, nulls, extreme values, states, reflow, localization, modalities, data scale and meaning, media failure, visual stability, content trust, platform behavior, component composition, and motion mode as applicable.
 8. Run repository checks only inside the audited target project. Do not run checks from the Designome plugin source unless the plugin itself is the audit target.
 9. Read `audit/plan.json`, create an official adapter session with `createCaptureSession(plan)`, and record real host-browser observations through `recordCapture`, `recordInteraction`, `recordConsoleMessage`, `recordAccessibilityCheck`, and `recordPerceptualObservation`. Call `finalize()` to validate, normalize, and write external evidence. Do not assemble internal `audit-evidence.json` manually.
 10. Evaluate the adapter output with `--evidence <adapter-output> --overwrite`. The runtime produces canonical `audit/report.json`, Markdown from the same state, normalized `audit/evidence.json`, and `audit/findings.json`.

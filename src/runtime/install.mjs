@@ -25,7 +25,7 @@ const auditConfigRelativePath = '.designome/audit.config.json';
 const defaultDocumentationDirectory = 'docs/designome';
 const auditSkillRelativeDirectory = '.agents/skills/designome-audit';
 const transactionRelativePath = '.designome/install-transaction.json';
-const supportedManifestVersions = new Set(['0.1.0', '0.2.0']);
+const supportedManifestVersions = new Set(['0.1.0', '0.2.0', '0.3.0']);
 const cssStartMarker = '/* designome:generated-import:start */';
 const cssEndMarker = '/* designome:generated-import:end */';
 const guidanceStartMarker = '<!-- designome:guidance:start -->';
@@ -219,13 +219,21 @@ function claimDetails(claim) {
   const evidence = claim.evidenceRefs?.length
     ? claim.evidenceRefs.map((item) => `\`${item}\``).join(', ')
     : 'none; this is not an observed claim';
+  const concepts = claim.conceptRefs?.length
+    ? claim.conceptRefs.map((item) => `\`${item}\``).join(', ')
+    : 'none';
+  const uiDomains = claim.uiDomainRefs?.length
+    ? claim.uiDomainRefs.map((item) => `\`${item}\``).join(', ')
+    : 'none';
   const exceptions = claim.exceptions?.length
     ? claim.exceptions.join('; ')
     : 'None documented.';
   return [
     `- Status: \`${claim.epistemicStatus}\``,
     `- Confidence: ${claim.confidence.score} — ${claim.confidence.basis}`,
-    `- Scope: ${claim.scope.join(', ')}`,
+    `- Scope: ${claim.scope?.join(', ') || 'none documented'}`,
+    `- Concept routing: ${concepts}`,
+    `- UI-domain routing: ${uiDomains}`,
     `- Evidence: ${evidence}`,
     `- Exceptions: ${exceptions}`,
     `- Validation: ${claim.validation.method}`,
@@ -247,6 +255,31 @@ function renderRulesDocument(dna) {
       '### Requirements',
       '',
       ...rule.requirements.map((item) => `- ${item}`),
+      ...(rule.appliesTo?.length
+        ? [
+            '',
+            '### Applies to',
+            '',
+            ...rule.appliesTo.map((item) => `- ${item}`),
+          ]
+        : []),
+      ...(rule.rationale ? ['', '### Rationale', '', rule.rationale] : []),
+      ...(rule.failureModes?.length
+        ? [
+            '',
+            '### Failure modes',
+            '',
+            ...rule.failureModes.map((item) => `- ${item}`),
+          ]
+        : []),
+      ...(rule.dependsOn?.length
+        ? [
+            '',
+            '### Dependencies',
+            '',
+            ...rule.dependsOn.map((item) => `- \`${item}\``),
+          ]
+        : []),
       '',
       '### Validation cases',
       '',
@@ -429,15 +462,19 @@ function renderGenericDocument(dna, matrix, entry) {
   const tokens = dna.tokens.filter(
     (token) =>
       entry.tokenCategories.includes(token.category) ||
-      sharesValue(token.claim.conceptRefs, entry.conceptRefs),
+      sharesValue(token.claim.conceptRefs, entry.conceptRefs) ||
+      sharesValue(token.claim.uiDomainRefs, entry.uiDomainRefs),
   );
   const rules = dna.rules.filter(
     (rule) =>
       entry.ruleCategories.includes(rule.category) ||
-      sharesValue(rule.claim.conceptRefs, entry.conceptRefs),
+      sharesValue(rule.claim.conceptRefs, entry.conceptRefs) ||
+      sharesValue(rule.claim.uiDomainRefs, entry.uiDomainRefs),
   );
-  const unknowns = dna.unknowns.filter((item) =>
-    sharesValue(item.conceptRefs, entry.conceptRefs),
+  const unknowns = dna.unknowns.filter(
+    (item) =>
+      sharesValue(item.conceptRefs, entry.conceptRefs) ||
+      sharesValue(item.uiDomainRefs, entry.uiDomainRefs),
   );
   const tokenSections = tokens.flatMap((token) => [
     `### Token: ${token.name}`,
@@ -495,7 +532,19 @@ function renderComponentCatalogue(dna) {
           component.claim.statement,
           '',
           `- Component ID: \`${component.id}\``,
-          `- Variants: ${component.variants.join('; ')}`,
+          `- Purpose: ${component.purpose ?? 'Not separately documented.'}`,
+          `- UI domains: ${
+            component.uiDomainRefs?.length
+              ? component.uiDomainRefs.map((item) => `\`${item}\``).join(', ')
+              : 'none'
+          }`,
+          `- Variants: ${
+            component.variants
+              .map((variant) =>
+                typeof variant === 'string' ? variant : variant.name,
+              )
+              .join('; ') || 'none'
+          }`,
           `- Rule references: ${component.ruleRefs.map((item) => `\`${item}\``).join(', ') || 'none'}`,
           `- Token references: ${component.tokenRefs.map((item) => `\`${item}\``).join(', ') || 'none'}`,
           claimDetails(component.claim),
@@ -522,7 +571,27 @@ function renderComponentAnatomy(dna) {
       ? components.flatMap((component) => [
           `## ${component.name}`,
           '',
-          ...component.anatomy.map((item) => `- ${item}`),
+          ...component.anatomy.flatMap((item) =>
+            typeof item === 'string'
+              ? [`- ${item}`]
+              : [
+                  `### ${item.name}`,
+                  '',
+                  `- Requirement: \`${item.requirement}\``,
+                  `- Purpose: ${item.purpose}`,
+                  ...(item.contentConstraints ?? []).map(
+                    (constraint) => `- Content constraint: ${constraint}`,
+                  ),
+                  `- Token references: ${
+                    item.tokenRefs?.length
+                      ? item.tokenRefs
+                          .map((tokenRef) => `\`${tokenRef}\``)
+                          .join(', ')
+                      : 'none'
+                  }`,
+                  '',
+                ],
+          ),
           '',
           claimDetails(component.claim),
           '',
@@ -530,6 +599,63 @@ function renderComponentAnatomy(dna) {
       : [
           '- Status: `unknown`',
           '- No component anatomy has been accepted.',
+          '',
+        ]),
+  ].join('\n');
+}
+
+function renderComponentVariants(dna) {
+  const components = dna.componentPatterns ?? [];
+  return [
+    '# Component variants and density',
+    '',
+    'Variants are explicit semantic adaptations of a canonical component. Similar geometry alone does not authorize reuse.',
+    '',
+    ...(components.length
+      ? components.flatMap((component) => [
+          `## ${component.name}`,
+          '',
+          `- Component status: \`${component.claim.epistemicStatus}\``,
+          ...(component.variants.length
+            ? component.variants.flatMap((variant) =>
+                typeof variant === 'string'
+                  ? [
+                      `### ${variant}`,
+                      '',
+                      '- Status: `unknown`',
+                      '- The legacy Design DNA names this variant but does not type its purpose, conditions, differences, or evidence.',
+                      '',
+                    ]
+                  : [
+                      `### ${variant.name}`,
+                      '',
+                      `- Status: \`${variant.epistemicStatus}\``,
+                      `- Purpose: ${variant.purpose}`,
+                      ...variant.conditions.map(
+                        (item) => `- Condition: ${item}`,
+                      ),
+                      ...variant.differences.map(
+                        (item) => `- Difference: ${item}`,
+                      ),
+                      `- Evidence: ${
+                        variant.evidenceRefs.length
+                          ? variant.evidenceRefs
+                              .map((item) => `\`${item}\``)
+                              .join(', ')
+                          : 'none'
+                      }`,
+                      '',
+                    ],
+              )
+            : [
+                '- Status: `unknown`',
+                '- No accepted variant contract is available.',
+                '',
+              ]),
+        ])
+      : [
+          '- Status: `unknown`',
+          '- No component family is available for variant analysis.',
           '',
         ]),
   ].join('\n');
@@ -546,15 +672,217 @@ function renderComponentStates(dna) {
       ? components.flatMap((component) => [
           `## ${component.name}`,
           '',
-          ...component.states.map(
-            (state) =>
-              `- **${state.name}** — Status: \`${state.status}\` — ${state.behavior}`,
-          ),
+          ...component.states.flatMap((state) => [
+            `### ${state.name}`,
+            '',
+            `- Status: \`${state.epistemicStatus ?? state.status}\``,
+            `- Trigger: ${state.trigger ?? 'Not documented in the legacy contract.'}`,
+            `- Behavior: ${state.behavior}`,
+            `- Feedback: ${state.feedback ?? 'Unknown.'}`,
+            `- Exit or recovery: ${state.exit ?? 'Unknown.'}`,
+            `- Programmatic state: ${state.programmaticState ?? 'Unknown.'}`,
+            ...(state.validationCases ?? []).map(
+              (item) => `- Validation case: ${item}`,
+            ),
+            `- Evidence: ${
+              state.evidenceRefs?.length
+                ? state.evidenceRefs.map((item) => `\`${item}\``).join(', ')
+                : 'none'
+            }`,
+            '',
+          ]),
           '',
         ])
       : [
           '- Status: `unknown`',
           '- No component state matrix has been accepted.',
+          '',
+        ]),
+  ].join('\n');
+}
+
+function renderComponentComposition(dna) {
+  const components = dna.componentPatterns ?? [];
+  return [
+    '# Component composition and anti-patterns',
+    '',
+    'Composition defines ownership between a component and its context: nesting, grouping, spacing, adaptation, content pressure, and invalid combinations.',
+    '',
+    ...(components.length
+      ? components.flatMap((component) => [
+          `## ${component.name}`,
+          '',
+          `- Status: \`${component.claim.epistemicStatus}\``,
+          `- Purpose: ${component.purpose ?? 'Unknown in the legacy contract.'}`,
+          '',
+          '### Composition rules',
+          '',
+          ...(component.compositionRules?.length
+            ? component.compositionRules.map((item) => `- ${item}`)
+            : ['- Status: `unknown` — No explicit composition rule.']),
+          '',
+          '### Content constraints',
+          '',
+          ...(component.contentConstraints?.length
+            ? component.contentConstraints.map((item) => `- ${item}`)
+            : ['- Status: `unknown` — No explicit content constraint.']),
+          '',
+          '### Adaptation rules',
+          '',
+          ...(component.adaptationRules?.length
+            ? component.adaptationRules.map((item) => `- ${item}`)
+            : ['- Status: `unknown` — No explicit adaptation rule.']),
+          '',
+          '### Accessibility requirements',
+          '',
+          ...(component.accessibilityRequirements?.length
+            ? component.accessibilityRequirements.map((item) => `- ${item}`)
+            : ['- Status: `unknown` — No explicit accessibility requirement.']),
+          '',
+          '### Anti-patterns',
+          '',
+          ...(component.antiPatterns?.length
+            ? component.antiPatterns.map((item) => `- ${item}`)
+            : ['- Status: `unknown` — No explicit anti-pattern.']),
+          '',
+        ])
+      : [
+          '- Status: `unknown`',
+          '- No component family is available for composition analysis.',
+          '',
+        ]),
+  ].join('\n');
+}
+
+function artifactRowsForDomain(dna, domainRef) {
+  const artifacts = [
+    ...dna.tokens
+      .filter((item) => item.claim.uiDomainRefs?.includes(domainRef))
+      .map((item) => ({
+        kind: 'Token',
+        id: item.id,
+        name: item.name,
+        status: item.claim.epistemicStatus,
+      })),
+    ...dna.rules
+      .filter((item) => item.claim.uiDomainRefs?.includes(domainRef))
+      .map((item) => ({
+        kind: 'Rule',
+        id: item.id,
+        name: item.name,
+        status: item.claim.epistemicStatus,
+      })),
+    ...(dna.componentPatterns ?? [])
+      .filter(
+        (item) =>
+          item.uiDomainRefs?.includes(domainRef) ||
+          item.claim.uiDomainRefs?.includes(domainRef),
+      )
+      .map((item) => ({
+        kind: 'Component',
+        id: item.id,
+        name: item.name,
+        status: item.claim.epistemicStatus,
+      })),
+  ];
+  return artifacts.length
+    ? artifacts.map(
+        (item) =>
+          `- ${item.kind}: \`${item.id}\` — ${item.name} — Status: \`${item.status}\``,
+      )
+    : [
+        '- Status: `unknown` — No accepted artifact is routed to this UI domain.',
+      ];
+}
+
+function renderUiDomainDocument(dna, matrix, entry) {
+  const domains = entry.uiDomainRefs
+    .map((domainRef) =>
+      matrix.uiDomains.find((domain) => domain.id === domainRef),
+    )
+    .filter(Boolean);
+  return [
+    `# ${entry.title}`,
+    '',
+    entry.purpose,
+    '',
+    ...(domains.length
+      ? domains.flatMap((domain) => {
+          const coverage = dna.coverage?.uiDomains?.find(
+            (item) => item.domainRef === domain.id,
+          );
+          const evidence = dna.evidence.filter((item) =>
+            item.uiDomainRefs?.includes(domain.id),
+          );
+          const unknowns = dna.unknowns.filter((item) =>
+            item.uiDomainRefs?.includes(domain.id),
+          );
+          return [
+            `## ${domain.name}`,
+            '',
+            domain.description,
+            '',
+            `- Applicability: \`${coverage?.applicability ?? 'unknown'}\``,
+            `- Coverage: \`${coverage?.coverageStatus ?? 'unknown'}\``,
+            `- Epistemic status: \`${coverage?.epistemicStatus ?? 'unknown'}\``,
+            `- Summary: ${
+              coverage?.summary ??
+              'This Design DNA predates typed UI-domain coverage.'
+            }`,
+            '',
+            '### Detection cues',
+            '',
+            ...domain.detectionCues.map((item) => `- ${item}`),
+            '',
+            '### Senior inspection contract',
+            '',
+            ...domain.inspect.map((item) => `- ${item}`),
+            '',
+            '### Accepted routed artifacts',
+            '',
+            ...artifactRowsForDomain(dna, domain.id),
+            '',
+            '### Visible evidence',
+            '',
+            ...(evidence.length
+              ? evidence.map(
+                  (item) =>
+                    `- \`${item.id}\` — ${item.region}: ${item.visibleSummary}`,
+                )
+              : [
+                  '- Status: `unknown` — No visible evidence is routed to this domain.',
+                ]),
+            '',
+            '### Gaps and limits',
+            '',
+            ...(coverage?.gaps?.length
+              ? coverage.gaps.map((item) => `- ${item}`)
+              : [
+                  '- Status: `unknown` — Domain-specific gaps are not recorded.',
+                ]),
+            ...domain.screenshotLimits.map(
+              (item) => `- Screenshot limit: ${item}`,
+            ),
+            '',
+            '### Required stress tests',
+            '',
+            ...domain.stressTests.map(
+              (item) => `- Status: \`proposed\` — ${item}`,
+            ),
+            '',
+            `### Validation — Status: \`${
+              coverage?.validation?.status ?? 'pending'
+            }\``,
+            '',
+            coverage?.validation?.method ??
+              'Obtain matching evidence and forward-test this domain before promotion.',
+            '',
+            ...(unknowns.length ? [renderRelevantUnknowns(unknowns), ''] : []),
+          ];
+        })
+      : [
+          '- Status: `unknown`',
+          '- The documentation projection does not route a recognized UI domain.',
           '',
         ]),
   ].join('\n');
@@ -647,6 +975,198 @@ function renderUnknownsDocument(dna) {
   ].join('\n');
 }
 
+function renderCoverageDocument(dna, matrix) {
+  return [
+    '# Grammar coverage',
+    '',
+    'Coverage is explicit for every axis facet and every routable UI domain. A missing or unobserved area remains `unknown` or `not-applicable`; it is never silently treated as complete.',
+    '',
+    '## Axis and facet coverage',
+    '',
+    ...matrix.axes.flatMap((axis) => {
+      const axisCoverage = dna.coverage?.axes?.find(
+        (item) => item.axisRef === axis.id,
+      );
+      return [
+        `### ${axis.order}. ${axis.name}`,
+        '',
+        `- Axis: \`${axis.id}\``,
+        `- Coverage: \`${axisCoverage?.coverageStatus ?? 'unknown'}\``,
+        `- Purpose: ${axis.purpose}`,
+        '',
+        ...axis.facets.flatMap((facet) => {
+          const facetCoverage = axisCoverage?.facets?.find(
+            (item) => item.facetRef === facet.id,
+          );
+          return [
+            `#### ${facet.name}`,
+            '',
+            `- Facet: \`${facet.id}\``,
+            `- Coverage: \`${facetCoverage?.coverageStatus ?? 'unknown'}\``,
+            `- Epistemic status: \`${
+              facetCoverage?.epistemicStatus ?? 'unknown'
+            }\``,
+            `- Question: ${facet.question}`,
+            `- Summary: ${
+              facetCoverage?.summary ??
+              'No typed coverage entry exists for this facet.'
+            }`,
+            `- Evidence: ${
+              facetCoverage?.evidenceRefs?.length
+                ? facetCoverage.evidenceRefs
+                    .map((item) => `\`${item}\``)
+                    .join(', ')
+                : 'none'
+            }`,
+            `- Artifacts: ${
+              facetCoverage?.artifactRefs?.length
+                ? facetCoverage.artifactRefs
+                    .map((item) => `\`${item}\``)
+                    .join(', ')
+                : 'none'
+            }`,
+            ...(facetCoverage?.gaps?.length
+              ? facetCoverage.gaps.map((item) => `- Gap: ${item}`)
+              : ['- Gap: Coverage evidence has not been supplied.']),
+            ...facet.screenshotLimits.map(
+              (item) => `- Screenshot limit: ${item}`,
+            ),
+            `- Validation status: \`${
+              facetCoverage?.validation?.status ?? 'pending'
+            }\``,
+            `- Validation method: ${
+              facetCoverage?.validation?.method ??
+              'Obtain matching evidence or execute a forward test.'
+            }`,
+            '',
+          ];
+        }),
+      ];
+    }),
+    '## UI-domain coverage',
+    '',
+    ...matrix.uiDomains.flatMap((domain) => {
+      const coverage = dna.coverage?.uiDomains?.find(
+        (item) => item.domainRef === domain.id,
+      );
+      return [
+        `### ${domain.name}`,
+        '',
+        `- Domain: \`${domain.id}\``,
+        `- Applicability: \`${coverage?.applicability ?? 'unknown'}\``,
+        `- Coverage: \`${coverage?.coverageStatus ?? 'unknown'}\``,
+        `- Epistemic status: \`${coverage?.epistemicStatus ?? 'unknown'}\``,
+        `- Summary: ${
+          coverage?.summary ?? 'No typed UI-domain coverage entry exists.'
+        }`,
+        `- Evidence: ${
+          coverage?.evidenceRefs?.length
+            ? coverage.evidenceRefs.map((item) => `\`${item}\``).join(', ')
+            : 'none'
+        }`,
+        `- Artifacts: ${
+          coverage?.artifactRefs?.length
+            ? coverage.artifactRefs.map((item) => `\`${item}\``).join(', ')
+            : 'none'
+        }`,
+        ...(coverage?.gaps?.length
+          ? coverage.gaps.map((item) => `- Gap: ${item}`)
+          : ['- Gap: Domain evidence has not been supplied.']),
+        `- Validation status: \`${coverage?.validation?.status ?? 'pending'}\``,
+        `- Validation method: ${
+          coverage?.validation?.method ??
+          'Supply matching references if this domain becomes applicable.'
+        }`,
+        '',
+      ];
+    }),
+  ].join('\n');
+}
+
+function renderSourceRoutingDocument(dna, matrix) {
+  return [
+    '# Source routing',
+    '',
+    'Each source records what it may contribute. A per-source `only`, `prefer`, or `exclude` directive scopes evidence without changing what is visibly true.',
+    '',
+    ...dna.sources.flatMap((source) => {
+      const classification = source.classification;
+      const directive = source.directive;
+      const evidence = dna.evidence.filter(
+        (item) => item.sourceRef === source.id,
+      );
+      const detectedDomains = (source.detectedUiDomainRefs ?? [])
+        .map((domainRef) =>
+          matrix.uiDomains.find((domain) => domain.id === domainRef),
+        )
+        .filter(Boolean);
+      return [
+        `## ${source.label}`,
+        '',
+        `- Source: \`${source.id}\``,
+        `- Kind: \`${source.kind}\``,
+        `- Classification status: \`${
+          classification?.epistemicStatus ?? 'unknown'
+        }\``,
+        `- Surface: \`${classification?.surface ?? 'unknown'}\``,
+        `- Archetype: ${classification?.archetype ?? 'unknown'}`,
+        `- Classification confidence: ${
+          classification?.confidence ?? 'unknown'
+        }`,
+        `- Classification basis: ${
+          classification?.basis ??
+          'The legacy source does not carry a typed classification.'
+        }`,
+        `- Limitations: ${source.limitations.join('; ')}`,
+        '',
+        '### Detected UI domains',
+        '',
+        ...(detectedDomains.length
+          ? detectedDomains.map(
+              (domain) => `- \`${domain.id}\` — ${domain.name}`,
+            )
+          : [
+              '- Status: `unknown` — No typed UI domain was detected for this source.',
+            ]),
+        '',
+        '### Evidence directive',
+        '',
+        `- Directive status: \`${directive ? 'observed' : 'unknown'}\``,
+        `- Evidence mode: \`${directive?.evidenceMode ?? 'all'}\``,
+        `- Axes: ${
+          directive?.axisRefs?.length
+            ? directive.axisRefs.map((item) => `\`${item}\``).join(', ')
+            : 'none'
+        }`,
+        `- Concepts: ${
+          directive?.conceptRefs?.length
+            ? directive.conceptRefs.map((item) => `\`${item}\``).join(', ')
+            : 'none'
+        }`,
+        `- UI domains: ${
+          directive?.uiDomainRefs?.length
+            ? directive.uiDomainRefs.map((item) => `\`${item}\``).join(', ')
+            : 'none'
+        }`,
+        `- Token categories: ${
+          directive?.tokenCategories?.join(', ') || 'none'
+        }`,
+        `- Rule categories: ${directive?.ruleCategories?.join(', ') || 'none'}`,
+        '',
+        '### Routed visible evidence',
+        '',
+        ...(evidence.length
+          ? evidence.map(
+              (item) =>
+                `- \`${item.id}\` — ${item.region}: ${item.visibleSummary}`,
+            )
+          : ['- Status: `unknown` — No visible evidence was registered.']),
+        '',
+      ];
+    }),
+  ].join('\n');
+}
+
 function renderCalibrationDocument(dna, matrix, entry) {
   const tokens = dna.tokens.filter((token) =>
     entry.tokenCategories.includes(token.category),
@@ -731,26 +1251,36 @@ function renderDocumentation({
         ? renderComponentCatalogue(dna)
         : entry.renderer === 'component-anatomy'
           ? renderComponentAnatomy(dna)
-          : entry.renderer === 'component-states'
-            ? renderComponentStates(dna)
-            : entry.renderer === 'component-mapping'
-              ? renderComponentMappingDocument(dna, styling)
-              : entry.renderer === 'rules'
-                ? renderRulesDocument(dna)
-                : entry.renderer === 'evidence'
-                  ? renderEvidenceDocument(dna)
-                  : entry.renderer === 'unknowns'
-                    ? renderUnknownsDocument(dna)
-                    : entry.renderer === 'calibration'
-                      ? renderCalibrationDocument(dna, matrix, entry)
-                      : entry.renderer === 'integration'
-                        ? renderIntegrationDocument({
-                            dna,
-                            styling,
-                            integrationPolicy,
-                            documentationDirectory,
-                          })
-                        : renderGenericDocument(dna, matrix, entry);
+          : entry.renderer === 'component-variants'
+            ? renderComponentVariants(dna)
+            : entry.renderer === 'component-states'
+              ? renderComponentStates(dna)
+              : entry.renderer === 'component-composition'
+                ? renderComponentComposition(dna)
+                : entry.renderer === 'component-mapping'
+                  ? renderComponentMappingDocument(dna, styling)
+                  : entry.renderer === 'ui-domain'
+                    ? renderUiDomainDocument(dna, matrix, entry)
+                    : entry.renderer === 'coverage'
+                      ? renderCoverageDocument(dna, matrix)
+                      : entry.renderer === 'rules'
+                        ? renderRulesDocument(dna)
+                        : entry.renderer === 'evidence'
+                          ? renderEvidenceDocument(dna)
+                          : entry.renderer === 'unknowns'
+                            ? renderUnknownsDocument(dna)
+                            : entry.renderer === 'calibration'
+                              ? renderCalibrationDocument(dna, matrix, entry)
+                              : entry.renderer === 'source-routing'
+                                ? renderSourceRoutingDocument(dna, matrix)
+                                : entry.renderer === 'integration'
+                                  ? renderIntegrationDocument({
+                                      dna,
+                                      styling,
+                                      integrationPolicy,
+                                      documentationDirectory,
+                                    })
+                                  : renderGenericDocument(dna, matrix, entry);
     documents.set(entry.path, content);
   }
   return documents;
@@ -1512,7 +2042,7 @@ export async function planInstallation({
   });
   await assertValidDesignDna(dna, { requireAccepted: true });
   const conceptMatrix = await readJson(
-    path.join(pluginRoot, 'concepts', 'concept-matrix.v0.2.json'),
+    path.join(pluginRoot, 'concepts', 'concept-matrix.v0.3.json'),
   );
 
   const resolvedCssEntry = await resolveCssEntry(projectRoot, cssEntry);
@@ -1808,7 +2338,7 @@ export async function planInstallation({
           },
     );
   const manifest = {
-    schemaVersion: '0.2.0',
+    schemaVersion: '0.3.0',
     pluginVersion: packageJson.version,
     installedAt,
     configurationFingerprint,

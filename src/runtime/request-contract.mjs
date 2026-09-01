@@ -28,19 +28,35 @@ const tokenCategories = new Set([
   'radius',
   'border',
   'elevation',
+  'opacity',
+  'layer',
   'motion',
+  'iconography',
+  'data-visualization',
+  'asset',
   'other',
 ]);
 const ruleCategories = new Set([
   'layout',
+  'typography',
+  'color',
   'content',
+  'component',
   'state',
   'interaction',
+  'navigation',
+  'form',
+  'data-display',
+  'visualization',
   'responsive',
+  'platform',
   'accessibility',
+  'localization',
   'performance',
   'trust',
+  'ethics',
   'motion',
+  'media',
   'governance',
 ]);
 const rulePrecedences = new Set([
@@ -66,6 +82,29 @@ const auditProviders = new Set([
 
 function isObject(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+export function migrateRequestContract(contract) {
+  if (!isObject(contract) || contract.schemaVersion !== '1.0.0') {
+    return contract;
+  }
+  const migrated = structuredClone(contract);
+  migrated.schemaVersion = '1.1.0';
+  migrated.matrixVersion = '0.3.0';
+  if (migrated.operation === 'extract' && isObject(migrated.parameters)) {
+    migrated.parameters.focusAxisRefs ??= [];
+    migrated.parameters.focusUiDomainRefs ??= [];
+    for (const source of migrated.parameters.sources ?? []) {
+      if (!isObject(source)) continue;
+      source.axisRefs ??= [];
+      source.uiDomainRefs ??= [];
+    }
+  }
+  if (migrated.operation === 'audit' && isObject(migrated.parameters)) {
+    migrated.parameters.focusAxisRefs ??= [];
+    migrated.parameters.focusUiDomainRefs ??= [];
+  }
+  return migrated;
 }
 
 function requireString(value, location, errors) {
@@ -105,6 +144,16 @@ function validateConceptRefs(value, location, conceptIds, errors) {
   for (const ref of refs) {
     if (typeof ref === 'string' && !conceptIds.has(ref)) {
       errors.push(`${location} references unknown concept ${ref}`);
+    }
+  }
+  return refs;
+}
+
+function validateCanonicalRefs(value, location, knownIds, label, errors) {
+  const refs = validateStringList(value, location, errors);
+  for (const ref of refs) {
+    if (typeof ref === 'string' && !knownIds.has(ref)) {
+      errors.push(`${location} references unknown ${label} ${ref}`);
     }
   }
   return refs;
@@ -161,7 +210,10 @@ function validateUseCase(useCase, location, errors) {
   }
 }
 
-function validateExtract(parameters, conceptIds, errors) {
+function validateExtract(parameters, matrix, errors) {
+  const axisIds = new Set(matrix.axes.map((axis) => axis.id));
+  const conceptIds = new Set(matrix.concepts.map((concept) => concept.id));
+  const uiDomainIds = new Set(matrix.uiDomains.map((uiDomain) => uiDomain.id));
   validateEnum(
     parameters.motionMode,
     motionModes,
@@ -181,6 +233,20 @@ function validateExtract(parameters, conceptIds, errors) {
       errors,
     );
   }
+  validateCanonicalRefs(
+    parameters.focusAxisRefs,
+    'parameters.focusAxisRefs',
+    axisIds,
+    'axis',
+    errors,
+  );
+  validateCanonicalRefs(
+    parameters.focusUiDomainRefs,
+    'parameters.focusUiDomainRefs',
+    uiDomainIds,
+    'UI domain',
+    errors,
+  );
   if (!Array.isArray(parameters.sources) || parameters.sources.length === 0) {
     errors.push('parameters.sources must contain at least one source');
     return;
@@ -208,10 +274,24 @@ function validateExtract(parameters, conceptIds, errors) {
       `${location}.evidenceMode`,
       errors,
     );
+    const axes = validateCanonicalRefs(
+      source.axisRefs,
+      `${location}.axisRefs`,
+      axisIds,
+      'axis',
+      errors,
+    );
     const refs = validateConceptRefs(
       source.conceptRefs,
       `${location}.conceptRefs`,
       conceptIds,
+      errors,
+    );
+    const domains = validateCanonicalRefs(
+      source.uiDomainRefs,
+      `${location}.uiDomainRefs`,
+      uiDomainIds,
+      'UI domain',
       errors,
     );
     const tokens = validateCategoryList(
@@ -226,7 +306,8 @@ function validateExtract(parameters, conceptIds, errors) {
       ruleCategories,
       errors,
     );
-    const selectorCount = refs.length + tokens.length + rules.length;
+    const selectorCount =
+      axes.length + refs.length + domains.length + tokens.length + rules.length;
     if (source.evidenceMode === 'all' && selectorCount > 0) {
       errors.push(
         `${location} selectors must be empty when evidenceMode is all`,
@@ -237,7 +318,7 @@ function validateExtract(parameters, conceptIds, errors) {
       selectorCount === 0
     ) {
       errors.push(
-        `${location} must select at least one concept, token, or rule category when evidenceMode is ${source.evidenceMode}`,
+        `${location} must select at least one axis, concept, UI domain, token, or rule category when evidenceMode is ${source.evidenceMode}`,
       );
     }
   }
@@ -293,7 +374,10 @@ function validateInstall(parameters, errors) {
   );
 }
 
-function validateAudit(parameters, conceptIds, errors) {
+function validateAudit(parameters, matrix, errors) {
+  const axisIds = new Set(matrix.axes.map((axis) => axis.id));
+  const conceptIds = new Set(matrix.concepts.map((concept) => concept.id));
+  const uiDomainIds = new Set(matrix.uiDomains.map((uiDomain) => uiDomain.id));
   requireString(parameters.projectPath, 'parameters.projectPath', errors);
   if (parameters.dnaPath !== null && parameters.dnaPath !== undefined) {
     requireString(parameters.dnaPath, 'parameters.dnaPath', errors);
@@ -305,10 +389,24 @@ function validateAudit(parameters, conceptIds, errors) {
     'parameters.provider',
     errors,
   );
+  validateCanonicalRefs(
+    parameters.focusAxisRefs,
+    'parameters.focusAxisRefs',
+    axisIds,
+    'axis',
+    errors,
+  );
   validateConceptRefs(
     parameters.focusConceptRefs,
     'parameters.focusConceptRefs',
     conceptIds,
+    errors,
+  );
+  validateCanonicalRefs(
+    parameters.focusUiDomainRefs,
+    'parameters.focusUiDomainRefs',
+    uiDomainIds,
+    'UI domain',
     errors,
   );
   requireBoolean(
@@ -337,13 +435,14 @@ function validateAudit(parameters, conceptIds, errors) {
 }
 
 export async function validateRequestContract(
-  contract,
+  inputContract,
   { rootDirectory = pluginRoot } = {},
 ) {
+  const contract = migrateRequestContract(inputContract);
   const errors = [];
   if (!isObject(contract)) return ['Request contract must be a JSON object'];
-  if (contract.schemaVersion !== '1.0.0') {
-    errors.push('schemaVersion must equal 1.0.0');
+  if (contract.schemaVersion !== '1.1.0') {
+    errors.push('schemaVersion must equal 1.1.0');
   }
   requireString(contract.requestId, 'requestId', errors);
   if (
@@ -402,26 +501,31 @@ export async function validateRequestContract(
     errors.push('parameters.kind must match operation');
   }
   const matrix = await loadConceptMatrix(rootDirectory);
-  const conceptIds = new Set(matrix.concepts.map((concept) => concept.id));
+  if (contract.matrixVersion !== matrix.matrixVersion) {
+    errors.push(
+      `matrixVersion must equal the active matrix version ${matrix.matrixVersion}`,
+    );
+  }
   if (contract.operation === 'extract') {
-    validateExtract(contract.parameters, conceptIds, errors);
+    validateExtract(contract.parameters, matrix, errors);
   } else if (contract.operation === 'install') {
     validateInstall(contract.parameters, errors);
   } else if (contract.operation === 'audit') {
-    validateAudit(contract.parameters, conceptIds, errors);
+    validateAudit(contract.parameters, matrix, errors);
   }
   return errors;
 }
 
 export async function assertValidRequestContract(contract, options = {}) {
-  const errors = await validateRequestContract(contract, options);
+  const migrated = migrateRequestContract(contract);
+  const errors = await validateRequestContract(migrated, options);
   if (errors.length > 0) {
     throw new DesignomeError('Request contract validation failed', {
       code: 'INVALID_REQUEST_CONTRACT',
       details: errors,
     });
   }
-  return contract;
+  return migrated;
 }
 
 export async function loadRequestContract(
@@ -433,7 +537,7 @@ export async function loadRequestContract(
   } = {},
 ) {
   const absolutePath = path.resolve(contractPath);
-  const contract = await readJson(absolutePath);
+  const contract = migrateRequestContract(await readJson(absolutePath));
   await assertValidRequestContract(contract, { rootDirectory });
   if (expectedOperation && contract.operation !== expectedOperation) {
     throw new DesignomeError(
