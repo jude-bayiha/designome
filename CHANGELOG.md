@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.8.0](https://github.com/jude-bayiha/designome/compare/v1.7.0...v1.8.0) (2026-09-01)
+
+
+### Features
+
+* introduce deep UI grammar v0.3 ([b2379fe](https://github.com/jude-bayiha/designome/commit/b2379fee2b58aa6fb1300e12fe7ddae580ccb6ae))
+* **matrix:** define deep UI grammar v0.3 ([8c856ec](https://github.com/jude-bayiha/designome/commit/8c856eca068c9bdcd65218eb34e804dd3d14a025))
+* **runtime:** enforce v0.3 routing contracts ([0a2b36f](https://github.com/jude-bayiha/designome/commit/0a2b36f480f3aa22e029e0a88d058f103e2702e7))
+
 ## [1.7.0](https://github.com/jude-bayiha/designome/compare/v1.6.0...v1.7.0) (2026-09-01)
 
 
