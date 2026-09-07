@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
-import { assertValidDesignDna } from './design-dna.mjs';
+import { assertValidDesignDna, loadConceptMatrix } from './design-dna.mjs';
 import {
   assertLayerStatuses,
   overallLayerStatus,
@@ -813,7 +813,25 @@ export async function planAudit({
   outputDirectory,
   provider = 'auto',
   browserInstallAuthorized = false,
+  focus = null,
 }) {
+  if (focus) {
+    const matrix = await loadConceptMatrix();
+    for (const [key, records] of [
+      ['axisRefs', matrix.axes],
+      ['conceptRefs', matrix.concepts],
+      ['uiDomainRefs', matrix.uiDomains],
+    ]) {
+      if (
+        !Array.isArray(focus[key]) ||
+        focus[key].some((ref) => !records.some((item) => item.id === ref))
+      ) {
+        throw new DesignomeError(`Invalid audit focus ${key}`, {
+          code: 'INVALID_AUDIT_FOCUS',
+        });
+      }
+    }
+  }
   const projectRoot = await assertProjectRoot(projectPath);
   const resolvedConfig = resolveProjectPath(
     projectRoot,
@@ -885,6 +903,7 @@ export async function planAudit({
       managedArtifactCount: installation.managedArtifactCount,
     },
     routes: config.routes,
+    ...(focus ? { focus } : {}),
     perceptual: {
       executionOwner: 'host-agent',
       deterministic: false,
@@ -1018,6 +1037,7 @@ export async function runAudit(options) {
         schemaVersion: prepared.plan.schemaVersion,
         baseUrl: prepared.plan.baseUrl,
         routes: prepared.plan.routes,
+        ...(prepared.plan.focus ? { focus: prepared.plan.focus } : {}),
       }),
     );
     if (evidence.plan.fingerprint !== expectedFingerprint) {

@@ -11,7 +11,9 @@ Treat supplied screenshots as the only source of visual truth. Use the host mode
 
 Resolve paths relative to this `SKILL.md`. The plugin root is `../..`. Convert it to an absolute path before invoking the helper; replace `<designome-plugin-root>` below with that path.
 
-Read completely before analysis:
+Context mode defaults to `full`. If the user or run plan explicitly selects `lossless-pack` or `shadow`, first read `../../docs/lossless-context.md` completely. In `lossless-pack`, read each validated `viewPath` completely instead of the canonical matrix/prompt files listed below or the integrity pack. In `shadow`, continue full reads. Invalid packs or views require rebuilding, not skipping instructions. The workflow and guardrails below still apply.
+
+In full mode, read completely before analysis:
 
 1. `../../prompts/_shared-contract.md`
 2. `../../prompts/00-orchestrator.md`

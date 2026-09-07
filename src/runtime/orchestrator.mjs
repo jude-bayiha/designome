@@ -19,6 +19,7 @@ import {
   recoverInterruptedInstallation,
 } from './install.mjs';
 import { initializeRun } from './run.mjs';
+import { compileContext, contextHash, loadContextInput } from './context.mjs';
 
 const workflowSteps = [
   ['doctor', 'designome-runtime'],
@@ -201,6 +202,7 @@ export async function initializeWorkflow({
   provider = 'in-app-browser',
   cssEntry = null,
   requestContractPath = null,
+  contextMode = 'full',
 } = {}) {
   if (!Array.isArray(sourcePaths) || sourcePaths.length === 0) {
     throw new DesignomeError('designome run requires at least one --source', {
@@ -236,6 +238,7 @@ export async function initializeWorkflow({
     outputDirectory: runDirectory,
     targetProjectPath: resolvedProject,
     requestContractPath,
+    contextMode,
   });
   const createdAt = now();
   const state = {
@@ -420,6 +423,28 @@ export async function resumeWorkflow({
       startStep(state, activeStep);
       const dna = await readJson(state.dnaPath);
       await assertValidDesignDna(dna);
+      const runPlan = await readJson(
+        path.join(state.runDirectory, 'run-plan.json'),
+      );
+      if (runPlan.context) {
+        const input = await loadContextInput(
+          runPlan.context.synthesisInputPath,
+        );
+        const request = await readJson(
+          path.join(state.runDirectory, 'request-contract.json'),
+        );
+        if (
+          input.phase !== 'synthesis' ||
+          input.mode !== runPlan.context.mode ||
+          contextHash(input.request) !== contextHash(request)
+        ) {
+          throw new DesignomeError(
+            'Synthesis context does not match the initialized workflow',
+            { code: 'INVALID_CONTEXT' },
+          );
+        }
+        await compileContext(input);
+      }
       completeStep(state, activeStep, [state.dnaPath]);
       awaitStep(state, 'accept-design-dna', {
         owner: 'human',

@@ -594,6 +594,16 @@ export function validateRepository(rootDirectory = repositoryRoot) {
     }
   }
 
+  try {
+    ajv.compile(
+      readJson(
+        path.join(rootDirectory, 'schemas/context-contract.schema.json'),
+      ),
+    );
+  } catch (error) {
+    errors.push(`context contract validation failed: ${error.message}`);
+  }
+
   errors.push(...validateWorkflowYaml(rootDirectory));
   errors.push(...validatePluginSurface(rootDirectory));
   return errors;

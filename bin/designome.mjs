@@ -1,6 +1,17 @@
 #!/usr/bin/env node
 
 import path from 'node:path';
+import {
+  loadContextInput,
+  validateContext,
+  validateContextView,
+  writeContext,
+} from '../src/runtime/context.mjs';
+import {
+  stageScaffold,
+  validateStageEnvelope,
+} from '../src/runtime/context-stage.mjs';
+import { writeJsonIfChanged } from '../src/runtime/files.mjs';
 
 import { runAudit } from '../src/runtime/audit.mjs';
 import { assertValidDesignDna } from '../src/runtime/design-dna.mjs';
@@ -135,8 +146,13 @@ function assertSameStringList(actual, expected, label) {
 }
 
 function printHelp() {
-  process.stdout.write(`Designome deterministic helper\n\n`);
-  process.stdout.write(`Commands:\n`);
+  process.stdout.write(`Designome deterministic helper\n\nCommands:\n`);
+  process.stdout.write(
+    '  context --spec <context-input.json> --output <directory>\n  validate-context --spec <context-input.json> --file <pack.json>\n  context-stages --spec <context-input.json> --pack <pack.json> --output <ledger.json>\n  validate-stage --spec <context-input.json> --pack <pack.json> --file <stage.json>\n',
+  );
+  process.stdout.write(
+    '  Extraction context option: --context-mode full|lossless-pack|shadow (default: full)\n',
+  );
   process.stdout.write(
     `  run --source <capture> [--source <capture>] --project <dir> [--workspace <dir>] [--request <normalized-request.json>] [--provider <name>] [--css-entry <file>]\n`,
   );
@@ -183,8 +199,52 @@ async function main() {
   }
 
   let result;
-  if (command === 'run') {
+  if (command === 'context') {
+    assertArguments(parsed, ['spec', 'output', 'help']);
+    result = await writeContext({
+      specPath: option(parsed, 'spec', { required: true }),
+      outputDirectory: option(parsed, 'output', { required: true }),
+    });
+  } else if (command === 'validate-context') {
+    assertArguments(parsed, ['spec', 'file', 'view', 'help']);
+    const pack = await readJson(option(parsed, 'file', { required: true }));
+    const input = await loadContextInput(
+      option(parsed, 'spec', { required: true }),
+    );
+    result = parsed.options.has('view')
+      ? await validateContextView(
+          await readJson(option(parsed, 'view')),
+          pack,
+          input,
+        )
+      : await validateContext(pack, input);
+  } else if (['context-stages', 'validate-stage'].includes(command)) {
     assertArguments(parsed, [
+      'spec',
+      'pack',
+      command === 'context-stages' ? 'output' : 'file',
+      'help',
+    ]);
+    const pack = await readJson(option(parsed, 'pack', { required: true }));
+    await validateContext(
+      pack,
+      await loadContextInput(option(parsed, 'spec', { required: true })),
+    );
+    if (command === 'context-stages') {
+      const output = path.resolve(option(parsed, 'output', { required: true }));
+      result = {
+        output,
+        action: await writeJsonIfChanged(output, stageScaffold(pack)),
+        status: 'scaffold-only',
+      };
+    } else
+      result = validateStageEnvelope(
+        await readJson(option(parsed, 'file', { required: true })),
+        pack,
+      );
+  } else if (command === 'run') {
+    assertArguments(parsed, [
+      'context-mode',
       'source',
       'request',
       'project',
@@ -202,11 +262,12 @@ async function main() {
     if (resume) {
       if (
         parsed.options.has('source') ||
+        parsed.options.has('context-mode') ||
         parsed.options.has('project') ||
         parsed.options.has('request')
       ) {
         throw new DesignomeError(
-          '--resume cannot be combined with --source, --project, or --request',
+          '--resume cannot be combined with --source, --project, --request, or --context-mode',
           { code: 'INVALID_ARGUMENTS' },
         );
       }
@@ -237,10 +298,12 @@ async function main() {
         provider: option(parsed, 'provider', { fallback: 'in-app-browser' }),
         cssEntry: option(parsed, 'css-entry', { fallback: null }),
         requestContractPath: option(parsed, 'request', { fallback: null }),
+        contextMode: option(parsed, 'context-mode', { fallback: 'full' }),
       });
     }
   } else if (command === 'extract') {
     assertArguments(parsed, [
+      'context-mode',
       'output',
       'source',
       'request',
@@ -254,6 +317,7 @@ async function main() {
       motionMode: option(parsed, 'motion', { fallback: 'off' }),
       targetProjectPath: option(parsed, 'project', { fallback: null }),
       requestContractPath: option(parsed, 'request', { fallback: null }),
+      contextMode: option(parsed, 'context-mode', { fallback: 'full' }),
     });
     result = {
       ...result,
@@ -263,6 +327,7 @@ async function main() {
     };
   } else if (command === 'init-run') {
     assertArguments(parsed, [
+      'context-mode',
       'output',
       'image',
       'request',
@@ -276,6 +341,7 @@ async function main() {
       motionMode: option(parsed, 'motion', { fallback: 'off' }),
       targetProjectPath: option(parsed, 'project', { fallback: null }),
       requestContractPath: option(parsed, 'request', { fallback: null }),
+      contextMode: option(parsed, 'context-mode', { fallback: 'full' }),
     });
   } else if (command === 'validate-request') {
     assertArguments(parsed, ['file', 'operation', 'help']);
@@ -460,6 +526,17 @@ async function main() {
       });
       const parameters = request.contract.parameters;
       assertSamePath(auditInput.projectPath, parameters.projectPath, 'project');
+      if (parameters.dnaPath)
+        assertSamePath(
+          parameters.dnaPath,
+          path.join(auditInput.projectPath, '.designome/design-dna.json'),
+          'installed DNA',
+        );
+      auditInput.focus = {
+        axisRefs: parameters.focusAxisRefs,
+        conceptRefs: parameters.focusConceptRefs,
+        uiDomainRefs: parameters.focusUiDomainRefs,
+      };
       assertSameValue(auditInput.mode, parameters.mode, 'audit mode');
       assertSameValue(
         auditInput.provider,

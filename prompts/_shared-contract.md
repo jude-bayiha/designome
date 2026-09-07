@@ -2,6 +2,10 @@
 
 Every Designome stage follows this contract.
 
+## Experimental context transport
+
+When explicitly using Context Contract `1.0.0`, validated phase views transport canonical inputs without summarization. Read the complete view, including context, routing and payload; integrity metadata stays in the machine-readable pack. Full governance, synthesis, installation and audit contracts remain mandatory. Follow `docs/lossless-context.md` for hash-bound envelopes; pending/skipped scaffolds never prove execution. Request additional routing when discovery reveals missing specialist context. Context checks prove structure and admission, not visual accuracy.
+
 ## Source policy
 
 - Supplied screenshots are the only source of visual truth.

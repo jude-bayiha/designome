@@ -20,6 +20,7 @@
     "promptStages"
   ],
   "properties": {
+    "contextContractVersion": { "const": "1.0.0" },
     "matrixVersion": { "const": "0.3.0" },
     "requestContractVersion": { "const": "1.1.0" },
     "designDnaSchemaVersion": { "const": "0.3.0" },

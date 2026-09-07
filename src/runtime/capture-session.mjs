@@ -156,6 +156,7 @@ function normalizePlan(plan) {
     projectRoot: plan.projectRoot ?? null,
     routes: plan.routes.map(normalizedRoute),
     perceptual: plan.perceptual ?? null,
+    ...(plan.focus ? { focus: structuredClone(plan.focus) } : {}),
   };
 }
 
@@ -499,6 +500,7 @@ export class CaptureSession {
         schemaVersion: this.plan.schemaVersion,
         baseUrl: this.plan.baseUrl,
         routes: this.plan.routes,
+        ...(this.plan.focus ? { focus: this.plan.focus } : {}),
       }),
     );
     const evidence = {

@@ -4,6 +4,8 @@ The Designome runtime supports the agent skills with deterministic operations. I
 
 ## Commands
 
+Experimental commands `context`, `validate-context`, `context-stages` and `validate-stage` use the [lossless context contract](lossless-context.md). Extraction initialization accepts `--context-mode full|lossless-pack|shadow`; full remains default. Packs are content-addressed, never token-truncated. Audit focus is retained in the plan and capture fingerprint without dropping required rules.
+
 ### Validate a normalized conversational request
 
 ```bash
