@@ -1,5 +1,7 @@
 # Architecture and methodology — Designome v0.3
 
+The optional [Context Contract 1.0 compiler](lossless-context.md) separates execution routing from canonical context projection. It preserves full global synthesis boundaries and does not replace host visual reasoning.
+
 ## Architecture principles
 
 - The host coding agent performs multimodal and perceptual reasoning; Designome supplies versioned contracts, specialized prompts, and deterministic workflow.

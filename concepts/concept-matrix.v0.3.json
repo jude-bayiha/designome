@@ -1,5 +1,6 @@
 {
   "matrixVersion": "0.3.0",
+  "contextContractVersion": "1.0.0",
   "requestContractVersion": "1.1.0",
   "designDnaSchemaVersion": "0.3.0",
   "epistemicStatuses": ["observed", "inferred", "proposed", "unknown"],

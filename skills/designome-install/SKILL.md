@@ -11,6 +11,8 @@ Install accepted guidance without treating the target project's existing UI as v
 
 Resolve paths relative to this `SKILL.md`. The plugin root is `../..`. Convert it to an absolute path before invoking the helper; replace `<designome-plugin-root>` below with that path.
 
+Context mode defaults to `full`. For explicitly selected experimental packs, first read `../../docs/lossless-context.md` and validate an `install` pack against the request and accepted DNA. Installation packs retain the full matrix, schema and DNA; preflight and ownership checks below remain mandatory.
+
 Read completely before installation:
 
 1. `../../prompts/_shared-contract.md`

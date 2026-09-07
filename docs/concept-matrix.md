@@ -1,5 +1,7 @@
 # Concept matrix v0.3
 
+Optional `contextContractVersion: 1.0.0` declares support for [lossless projections](lossless-context.md). The matrix's axis, facet, concept, domain and documentation definitions remain canonical and unchanged; missing support metadata does not migrate legacy DNA.
+
 The [v0.3 matrix](../concepts/concept-matrix.v0.3.json) is the canonical routing contract for deep UI extraction. It separates four structures that are often collapsed in shallow screenshot analysis:
 
 - 13 specialist axes define independent reasoning passes;

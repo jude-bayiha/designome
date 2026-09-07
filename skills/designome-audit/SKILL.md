@@ -7,6 +7,8 @@ description: Audit generated or existing UI against an accepted Designome Design
 
 Compare implementation evidence with accepted Design DNA. Keep static, rendered, interaction, and accessibility validation explicitly separate.
 
+Context mode defaults to `full`. In plugin mode only, for explicitly selected experimental packs, first read `../../docs/lossless-context.md` and validate an `audit` pack against the request and accepted DNA. Packs retain every accepted rule and dependency. Project-local mode without the compiler keeps the documentation workflow below; do not install dependencies implicitly.
+
 ## Resolve the execution context
 
 This skill works from either the Designome plugin or an installed target project.

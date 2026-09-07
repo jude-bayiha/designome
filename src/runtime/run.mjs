@@ -14,6 +14,7 @@ import {
 } from './files.mjs';
 import { loadConceptMatrix } from './design-dna.mjs';
 import { loadRequestContract } from './request-contract.mjs';
+import { writeContext } from './context.mjs';
 
 const motionModes = new Set(['off', 'observed-only', 'auto']);
 
@@ -23,7 +24,17 @@ export async function initializeRun({
   outputDirectory,
   targetProjectPath = null,
   requestContractPath = null,
+  contextMode = 'full',
 }) {
+  if (
+    !['full', 'lossless-pack', 'shadow'].includes(contextMode) ||
+    (contextMode !== 'full' && !requestContractPath)
+  ) {
+    throw new DesignomeError(
+      'Context mode must be full, lossless-pack or shadow; experimental modes require a normalized request',
+      { code: 'INVALID_CONTEXT_MODE' },
+    );
+  }
   if (!Array.isArray(imagePaths) || imagePaths.length === 0) {
     throw new DesignomeError('At least one --image is required', {
       code: 'MISSING_SCREENSHOT',
@@ -111,10 +122,19 @@ export async function initializeRun({
 
   const sources = [];
   const seenHashes = new Set();
+  const seenPaths = new Set();
+  const seenIds = new Set();
   for (const imagePath of imagePaths) {
     const source = await inspectImage(imagePath);
-    if (seenHashes.has(source.contentHash)) continue;
+    if (seenPaths.has(source.path)) continue;
+    // A normalized request can assign distinct directives to identical bytes
+    // at different paths. Keep those evidence identities separate.
+    if (!request && seenHashes.has(source.contentHash)) continue;
+    seenPaths.add(source.path);
     seenHashes.add(source.contentHash);
+    if (seenIds.has(source.id))
+      source.id = `${source.id}-${sha256(source.path).slice(0, 8)}`;
+    seenIds.add(source.id);
     sources.push(source);
   }
 
@@ -128,6 +148,7 @@ export async function initializeRun({
       requestContract: request?.contract ?? null,
       matrixVersion: matrix.matrixVersion,
       toolVersion: packageJson.version,
+      ...(contextMode !== 'full' ? { contextMode } : {}),
     }),
   );
 
@@ -209,6 +230,19 @@ export async function initializeRun({
     schemaVersion: '0.2.0',
     runId,
     createdAt,
+    ...(contextMode !== 'full'
+      ? {
+          context: {
+            schemaVersion: '1.0.0',
+            mode: contextMode,
+            synthesisInputPath: path.join(
+              resolvedOutput,
+              'synthesis-context-input.json',
+            ),
+            promotion: 'experimental',
+          },
+        }
+      : {}),
     routing: {
       status: requiresVisualRouting
         ? 'awaiting-source-evidence'
@@ -309,6 +343,19 @@ export async function initializeRun({
     ),
   });
 
+  let context = null;
+  if (contextMode !== 'full') {
+    const specPath = path.join(resolvedOutput, 'source-context-input.json');
+    await writeJsonIfChanged(specPath, {
+      phase: 'source',
+      mode: contextMode,
+      requestPath: 'request-contract.json',
+    });
+    context = await writeContext({
+      specPath,
+      outputDirectory: path.join(resolvedOutput, 'context'),
+    });
+  }
   return {
     status: 'ready',
     runId,
@@ -317,5 +364,6 @@ export async function initializeRun({
     duplicateSourceCount: imagePaths.length - sources.length,
     actions,
     nextStage: 'prompt.source-evidence',
+    ...(context ? { context } : {}),
   };
 }

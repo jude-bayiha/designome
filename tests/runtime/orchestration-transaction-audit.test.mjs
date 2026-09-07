@@ -6,6 +6,7 @@ import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import { runAudit } from '../../src/runtime/audit.mjs';
+import { planAudit } from '../../src/runtime/audit.mjs';
 import { createCaptureSession } from '../../src/runtime/capture-session.mjs';
 import { doctorProject } from '../../src/runtime/doctor.mjs';
 import { writeBrowserEvidence } from '../../examples/browser-adapter.reference.mjs';
@@ -91,6 +92,57 @@ async function installFixture(fixture) {
     instructionsReviewed: true,
   });
 }
+
+test('audit focus survives planning and capture binding without pruning accepted rules', async (t) => {
+  const fixture = await makeProject(t, 'audit-focus');
+  await installFixture(fixture);
+  await configureSingleRouteAudit(fixture.projectRoot);
+  const focus = {
+    axisRefs: ['axis.data-display-visualization'],
+    conceptRefs: [],
+    uiDomainRefs: ['domain.stats-kpis'],
+  };
+  const options = {
+    projectPath: fixture.projectRoot,
+    provider: 'in-app-browser',
+    focus,
+  };
+  await runAudit(options);
+  const { plan, dna } = await planAudit(options);
+  assert.deepEqual(plan.focus, focus);
+  assert.equal(plan.perceptual.rules.length, dna.rules.length);
+  assert.equal(plan.perceptual.tokens.length, dna.tokens.length);
+  const evidencePath = path.join(
+    fixture.projectRoot,
+    'audit',
+    'focus-evidence.json',
+  );
+  const session = await recordPassingEvidence(
+    fixture.projectRoot,
+    plan,
+    evidencePath,
+  );
+  await session.finalize();
+  const result = await runAudit({
+    ...options,
+    evidencePath: 'audit/focus-evidence.json',
+    overwrite: true,
+  });
+  assert.equal(result.status, 'passed');
+  await assert.rejects(
+    runAudit({
+      ...options,
+      focus: { ...focus, uiDomainRefs: ['domain.tables-lists'] },
+      evidencePath: 'audit/focus-evidence.json',
+      overwrite: true,
+    }),
+    /different plan/,
+  );
+  await assert.rejects(
+    planAudit({ ...options, focus: { ...focus, axisRefs: ['axis.invalid'] } }),
+    { code: 'INVALID_AUDIT_FOCUS' },
+  );
+});
 
 async function configureSingleRouteAudit(
   projectRoot,
@@ -739,4 +791,62 @@ test('orchestrated run persists failure and resumes installation deterministical
     (await verifyInstallation({ projectPath: fixture.projectRoot })).valid,
     true,
   );
+});
+
+test('experimental workflow refuses acceptance without validated specialist envelopes', async (t) => {
+  const fixture = await makeProject(t, 'context-workflow');
+  const workspacePath = path.join(fixture.root, 'workspace');
+  await fs.mkdir(workspacePath);
+  const sourcePath = path.join(fixture.root, 'source.png');
+  await fs.writeFile(
+    sourcePath,
+    Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Zl1sAAAAASUVORK5CYII=',
+      'base64',
+    ),
+  );
+  const request = JSON.parse(
+    await fs.readFile(
+      path.join(
+        repositoryRoot,
+        'examples/request-contract.extract.reference.json',
+      ),
+      'utf8',
+    ),
+  );
+  request.parameters.sources = [
+    { ...request.parameters.sources[0], path: sourcePath },
+  ];
+  const requestPath = path.join(fixture.root, 'request.json');
+  await fs.writeFile(requestPath, JSON.stringify(request));
+  const initialized = await initializeWorkflow({
+    sourcePaths: [sourcePath],
+    projectPath: fixture.projectRoot,
+    workspacePath,
+    requestContractPath: requestPath,
+    contextMode: 'lossless-pack',
+  });
+  await fs.writeFile(
+    path.join(initialized.runDirectory, 'design-dna.json'),
+    JSON.stringify(await referenceDna('draft')),
+  );
+  const before = await projectSnapshot(fixture.projectRoot);
+  await assert.rejects(
+    resumeWorkflow({ workspacePath, acceptDesignDna: true }),
+    /synthesis-context-input/,
+  );
+  await fs.writeFile(
+    path.join(initialized.runDirectory, 'synthesis-context-input.json'),
+    JSON.stringify({
+      phase: 'synthesis',
+      mode: 'lossless-pack',
+      requestPath: 'request-contract.json',
+      fragmentPaths: [],
+    }),
+  );
+  await assert.rejects(
+    resumeWorkflow({ workspacePath, acceptDesignDna: true }),
+    /specialist envelopes/,
+  );
+  assert.deepEqual(await projectSnapshot(fixture.projectRoot), before);
 });
