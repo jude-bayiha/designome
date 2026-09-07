@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.0](https://github.com/jude-bayiha/designome/compare/v1.8.0...v1.9.0) (2026-09-07)
+
+
+### Features
+
+* **runtime:** add lossless context compilation ([dc48be5](https://github.com/jude-bayiha/designome/commit/dc48be506ae353629c429d4550dfd7aa6744e928))
+* **runtime:** add lossless context compiler ([c807b91](https://github.com/jude-bayiha/designome/commit/c807b91b3f08c3c2ca2fc25071d20b434bbcd1f0))
+
 ## [1.8.0](https://github.com/jude-bayiha/designome/compare/v1.7.0...v1.8.0) (2026-09-01)
 
 
