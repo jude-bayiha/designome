@@ -4,6 +4,10 @@ Designome turns UI screenshots into an evidence-backed **Design DNA** that an ex
 
 ## Current status
 
+An experimental [lossless context compiler](docs/lossless-context.md) provides hash-bound specialist packs and stage validation. Full context remains the default until behavioral parity is established.
+
+See the [non-regression assessment](docs/context-non-regression.md) for executed checks, measured view sizes and promotion limits.
+
 The repository now contains the first executable vertical slice:
 
 - a Codex plugin manifest with `designome-extract`, `designome-install`, and `designome-audit` skills;
