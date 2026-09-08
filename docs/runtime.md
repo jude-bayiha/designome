@@ -1,5 +1,7 @@
 # Runtime and CLI
 
+New extraction drafts require [Fidelity Contract 1.0](fidelity-contract.md); use `validate-dna --file <draft> --require-fidelity` for the standalone equivalent. `benchmark-prepare --dna <file> --corpus <file> --output <directory>` creates immutable docs-only packets. `benchmark-evaluate --plan <file> --evidence <file> --output <file>` verifies repeated rendered evidence. See [benchmark semantics](fidelity-benchmark.md), including component-library provenance and incomplete results.
+
 The Designome runtime supports the agent skills with deterministic operations. It does not call a model API or perform visual design reasoning.
 
 ## Commands

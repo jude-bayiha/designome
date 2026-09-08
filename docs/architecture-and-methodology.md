@@ -1,5 +1,7 @@
 # Architecture and methodology — Designome v0.3
 
+The additive [Fidelity Contract 1.0](fidelity-contract.md) strengthens extraction and documentation without changing the 13 specialist axes. New extraction run plans require independent assertions, signature qualities and explicit calibration limits. The pure Markdown projection supports a [repeated docs-only benchmark](fidelity-benchmark.md) before DNA acceptance or target installation; component-library APIs remain technical integration inputs. Structural coverage, visual fidelity and artifact finish are evaluated separately.
+
 The optional [Context Contract 1.0 compiler](lossless-context.md) separates execution routing from canonical context projection. It preserves full global synthesis boundaries and does not replace host visual reasoning.
 
 ## Architecture principles
