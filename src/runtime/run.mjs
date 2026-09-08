@@ -147,6 +147,7 @@ export async function initializeRun({
       targetProjectPath: resolvedTarget,
       requestContract: request?.contract ?? null,
       matrixVersion: matrix.matrixVersion,
+      fidelityContractVersion: matrix.fidelityContractVersion ?? null,
       toolVersion: packageJson.version,
       ...(contextMode !== 'full' ? { contextMode } : {}),
     }),
@@ -228,6 +229,7 @@ export async function initializeRun({
   }
   const runPlan = {
     schemaVersion: '0.2.0',
+    fidelityContractVersion: matrix.fidelityContractVersion ?? null,
     runId,
     createdAt,
     ...(contextMode !== 'full'

@@ -15,6 +15,11 @@ import { writeJsonIfChanged } from '../src/runtime/files.mjs';
 
 import { runAudit } from '../src/runtime/audit.mjs';
 import { assertValidDesignDna } from '../src/runtime/design-dna.mjs';
+import { fidelityReadiness } from '../src/runtime/fidelity.mjs';
+import {
+  prepareBenchmark,
+  evaluateBenchmark,
+} from '../src/runtime/benchmark.mjs';
 import { doctorProject } from '../src/runtime/doctor.mjs';
 import { DesignomeError } from '../src/runtime/errors.mjs';
 import { readJson } from '../src/runtime/files.mjs';
@@ -47,6 +52,7 @@ function parseArguments(values) {
         'browser-install-authorized',
         'overwrite',
         'require-accepted',
+        'require-fidelity',
         'resume',
         'accept-dna',
         'help',
@@ -148,6 +154,9 @@ function assertSameStringList(actual, expected, label) {
 function printHelp() {
   process.stdout.write(`Designome deterministic helper\n\nCommands:\n`);
   process.stdout.write(
+    '  benchmark-prepare --dna <draft-or-accepted.json> --corpus <corpus.json> --output <new-directory>\n  benchmark-evaluate --plan <plan.json> --evidence <evidence.json> --output <report.json>\n',
+  );
+  process.stdout.write(
     '  context --spec <context-input.json> --output <directory>\n  validate-context --spec <context-input.json> --file <pack.json>\n  context-stages --spec <context-input.json> --pack <pack.json> --output <ledger.json>\n  validate-stage --spec <context-input.json> --pack <pack.json> --file <stage.json>\n',
   );
   process.stdout.write(
@@ -169,7 +178,7 @@ function printHelp() {
     `  validate-request --file <normalized-request.json> [--operation <extract|install|audit>]\n`,
   );
   process.stdout.write(
-    `  validate-dna --file <design-dna.json> [--require-accepted]\n`,
+    `  validate-dna --file <design-dna.json> [--require-accepted] [--require-fidelity]\n`,
   );
   process.stdout.write(
     `  install --dna <file> --project <dir> [--request <normalized-request.json>] [--css-entry <file>] [--scope <selector>] [--docs-dir <dir>] [--rule-precedence <mode>] [--existing-rules <path>] [--styling <strategy>] [--ui-kit <auto|none|shadcn>] --dry-run\n`,
@@ -359,12 +368,32 @@ async function main() {
       operation: request.contract.operation,
       interpretationStatus: request.contract.interpretation.status,
     };
+  } else if (command === 'benchmark-prepare') {
+    assertArguments(parsed, ['dna', 'corpus', 'output', 'help']);
+    result = await prepareBenchmark({
+      dnaPath: option(parsed, 'dna', { required: true }),
+      corpusPath: option(parsed, 'corpus', { required: true }),
+      outputDirectory: option(parsed, 'output', { required: true }),
+    });
+  } else if (command === 'benchmark-evaluate') {
+    assertArguments(parsed, ['plan', 'evidence', 'output', 'help']);
+    result = await evaluateBenchmark({
+      planPath: option(parsed, 'plan', { required: true }),
+      evidencePath: option(parsed, 'evidence', { required: true }),
+      outputPath: option(parsed, 'output', { required: true }),
+    });
   } else if (command === 'validate-dna') {
-    assertArguments(parsed, ['file', 'require-accepted', 'help']);
+    assertArguments(parsed, [
+      'file',
+      'require-accepted',
+      'require-fidelity',
+      'help',
+    ]);
     const filePath = path.resolve(option(parsed, 'file', { required: true }));
     const dna = await readJson(filePath);
     await assertValidDesignDna(dna, {
       requireAccepted: Boolean(parsed.options.get('require-accepted')),
+      requireFidelity: Boolean(parsed.options.get('require-fidelity')),
     });
     result = {
       valid: true,
@@ -373,6 +402,7 @@ async function main() {
       documentId: dna.documentId,
       status: dna.status,
       revision: dna.revision.number,
+      fidelity: fidelityReadiness(dna),
     };
   } else if (command === 'install') {
     assertArguments(parsed, [

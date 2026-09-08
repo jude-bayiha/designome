@@ -14,6 +14,8 @@ Read `_shared-contract.md`, the accepted Design DNA, active matrix, integration 
 
 Run `designome doctor` as a read-only diagnostic. Inspect only technical integration facts: framework, package manager, CSS entry points, aliases, installed libraries, existing agent instructions, and applicable component primitives. Never use target-project styles, tokens, components, or rendered UI as Design DNA evidence.
 
+Map accepted semantic colors, type roles, density, radius and component anatomy through the available library's theme and component APIs. Document unresolved default treatments rather than silently substituting the library's palette or geometry. Check the actual rendered font and preserve content semantics and visible collection density in a scoped reconstruction. A component-library mapping remains a technical proposal until its rendered output is reviewed against the source-derived guidance.
+
 Prepare a transactional installation: diagnose, stage, validate, dry-run, apply atomically, verify checksums, commit the manifest, and clean staging. Preserve user-owned overrides and reject manual changes to managed files rather than overwriting them.
 
 Compile all 51 `documentationProjection` entries plus the generated dossier index, producing 52 managed documentation files grouped under `foundations/`, `components/`, `patterns/`, `behavior/`, and `governance/`. Every projected document is mandatory even when its only honest content is an unknown boundary or proposed stress test.

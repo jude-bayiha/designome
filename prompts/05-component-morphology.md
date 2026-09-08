@@ -20,6 +20,8 @@ Promote a visual structure to a component candidate only when repetition, stable
 
 Use UI-domain definitions to avoid generic components. A KPI card, media card, settings row, notification row, and commerce line item may share surface tokens while retaining different anatomy and state contracts.
 
+For each variant, describe a concrete change to part presence, order, alignment, density, emphasis or action placement and the condition selecting it. Each condition and difference has an independent assertion; generic restatements of the variant name are insufficient. Independently label every state field and every composition, content, adaptation and accessibility requirement. The visible selected appearance cannot prove keyboard selection, ARIA state or the effect of activation.
+
 ## Output
 
 Return the shared stage JSON for `prompt.component-morphology` with:

@@ -21,6 +21,8 @@ Turn specialist observations into reusable, auditable candidates without perform
 
 Reject vague rules such as “use clean spacing” or “make charts clear.” A reusable rule identifies affected roles or domains, the relationship or bounded condition, exceptions, failure modes, and a concrete verification method.
 
+Review Fidelity Contract `1.0.0` candidates: a short ranked set of distinctive qualities, measurable calibration proposals and independent assertions for component/requirement fields. Reject complete coverage without relevant canonical artifacts or with unresolved gaps. Preserve token relationships and dependency closure in autonomous domain recipes. Acceptance of a proposed bound does not make it observed. Use the repeated docs-only benchmark to test reproduction; never equate a well-formed dossier with a faithful rendered UI.
+
 ## Output
 
 Return the shared stage JSON for `prompt.system-governance` with:

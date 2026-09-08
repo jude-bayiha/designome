@@ -55,7 +55,7 @@ Read each axis prompt only when the orchestrator routes that axis. Read `../../p
 
     ```bash
     node <designome-plugin-root>/bin/designome.mjs validate-dna \
-      --file <run-directory>/design-dna.json
+      --file <run-directory>/design-dna.json --require-fidelity
     ```
 
 11. Report request interpretation, per-source routing, source-to-destination compatibility, detected UI domains, facet and domain coverage, conflicts, unknowns, unperformed validation, and the exact files produced. Leave the Design DNA as `draft` until the user explicitly accepts it.
@@ -64,6 +64,8 @@ When invoked from `designome run`, write the draft to the `expectedArtifact` pat
 
 ## Guardrails
 
+- New extraction emits Fidelity Contract `1.0.0` with ranked source-specific qualities, proposed calibration bounds and independent requirement/component assertions. Read `../../docs/fidelity-contract.md` before synthesis. Legacy DNA remains readable but is never upgraded through automatic status promotion.
+- Report structural completeness, benchmark readiness and rendered fidelity separately. If a benchmark is requested, follow `../../docs/fidelity-benchmark.md`; keep generator contexts isolated from screenshots and bind all evidence to immutable packets.
 - Use only `observed`, `inferred`, `proposed`, and `unknown`.
 - Require evidence references for observed and inferred claims.
 - The bundled `validate-dna` command performs dependency-light semantic contract checks. Do not call it full JSON Schema validation unless a separate schema validator actually ran.

@@ -18,3 +18,14 @@ export {
   stageScaffold,
   validateStageEnvelope,
 } from './runtime/context-stage.mjs';
+export {
+  fidelityReadiness,
+  evaluateFidelityConstraints,
+} from './runtime/fidelity.mjs';
+export { projectDocumentation } from './runtime/install.mjs';
+export {
+  prepareBenchmark,
+  evaluateBenchmark,
+  benchmarkAspects,
+  hashBenchmarkDirectory,
+} from './runtime/benchmark.mjs';

@@ -17,6 +17,7 @@ For every declared facet, distinguish repeated system relationships from one-off
 3. Build a spacing inventory by semantic distance: within a control, within a component, between peers, between groups, between sections, and at page boundaries. Identify repeated families, ratios, exceptions, and proposed readability bounds.
 4. Record geometric and optical alignment: edges, centers, baselines, decimals, icons, labels, values, repeated rows, and visual centers. Separate actual alignment evidence from capture distortion.
 5. Describe density, whitespace, salience, overlap, surface depth, and dominant-to-supporting proportions by region. Explain what creates hierarchy without claiming business priority.
+6. Make significant relationships executable: identify both sides of a proportion, the owner of each gap, the alignment anchor and the exception that changes the layout. When useful, propose bounded calibration for region width ratios, peer gaps or insets and specify what failure would break the source hierarchy. Preserve uncertainty caused by promotional framing, overlays, crop and perspective.
 
 For every routed UI domain, describe its spatial anatomy and transformations. A statistics region must distinguish KPI-grid rhythm from chart-region proportion; a marketing surface must distinguish narrative section rhythm from reusable application-shell geometry.
 

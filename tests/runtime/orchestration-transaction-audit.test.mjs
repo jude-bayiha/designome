@@ -35,7 +35,13 @@ async function temporaryDirectory(t, prefix) {
 async function referenceDna(status = 'accepted') {
   const dna = JSON.parse(
     await fs.readFile(
-      path.join(repositoryRoot, 'examples', 'design-dna.reference-v0.2.json'),
+      path.join(
+        repositoryRoot,
+        'examples',
+        status === 'draft'
+          ? 'design-dna.fidelity.reference.json'
+          : 'design-dna.reference-v0.2.json',
+      ),
       'utf8',
     ),
   );

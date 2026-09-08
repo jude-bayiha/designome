@@ -1,0 +1,434 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:designome:schema:benchmark:1.0.0",
+  "title": "Designome corpus and host benchmark evidence",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/corpus"
+    },
+    {
+      "$ref": "#/$defs/evidence"
+    }
+  ],
+  "$defs": {
+    "viewport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height"],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 200,
+          "maximum": 4096
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 200,
+          "maximum": 4096
+        }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "family",
+        "kind",
+        "sourceRefs",
+        "viewport",
+        "task",
+        "scope"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "family": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": ["reference-reproduction", "grammar-transfer"]
+        },
+        "sourceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/viewport"
+        },
+        "task": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementationContext": {
+          "$ref": "#/$defs/implementationContext"
+        }
+      }
+    },
+    "corpus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "id",
+        "repetitions",
+        "cases",
+        "limitations"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "repetitions": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 10
+        },
+        "cases": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/case"
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "kind": {
+          "enum": ["file", "directory"]
+        }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "aspect",
+        "result",
+        "epistemicStatus",
+        "statement",
+        "sourceRefs"
+      ],
+      "properties": {
+        "aspect": {
+          "enum": [
+            "composition",
+            "proportions",
+            "typography",
+            "spacing",
+            "color-surface",
+            "component-anatomy",
+            "identity",
+            "content-resilience"
+          ]
+        },
+        "result": {
+          "enum": ["passed", "failed", "incomplete"]
+        },
+        "epistemicStatus": {
+          "enum": ["observed", "inferred", "unknown"]
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "measurement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target", "property", "unit", "value"],
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "property": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": ["number", "string", "boolean"]
+        }
+      }
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "caseId",
+        "repetition",
+        "generatorId",
+        "reviewerId",
+        "sourceAccess",
+        "inputHash",
+        "viewport",
+        "implementation",
+        "capture",
+        "observations",
+        "measurements",
+        "limitations"
+      ],
+      "properties": {
+        "caseId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "repetition": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "generatorId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewerId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceAccess": {
+          "const": false
+        },
+        "inputHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "viewport": {
+          "$ref": "#/$defs/viewport"
+        },
+        "implementation": {
+          "$ref": "#/$defs/artifact"
+        },
+        "capture": {
+          "$ref": "#/$defs/artifact"
+        },
+        "observations": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/$defs/observation"
+          }
+        },
+        "measurements": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/$defs/measurement"
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "integrationEvidence": {
+          "$ref": "#/$defs/integrationEvidence"
+        },
+        "qualityAssessment": {
+          "$ref": "#/$defs/qualityAssessment"
+        },
+        "additionalCaptures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["purpose", "path", "sha256"],
+            "properties": {
+              "purpose": {
+                "type": "string",
+                "minLength": 1
+              },
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "planFingerprint", "runs"],
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "planFingerprint": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "runs": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/$defs/run"
+          }
+        }
+      }
+    },
+    "implementationContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["framework", "componentLibrary", "requirements"],
+      "properties": {
+        "framework": {
+          "type": "string",
+          "minLength": 1
+        },
+        "componentLibrary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "integrationEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "framework",
+        "componentLibrary",
+        "versions",
+        "components",
+        "themeAdaptations",
+        "dependencyArtifact"
+      ],
+      "properties": {
+        "framework": {
+          "type": "string",
+          "minLength": 1
+        },
+        "componentLibrary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versions": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "themeAdaptations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "dependencyArtifact": {
+          "$ref": "#/$defs/artifact"
+        }
+      }
+    },
+    "qualityAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "finish",
+        "coherence",
+        "readability",
+        "statement",
+        "epistemicStatus",
+        "limitations"
+      ],
+      "properties": {
+        "finish": {
+          "enum": ["strong", "mixed", "weak", "unknown"]
+        },
+        "coherence": {
+          "enum": ["strong", "mixed", "weak", "unknown"]
+        },
+        "readability": {
+          "enum": ["strong", "mixed", "weak", "unknown"]
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "epistemicStatus": {
+          "enum": ["observed", "inferred", "unknown"]
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

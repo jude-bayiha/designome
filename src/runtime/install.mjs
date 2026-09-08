@@ -4,6 +4,16 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 
 import { assertValidDesignDna, validateDesignDna } from './design-dna.mjs';
+import {
+  claimDetails,
+  renderTokenContract,
+  renderRuleContract,
+  renderStateContract,
+  renderAssertions,
+  domainRecipe,
+  renderFidelityContract,
+} from './documentation.mjs';
+import { fidelityReadiness } from './fidelity.mjs';
 import { DesignomeError } from './errors.mjs';
 import {
   atomicWrite,
@@ -215,85 +225,13 @@ function markdownValue(value) {
   return value?.reason ?? 'Unknown';
 }
 
-function claimDetails(claim) {
-  const evidence = claim.evidenceRefs?.length
-    ? claim.evidenceRefs.map((item) => `\`${item}\``).join(', ')
-    : 'none; this is not an observed claim';
-  const concepts = claim.conceptRefs?.length
-    ? claim.conceptRefs.map((item) => `\`${item}\``).join(', ')
-    : 'none';
-  const uiDomains = claim.uiDomainRefs?.length
-    ? claim.uiDomainRefs.map((item) => `\`${item}\``).join(', ')
-    : 'none';
-  const exceptions = claim.exceptions?.length
-    ? claim.exceptions.join('; ')
-    : 'None documented.';
-  return [
-    `- Status: \`${claim.epistemicStatus}\``,
-    `- Confidence: ${claim.confidence.score} — ${claim.confidence.basis}`,
-    `- Scope: ${claim.scope?.join(', ') || 'none documented'}`,
-    `- Concept routing: ${concepts}`,
-    `- UI-domain routing: ${uiDomains}`,
-    `- Evidence: ${evidence}`,
-    `- Exceptions: ${exceptions}`,
-    `- Validation: ${claim.validation.method}`,
-  ].join('\n');
-}
-
 function renderRulesDocument(dna) {
-  const rules = dna.rules.map((rule) =>
-    [
-      `## ${rule.name}`,
-      '',
-      `- Rule ID: \`${rule.id}\``,
-      `- Strength: \`${rule.strength}\``,
-      `- Category: \`${rule.category}\``,
-      `- Epistemic status: \`${rule.claim.epistemicStatus}\``,
-      '',
-      rule.claim.statement,
-      '',
-      '### Requirements',
-      '',
-      ...rule.requirements.map((item) => `- ${item}`),
-      ...(rule.appliesTo?.length
-        ? [
-            '',
-            '### Applies to',
-            '',
-            ...rule.appliesTo.map((item) => `- ${item}`),
-          ]
-        : []),
-      ...(rule.rationale ? ['', '### Rationale', '', rule.rationale] : []),
-      ...(rule.failureModes?.length
-        ? [
-            '',
-            '### Failure modes',
-            '',
-            ...rule.failureModes.map((item) => `- ${item}`),
-          ]
-        : []),
-      ...(rule.dependsOn?.length
-        ? [
-            '',
-            '### Dependencies',
-            '',
-            ...rule.dependsOn.map((item) => `- \`${item}\``),
-          ]
-        : []),
-      '',
-      '### Validation cases',
-      '',
-      ...rule.validationCases.map((item) => `- ${item}`),
-      '',
-      claimDetails(rule.claim),
-    ].join('\n'),
-  );
   return [
     '# UI rules',
     '',
-    `Accepted Design DNA: \`${dna.documentId}\` revision ${dna.revision.number}.`,
+    `Design DNA: \`${dna.documentId}\` revision ${dna.revision.number}; status \`${dna.status}\`.`,
     '',
-    ...rules,
+    ...dna.rules.map((rule) => renderRuleContract(rule, '##')),
     '',
   ].join('\n');
 }
@@ -436,7 +374,12 @@ function renderRelevantUnknowns(unknowns) {
       `### ${item.question}`,
       '',
       '- Status: `unknown`',
+      `- Unknown ID: \`${item.id}\``,
       `- Impact: \`${item.impact}\``,
+      `- Missing evidence: ${(item.missingEvidence ?? []).join('; ') || 'Not documented in legacy DNA.'}`,
+      `- Affected axes: ${(item.axisRefs ?? []).join(', ')}`,
+      `- Concepts: ${item.conceptRefs.join(', ')}`,
+      `- UI domains: ${(item.uiDomainRefs ?? []).join(', ')}`,
       `- Resolution: ${item.resolutionPlan}`,
       '',
     ]),
@@ -476,27 +419,8 @@ function renderGenericDocument(dna, matrix, entry) {
       sharesValue(item.conceptRefs, entry.conceptRefs) ||
       sharesValue(item.uiDomainRefs, entry.uiDomainRefs),
   );
-  const tokenSections = tokens.flatMap((token) => [
-    `### Token: ${token.name}`,
-    '',
-    token.claim.statement,
-    '',
-    `- Design value: ${markdownValue(token.value)}`,
-    claimDetails(token.claim),
-    '',
-  ]);
-  const ruleSections = rules.flatMap((rule) => [
-    `### Rule: ${rule.name}`,
-    '',
-    rule.claim.statement,
-    '',
-    `- Strength: \`${rule.strength}\``,
-    `- Category: \`${rule.category}\``,
-    ...rule.requirements.map((item) => `- Requirement: ${item}`),
-    ...rule.validationCases.map((item) => `- Validation case: ${item}`),
-    claimDetails(rule.claim),
-    '',
-  ]);
+  const tokenSections = tokens.map((token) => renderTokenContract(token));
+  const ruleSections = rules.map((rule) => renderRuleContract(rule));
   return [
     `# ${entry.title}`,
     '',
@@ -579,8 +503,10 @@ function renderComponentAnatomy(dna) {
                   '',
                   `- Requirement: \`${item.requirement}\``,
                   `- Purpose: ${item.purpose}`,
-                  ...(item.contentConstraints ?? []).map(
-                    (constraint) => `- Content constraint: ${constraint}`,
+                  ...renderAssertions(
+                    item,
+                    'contentConstraints',
+                    'Content constraints',
                   ),
                   `- Token references: ${
                     item.tokenRefs?.length
@@ -631,11 +557,11 @@ function renderComponentVariants(dna) {
                       '',
                       `- Status: \`${variant.epistemicStatus}\``,
                       `- Purpose: ${variant.purpose}`,
-                      ...variant.conditions.map(
-                        (item) => `- Condition: ${item}`,
-                      ),
-                      ...variant.differences.map(
-                        (item) => `- Difference: ${item}`,
+                      ...renderAssertions(variant, 'conditions', 'Conditions'),
+                      ...renderAssertions(
+                        variant,
+                        'differences',
+                        'Differences',
                       ),
                       `- Evidence: ${
                         variant.evidenceRefs.length
@@ -662,95 +588,46 @@ function renderComponentVariants(dna) {
 }
 
 function renderComponentStates(dna) {
-  const components = dna.componentPatterns ?? [];
   return [
     '# Component states',
     '',
-    'Each state carries its own status. Proposed states are resilience contracts, not observed screenshot behavior.',
+    'Every state aspect carries an independent assertion. Legacy appearance labels never establish triggers, transitions or programmatic semantics.',
     '',
-    ...(components.length
-      ? components.flatMap((component) => [
-          `## ${component.name}`,
-          '',
-          ...component.states.flatMap((state) => [
-            `### ${state.name}`,
-            '',
-            `- Status: \`${state.epistemicStatus ?? state.status}\``,
-            `- Trigger: ${state.trigger ?? 'Not documented in the legacy contract.'}`,
-            `- Behavior: ${state.behavior}`,
-            `- Feedback: ${state.feedback ?? 'Unknown.'}`,
-            `- Exit or recovery: ${state.exit ?? 'Unknown.'}`,
-            `- Programmatic state: ${state.programmaticState ?? 'Unknown.'}`,
-            ...(state.validationCases ?? []).map(
-              (item) => `- Validation case: ${item}`,
-            ),
-            `- Evidence: ${
-              state.evidenceRefs?.length
-                ? state.evidenceRefs.map((item) => `\`${item}\``).join(', ')
-                : 'none'
-            }`,
-            '',
-          ]),
-          '',
-        ])
-      : [
-          '- Status: `unknown`',
-          '- No component state matrix has been accepted.',
-          '',
-        ]),
+    ...(dna.componentPatterns ?? []).flatMap((component) => [
+      `## ${component.name}`,
+      '',
+      claimDetails(component.claim),
+      '',
+      ...component.states.map((state) => renderStateContract(state, '###')),
+    ]),
+    '',
   ].join('\n');
 }
 
 function renderComponentComposition(dna) {
-  const components = dna.componentPatterns ?? [];
   return [
     '# Component composition and anti-patterns',
     '',
-    'Composition defines ownership between a component and its context: nesting, grouping, spacing, adaptation, content pressure, and invalid combinations.',
+    ...(dna.componentPatterns ?? []).flatMap((component) => [
+      `## ${component.name}`,
+      '',
+      claimDetails(component.claim),
+      '',
+      ...renderAssertions(component, 'compositionRules', 'Composition rules'),
+      ...renderAssertions(
+        component,
+        'contentConstraints',
+        'Content constraints',
+      ),
+      ...renderAssertions(component, 'adaptationRules', 'Adaptation rules'),
+      ...renderAssertions(
+        component,
+        'accessibilityRequirements',
+        'Accessibility requirements',
+      ),
+      ...renderAssertions(component, 'antiPatterns', 'Anti-patterns'),
+    ]),
     '',
-    ...(components.length
-      ? components.flatMap((component) => [
-          `## ${component.name}`,
-          '',
-          `- Status: \`${component.claim.epistemicStatus}\``,
-          `- Purpose: ${component.purpose ?? 'Unknown in the legacy contract.'}`,
-          '',
-          '### Composition rules',
-          '',
-          ...(component.compositionRules?.length
-            ? component.compositionRules.map((item) => `- ${item}`)
-            : ['- Status: `unknown` — No explicit composition rule.']),
-          '',
-          '### Content constraints',
-          '',
-          ...(component.contentConstraints?.length
-            ? component.contentConstraints.map((item) => `- ${item}`)
-            : ['- Status: `unknown` — No explicit content constraint.']),
-          '',
-          '### Adaptation rules',
-          '',
-          ...(component.adaptationRules?.length
-            ? component.adaptationRules.map((item) => `- ${item}`)
-            : ['- Status: `unknown` — No explicit adaptation rule.']),
-          '',
-          '### Accessibility requirements',
-          '',
-          ...(component.accessibilityRequirements?.length
-            ? component.accessibilityRequirements.map((item) => `- ${item}`)
-            : ['- Status: `unknown` — No explicit accessibility requirement.']),
-          '',
-          '### Anti-patterns',
-          '',
-          ...(component.antiPatterns?.length
-            ? component.antiPatterns.map((item) => `- ${item}`)
-            : ['- Status: `unknown` — No explicit anti-pattern.']),
-          '',
-        ])
-      : [
-          '- Status: `unknown`',
-          '- No component family is available for composition analysis.',
-          '',
-        ]),
   ].join('\n');
 }
 
@@ -841,6 +718,8 @@ function renderUiDomainDocument(dna, matrix, entry) {
             '### Accepted routed artifacts',
             '',
             ...artifactRowsForDomain(dna, domain.id),
+            '',
+            domainRecipe(dna, domain.id),
             '',
             '### Visible evidence',
             '',
@@ -1179,6 +1058,8 @@ function renderCalibrationDocument(dna, matrix, entry) {
     '',
     'Calibration never promotes a measured or proposed value to observed. Exact values require accepted Design DNA evidence.',
     '',
+    renderFidelityContract(dna),
+    '',
     '## Current calibration inputs',
     '',
     ...(tokens.length
@@ -1220,9 +1101,13 @@ function renderDocumentationReadme(dna, matrix) {
     '',
     `Design DNA: \`${dna.documentId}\`, revision ${dna.revision.number}, status \`${dna.status}\`. Documentation layout: \`${matrix.documentationLayoutVersion}\`.`,
     '',
-    'This complete dossier is generated from accepted Design DNA. Every UI claim remains `observed`, `inferred`, `proposed`, or `unknown`; proposed resilience guidance is never presented as screenshot evidence.',
+    'This dossier preserves the supplied Design DNA status; completeness of file projection is not visual fidelity. Every UI claim remains `observed`, `inferred`, `proposed`, or `unknown`; proposed resilience guidance is never presented as screenshot evidence.',
     '',
     'These files are checksum-managed by Designome. Put manual additions in repository-owned documentation or Designome override files rather than editing generated documents.',
+    '',
+    `- Fidelity readiness: \`${fidelityReadiness(dna).status}\`; visual fidelity is not established by projection.`,
+    '',
+    renderFidelityContract(dna),
     '',
     ...[...groups].flatMap(([directory, entries]) => [
       `## ${directory[0].toUpperCase()}${directory.slice(1)}`,
@@ -1235,11 +1120,11 @@ function renderDocumentationReadme(dna, matrix) {
   ].join('\n');
 }
 
-function renderDocumentation({
+export function renderDocumentation({
   dna,
   styling,
   integrationPolicy,
-  documentationDirectory,
+  documentationDirectory = defaultDocumentationDirectory,
   matrix,
 }) {
   const documents = new Map([
@@ -1283,6 +1168,31 @@ function renderDocumentation({
                                   : renderGenericDocument(dna, matrix, entry);
     documents.set(entry.path, content);
   }
+  return documents;
+}
+
+export async function projectDocumentation(
+  dna,
+  { rootDirectory = pluginRoot } = {},
+) {
+  await assertValidDesignDna(dna, { rootDirectory });
+  const matrix = await readJson(
+    path.join(rootDirectory, 'concepts/concept-matrix.v0.3.json'),
+  );
+  const documents = renderDocumentation({
+    dna,
+    matrix,
+    styling: { strategy: 'guidance-only', system: 'unknown', evidence: [] },
+    integrationPolicy: { existingRulePaths: [], rulePrecedence: 'complement' },
+  });
+  const integrationEntry = matrix.documentationProjection.find(
+    (entry) => entry.renderer === 'integration',
+  );
+  if (integrationEntry)
+    documents.set(
+      integrationEntry.path,
+      '# Repository integration\n\n- Status: `unknown` — This is a documentation-only projection. No target project was inspected or installed. The Design DNA acceptance status remains unchanged.\n',
+    );
   return documents;
 }
 

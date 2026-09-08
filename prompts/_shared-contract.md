@@ -78,6 +78,10 @@ Allowed stage statuses are `complete`, `partial`, and `blocked`. Allowed validat
 
 ## Quality rules
 
+- A `complete` final facet or applicable domain needs at least one relevant, non-unknown canonical artifact and no unresolved gaps. A checklist, evidence pointer or document alone is insufficient. Unknown and not-applicable records explain why evidence is unavailable.
+- New extraction uses Fidelity Contract `1.0.0`. Each requirement, composition/content/adaptation/accessibility note, variant condition/difference and state field has its own full claim. A visible appearance never establishes its trigger, behavior, feedback, exit or programmatic semantics. See `docs/fidelity-contract.md` for exact mirrors and compatibility.
+- Preserve a small ranked set of source-specific qualities: which relationships make this interface recognizable, their scope, evidence, exceptions and concrete failure modes. Priorities guide review; they do not turn preference into observation.
+- Keep observed relationships separate from proposed reproduction bounds. Calibration candidates name target, property, unit, range or ratio, tolerance, validation and acceptance basis. Unknown exact values stay unknown. Never use the target project's styles as calibration evidence.
 - One claim expresses one testable rule.
 - `observed` and `inferred` claims require evidence references.
 - `proposed` claims state that they are not visible in the screenshots.
