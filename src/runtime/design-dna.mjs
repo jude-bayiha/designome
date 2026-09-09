@@ -2,6 +2,7 @@ import path from 'node:path';
 
 import { DesignomeError } from './errors.mjs';
 import { pluginRoot, readJson } from './files.mjs';
+import { validateFidelity } from './fidelity.mjs';
 
 const statuses = new Set(['observed', 'inferred', 'proposed', 'unknown']);
 const documentStatuses = new Set(['draft', 'accepted', 'superseded']);
@@ -536,7 +537,11 @@ function validateEpistemicEvidence(
 
 async function validateV03DesignDna(
   dna,
-  { requireAccepted = false, rootDirectory = pluginRoot } = {},
+  {
+    requireAccepted = false,
+    requireFidelity = false,
+    rootDirectory = pluginRoot,
+  } = {},
 ) {
   const errors = [];
   if (!isObject(dna)) return ['Design DNA must be a JSON object'];
@@ -611,6 +616,9 @@ async function validateV03DesignDna(
   const tokenCategoryIds = new Set(matrix.tokenCategories);
   const ruleCategoryIds = new Set(matrix.ruleCategories);
   const artifactIds = new Set([...tokenIds, ...ruleIds, ...componentIds]);
+  const artifactsById = new Map(
+    [...tokens, ...rules, ...components].map((item) => [item.id, item]),
+  );
   const context = { conceptIds, evidenceIds, uiDomainIds };
   const sourcesById = new Map(sources.map((source) => [source.id, source]));
   const evidenceById = new Map(evidence.map((item) => [item.id, item]));
@@ -1193,8 +1201,42 @@ async function validateV03DesignDna(
           artifactIds,
           facetLocation + '.artifactRefs',
           errors,
+          { minimum: facet.coverageStatus === 'complete' ? 1 : 0 },
         );
         validateStringList(facet.gaps, facetLocation + '.gaps', errors);
+        if (facet.coverageStatus === 'complete') {
+          if (
+            facet.epistemicStatus === 'unknown' ||
+            (facet.gaps?.length ?? 0) > 0
+          )
+            errors.push(
+              facetLocation +
+                ': complete coverage cannot retain unknown status or unresolved gaps',
+            );
+          for (const ref of Array.isArray(facet.artifactRefs)
+            ? facet.artifactRefs
+            : []) {
+            const artifact = artifactsById.get(ref);
+            if (
+              artifact &&
+              (artifact.claim?.epistemicStatus === 'unknown' ||
+                !(artifact.claim?.conceptRefs ?? []).some((id) =>
+                  expectedAxis?.conceptRefs.includes(id),
+                ))
+            )
+              errors.push(
+                facetLocation +
+                  ': complete coverage must reference non-unknown artifacts routed to its axis',
+              );
+          }
+        }
+        if (
+          ['unknown', 'not-applicable'].includes(facet.coverageStatus) &&
+          !(facet.gaps?.length > 0)
+        )
+          errors.push(
+            facetLocation + ': missing coverage requires an explicit reason',
+          );
         validateEpistemicEvidence(
           facet,
           facetLocation,
@@ -1270,8 +1312,45 @@ async function validateV03DesignDna(
         artifactIds,
         location + '.artifactRefs',
         errors,
+        { minimum: coverage.coverageStatus === 'complete' ? 1 : 0 },
       );
       validateStringList(coverage.gaps, location + '.gaps', errors);
+      if (
+        coverage.coverageStatus === 'complete' &&
+        (coverage.epistemicStatus === 'unknown' ||
+          (coverage.gaps?.length ?? 0) > 0 ||
+          !['detected', 'requested'].includes(coverage.applicability))
+      )
+        errors.push(
+          location +
+            ': complete coverage requires an applicable domain without unresolved gaps',
+        );
+      if (coverage.coverageStatus === 'complete') {
+        for (const ref of Array.isArray(coverage.artifactRefs)
+          ? coverage.artifactRefs
+          : []) {
+          const artifact = artifactsById.get(ref);
+          if (
+            artifact &&
+            (artifact.claim?.epistemicStatus === 'unknown' ||
+              ![
+                ...(artifact.uiDomainRefs ?? []),
+                ...(artifact.claim?.uiDomainRefs ?? []),
+              ].includes(coverage.domainRef))
+          )
+            errors.push(
+              location +
+                ': complete coverage must reference non-unknown artifacts routed to its domain',
+            );
+        }
+      }
+      if (
+        ['unknown', 'not-applicable'].includes(coverage.coverageStatus) &&
+        !(coverage.gaps?.length > 0)
+      )
+        errors.push(
+          location + ': missing coverage requires an explicit reason',
+        );
       validateEpistemicEvidence(
         coverage,
         location,
@@ -1336,12 +1415,28 @@ async function validateV03DesignDna(
     validateReferences(dna.motion.rules, ruleIds, 'motion.rules', errors);
   }
 
+  validateFidelity(dna, {
+    errors,
+    artifactIds,
+    requireFidelity,
+    validateClaim(claim, location) {
+      validateRichClaim(claim, location, context, errors);
+      validateClaimSourceRouting(claim, location);
+    },
+    validateValue(value, location) {
+      validateDesignValue(value, location, errors);
+    },
+  });
   return errors;
 }
 
 export async function validateDesignDna(dna, options = {}) {
   if (!isObject(dna)) return ['Design DNA must be a JSON object'];
   if (dna.schemaVersion === '0.2.0') {
+    if (options.requireFidelity)
+      return [
+        'fidelity: legacy 0.2.0 DNA requires explicit re-extraction before fidelity validation',
+      ];
     return validateLegacyDesignDna(dna, options);
   }
   if (dna.schemaVersion === '0.3.0') {

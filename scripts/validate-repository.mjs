@@ -509,6 +509,25 @@ export function validateRepository(rootDirectory = repositoryRoot) {
   );
 
   try {
+    const benchmarkSchema = readJson(
+      path.join(rootDirectory, 'schemas/benchmark.schema.json'),
+    );
+    const validateBenchmark = ajv.compile(benchmarkSchema);
+    if (
+      !validateBenchmark(
+        readJson(
+          path.join(rootDirectory, 'examples/benchmark-corpus.reference.json'),
+        ),
+      )
+    )
+      errors.push(
+        ...formatAjvErrors('Benchmark corpus', validateBenchmark.errors),
+      );
+  } catch (error) {
+    errors.push(`Benchmark schema validation failed: ${error.message}`);
+  }
+
+  try {
     const matrixSchema = readJson(matrixSchemaPath);
     const matrix = readJson(matrixPath);
     const validateMatrix = ajv.compile(matrixSchema);
@@ -526,6 +545,11 @@ export function validateRepository(rootDirectory = repositoryRoot) {
     const validateDna = ajv.compile(dnaSchema);
     if (!validateDna(dnaExample))
       errors.push(...formatAjvErrors('Design DNA example', validateDna.errors));
+    const fidelityExample = readJson(
+      path.join(rootDirectory, 'examples/design-dna.fidelity.reference.json'),
+    );
+    if (!validateDna(fidelityExample))
+      errors.push(...formatAjvErrors('Fidelity example', validateDna.errors));
   } catch (error) {
     errors.push(`Design DNA validation failed: ${error.message}`);
   }

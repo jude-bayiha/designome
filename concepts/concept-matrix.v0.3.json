@@ -159,7 +159,8 @@
           "inspect": [
             "display, page title, section title, component title, body, label, metadata, caption, code, and data roles",
             "relative size, weight, contrast, and spacing hierarchy",
-            "role reuse and intentional exceptions"
+            "role reuse and intentional exceptions",
+            "apparent glyph width, geometric or humanist character, x-height cues and numeral shape; exact font identity remains unknown"
           ],
           "screenshotLimits": [
             "font family and exact metrics cannot be identified from resemblance",
@@ -678,6 +679,7 @@
           "question": "How do rows, columns, metadata, hierarchy, actions, selection, and navigation preserve scanability at scale?",
           "inspect": [
             "column roles, row anatomy, alignment, density, sticky cues, and action placement",
+            "readable column labels and order, grouping depth, visible row counts, occupied space, and crop uncertainty without inventing total data volume",
             "sorting, filtering, grouping, pagination, expansion, selection, and batch-action cues",
             "empty, partial, loading, error, long-content, and extreme-value behavior"
           ],
@@ -1281,7 +1283,8 @@
           "inspect": [
             "evidence, confidence, scope, exceptions, conflicts, and unknowns",
             "facet coverage and UI-domain applicability",
-            "missing references and next evidence required"
+            "missing references and next evidence required",
+            "complete coverage requires routed non-unknown artifacts and no unresolved gaps; independent field assertions preserve behavior uncertainty"
           ],
           "screenshotLimits": [
             "document presence does not prove semantic coverage",
@@ -3188,7 +3191,7 @@
       ]
     }
   ],
-  "documentationLayoutVersion": "2.0.0",
+  "documentationLayoutVersion": "2.1.0",
   "documentationProjection": [
     {
       "path": "foundations/spatial-composition.md",
@@ -5205,5 +5208,6 @@
         "calibration candidates"
       ]
     }
-  ]
+  ],
+  "fidelityContractVersion": "1.0.0"
 }

@@ -97,12 +97,16 @@ In direct mode, a target-specific accuracy claim still requires matching source 
 
 ## Coverage contract
 
+Matrix metadata `fidelityContractVersion: 1.0.0` makes the [fidelity contract](fidelity-contract.md) mandatory for new extraction run plans. Layout `2.1.0` preserves all projection paths while retaining relational tokens, independent field assertions and autonomous domain recipes.
+
 Design DNA v0.3 contains two complete ledgers:
 
 1. `coverage.axes`: exactly 13 axis records, each with exactly the matrix's five facets;
 2. `coverage.uiDomains`: exactly 20 domain records, including detected, requested, not-detected, and not-applicable domains.
 
 Facet and domain records retain summary, epistemic status, evidence references, artifact references, gaps, and a validation method/status. Coverage completeness means every question has an honest record; it never means every question is visually proven.
+
+A record labeled `complete` additionally needs relevant non-unknown canonical artifacts and no unresolved gaps. Unknown and not-applicable records explain the missing evidence or applicability boundary. Runtime checks reference integrity and routing; a specialist still judges whether the rule actually answers its facet.
 
 ## Documentation projection
 

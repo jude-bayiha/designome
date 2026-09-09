@@ -21,6 +21,7 @@
   ],
   "properties": {
     "contextContractVersion": { "const": "1.0.0" },
+    "fidelityContractVersion": { "const": "1.0.0" },
     "matrixVersion": { "const": "0.3.0" },
     "requestContractVersion": { "const": "1.1.0" },
     "designDnaSchemaVersion": { "const": "0.3.0" },
@@ -65,7 +66,7 @@
       "maxItems": 20,
       "items": { "$ref": "#/$defs/uiDomain" }
     },
-    "documentationLayoutVersion": { "const": "2.0.0" },
+    "documentationLayoutVersion": { "const": "2.1.0" },
     "documentationProjection": {
       "type": "array",
       "minItems": 51,

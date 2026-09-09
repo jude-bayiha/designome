@@ -422,10 +422,12 @@ export async function resumeWorkflow({
       activeStep = 'extract-design-dna';
       startStep(state, activeStep);
       const dna = await readJson(state.dnaPath);
-      await assertValidDesignDna(dna);
       const runPlan = await readJson(
         path.join(state.runDirectory, 'run-plan.json'),
       );
+      await assertValidDesignDna(dna, {
+        requireFidelity: runPlan.fidelityContractVersion === '1.0.0',
+      });
       if (runPlan.context) {
         const input = await loadContextInput(
           runPlan.context.synthesisInputPath,

@@ -4,6 +4,8 @@ Designome turns UI screenshots into an evidence-backed **Design DNA** that an ex
 
 ## Current status
 
+[Fidelity Contract 1.0](docs/fidelity-contract.md) adds actionable coverage gates, independent component assertions, ranked visual qualities and proposed reproduction bounds. The 52-file dossier now preserves token relationships and complete domain recipes. A [repeated documentation-only benchmark](docs/fidelity-benchmark.md) measures reconstruction across source families and component libraries, with visual finish evaluated separately from fidelity. See the [executed evaluation](docs/fidelity-evaluation.md) for results and limits.
+
 An experimental [lossless context compiler](docs/lossless-context.md) provides hash-bound specialist packs and stage validation. Full context remains the default until behavioral parity is established.
 
 See the [non-regression assessment](docs/context-non-regression.md) for executed checks, measured view sizes and promotion limits.
