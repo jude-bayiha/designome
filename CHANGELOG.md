@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.10.0](https://github.com/jude-bayiha/designome/compare/v1.9.0...v1.10.0) (2026-09-09)
+
+
+### Features
+
+* preserve actionable UI fidelity and benchmark component libraries ([48a29e8](https://github.com/jude-bayiha/designome/commit/48a29e84af554c9df7ff1070fce42c29f44a8281))
+* **runtime:** add actionable UI fidelity contracts and benchmarks ([898eb13](https://github.com/jude-bayiha/designome/commit/898eb13525b3d02dce6ceb093dff96ce68d5ed17))
+
 ## [1.9.0](https://github.com/jude-bayiha/designome/compare/v1.8.0...v1.9.0) (2026-09-07)
 
 
