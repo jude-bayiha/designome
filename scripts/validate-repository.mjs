@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { parse as parseYaml } from 'yaml';
+import { buildAuditVerification, designDnaFingerprint } from '../src/index.mjs';
 
 const repositoryRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -444,6 +445,16 @@ export function validateRepository(rootDirectory = repositoryRoot) {
     'examples',
     'audit-config.reference.json',
   );
+  const auditConfigV2ExamplePath = path.join(
+    rootDirectory,
+    'examples',
+    'audit-config.v2.reference.json',
+  );
+  const auditPlanSchemaPath = path.join(
+    rootDirectory,
+    'schemas',
+    'audit-plan.schema.json',
+  );
   const auditEvidenceSchemaPath = path.join(
     rootDirectory,
     'schemas',
@@ -591,14 +602,48 @@ export function validateRepository(rootDirectory = repositoryRoot) {
   try {
     const auditConfigSchema = readJson(auditConfigSchemaPath);
     const auditConfigExample = readJson(auditConfigExamplePath);
+    const auditConfigV2Example = readJson(auditConfigV2ExamplePath);
     const validateAuditConfig = ajv.compile(auditConfigSchema);
-    if (!validateAuditConfig(auditConfigExample)) {
+    for (const [label, example] of [
+      ['audit config', auditConfigExample],
+      ['audit config v2', auditConfigV2Example],
+    ]) {
+      if (!validateAuditConfig(example)) {
+        errors.push(...formatAjvErrors(label, validateAuditConfig.errors));
+      }
+    }
+    const fidelityDna = readJson(
+      path.join(
+        rootDirectory,
+        'examples',
+        'design-dna.fidelity.reference.json',
+      ),
+    );
+    if (
+      auditConfigV2Example.verification?.dnaFingerprint !==
+      designDnaFingerprint(fidelityDna)
+    ) {
       errors.push(
-        ...formatAjvErrors('audit config', validateAuditConfig.errors),
+        'audit config v2 fingerprint does not match its reference DNA',
       );
+    }
+    try {
+      buildAuditVerification({
+        dna: fidelityDna,
+        config: auditConfigV2Example,
+        routes: auditConfigV2Example.routes,
+      });
+    } catch (error) {
+      errors.push(`audit config v2 verification failed: ${error.message}`);
     }
   } catch (error) {
     errors.push(`audit config validation failed: ${error.message}`);
+  }
+
+  try {
+    ajv.compile(readJson(auditPlanSchemaPath));
+  } catch (error) {
+    errors.push(`audit plan schema validation failed: ${error.message}`);
   }
 
   for (const [label, schemaPath, examplePath] of [
