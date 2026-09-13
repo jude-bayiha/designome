@@ -10,6 +10,8 @@ import { planAudit } from '../../src/runtime/audit.mjs';
 import { createCaptureSession } from '../../src/runtime/capture-session.mjs';
 import { doctorProject } from '../../src/runtime/doctor.mjs';
 import { writeBrowserEvidence } from '../../examples/browser-adapter.reference.mjs';
+import { buildAuditVerification } from '../../src/runtime/audit-verification.mjs';
+import { designDnaFingerprint } from '../../src/runtime/audit-contract.mjs';
 import {
   installDesignDna,
   planInstallation,
@@ -630,7 +632,7 @@ test('external in-app-browser evidence transitions to passed and never remains p
   );
 });
 
-test('published browser adapter example writes evidence that the audit accepts', async (t) => {
+test('published browser adapter example records only supplied evidence and stays incomplete without observations', async (t) => {
   const fixture = await makeProject(t, 'adapter-example');
   await installFixture(fixture);
   await configureSingleRouteAudit(fixture.projectRoot, { perceptual: true });
@@ -661,6 +663,16 @@ test('published browser adapter example writes evidence that the audit accepts',
     plan,
     screenshotPath,
     outputPath: evidencePath,
+    capture: {
+      document: {
+        scrollWidth: 390,
+        clientWidth: 390,
+        scrollHeight: 844,
+        clientHeight: 844,
+      },
+      elements: [],
+      responsiveChecks: [],
+    },
   });
   const result = await runAudit({
     projectPath: fixture.projectRoot,
@@ -668,7 +680,10 @@ test('published browser adapter example writes evidence that the audit accepts',
     evidencePath: 'audit/example-evidence.json',
     overwrite: true,
   });
-  assert.equal(result.status, 'passed');
+  assert.equal(result.status, 'incomplete');
+  const exampleEvidence = JSON.parse(await fs.readFile(evidencePath, 'utf8'));
+  assert.equal(exampleEvidence.perceptualObservations.length, 0);
+  assert.equal(exampleEvidence.interactions.length, 0);
 
   await fs.writeFile(
     path.join(fixture.projectRoot, 'audit', 'incompatible.json'),
@@ -855,4 +870,131 @@ test('experimental workflow refuses acceptance without validated specialist enve
     /specialist envelopes/,
   );
   assert.deepEqual(await projectSnapshot(fixture.projectRoot), before);
+});
+
+test('orchestrated legacy evidence requests a fresh capture without repeating accepted steps', async (t) => {
+  const fixture = await makeProject(t, 'orchestrator-recapture');
+  const workspacePath = path.join(fixture.root, 'workspace');
+  await fs.mkdir(workspacePath);
+  const sourcePath = path.join(fixture.root, 'source.png');
+  await fs.writeFile(
+    sourcePath,
+    Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Zl1sAAAAASUVORK5CYII=',
+      'base64',
+    ),
+  );
+  const initialized = await initializeWorkflow({
+    sourcePaths: [sourcePath],
+    projectPath: fixture.projectRoot,
+    workspacePath,
+    cssEntry: 'src/styles/globals.css',
+  });
+  await fs.writeFile(
+    path.join(initialized.runDirectory, 'design-dna.json'),
+    `${JSON.stringify(await referenceDna('draft'), null, 2)}\n`,
+  );
+  await resumeWorkflow({ workspacePath });
+  await resumeWorkflow({ workspacePath, acceptDesignDna: true });
+  const installedDna = JSON.parse(
+    await fs.readFile(
+      path.join(fixture.projectRoot, '.designome', 'design-dna.json'),
+      'utf8',
+    ),
+  );
+  const routes = [
+    {
+      id: 'home',
+      path: '/',
+      viewports: [{ name: 'mobile', width: 390, height: 844 }],
+      flows: [],
+      scenarios: ['default'],
+      directions: ['ltr'],
+    },
+  ];
+  const emptyConfig = {
+    auditContractVersion: '2.0.0',
+    verification: {
+      dnaFingerprint: designDnaFingerprint(installedDna),
+      bindings: [],
+    },
+  };
+  const candidate = buildAuditVerification({
+    dna: installedDna,
+    config: emptyConfig,
+    routes,
+  });
+  const targetContext = {
+    routeId: 'home',
+    viewport: { width: 390, height: 844 },
+    scenario: 'default',
+    direction: 'ltr',
+  };
+  const config = {
+    schemaVersion: '1.0.0',
+    auditContractVersion: '2.0.0',
+    baseUrl: 'http://127.0.0.1:3000',
+    outputDirectory: 'audit',
+    layers: {
+      installation: true,
+      mechanical: true,
+      perceptual: true,
+      usage: true,
+    },
+    routes,
+    verification: {
+      dnaFingerprint: designDnaFingerprint(installedDna),
+      bindings: candidate.obligations
+        .filter((item) => item.disposition === 'requirement')
+        .map((item) => ({
+          obligationRef: item.id,
+          layer: item.layer,
+          method: item.method,
+          targetContexts: [targetContext],
+          sourceRefs:
+            item.method === 'perceptual' ? [installedDna.sources[0].id] : [],
+        })),
+    },
+  };
+  await fs.writeFile(
+    path.join(fixture.projectRoot, '.designome', 'audit.config.json'),
+    `${JSON.stringify(config, null, 2)}\n`,
+  );
+  const captureHandoff = await resumeWorkflow({
+    workspacePath,
+    hostEvent: 'implementation-complete',
+  });
+  assert.equal(captureHandoff.currentStep, 'capture-browser-evidence');
+  const legacyEvidencePath = path.join(
+    fixture.projectRoot,
+    'audit',
+    'legacy-evidence.json',
+  );
+  await fs.mkdir(path.dirname(legacyEvidencePath), { recursive: true });
+  await fs.writeFile(legacyEvidencePath, '{"schemaVersion":"1.0.0"}\n');
+  const recapture = await resumeWorkflow({
+    workspacePath,
+    hostEvent: 'evidence-complete',
+    evidencePath: legacyEvidencePath,
+  });
+  assert.equal(recapture.status, 'awaiting-host');
+  assert.equal(recapture.currentStep, 'capture-browser-evidence');
+  assert.equal(
+    recapture.handoff.error.code,
+    'AUDIT_EVIDENCE_RECAPTURE_REQUIRED',
+  );
+  assert.equal(
+    recapture.steps.find((step) => step.id === 'accept-design-dna').status,
+    'completed',
+  );
+  assert.equal(
+    recapture.steps.find((step) => step.id === 'install-design-dna').status,
+    'completed',
+  );
+  const noPath = await resumeWorkflow({
+    workspacePath,
+    hostEvent: 'evidence-complete',
+  });
+  assert.equal(noPath.status, 'awaiting-host');
+  assert.equal(noPath.currentStep, 'capture-browser-evidence');
 });

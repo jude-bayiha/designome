@@ -672,6 +672,10 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
     'audit.config.json',
   );
   const auditConfig = JSON.parse(await fs.readFile(auditConfigPath, 'utf8'));
+  assert.equal(auditConfig.auditContractVersion, '2.0.0');
+  assert.equal(auditConfig.verification.dnaFingerprint.length, 64);
+  assert.deepEqual(auditConfig.verification.bindings, []);
+  assert.match(agents, /Audit Contract 2\.0/u);
   auditConfig.routes.push({
     id: 'people',
     path: '/people',

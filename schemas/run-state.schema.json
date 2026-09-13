@@ -40,6 +40,14 @@
     },
     "requestContractPath": { "type": ["string", "null"] },
     "dnaPath": { "type": "string", "minLength": 1 },
+    "recaptureRequired": {
+      "type": ["object", "null"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
     "steps": {
       "type": "array",
       "minItems": 9,

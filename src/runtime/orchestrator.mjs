@@ -268,6 +268,7 @@ export async function initializeWorkflow({
     steps: workflowSteps.map(stepState),
     handoff: null,
     finalResult: null,
+    recaptureRequired: null,
   };
   completeStep(state, 'doctor', []);
   const initializationArtifacts = [
@@ -401,6 +402,24 @@ export async function resumeWorkflow({
   if (state.status === 'completed')
     return publicResult(state, { finalResult: state.finalResult });
   if (hostEvent) recordHostEvent(state, hostEvent);
+
+  if (
+    state.recaptureRequired &&
+    hostEvent === 'evidence-complete' &&
+    !evidencePath
+  ) {
+    awaitStep(state, 'capture-browser-evidence', {
+      owner: 'host-agent',
+      type: 'capture-browser-evidence',
+      responsibility:
+        'Provide a newly captured evidence file. The previous file was rejected and cannot be reused; keep extraction, acceptance, installation, and implementation steps intact.',
+      error: state.recaptureRequired,
+      completionEvent:
+        'designome run --resume --host-event evidence-complete --evidence <new-adapter-output>',
+    });
+    await persistState(state);
+    return publicResult(state);
+  }
 
   let activeStep = state.currentStep;
   try {
@@ -592,6 +611,7 @@ export async function resumeWorkflow({
         });
       }
       completeStep(state, activeStep, [externalEvidencePath]);
+      state.recaptureRequired = null;
     }
 
     const auditStep = getStep(state, 'evaluate-audit');
@@ -641,6 +661,63 @@ export async function resumeWorkflow({
       error instanceof DesignomeError
         ? error
         : new DesignomeError(error.message, { code: 'UNEXPECTED_ERROR' });
+    if (
+      new Set([
+        'AUDIT_EVIDENCE_RECAPTURE_REQUIRED',
+        'AUDIT_EVIDENCE_UNREADABLE',
+        'INCOMPATIBLE_AUDIT_EVIDENCE_VERSION',
+        'INVALID_AUDIT_EVIDENCE',
+        'INVALID_AUDIT_VERIFICATION',
+        'AUDIT_EVIDENCE_DNA_MISMATCH',
+        'AUDIT_CAPTURE_FILE_MISMATCH',
+        'AUDIT_EVIDENCE_PLAN_MISMATCH',
+        'AUDIT_EVIDENCE_PROVIDER_MISMATCH',
+      ]).has(normalized.code)
+    ) {
+      const captureStep = getStep(state, 'capture-browser-evidence');
+      const auditStep = getStep(state, 'evaluate-audit');
+      captureStep.error = {
+        code: normalized.code,
+        message: normalized.message,
+        details: normalized.details,
+        failedAt: now(),
+      };
+      auditStep.status = 'pending';
+      auditStep.startedAt = null;
+      auditStep.error = null;
+      state.recaptureRequired = {
+        code: normalized.code,
+        message: normalized.message,
+        details: normalized.details,
+        reason:
+          'A fresh adapter evidence file is required before this audit can be evaluated.',
+      };
+      awaitStep(state, 'capture-browser-evidence', {
+        owner: 'host-agent',
+        type: 'capture-browser-evidence',
+        adapter: {
+          packageExport: 'designome/audit',
+          factory: 'createCaptureSession',
+          planPath: path.join(
+            state.projectPath,
+            state.auditOutputDirectory,
+            'plan.json',
+          ),
+          outputPath: path.join(
+            state.projectPath,
+            state.auditOutputDirectory,
+            'external-evidence.json',
+          ),
+        },
+        responsibility:
+          'Recapture through the current browser adapter and submit a new evidence file. Previously accepted extraction, DNA acceptance, installation, and implementation steps remain complete.',
+        error: state.recaptureRequired,
+        completionEvent:
+          'designome run --resume --host-event evidence-complete --evidence <new-adapter-output>',
+      });
+      await persistState(state);
+      return publicResult(state);
+    }
     if (
       new Set([
         'MANAGED_ARTIFACT_CONFLICT',
