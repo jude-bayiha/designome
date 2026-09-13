@@ -8,7 +8,10 @@ import {
   overallLayerStatus,
   transitionProvider,
 } from './audit-state.mjs';
-import { validateAuditEvidence } from './capture-session.mjs';
+import {
+  validateAuditCaptureFiles,
+  validateAuditEvidence,
+} from './capture-session.mjs';
 import { DesignomeError } from './errors.mjs';
 import {
   atomicWrite,
@@ -23,6 +26,17 @@ import {
 } from './files.mjs';
 import { verifyInstallation } from './install.mjs';
 import { migrateAuditConfig, migrateAuditEvidence } from './migrations.mjs';
+import {
+  auditContractVersion,
+  designDnaFingerprint,
+  fingerprintFromPlan,
+} from './audit-contract.mjs';
+import {
+  buildAuditVerification,
+  evaluateAuditVerification,
+  validateAuditVerificationEvidence,
+  verificationCoverage,
+} from './audit-verification.mjs';
 
 const defaultConfigPath = '.designome/audit.config.json';
 const providerNames = new Set([
@@ -54,6 +68,12 @@ async function assertProjectRoot(projectPath) {
 
 function validateConfig(config) {
   const errors = [];
+  if (
+    config?.auditContractVersion !== undefined &&
+    !['1.0.0', auditContractVersion].includes(config.auditContractVersion)
+  ) {
+    errors.push('auditContractVersion must be 1.0.0 or 2.0.0');
+  }
   if (config?.schemaVersion !== '1.0.0')
     errors.push('schemaVersion must be 1.0.0 after migration');
   if (typeof config?.baseUrl !== 'string' || config.baseUrl.length === 0)
@@ -87,6 +107,26 @@ function validateConfig(config) {
   for (const layer of ['installation', 'mechanical', 'perceptual', 'usage']) {
     if (typeof config?.layers?.[layer] !== 'boolean') {
       errors.push(`layers.${layer} must be a boolean`);
+    }
+  }
+  if (config?.auditContractVersion === auditContractVersion) {
+    if (!config.verification || typeof config.verification !== 'object')
+      errors.push('verification is required for Audit Contract 2.0');
+    else {
+      if (
+        typeof config.verification.dnaFingerprint !== 'string' ||
+        !/^[a-f0-9]{64}$/u.test(config.verification.dnaFingerprint)
+      )
+        errors.push(
+          'verification.dnaFingerprint must be a SHA-256 fingerprint',
+        );
+      if (!Array.isArray(config.verification.bindings))
+        errors.push('verification.bindings must be an array');
+      if (
+        config.verification.exclusions !== undefined &&
+        !Array.isArray(config.verification.exclusions)
+      )
+        errors.push('verification.exclusions must be an array');
     }
   }
   return errors;
@@ -202,6 +242,11 @@ function reportMarkdown(report) {
     '# Designome audit',
     '',
     `Design DNA: \`${report.designDna.documentId}\` revision ${report.designDna.revision}.`,
+    ...(report.auditContractVersion
+      ? [
+          `Audit contract: \`${report.auditContractVersion}\`; Design DNA fingerprint: \`${report.designDnaFingerprint}\`.`,
+        ]
+      : []),
     `Overall status: **${report.overallStatus}**.`,
     '',
     '## Canonical provider state',
@@ -232,6 +277,22 @@ function reportMarkdown(report) {
     `- Proposed calibration candidates requiring human validation: ${report.results.proposalCount}`,
     `- Missing captures: ${report.coverage.missing.captures.length}`,
     `- Missing interactions: ${report.coverage.missing.interactions.length}`,
+    ...(report.results.verification
+      ? [
+          '',
+          '### Verification registry',
+          '',
+          `- Checks: ${report.results.verification.evaluated}/${report.results.verification.expected}`,
+          `- Passed: ${report.results.verification.passed}`,
+          `- Failed: ${report.results.verification.failed}`,
+          `- Incomplete: ${report.results.verification.incomplete}`,
+          `- Unresolved: ${report.results.verification.unresolved}`,
+          `- Exclusions: ${report.results.verification.exclusions.length}`,
+          `- Rejected constraints: ${report.results.verification.excluded.length}`,
+          `- Pending calibrations: ${report.results.verification.calibration.length}`,
+          `- Diagnostics: ${report.results.verification.diagnostics.length}`,
+        ]
+      : []),
     '',
     ...report.limitations.map((limitation) => `- Limitation: ${limitation}`),
     '',
@@ -521,6 +582,7 @@ export function evaluateAuditEvidence({ dna, evidence }) {
   for (const observation of evidence.perceptualObservations) {
     if (
       observation.result === 'failed' &&
+      !observation.checkRef &&
       ['observed', 'inferred'].includes(observation.epistemicStatus)
     ) {
       findings.push(
@@ -632,7 +694,12 @@ function initialLayerStates(config, provider) {
   };
 }
 
-function evaluatedLayerStates({ config, evidence, findings }) {
+function evaluatedLayerStates({
+  config,
+  evidence,
+  findings,
+  verificationEvaluation = null,
+}) {
   const failures = new Set(findings.map((finding) => finding.layer));
   const states = {
     installation: requestedLayer(config, 'installation')
@@ -660,20 +727,55 @@ function evaluatedLayerStates({ config, evidence, findings }) {
         : 'passed';
   }
   if (requestedLayer(config, 'perceptual')) {
-    const observedAspects = new Set(
-      evidence.perceptualObservations.map((observation) => observation.aspect),
+    const verificationPerceptual = verificationEvaluation?.checks?.filter(
+      (check) => check.layer === 'perceptual',
     );
-    const missingAspects = perceptualAspects.filter(
-      (aspect) => !observedAspects.has(aspect),
-    );
-    states.perceptual = failures.has('perceptual')
-      ? 'failed'
-      : missingAspects.length > 0 ||
-          evidence.perceptualObservations.some(
-            (observation) => observation.result === 'incomplete',
-          )
-        ? 'incomplete'
-        : 'passed';
+    if (verificationEvaluation) {
+      states.perceptual =
+        failures.has('perceptual') ||
+        verificationPerceptual.some((check) => check.result === 'failed')
+          ? 'failed'
+          : verificationPerceptual.some(
+                (check) => check.result === 'incomplete',
+              ) ||
+              verificationEvaluation.unresolved.some(
+                (item) => item.layer === 'perceptual',
+              )
+            ? 'incomplete'
+            : 'passed';
+    } else {
+      const observedAspects = new Set(
+        evidence.perceptualObservations.map(
+          (observation) => observation.aspect,
+        ),
+      );
+      const missingAspects = perceptualAspects.filter(
+        (aspect) => !observedAspects.has(aspect),
+      );
+      states.perceptual = failures.has('perceptual')
+        ? 'failed'
+        : missingAspects.length > 0 ||
+            evidence.perceptualObservations.some(
+              (observation) => observation.result === 'incomplete',
+            )
+          ? 'incomplete'
+          : 'passed';
+    }
+  }
+  if (verificationEvaluation) {
+    for (const layer of ['mechanical', 'usage']) {
+      if (!requestedLayer(config, layer)) continue;
+      const checks = verificationEvaluation.checks.filter(
+        (check) => check.layer === layer,
+      );
+      if (checks.some((check) => check.result === 'failed'))
+        states[layer] = 'failed';
+      else if (
+        checks.some((check) => check.result === 'incomplete') ||
+        verificationEvaluation.unresolved.some((item) => item.layer === layer)
+      )
+        states[layer] = 'incomplete';
+    }
   }
   assertLayerStatuses(states);
   return states;
@@ -716,13 +818,21 @@ function canonicalLayerReport(statuses, evidence) {
   };
 }
 
-function buildCanonicalReport({ dna, plan, provider, evidence, findings }) {
+function buildCanonicalReport({
+  dna,
+  plan,
+  provider,
+  evidence,
+  findings,
+  verificationEvaluation = null,
+}) {
   const coverage = evidence?.coverage ?? emptyCoverage(plan);
   const statuses = evidence
     ? evaluatedLayerStates({
         config: plan.config,
         evidence,
         findings: findings.findings,
+        verificationEvaluation,
       })
     : initialLayerStates(plan.config, provider);
   const overallStatus = overallLayerStatus(statuses);
@@ -757,6 +867,12 @@ function buildCanonicalReport({ dna, plan, provider, evidence, findings }) {
   }
   return {
     schemaVersion: '1.0.0',
+    ...(plan.auditContractVersion === auditContractVersion
+      ? {
+          auditContractVersion,
+          designDnaFingerprint: designDnaFingerprint(dna),
+        }
+      : {}),
     generatedAt: new Date().toISOString(),
     designDna: {
       documentId: dna.documentId,
@@ -802,6 +918,14 @@ function buildCanonicalReport({ dna, plan, provider, evidence, findings }) {
         (finding) => finding.epistemicStatus !== 'proposed',
       ).length,
       proposalCount: findings.calibrationCandidates.length,
+      ...(verificationEvaluation
+        ? {
+            verification: verificationCoverage(
+              plan.verification,
+              verificationEvaluation,
+            ),
+          }
+        : {}),
     },
     limitations,
   };
@@ -883,9 +1007,23 @@ export async function planAudit({
   const outputRelative = toPosixPath(
     relativeInside(projectRoot, resolvedOutput, '--output'),
   );
+  const verification =
+    config.auditContractVersion === auditContractVersion
+      ? buildAuditVerification({
+          dna,
+          config,
+          routes: config.routes,
+          aspects: perceptualAspects,
+        })
+      : null;
   const createdAt = new Date().toISOString();
   const plan = {
     schemaVersion: '1.0.0',
+    auditContractVersion: config.auditContractVersion ?? '1.0.0',
+    designDnaFingerprint:
+      config.auditContractVersion === auditContractVersion
+        ? designDnaFingerprint(dna)
+        : null,
     createdAt,
     projectRoot,
     configPath: toPosixPath(path.relative(projectRoot, resolvedConfig)),
@@ -903,6 +1041,7 @@ export async function planAudit({
       managedArtifactCount: installation.managedArtifactCount,
     },
     routes: config.routes,
+    ...(verification ? { verification } : {}),
     ...(focus ? { focus } : {}),
     perceptual: {
       executionOwner: 'host-agent',
@@ -941,15 +1080,45 @@ export async function planAudit({
         'provenance',
         'limitations',
         'result',
+        ...(config.auditContractVersion === auditContractVersion
+          ? ['checkRef', 'sourceCaptureRefs', 'targetCaptureRefs']
+          : []),
       ],
+      ...(config.auditContractVersion === auditContractVersion
+        ? {
+            requiredMeasurementFields: [
+              'id',
+              'checkRef',
+              'captureRef',
+              'target',
+              'property',
+              'unit',
+              'value',
+              'provenance',
+              'limitations',
+            ],
+          }
+        : {}),
     },
     captureAdapter: {
       packageExport: 'designome/audit',
       factory: 'createCaptureSession',
       evidenceSchemaVersion: '1.0.0',
+      auditContractVersion: config.auditContractVersion ?? '1.0.0',
       manualEvidenceAssemblyRequired: false,
     },
   };
+  plan.fingerprint =
+    plan.auditContractVersion === auditContractVersion
+      ? fingerprintFromPlan(plan)
+      : sha256(
+          jsonText({
+            schemaVersion: plan.schemaVersion,
+            baseUrl: plan.baseUrl,
+            routes: plan.routes,
+            ...(plan.focus ? { focus: plan.focus } : {}),
+          }),
+        );
   return { projectRoot, outputPath: resolvedOutput, dna, plan };
 }
 
@@ -1010,7 +1179,25 @@ export async function runAudit(options) {
       });
     });
     evidence = migrateAuditEvidence(rawEvidence, prepared.plan);
-    validateAuditEvidence(evidence);
+    validateAuditEvidence(evidence, { plan: prepared.plan });
+    await validateAuditCaptureFiles(evidence, {
+      projectRoot: prepared.projectRoot,
+    });
+    if (prepared.plan.auditContractVersion === auditContractVersion) {
+      validateAuditVerificationEvidence({
+        verification: prepared.plan.verification,
+        evidence,
+        sourceRefs: new Set(prepared.dna.sources.map((source) => source.id)),
+      });
+      if (
+        evidence.designDnaFingerprint !== designDnaFingerprint(prepared.dna)
+      ) {
+        throw new DesignomeError(
+          'Audit evidence is bound to a different Design DNA',
+          { code: 'AUDIT_EVIDENCE_DNA_MISMATCH' },
+        );
+      }
+    }
     if (providerState.status === 'not-requested') {
       throw new DesignomeError(
         'Evidence cannot be attached to a not-requested provider',
@@ -1032,14 +1219,17 @@ export async function runAudit(options) {
         },
       );
     }
-    const expectedFingerprint = sha256(
-      jsonText({
-        schemaVersion: prepared.plan.schemaVersion,
-        baseUrl: prepared.plan.baseUrl,
-        routes: prepared.plan.routes,
-        ...(prepared.plan.focus ? { focus: prepared.plan.focus } : {}),
-      }),
-    );
+    const expectedFingerprint =
+      prepared.plan.auditContractVersion === auditContractVersion
+        ? fingerprintFromPlan(prepared.plan)
+        : sha256(
+            jsonText({
+              schemaVersion: prepared.plan.schemaVersion,
+              baseUrl: prepared.plan.baseUrl,
+              routes: prepared.plan.routes,
+              ...(prepared.plan.focus ? { focus: prepared.plan.focus } : {}),
+            }),
+          );
     if (evidence.plan.fingerprint !== expectedFingerprint) {
       throw new DesignomeError(
         'Audit evidence was captured for a different plan',
@@ -1066,6 +1256,46 @@ export async function runAudit(options) {
   const evaluated = evidence
     ? evaluateAuditEvidence({ dna: prepared.dna, evidence })
     : { findings: [], calibrationCandidates: [] };
+  const verificationEvaluation =
+    evidence && prepared.plan.auditContractVersion === auditContractVersion
+      ? evaluateAuditVerification({
+          verification: prepared.plan.verification,
+          evidence,
+          dna: prepared.dna,
+        })
+      : null;
+  if (verificationEvaluation) {
+    for (const check of verificationEvaluation.checks) {
+      if (check.result !== 'failed') continue;
+      evaluated.findings.push({
+        id: `verification.${check.checkRef}`,
+        kind:
+          check.layer === 'perceptual'
+            ? 'perceptual-deviation'
+            : 'mechanical-risk',
+        layer: check.layer,
+        severity: 'high',
+        scope: check.targetContexts
+          .map(
+            (context) =>
+              `${context.routeId} at ${context.viewport.width}x${context.viewport.height}`,
+          )
+          .join(', '),
+        ruleRef: check.obligationRef,
+        evidence: check.reason,
+        epistemicStatus: 'observed',
+        certainty: 1,
+        suggestedCorrection:
+          'Review the linked evidence and apply the smallest scoped implementation correction.',
+        verificationMethod: 'Repeat the same check in the same target context.',
+        provenance: {
+          evaluator: 'designome-verification-runtime',
+          method: check.method,
+        },
+        limitations: [],
+      });
+    }
+  }
   const findings = {
     schemaVersion: '1.0.0',
     generatedAt: prepared.plan.createdAt,
@@ -1083,6 +1313,7 @@ export async function runAudit(options) {
       provider: providerState,
       evidence,
       findings,
+      verificationEvaluation,
     });
     const finalProviderStatus =
       provisionalReport.overallStatus === 'failed'
@@ -1098,6 +1329,7 @@ export async function runAudit(options) {
     provider: providerState,
     evidence,
     findings,
+    verificationEvaluation,
   });
   await fs.mkdir(prepared.outputPath, { recursive: true });
   await atomicWrite(

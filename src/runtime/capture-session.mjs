@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { DesignomeError } from './errors.mjs';
+import { inspectImageBuffer } from './images.mjs';
 import {
   atomicWrite,
   jsonText,
@@ -9,6 +10,16 @@ import {
   sha256,
   toPosixPath,
 } from './files.mjs';
+import {
+  assertAuditContractVersion,
+  auditContractVersion,
+  fingerprintFromPlan,
+  isVerificationAware,
+} from './audit-contract.mjs';
+import {
+  evaluateAuditVerification,
+  validateAuditVerificationEvidence,
+} from './audit-verification.mjs';
 
 export const captureAdapter = Object.freeze({
   name: '@designome/audit-browser-adapter',
@@ -35,6 +46,14 @@ const interactionKinds = new Set([
   'responsive',
   'other',
 ]);
+
+function sameNativeDimensions(left, right) {
+  return (
+    left?.format === right?.format &&
+    left?.width === right?.width &&
+    left?.height === right?.height
+  );
+}
 
 function requireObject(value, label) {
   if (value === null || typeof value !== 'object' || Array.isArray(value)) {
@@ -69,6 +88,48 @@ function requireFinite(value, label) {
       code: 'INVALID_CAPTURE_OBSERVATION',
       details: { field: label },
     });
+  }
+}
+
+function rejectDuplicateReferences(values, label) {
+  if (!Array.isArray(values)) return;
+  if (new Set(values).size !== values.length) {
+    throw new DesignomeError(`${label} contains duplicate references`, {
+      code: 'DUPLICATE_VERIFICATION_REFERENCE',
+      details: { field: label },
+    });
+  }
+}
+
+function requireArrayIfPresent(value, label) {
+  if (value !== undefined && !Array.isArray(value)) {
+    throw new DesignomeError(`${label} must be an array`, {
+      code: 'INVALID_CAPTURE_OBSERVATION',
+      details: { field: label },
+    });
+  }
+}
+
+function requireStringArrayIfPresent(value, label) {
+  requireArrayIfPresent(value, label);
+  for (const [index, item] of (value ?? []).entries())
+    requireString(item, `${label}[${index}]`);
+}
+
+function validatePlannedCheckRefs(plan, checkRefs, method, label) {
+  for (const checkRef of checkRefs ?? []) {
+    const check = plan.verification?.checks?.find(
+      (candidate) => candidate.id === checkRef,
+    );
+    if (!check || check.method !== method) {
+      throw new DesignomeError(
+        `${label} references an invalid ${method} check`,
+        {
+          code: 'INVALID_VERIFICATION_CHECK_REF',
+          details: { checkRef },
+        },
+      );
+    }
   }
 }
 
@@ -114,6 +175,148 @@ function expectedCoverage(plan) {
   return { captures, interactions };
 }
 
+function coverageForRecords(plan, captures, interactions) {
+  const expected = expectedCoverage(plan);
+  const captureKeySet = new Set(
+    captures.map((capture) =>
+      captureKey(
+        capture.routeId,
+        capture.viewport,
+        capture.scenario,
+        capture.direction,
+      ),
+    ),
+  );
+  const interactionKeySet = new Set(
+    interactions.map(
+      (interaction) => `${interaction.routeId}:${interaction.flowId}`,
+    ),
+  );
+  const actual = {
+    captures: captures.map(({ routeId, viewport, scenario, direction }) => ({
+      routeId,
+      viewport: { width: viewport.width, height: viewport.height },
+      scenario,
+      direction,
+    })),
+    interactions: interactions.map(({ routeId, flowId }) => ({
+      routeId,
+      flowId,
+    })),
+  };
+  const missing = {
+    captures: expected.captures.filter(
+      (capture) =>
+        !captureKeySet.has(
+          captureKey(
+            capture.routeId,
+            capture.viewport,
+            capture.scenario,
+            capture.direction,
+          ),
+        ),
+    ),
+    interactions: expected.interactions.filter(
+      (interaction) =>
+        !interactionKeySet.has(`${interaction.routeId}:${interaction.flowId}`),
+    ),
+  };
+  return {
+    complete:
+      missing.captures.length === 0 && missing.interactions.length === 0,
+    expected,
+    actual,
+    missing,
+  };
+}
+
+function coverageSignature(coverage) {
+  const sortCaptures = (values) =>
+    [...values].sort((left, right) =>
+      captureKey(
+        left.routeId,
+        left.viewport,
+        left.scenario,
+        left.direction,
+      ).localeCompare(
+        captureKey(
+          right.routeId,
+          right.viewport,
+          right.scenario,
+          right.direction,
+        ),
+      ),
+    );
+  const sortInteractions = (values) =>
+    [...values].sort((left, right) =>
+      `${left.routeId}:${left.flowId}`.localeCompare(
+        `${right.routeId}:${right.flowId}`,
+      ),
+    );
+  return JSON.stringify({
+    complete: coverage.complete,
+    expected: {
+      captures: sortCaptures(coverage.expected.captures),
+      interactions: sortInteractions(coverage.expected.interactions),
+    },
+    actual: {
+      captures: sortCaptures(coverage.actual.captures),
+      interactions: sortInteractions(coverage.actual.interactions),
+    },
+    missing: {
+      captures: sortCaptures(coverage.missing.captures),
+      interactions: sortInteractions(coverage.missing.interactions),
+    },
+  });
+}
+
+export async function validateAuditCaptureFiles(
+  evidence,
+  { projectRoot = null } = {},
+) {
+  const errors = [];
+  for (const [index, capture] of (evidence?.captures ?? []).entries()) {
+    if (!capture.contentHash && !capture.nativeDimensions) continue;
+    const screenshotPath =
+      projectRoot && !path.isAbsolute(capture.screenshotPath)
+        ? path.resolve(projectRoot, capture.screenshotPath)
+        : path.resolve(capture.screenshotPath);
+    let bytes;
+    try {
+      bytes = await fs.readFile(screenshotPath);
+    } catch (error) {
+      errors.push(
+        `captures[${index}] screenshot is unreadable: ${error.message}`,
+      );
+      continue;
+    }
+    if (capture.contentHash) {
+      const actualHash = `sha256:${sha256(bytes)}`;
+      if (capture.contentHash !== actualHash)
+        errors.push(`captures[${index}] contentHash does not match its file`);
+    }
+    if (capture.nativeDimensions) {
+      try {
+        const actualDimensions = inspectImageBuffer(bytes);
+        if (!sameNativeDimensions(actualDimensions, capture.nativeDimensions))
+          errors.push(
+            `captures[${index}] nativeDimensions do not match its file`,
+          );
+      } catch (error) {
+        errors.push(
+          `captures[${index}] image metadata is unavailable: ${error.message}`,
+        );
+      }
+    }
+  }
+  if (errors.length > 0)
+    throw new DesignomeError('Audit capture files are invalid or changed', {
+      code: 'AUDIT_CAPTURE_FILE_MISMATCH',
+      details: errors,
+    });
+  return true;
+}
+
 function normalizeElement(element, index) {
   requireObject(element, `element[${index}]`);
   requireString(element.id, `element[${index}].id`);
@@ -150,12 +353,25 @@ function normalizePlan(plan) {
       code: 'INVALID_CAPTURE_PLAN',
     });
   }
+  const contract = plan.auditContractVersion ?? '1.0.0';
+  try {
+    assertAuditContractVersion(contract);
+  } catch (error) {
+    throw new DesignomeError(error.message, {
+      code: 'INCOMPATIBLE_AUDIT_CONTRACT_VERSION',
+    });
+  }
   return {
     schemaVersion: plan.schemaVersion ?? '1.0.0',
+    auditContractVersion: contract,
+    designDnaFingerprint: plan.designDnaFingerprint ?? null,
     baseUrl: plan.baseUrl,
     projectRoot: plan.projectRoot ?? null,
+    startCommand: plan.startCommand ?? null,
+    config: plan.config ?? null,
     routes: plan.routes.map(normalizedRoute),
     perceptual: plan.perceptual ?? null,
+    verification: plan.verification ?? null,
     ...(plan.focus ? { focus: structuredClone(plan.focus) } : {}),
   };
 }
@@ -168,6 +384,7 @@ export class CaptureSession {
       : null;
     this.providerName =
       options.provider ?? plan.provider?.selected ?? 'external';
+    this.verificationAware = isVerificationAware(this.plan);
     this.executionOwner =
       options.executionOwner ??
       (this.providerName === 'existing-playwright'
@@ -178,6 +395,7 @@ export class CaptureSession {
     this.consoleMessages = [];
     this.accessibilityChecks = [];
     this.perceptualObservations = [];
+    this.fidelityMeasurements = [];
     this.finalized = false;
   }
 
@@ -247,6 +465,30 @@ export class CaptureSession {
         details: { checkedPath: screenshotPath },
       });
     }
+    const existingCapture = this.captures.find(
+      (capture) =>
+        capture.id === observation.id ||
+        captureKey(
+          capture.routeId,
+          capture.viewport,
+          capture.scenario,
+          capture.direction,
+        ) === captureKey(route.id, observation.viewport, scenario, direction),
+    );
+    if (existingCapture) {
+      throw new DesignomeError(
+        'A capture with the same ID or context is already recorded',
+        {
+          code: 'DUPLICATE_CAPTURE_EVIDENCE',
+          details: {
+            id: observation.id,
+            routeId: route.id,
+            scenario,
+            direction,
+          },
+        },
+      );
+    }
     requireObject(observation.document, 'capture.document');
     for (const key of [
       'scrollWidth',
@@ -255,6 +497,43 @@ export class CaptureSession {
       'clientHeight',
     ]) {
       requireFinite(observation.document[key], `capture.document.${key}`);
+    }
+    const screenshotBytes = await fs.readFile(screenshotPath);
+    const contentHash = `sha256:${sha256(screenshotBytes)}`;
+    let nativeDimensions = null;
+    try {
+      nativeDimensions = inspectImageBuffer(screenshotBytes);
+    } catch {
+      if (this.verificationAware) {
+        throw new DesignomeError(
+          'Audit Contract 2.0 captures must use a supported image file',
+          {
+            code: 'CAPTURE_IMAGE_METADATA_UNAVAILABLE',
+            details: { checkedPath: screenshotPath },
+          },
+        );
+      }
+    }
+    if (
+      observation.contentHash !== undefined &&
+      observation.contentHash !== contentHash
+    ) {
+      throw new DesignomeError('Capture content hash does not match the file', {
+        code: 'CAPTURE_HASH_MISMATCH',
+        details: { id: observation.id },
+      });
+    }
+    if (
+      observation.nativeDimensions !== undefined &&
+      !sameNativeDimensions(observation.nativeDimensions, nativeDimensions)
+    ) {
+      throw new DesignomeError(
+        'Capture native dimensions do not match the file',
+        {
+          code: 'CAPTURE_DIMENSIONS_MISMATCH',
+          details: { id: observation.id },
+        },
+      );
     }
     const normalized = {
       id: observation.id,
@@ -277,6 +556,8 @@ export class CaptureSession {
       },
       elements: (observation.elements ?? []).map(normalizeElement),
       responsiveChecks: observation.responsiveChecks ?? [],
+      contentHash,
+      ...(nativeDimensions ? { nativeDimensions } : {}),
       recordedAt: observation.recordedAt ?? new Date().toISOString(),
     };
     this.captures.push(normalized);
@@ -297,6 +578,18 @@ export class CaptureSession {
     requireString(observation.expected, 'interaction.expected');
     requireString(observation.observed, 'interaction.observed');
     requireBoolean(observation.passed, 'interaction.passed');
+    if (this.verificationAware) {
+      requireArrayIfPresent(observation.checkRefs, 'interaction.checkRefs');
+      rejectDuplicateReferences(observation.checkRefs, 'interaction.checkRefs');
+      validatePlannedCheckRefs(
+        this.plan,
+        observation.checkRefs,
+        'interaction',
+        'Interaction',
+      );
+      if ((observation.checkRefs ?? []).length > 0)
+        requireString(observation.captureRef, 'interaction.captureRef');
+    }
     const normalized = {
       ...observation,
       flowId: observation.flowId ?? observation.id,
@@ -310,6 +603,8 @@ export class CaptureSession {
       disclosure: observation.disclosure ?? null,
       dialog: observation.dialog ?? null,
       focus: observation.focus ?? null,
+      ...(observation.captureRef ? { captureRef: observation.captureRef } : {}),
+      checkRefs: [...new Set(observation.checkRefs ?? [])],
       ruleRefs: [...new Set(observation.ruleRefs ?? [])],
       recordedAt: observation.recordedAt ?? new Date().toISOString(),
     };
@@ -348,11 +643,31 @@ export class CaptureSession {
     requireString(observation.expected, 'accessibilityCheck.expected');
     requireString(observation.observed, 'accessibilityCheck.observed');
     requireBoolean(observation.passed, 'accessibilityCheck.passed');
+    if (this.verificationAware) {
+      requireArrayIfPresent(
+        observation.checkRefs,
+        'accessibilityCheck.checkRefs',
+      );
+      rejectDuplicateReferences(
+        observation.checkRefs,
+        'accessibilityCheck.checkRefs',
+      );
+      validatePlannedCheckRefs(
+        this.plan,
+        observation.checkRefs,
+        'accessibility',
+        'Accessibility check',
+      );
+      if ((observation.checkRefs ?? []).length > 0)
+        requireString(observation.captureRef, 'accessibilityCheck.captureRef');
+    }
     const normalized = {
       ...observation,
       accessibleName: observation.accessibleName ?? null,
       accessibleRole: observation.accessibleRole ?? null,
       accessibleState: observation.accessibleState ?? null,
+      ...(observation.captureRef ? { captureRef: observation.captureRef } : {}),
+      checkRefs: [...new Set(observation.checkRefs ?? [])],
       ruleRefs: [...new Set(observation.ruleRefs ?? [])],
       recordedAt: observation.recordedAt ?? new Date().toISOString(),
     };
@@ -410,6 +725,60 @@ export class CaptureSession {
         },
       );
     }
+    if (this.verificationAware) {
+      for (const field of [
+        'sourceCaptureRefs',
+        'targetCaptureRefs',
+        'ruleRefs',
+        'tokenRefs',
+        'limitations',
+      ])
+        requireStringArrayIfPresent(
+          observation[field],
+          `perceptualObservation.${field}`,
+        );
+      rejectDuplicateReferences(
+        observation.sourceCaptureRefs,
+        'perceptualObservation.sourceCaptureRefs',
+      );
+      rejectDuplicateReferences(
+        observation.targetCaptureRefs,
+        'perceptualObservation.targetCaptureRefs',
+      );
+      const check = this.plan.verification?.checks?.find(
+        (candidate) => candidate.id === observation.checkRef,
+      );
+      if (!check || check.method !== 'perceptual') {
+        throw new DesignomeError(
+          'Audit Contract 2.0 perceptual observations require a planned checkRef',
+          {
+            code: 'INVALID_VERIFICATION_CHECK_REF',
+            details: { checkRef: observation.checkRef ?? null },
+          },
+        );
+      }
+      if (
+        ['unknown', 'proposed'].includes(observation.epistemicStatus) &&
+        observation.result !== 'incomplete'
+      ) {
+        throw new DesignomeError(
+          'Unestablished perceptual evidence cannot be marked passed or failed',
+          { code: 'UNESTABLISHED_PERCEPTUAL_VERDICT' },
+        );
+      }
+      if (
+        ['passed', 'failed'].includes(observation.result) &&
+        (!Array.isArray(observation.sourceCaptureRefs) ||
+          observation.sourceCaptureRefs.length === 0 ||
+          !Array.isArray(observation.targetCaptureRefs) ||
+          observation.targetCaptureRefs.length === 0)
+      ) {
+        throw new DesignomeError(
+          'Established perceptual verdicts require source and target capture references',
+          { code: 'PERCEPTUAL_REFERENCES_REQUIRED' },
+        );
+      }
+    }
     const normalized = {
       ...observation,
       provenance: {
@@ -419,6 +788,7 @@ export class CaptureSession {
       },
       sourceCaptureRefs: [...new Set(observation.sourceCaptureRefs ?? [])],
       targetCaptureRefs: [...new Set(observation.targetCaptureRefs ?? [])],
+      ...(observation.checkRef ? { checkRef: observation.checkRef } : {}),
       ruleRefs: [...new Set(observation.ruleRefs ?? [])],
       tokenRefs: [...new Set(observation.tokenRefs ?? [])],
       limitations: [...new Set(observation.limitations ?? [])],
@@ -428,58 +798,66 @@ export class CaptureSession {
     return normalized;
   }
 
-  coverage() {
-    const expected = expectedCoverage(this.plan);
-    const actualCaptureKeys = new Set(
-      this.captures.map((capture) =>
-        captureKey(
-          capture.routeId,
-          capture.viewport,
-          capture.scenario,
-          capture.direction,
-        ),
-      ),
-    );
-    const actualInteractionKeys = new Set(
-      this.interactions.map(
-        (interaction) => `${interaction.routeId}:${interaction.flowId}`,
-      ),
-    );
-    const missingCaptures = expected.captures.filter(
-      (item) =>
-        !actualCaptureKeys.has(
-          captureKey(
-            item.routeId,
-            item.viewport,
-            item.scenario,
-            item.direction,
-          ),
-        ),
-    );
-    const missingInteractions = expected.interactions.filter(
-      (item) => !actualInteractionKeys.has(`${item.routeId}:${item.flowId}`),
-    );
-    return {
-      complete:
-        missingCaptures.length === 0 && missingInteractions.length === 0,
-      expected,
-      actual: {
-        captures: this.captures.map((capture) => ({
-          routeId: capture.routeId,
-          viewport: capture.viewport,
-          scenario: capture.scenario,
-          direction: capture.direction,
-        })),
-        interactions: this.interactions.map((interaction) => ({
-          routeId: interaction.routeId,
-          flowId: interaction.flowId,
-        })),
+  async recordFidelityMeasurement(measurement) {
+    this.assertOpen();
+    requireObject(measurement, 'fidelityMeasurement');
+    requireString(measurement.id, 'fidelityMeasurement.id');
+    requireString(measurement.checkRef, 'fidelityMeasurement.checkRef');
+    requireString(measurement.captureRef, 'fidelityMeasurement.captureRef');
+    requireString(measurement.target, 'fidelityMeasurement.target');
+    requireString(measurement.property, 'fidelityMeasurement.property');
+    requireString(measurement.unit, 'fidelityMeasurement.unit');
+    if (
+      !['string', 'number', 'boolean'].includes(typeof measurement.value) ||
+      (typeof measurement.value === 'number' &&
+        !Number.isFinite(measurement.value))
+    ) {
+      throw new DesignomeError('Fidelity measurement value is invalid', {
+        code: 'INVALID_FIDELITY_MEASUREMENT',
+      });
+    }
+    if (this.verificationAware) {
+      requireStringArrayIfPresent(
+        measurement.limitations,
+        'fidelityMeasurement.limitations',
+      );
+      if (measurement.provenance !== undefined)
+        requireObject(measurement.provenance, 'fidelityMeasurement.provenance');
+      const check = this.plan.verification?.checks?.find(
+        (candidate) => candidate.id === measurement.checkRef,
+      );
+      if (!check || check.method !== 'measurement')
+        throw new DesignomeError(
+          'Fidelity measurements require a planned measurement checkRef',
+          { code: 'INVALID_VERIFICATION_CHECK_REF' },
+        );
+    }
+    const key = `${measurement.captureRef}:${measurement.target}:${measurement.property}`;
+    if (
+      this.fidelityMeasurements.some(
+        (candidate) =>
+          `${candidate.captureRef}:${candidate.target}:${candidate.property}` ===
+          key,
+      )
+    )
+      throw new DesignomeError('Duplicate fidelity measurement', {
+        code: 'DUPLICATE_FIDELITY_MEASUREMENT',
+        details: { key },
+      });
+    const normalized = {
+      ...measurement,
+      provenance: measurement.provenance ?? {
+        evaluator: 'host-agent-browser',
       },
-      missing: {
-        captures: missingCaptures,
-        interactions: missingInteractions,
-      },
+      limitations: [...new Set(measurement.limitations ?? [])],
+      recordedAt: measurement.recordedAt ?? new Date().toISOString(),
     };
+    this.fidelityMeasurements.push(normalized);
+    return normalized;
+  }
+
+  coverage() {
+    return coverageForRecords(this.plan, this.captures, this.interactions);
   }
 
   async finalize({
@@ -487,7 +865,11 @@ export class CaptureSession {
     outputPath = this.outputPath,
   } = {}) {
     this.assertOpen();
-    const coverage = this.coverage();
+    const coverage = coverageForRecords(
+      this.plan,
+      this.captures,
+      this.interactions,
+    );
     if (!coverage.complete && !allowIncomplete) {
       throw new DesignomeError('Browser evidence is incomplete', {
         code: 'INCOMPLETE_AUDIT_EVIDENCE',
@@ -495,16 +877,24 @@ export class CaptureSession {
       });
     }
     const receivedAt = new Date().toISOString();
-    const planFingerprint = sha256(
-      jsonText({
-        schemaVersion: this.plan.schemaVersion,
-        baseUrl: this.plan.baseUrl,
-        routes: this.plan.routes,
-        ...(this.plan.focus ? { focus: this.plan.focus } : {}),
-      }),
-    );
+    const planFingerprint = this.verificationAware
+      ? fingerprintFromPlan(this.plan)
+      : sha256(
+          jsonText({
+            schemaVersion: this.plan.schemaVersion,
+            baseUrl: this.plan.baseUrl,
+            routes: this.plan.routes,
+            ...(this.plan.focus ? { focus: this.plan.focus } : {}),
+          }),
+        );
     const evidence = {
       schemaVersion: '1.0.0',
+      ...(this.verificationAware
+        ? {
+            auditContractVersion,
+            designDnaFingerprint: this.plan.designDnaFingerprint,
+          }
+        : {}),
       generatedAt: receivedAt,
       adapter: captureAdapter,
       plan: {
@@ -527,8 +917,37 @@ export class CaptureSession {
       consoleMessages: this.consoleMessages,
       accessibilityChecks: this.accessibilityChecks,
       perceptualObservations: this.perceptualObservations,
+      fidelityMeasurements: this.fidelityMeasurements,
     };
-    validateAuditEvidence(evidence);
+    validateAuditEvidence(evidence, { plan: this.plan });
+    await validateAuditCaptureFiles(evidence, {
+      projectRoot: this.plan.projectRoot,
+    });
+    if (this.verificationAware) {
+      validateAuditVerificationEvidence({
+        verification: this.plan.verification,
+        evidence,
+        sourceRefs: new Set(
+          (this.plan.perceptual?.sourceCaptures ?? []).map(
+            (source) => source.id,
+          ),
+        ),
+      });
+      const verificationEvaluation = evaluateAuditVerification({
+        verification: this.plan.verification,
+        evidence,
+        sourceRefs: new Set(
+          (this.plan.perceptual?.sourceCaptures ?? []).map(
+            (source) => source.id,
+          ),
+        ),
+      });
+      if (verificationEvaluation.status === 'incomplete' && !allowIncomplete)
+        throw new DesignomeError('Audit verification evidence is incomplete', {
+          code: 'INCOMPLETE_AUDIT_VERIFICATION',
+          details: verificationEvaluation.unresolved,
+        });
+    }
     if (outputPath) {
       await atomicWrite(path.resolve(outputPath), jsonText(evidence));
     }
@@ -537,13 +956,25 @@ export class CaptureSession {
   }
 }
 
-export function validateAuditEvidence(evidence) {
+export function validateAuditEvidence(evidence, { plan = null } = {}) {
   const errors = [];
   if (evidence?.schemaVersion !== '1.0.0') {
     errors.push('schemaVersion must be 1.0.0');
   }
   if (evidence?.adapter?.evidenceSchemaVersion !== '1.0.0') {
     errors.push('adapter.evidenceSchemaVersion must be 1.0.0');
+  }
+  if (
+    evidence?.auditContractVersion !== undefined &&
+    !['1.0.0', auditContractVersion].includes(evidence.auditContractVersion)
+  ) {
+    errors.push('auditContractVersion must be 1.0.0 or 2.0.0');
+  }
+  if (
+    evidence?.designDnaFingerprint !== undefined &&
+    !/^[a-f0-9]{64}$/u.test(evidence.designDnaFingerprint)
+  ) {
+    errors.push('designDnaFingerprint must be a SHA-256 fingerprint');
   }
   if (evidence?.provider?.status !== 'evidence-received') {
     errors.push('provider.status must be evidence-received');
@@ -562,6 +993,12 @@ export function validateAuditEvidence(evidence) {
       errors.push(`${property} must be an array`);
     }
   }
+  if (
+    evidence?.auditContractVersion === auditContractVersion &&
+    !Array.isArray(evidence?.fidelityMeasurements)
+  ) {
+    errors.push('fidelityMeasurements must be an array for Audit Contract 2.0');
+  }
   if (!evidence?.coverage || typeof evidence.coverage.complete !== 'boolean') {
     errors.push('coverage.complete must be a boolean');
   }
@@ -574,7 +1011,11 @@ export function validateAuditEvidence(evidence) {
     }
   }
   for (const [index, capture] of (evidence?.captures ?? []).entries()) {
-    if (typeof capture.id !== 'string' || typeof capture.routeId !== 'string') {
+    if (
+      typeof capture.id !== 'string' ||
+      typeof capture.routeId !== 'string' ||
+      typeof capture.screenshotPath !== 'string'
+    ) {
       errors.push(`captures[${index}] requires string id and routeId`);
     }
     if (
@@ -598,6 +1039,34 @@ export function validateAuditEvidence(evidence) {
     if (!Array.isArray(capture.elements)) {
       errors.push(`captures[${index}].elements must be an array`);
     }
+    if (
+      capture.contentHash !== undefined &&
+      !/^sha256:[a-f0-9]{64}$/u.test(capture.contentHash)
+    ) {
+      errors.push(`captures[${index}].contentHash must be a SHA-256 hash`);
+    }
+    if (
+      capture.nativeDimensions !== undefined &&
+      (!Number.isInteger(capture.nativeDimensions.width) ||
+        capture.nativeDimensions.width < 1 ||
+        !Number.isInteger(capture.nativeDimensions.height) ||
+        capture.nativeDimensions.height < 1 ||
+        !['png', 'jpeg', 'gif', 'webp'].includes(
+          capture.nativeDimensions.format,
+        ))
+    ) {
+      errors.push(`captures[${index}].nativeDimensions is invalid`);
+    }
+    if (evidence?.auditContractVersion === auditContractVersion) {
+      if (!capture.contentHash)
+        errors.push(
+          `captures[${index}].contentHash is required for Audit Contract 2.0`,
+        );
+      if (!capture.nativeDimensions)
+        errors.push(
+          `captures[${index}].nativeDimensions is required for Audit Contract 2.0`,
+        );
+    }
   }
   for (const [index, interaction] of (evidence?.interactions ?? []).entries()) {
     for (const property of [
@@ -614,6 +1083,15 @@ export function validateAuditEvidence(evidence) {
     }
     if (typeof interaction.passed !== 'boolean') {
       errors.push(`interactions[${index}].passed must be a boolean`);
+    }
+    if (
+      interaction.checkRefs !== undefined &&
+      (!Array.isArray(interaction.checkRefs) ||
+        interaction.checkRefs.some((ref) => typeof ref !== 'string'))
+    ) {
+      errors.push(
+        `interactions[${index}].checkRefs must be an array of strings`,
+      );
     }
   }
   for (const [index, message] of (evidence?.consoleMessages ?? []).entries()) {
@@ -637,6 +1115,37 @@ export function validateAuditEvidence(evidence) {
     ) {
       errors.push(`accessibilityChecks[${index}] is invalid`);
     }
+    if (
+      check.checkRefs !== undefined &&
+      (!Array.isArray(check.checkRefs) ||
+        check.checkRefs.some((ref) => typeof ref !== 'string'))
+    ) {
+      errors.push(
+        `accessibilityChecks[${index}].checkRefs must be an array of strings`,
+      );
+    }
+  }
+  for (const [index, measurement] of (
+    evidence?.fidelityMeasurements ?? []
+  ).entries()) {
+    if (
+      typeof measurement.id !== 'string' ||
+      typeof measurement.checkRef !== 'string' ||
+      typeof measurement.captureRef !== 'string' ||
+      typeof measurement.target !== 'string' ||
+      typeof measurement.property !== 'string' ||
+      typeof measurement.unit !== 'string' ||
+      !['string', 'number', 'boolean'].includes(typeof measurement.value) ||
+      (typeof measurement.value === 'number' &&
+        !Number.isFinite(measurement.value)) ||
+      !Array.isArray(measurement.limitations) ||
+      measurement.limitations.some((item) => typeof item !== 'string') ||
+      !measurement.provenance ||
+      typeof measurement.provenance !== 'object' ||
+      Array.isArray(measurement.provenance)
+    ) {
+      errors.push(`fidelityMeasurements[${index}] is invalid`);
+    }
   }
   for (const [index, observation] of (
     evidence?.perceptualObservations ?? []
@@ -653,10 +1162,80 @@ export function validateAuditEvidence(evidence) {
       observation.certainty < 0 ||
       observation.certainty > 1 ||
       observation.provenance?.evaluator !== 'host-agent' ||
-      !Array.isArray(observation.limitations)
+      !Array.isArray(observation.limitations) ||
+      observation.limitations.some((item) => typeof item !== 'string')
     ) {
       errors.push(`perceptualObservations[${index}] is invalid`);
     }
+    if (
+      observation.checkRef !== undefined &&
+      (typeof observation.checkRef !== 'string' ||
+        observation.checkRef.trim() === '')
+    ) {
+      errors.push(`perceptualObservations[${index}].checkRef must be a string`);
+    }
+  }
+  if (
+    plan &&
+    evidence.coverage &&
+    Array.isArray(evidence.captures) &&
+    Array.isArray(evidence.interactions) &&
+    ['expected', 'actual', 'missing'].every(
+      (section) =>
+        Array.isArray(evidence.coverage[section]?.captures) &&
+        Array.isArray(evidence.coverage[section]?.interactions),
+    )
+  ) {
+    const expectedCoverage = coverageForRecords(
+      plan,
+      evidence.captures,
+      evidence.interactions,
+    );
+    const plannedCaptureKeys = new Set(
+      expectedCoverage.expected.captures.map((capture) =>
+        captureKey(
+          capture.routeId,
+          capture.viewport,
+          capture.scenario,
+          capture.direction,
+        ),
+      ),
+    );
+    const plannedInteractionKeys = new Set(
+      expectedCoverage.expected.interactions.map(
+        (interaction) => `${interaction.routeId}:${interaction.flowId}`,
+      ),
+    );
+    const seenCaptureIds = new Set();
+    const seenCaptureContexts = new Set();
+    for (const [index, capture] of evidence.captures.entries()) {
+      const key = captureKey(
+        capture.routeId,
+        capture.viewport,
+        capture.scenario,
+        capture.direction,
+      );
+      if (!plannedCaptureKeys.has(key))
+        errors.push(`captures[${index}] is outside the audit plan`);
+      if (seenCaptureIds.has(capture.id))
+        errors.push(`captures[${index}] duplicates capture ID ${capture.id}`);
+      seenCaptureIds.add(capture.id);
+      if (seenCaptureContexts.has(key))
+        errors.push(`captures[${index}] duplicates target context ${key}`);
+      seenCaptureContexts.add(key);
+    }
+    for (const [index, interaction] of evidence.interactions.entries()) {
+      const key = `${interaction.routeId}:${interaction.flowId}`;
+      if (!plannedInteractionKeys.has(key))
+        errors.push(`interactions[${index}] is outside the audit plan`);
+    }
+    if (
+      coverageSignature(evidence.coverage) !==
+      coverageSignature(expectedCoverage)
+    )
+      errors.push(
+        'coverage does not match the recorded captures and interactions',
+      );
   }
   if (errors.length > 0) {
     throw new DesignomeError('Audit evidence is invalid or incompatible', {

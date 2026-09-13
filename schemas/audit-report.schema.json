@@ -17,6 +17,11 @@
   ],
   "properties": {
     "schemaVersion": { "const": "1.0.0" },
+    "auditContractVersion": { "enum": ["1.0.0", "2.0.0"] },
+    "designDnaFingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
     "generatedAt": { "type": "string", "format": "date-time" },
     "designDna": { "type": "object" },
     "overallStatus": {
@@ -61,7 +66,12 @@
     },
     "coverage": { "type": "object" },
     "evidenceBoundaries": { "type": "object" },
-    "results": { "type": "object" },
+    "results": {
+      "type": "object",
+      "properties": {
+        "verification": { "$ref": "#/$defs/verificationCoverage" }
+      }
+    },
     "limitations": { "type": "array", "items": { "type": "string" } }
   },
   "$defs": {
@@ -80,6 +90,35 @@
         },
         "evidenceOwner": { "type": "string" },
         "summary": { "type": "string" }
+      }
+    },
+    "verificationCoverage": {
+      "type": "object",
+      "required": [
+        "contractVersion",
+        "expected",
+        "evaluated",
+        "passed",
+        "failed",
+        "incomplete",
+        "unresolved",
+        "checks",
+        "exclusions"
+      ],
+      "properties": {
+        "contractVersion": { "const": "2.0.0" },
+        "expected": { "type": "integer", "minimum": 0 },
+        "evaluated": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "incomplete": { "type": "integer", "minimum": 0 },
+        "unresolved": { "type": "integer", "minimum": 0 },
+        "unresolvedItems": { "type": "array" },
+        "checks": { "type": "array" },
+        "exclusions": { "type": "array" },
+        "excluded": { "type": "array" },
+        "calibration": { "type": "array" },
+        "diagnostics": { "type": "array" }
       }
     }
   }

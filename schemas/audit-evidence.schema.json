@@ -19,6 +19,11 @@
   ],
   "properties": {
     "schemaVersion": { "const": "1.0.0" },
+    "auditContractVersion": { "enum": ["1.0.0", "2.0.0"] },
+    "designDnaFingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
     "generatedAt": { "type": "string", "format": "date-time" },
     "adapter": {
       "type": "object",
@@ -68,8 +73,23 @@
     "perceptualObservations": {
       "type": "array",
       "items": { "$ref": "#/$defs/perceptualObservation" }
+    },
+    "fidelityMeasurements": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/fidelityMeasurement" }
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "required": ["auditContractVersion"],
+        "properties": { "auditContractVersion": { "const": "2.0.0" } }
+      },
+      "then": {
+        "required": ["designDnaFingerprint", "fidelityMeasurements"]
+      }
+    }
+  ],
   "$defs": {
     "viewport": {
       "type": "object",
@@ -178,6 +198,19 @@
         "scenario": { "type": "string", "minLength": 1 },
         "direction": { "enum": ["ltr", "rtl"] },
         "screenshotPath": { "type": "string", "minLength": 1 },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "nativeDimensions": {
+          "type": "object",
+          "required": ["format", "width", "height"],
+          "properties": {
+            "format": { "enum": ["png", "jpeg", "gif", "webp"] },
+            "width": { "type": "integer", "minimum": 1 },
+            "height": { "type": "integer", "minimum": 1 }
+          }
+        },
         "document": {
           "type": "object",
           "required": [
@@ -228,6 +261,12 @@
         "disclosure": { "type": ["object", "null"] },
         "dialog": { "type": ["object", "null"] },
         "focus": { "type": ["object", "null"] },
+        "captureRef": { "type": "string", "minLength": 1 },
+        "checkRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
         "ruleRefs": { "type": "array", "items": { "type": "string" } },
         "recordedAt": { "type": "string", "format": "date-time" }
       }
@@ -263,6 +302,12 @@
         "accessibleName": { "type": ["string", "null"] },
         "accessibleRole": { "type": ["string", "null"] },
         "accessibleState": { "type": ["object", "null"] },
+        "captureRef": { "type": "string", "minLength": 1 },
+        "checkRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
         "ruleRefs": { "type": "array", "items": { "type": "string" } },
         "recordedAt": { "type": "string", "format": "date-time" }
       }
@@ -286,6 +331,7 @@
       ],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
+        "checkRef": { "type": "string", "minLength": 1 },
         "aspect": { "type": "string", "minLength": 1 },
         "statement": { "type": "string", "minLength": 1 },
         "epistemicStatus": {
@@ -311,6 +357,33 @@
         "tokenRefs": { "type": "array", "items": { "type": "string" } },
         "limitations": { "type": "array", "items": { "type": "string" } },
         "suggestedCorrection": { "type": "string" },
+        "recordedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "fidelityMeasurement": {
+      "type": "object",
+      "required": [
+        "id",
+        "checkRef",
+        "captureRef",
+        "target",
+        "property",
+        "unit",
+        "value",
+        "provenance",
+        "limitations",
+        "recordedAt"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "checkRef": { "type": "string", "minLength": 1 },
+        "captureRef": { "type": "string", "minLength": 1 },
+        "target": { "type": "string", "minLength": 1 },
+        "property": { "type": "string", "minLength": 1 },
+        "unit": { "type": "string", "minLength": 1 },
+        "value": { "type": ["string", "number", "boolean"] },
+        "provenance": { "type": "object" },
+        "limitations": { "type": "array", "items": { "type": "string" } },
         "recordedAt": { "type": "string", "format": "date-time" }
       }
     }
