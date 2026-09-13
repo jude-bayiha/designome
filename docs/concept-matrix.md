@@ -1,6 +1,6 @@
 # Concept matrix v0.3
 
-Optional `contextContractVersion: 1.0.0` declares support for [lossless projections](lossless-context.md). The matrix's axis, facet, concept, domain and documentation definitions remain canonical and unchanged; missing support metadata does not migrate legacy DNA.
+Optional `contextContractVersion: 1.0.0` declares support for [lossless projections](lossless-context.md), and `auditContractVersion: 2.0.0` declares the additive audit verification capability. The matrix's axis, facet, concept, domain and documentation definitions remain canonical and unchanged; missing support metadata does not migrate legacy DNA.
 
 The [v0.3 matrix](../concepts/concept-matrix.v0.3.json) is the canonical routing contract for deep UI extraction. It separates four structures that are often collapsed in shallow screenshot analysis:
 
@@ -97,7 +97,7 @@ In direct mode, a target-specific accuracy claim still requires matching source 
 
 ## Coverage contract
 
-Matrix metadata `fidelityContractVersion: 1.0.0` makes the [fidelity contract](fidelity-contract.md) mandatory for new extraction run plans. Layout `2.1.0` preserves all projection paths while retaining relational tokens, independent field assertions and autonomous domain recipes.
+Matrix metadata `fidelityContractVersion: 1.0.0` makes the [fidelity contract](fidelity-contract.md) mandatory for new extraction run plans, while `auditContractVersion: 2.0.0` advertises the plan-bound audit registry. Layout `2.1.0` preserves all projection paths while retaining relational tokens, independent field assertions and autonomous domain recipes.
 
 Design DNA v0.3 contains two complete ledgers:
 

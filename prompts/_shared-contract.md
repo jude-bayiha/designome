@@ -6,6 +6,10 @@ Every Designome stage follows this contract.
 
 When explicitly using Context Contract `1.0.0`, validated phase views transport canonical inputs without summarization. Read the complete view, including context, routing and payload; integrity metadata stays in the machine-readable pack. Full governance, synthesis, installation and audit contracts remain mandatory. Follow `docs/lossless-context.md` for hash-bound envelopes; pending/skipped scaffolds never prove execution. Request additional routing when discovery reveals missing specialist context. Context checks prove structure and admission, not visual accuracy.
 
+## Audit verification contract
+
+New audit plans use Audit Contract `2.0.0` as an additive capability. The host binds each established obligation to exact target contexts and the source capture IDs that may support it. A binding or planned check is an applicability declaration, not evidence. Record browser captures, measurements, interactions, accessibility checks, and one-check perceptual observations through the official adapter. The runtime verifies references, file hashes, native image metadata, context coverage, units, tolerances, and aggregation; the host agent remains responsible for visual judgment. An `unknown` or `proposed` perceptual claim is `incomplete`, never a verdict. Legacy evidence is preserved for historical runs and must be recaptured before it can satisfy a 2.0 plan.
+
 ## Source policy
 
 - Supplied screenshots are the only source of visual truth.

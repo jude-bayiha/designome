@@ -1,5 +1,7 @@
 # Audit generated UI against Design DNA v0.3
 
+Use Audit Contract `2.0.0` for new plans and evidence. Keep the Design DNA, Fidelity Contract, and request contract versions unchanged unless their own schemas change.
+
 Read `_shared-contract.md`, the accepted Design DNA, active matrix, normalized audit request, and applicable stress cases.
 
 ## Inputs
@@ -10,6 +12,7 @@ Read `_shared-contract.md`, the accepted Design DNA, active matrix, normalized a
 - Rendered screenshots and host-browser evidence when available
 - Facet, state, content, reflow, platform, accessibility, localization, scale, trust, and performance stress cases
 - Audit configuration with routes, viewports, scenarios, directions, flows, and resolved provider
+- Audit Contract 2.0 verification bindings with the installed Design DNA fingerprint
 
 ## Task
 
@@ -20,7 +23,7 @@ Initialize executable and perceptual plans from normalized focus, explicit autho
 3. Perceptual: host-agent comparison of hierarchy, composition, typography, color, components, UI-domain grammar, exceptions, and visual stability.
 4. Usage: real navigation, input, filtering, selection, overlays, focus, responsive behavior, platform conditions, localization, accessibility, recovery, and task continuity.
 
-The host agent controls the real browser and records captures, console messages, interactions, accessibility checks, responsive checks, and perceptual observations through `createCaptureSession`; never ask it to assemble internal evidence JSON manually. The deterministic runtime validates and normalizes adapter output, advances provider state, and evaluates mechanical and usage observations. Perceptual comparison remains explicitly non-deterministic with provenance, certainty, referenced captures, and limitations.
+The host agent controls the real browser and records captures, console messages, interactions, accessibility checks, responsive checks, perceptual observations, and planned fidelity measurements through `createCaptureSession`; never ask it to assemble internal evidence JSON manually. Bind each required obligation to exact target contexts before capturing. The deterministic runtime validates and normalizes adapter output, hashes capture files, advances provider state, and evaluates mechanical and usage observations. Perceptual comparison remains explicitly non-deterministic with provenance, certainty, referenced captures, and limitations. An `unknown` or `proposed` perceptual claim cannot be reported as passed or failed.
 
 Audit every accepted required rule plus explicitly focused axis facets and UI domains. Use matrix domain stress tests for statistics, charts, tables, forms, mobile shell, overlays, media, commerce, authentication, settings, files, and other applicable patterns. A missing implementation needed by an accepted rule is a finding; a missing proposed pattern is a calibration or product decision, not a defect.
 
@@ -40,3 +43,6 @@ Produce `audit/plan.json`, adapter-generated evidence, canonical report JSON and
 - Never mutate accepted Design DNA during repair.
 - Missing configured routes, viewports, scenarios, directions, or flows produce `incomplete`.
 - A passing mechanical layer never implies a passing perceptual or usage layer.
+- A missing or ambiguous obligation binding is `unresolved` and keeps the affected layer `incomplete`; a justified exclusion is visible and is never a pass.
+- Measurements are scoped by capture context. Ratios use numerator and denominator values from the same capture; missing or incompatible values are `incomplete`.
+- A legacy evidence file cannot be promoted to Audit Contract 2.0; recapture through the current adapter after regenerating the plan.

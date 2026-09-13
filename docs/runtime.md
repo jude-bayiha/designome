@@ -161,6 +161,8 @@ node bin/designome.mjs audit \
 
 The user-owned audit config declares the base URL, routes, viewports, scenarios, directions, flows, requested layers, and output directory. The command verifies the managed installation, validates the accepted Design DNA, resolves a browser provider, and initializes `plan.json`, `findings.json`, canonical `report.json`, and `report.md`. It does not create final evidence before a provider actually supplies observations.
 
+New installations generate an additive Audit Contract `2.0.0` configuration. It records `verification.dnaFingerprint` and an initially empty `verification.bindings` list. Use the dry-run plan to bind every established obligation to explicit route, viewport, scenario, and direction contexts, then regenerate the plan before capturing. The resulting plan exposes `verification.obligations`, `checks`, `exclusions`, and `unresolved`; a binding or check is an applicability declaration, not a proof.
+
 After the host browser or project runner uses `createCaptureSession(plan)` and finalizes `external-evidence.json`, evaluate it without changing implementation code:
 
 ```bash
@@ -187,6 +189,10 @@ The repair plan includes observed finding IDs, excludes proposed calibration can
 Provider resolution never silently installs dependencies. `auto` selects an existing target-project Playwright setup when one is detected, otherwise it produces a static-only plan. `in-app-browser` records that the host agent owns browser execution. `managed-playwright` remains `provider-unavailable` unless a separately implemented provider exists; `--browser-install-authorized` only records a reviewed setup proposal and the audit command still performs no dependency mutation.
 
 Provider reports use the validated states `not-requested`, `provider-unavailable`, `awaiting-evidence`, `evidence-received`, `running`, `passed`, `failed`, and `incomplete`. Installation, mechanical, perceptual, and usage layers are reported separately.
+
+Audit Contract 2.0 evidence adds `checkRef` to each perceptual observation and accepts planned `recordFidelityMeasurement` records. The runtime recalculates coverage from recorded captures and flows, verifies target hashes and native image dimensions, keeps CSS viewport context separate from file dimensions, and evaluates accepted constraints per capture. Ratios never combine desktop and mobile measurements. Missing or incompatible evidence is `incomplete`; a failed established check is `failed`. `unknown` or `proposed` perceptual claims cannot be reported as a verdict.
+
+Legacy schema `0.1.0` and Audit Contract `1.0.0` artifacts remain readable for historical runs. When a legacy evidence file is supplied to a 2.0 plan, the command returns `AUDIT_EVIDENCE_RECAPTURE_REQUIRED` before writing a successful result. `designome run --resume` keeps accepted extraction, acceptance, installation, and implementation steps intact while handing capture back to the host.
 
 ## Exit behavior
 

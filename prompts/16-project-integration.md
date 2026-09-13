@@ -9,6 +9,7 @@ Read `_shared-contract.md`, the accepted Design DNA, active matrix, integration 
 - Authorized target-project path
 - Read-only target diagnostics and applicable repository instructions
 - v0.3 documentation projection
+- Audit Contract 2.0 capability metadata and the generated user-owned audit configuration
 
 ## Task
 
@@ -28,6 +29,8 @@ Generate:
 - compact agent guidance with rule precedence and evidence boundaries;
 - request-contract and methodology references;
 - manifest, checksums, transaction journal, rollback state, and human-owned overrides.
+
+The generated `.designome/audit.config.json` uses Audit Contract `2.0.0`, records the installed Design DNA fingerprint, and starts with an empty verification binding list. The host agent must map established obligations to exact route, viewport, scenario, and direction contexts before capturing; an empty list is an explicit unresolved state, not a passing audit. Preserve an existing project-owned audit configuration and its bindings.
 
 Run two consecutive installation plans. The second must be idempotent. Treat migrations from the 23-file v0.2 dossier as ownership-aware: delete an obsolete generated file only when the prior manifest owns it and its checksum still matches.
 

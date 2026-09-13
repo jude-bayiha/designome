@@ -6,6 +6,8 @@ Designome turns UI screenshots into an evidence-backed **Design DNA** that an ex
 
 [Fidelity Contract 1.0](docs/fidelity-contract.md) adds actionable coverage gates, independent component assertions, ranked visual qualities and proposed reproduction bounds. The 52-file dossier now preserves token relationships and complete domain recipes. A [repeated documentation-only benchmark](docs/fidelity-benchmark.md) measures reconstruction across source families and component libraries, with visual finish evaluated separately from fidelity. See the [executed evaluation](docs/fidelity-evaluation.md) for results and limits.
 
+[Audit Contract 2.0](docs/audit-contract.md) adds a DNA-bound verification registry, exact route/viewport/scenario/direction bindings, contextual fidelity measurements, and capture identity checks. It makes missing or unresolved evidence `incomplete`, preserves failed checks as failures, and requests explicit recapture for legacy evidence; it does not establish a visual improvement by itself.
+
 An experimental [lossless context compiler](docs/lossless-context.md) provides hash-bound specialist packs and stage validation. Full context remains the default until behavioral parity is established.
 
 See the [non-regression assessment](docs/context-non-regression.md) for executed checks, measured view sizes and promotion limits.
@@ -136,10 +138,15 @@ await session.recordPerceptualObservation(perceptualObservation);
 await session.finalize();
 ```
 
-The adapter writes audit evidence schema `1.0.0`; incompatible versions fail
-closed. Incomplete route, viewport, scenario, direction, or interaction
-coverage fails finalization unless the host deliberately requests an
-`incomplete` report. See the [browser evidence adapter contract](docs/browser-evidence-adapter.md)
+The adapter keeps its evidence envelope at schema `1.0.0` and marks new
+plan-bound evidence with Audit Contract `2.0.0`; incompatible versions fail
+closed. New evidence binds each perceptual observation to one planned check,
+records SHA-256 and native dimensions for captures, and uses
+`recordFidelityMeasurement` for contextual numeric constraints. Incomplete
+route, viewport, scenario, direction, interaction, or obligation coverage
+fails finalization unless the host deliberately requests an `incomplete`
+report. Legacy evidence is readable for historical audits but cannot satisfy a
+new v2 plan without recapture. See the [browser evidence adapter contract](docs/browser-evidence-adapter.md)
 and its [runnable example](examples/browser-adapter.reference.mjs).
 
 ## Audit result semantics

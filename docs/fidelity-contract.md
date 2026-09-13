@@ -30,6 +30,12 @@ Each constraint has separate `acceptance.status` (`pending`, `accepted`, `reject
 
 `evaluateFidelityConstraints` evaluates host-supplied role/property measurements, compatible units, ranges, ratios and tolerance. Missing measurements, incompatible units and relationships needing perceptual review remain incomplete. The runtime does no OCR, pixel inference or font identification. Readiness always reports `visualFidelity: not-established`; it is eligibility for a benchmark, not a visual pass.
 
+## Audit Contract 2.0 boundary
+
+Fidelity Contract `1.0.0` defines source claims and numeric constraint acceptance. Audit Contract `2.0.0` defines how a new audit binds those claims to implementation contexts. It keeps the existing DNA and fidelity versions unchanged, adds a Design DNA content fingerprint, and expands each established requirement into checks for explicit route, viewport, scenario, and direction contexts. A missing binding is unresolved and keeps the affected layer incomplete; a proposed or unknown claim stays diagnostic and cannot become a verdict through a host observation.
+
+The browser adapter records target capture content hashes and native image dimensions, plus CSS viewport dimensions. `recordFidelityMeasurement` carries one capture reference, semantic target and property roles, unit, value, provenance, and limitations. The runtime reuses `evaluateFidelityConstraints` per capture: accepted compatible values may pass or fail, missing or incompatible values remain incomplete, pending constraints remain calibration, and rejected constraints remain excluded. Ratios never combine captures from different contexts. These checks establish measurement evidence only; a host agent must still compare source and target images for perceptual claims.
+
 ## Documentation projection
 
 Token relationships, applies-to scopes, rationale, failures, dependencies, exceptions and validation status survive projection. Domain documents contain full relevant token, rule and component contracts, including dependency closure, anatomy, selection conditions, concrete differences and independently labeled behavior. Related signature qualities and calibration bounds appear with the recipe and in governance documentation.

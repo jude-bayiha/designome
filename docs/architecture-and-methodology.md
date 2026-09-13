@@ -2,6 +2,8 @@
 
 The additive [Fidelity Contract 1.0](fidelity-contract.md) strengthens extraction and documentation without changing the 13 specialist axes. New extraction run plans require independent assertions, signature qualities and explicit calibration limits. The pure Markdown projection supports a [repeated docs-only benchmark](fidelity-benchmark.md) before DNA acceptance or target installation; component-library APIs remain technical integration inputs. Structural coverage, visual fidelity and artifact finish are evaluated separately.
 
+[Audit Contract 2.0](audit-contract.md) extends the audit handoff without changing the Design DNA, fidelity, request, or context contract versions. New plans carry a semantic DNA fingerprint and an explicit verification registry. The runtime validates obligation links, exact target contexts, capture hashes and native image dimensions, and evaluates measurements per capture; the host agent remains responsible for perceptual judgment. Legacy evidence is kept readable within its historical contract and requires recapture before it can satisfy a v2 plan.
+
 The optional [Context Contract 1.0 compiler](lossless-context.md) separates execution routing from canonical context projection. It preserves full global synthesis boundaries and does not replace host visual reasoning.
 
 ## Architecture principles
@@ -211,7 +213,7 @@ Run artifacts are local evidence and are not committed by default. Accepted sani
 2. **Semantic:** status/evidence rules, typed artifacts, dependencies, exact axis/facet/domain coverage, and unresolved unknowns.
 3. **Installation:** read-only doctor, dry-run, staging, journal, atomic apply, checksums, rollback, manifest integrity, and second-run no diff.
 4. **Mechanical:** geometry, overflow, clipping, measurable constraints, and console evidence.
-5. **Perceptual:** host-agent comparison with provenance, certainty, source/target captures, and limitations.
+5. **Perceptual:** host-agent comparison with provenance, certainty, source/target captures, and limitations; v2 observations must reference one planned check.
 6. **Usage:** executed interactions, keyboard/focus, accessibility semantics, responsive scenarios, directions, states, and recovery.
 
 Reports state which layers ran. Static inspection is not rendered, interaction, accessibility, or perceptual proof.
@@ -225,6 +227,6 @@ The dependency-light Node runtime performs only deterministic work:
 - explicit run-plan routing metadata;
 - installation planning, rendering, staging, journaling, atomic writes, checksums, rollback, and verification;
 - projection of the 52-file dossier;
-- audit planning, evidence normalization, and result evaluation.
+- audit planning, evidence normalization, DNA-bound verification, contextual measurements, and result evaluation.
 
 The host agent performs screenshot reasoning, writes evidence and Design DNA, implements the target UI, drives an available browser, and records perceptual observations. The human accepts the draft Design DNA. These ownership boundaries are never collapsed.
