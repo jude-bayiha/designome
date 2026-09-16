@@ -257,7 +257,7 @@ export function renderFidelityContract(dna, artifactIds = null) {
   return [
     '## Fidelity contract',
     '',
-    'Contract 1.0.0 preserves reproduction priorities and separates epistemic status from acceptance. A proposed calibration never becomes an observation through acceptance.',
+    'Contract 1.0.0 preserves reproduction priorities and separates epistemic status from acceptance. A proposed calibration never becomes an observation through acceptance. Audit Contract 2.0 evaluates these qualities through explicit host-agent checks and keeps missing visual evidence incomplete.',
     '',
     ...dna.fidelity.qualities
       .filter(relevant)

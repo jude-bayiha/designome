@@ -35,6 +35,20 @@ Transitions are validated. A valid external file records provider name and recep
 
 The CLI does not silently install Playwright. `in-app-browser` means the host agent owns captures. `existing-playwright` means the project owns its runner and dependencies.
 
+## Audit Contract 2.0 verification registry
+
+New audit configurations and plans use Audit Contract `2.0.0` as an additive capability. Design DNA remains `0.3.0`, Fidelity Contract remains `1.0.0`, and the request and context contracts remain at their existing versions. The generated project configuration records the installed Design DNA fingerprint and starts with an empty `verification.bindings` array. The host agent fills that array from the dry-run plan before capturing; an empty or missing binding leaves the corresponding requirement unresolved.
+
+The plan contains `verification.obligations`, `checks`, `exclusions`, and `unresolved`. An obligation has a deterministic owner and JSON claim path, its source status, priority, exceptions, disposition, layer, and expected method. Established `observed` or `inferred` claims and accepted numeric constraints become requirements when explicitly bound. Pending constraints remain calibration, rejected constraints remain excluded with their acceptance basis, and proposed or unknown claims remain diagnostics. A binding names exact route, CSS viewport, scenario, direction, method, source references, and optional implementation references. Context exclusions require a reason and references; they are visible scope decisions rather than successes.
+
+The shared runtime identity excludes timestamps, evaluated results, and output directories. It includes the Audit Contract version, canonical Design DNA content hash, source identities and known hashes, URL, requested layers, routes, dimensions, scenarios, directions, flows, focus, obligations, bindings, and exclusions. A changed DNA statement, tolerance, acceptance, scope, or binding therefore invalidates the prior evidence. New evidence declares the same contract and DNA fingerprint and cannot be supplied by changing a legacy JSON version field.
+
+The adapter adds `checkRef` to perceptual observations and `recordFidelityMeasurement({ id, checkRef, captureRef, target, property, unit, value, provenance, limitations })` for planned numeric checks. A perceptual `passed` or `failed` result requires `observed` or `inferred` status, host provenance, source references, target references, an explanation, and a matching planned check. `unknown` and `proposed` observations use `incomplete`. Capture records include a SHA-256 content hash and native image dimensions while retaining the CSS viewport; a native image size may differ from that viewport. The runtime checks file identity and references but performs no pixel or visual classification.
+
+Verification evaluates each obligation and exact target context independently. Ratios use measurements from one capture; missing values, incompatible units, zero denominators, and relationships that need host judgment remain incomplete. An established failure yields a finding and failed layer even when another check is missing. Otherwise an uncovered requirement or unresolved mapping yields incomplete. The canonical JSON report exposes the detailed verification coverage, evidence references, exclusions, and unresolved mappings; Markdown is rendered from that report.
+
+Configurations and evidence from schema `0.1.0` or Audit Contract `1.0.0` remain readable for historical runs and are normalized in memory without overwriting user files. A legacy evidence file presented to a `2.0.0` plan returns `AUDIT_EVIDENCE_RECAPTURE_REQUIRED`; extraction, acceptance, installation, and implementation can be resumed without repeating completed steps. `allowIncomplete: true` records a valid missing-evidence report but never suppresses invalid references, stale hashes, or contract mismatches.
+
 ## Mechanical measurements
 
 Normalized evidence supports the following implementation-level risks:

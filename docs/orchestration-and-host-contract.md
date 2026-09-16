@@ -9,7 +9,7 @@
 | Designome runtime | Environment diagnostic, run initialization, semantic validation, persistent state transitions, transactional installation, capture plan, evidence normalization checks, mechanical evaluation, report generation |
 | Host agent        | Conversational request normalization, screenshot reasoning through `designome-extract`, target-interface implementation, real browser control, interaction execution, perceptual comparison                      |
 | Human             | One mandatory normal-workflow decision: accept or reject the draft Design DNA                                                                                                                                    |
-| Browser adapter   | Stable typed recording surface that normalizes host-browser observations into audit evidence 1.0                                                                                                                 |
+| Browser adapter   | Stable typed recording surface that normalizes host-browser observations into audit evidence 1.0 and Audit Contract 2.0 verification links                                                                       |
 
 The runtime never claims to generate the target interface, control the host's integrated browser, or make a deterministic perceptual judgment.
 
@@ -70,8 +70,12 @@ designome run --resume \
 
 Additional human approval is required only for a destructive write, ownership conflict, applicable repository instruction, or real product decision. Host handoffs are execution boundaries, not approval prompts.
 
+For a 2.0 plan, prepare `verification.bindings` from the generated obligation IDs before the final capture. Bindings name exact target contexts and source references; they do not count as evidence. The adapter records `checkRef` on perceptual observations, `captureRef` on context-specific interaction or accessibility checks, and `recordFidelityMeasurement` values for measurement checks. Legacy evidence cannot be promoted by changing a version field.
+
 ## Interrupted and resumed example
 
 If installation fails after application starts, the transaction rolls back and the step is stored as `failed`. The next `designome run --resume` re-runs read-only diagnostic and planning, recovers an interrupted journal if present, and retries from installation. It does not repeat extraction or acceptance.
 
 An executable integration test covers this sequence in `tests/runtime/orchestration-transaction-audit.test.mjs`.
+
+If evaluation rejects an old, stale, malformed, or changed evidence file, the capture step returns to an explicit host handoff with `AUDIT_EVIDENCE_RECAPTURE_REQUIRED` or the relevant validation code. The state preserves completed extraction, acceptance, installation, and implementation steps. Resuming with `--host-event evidence-complete` requires a newly supplied evidence path, so the workflow does not loop over an already rejected file.

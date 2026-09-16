@@ -1,5 +1,6 @@
 import { DesignomeError } from './errors.mjs';
 import { jsonText, sha256 } from './files.mjs';
+import { auditContractVersion } from './audit-contract.mjs';
 
 function normalizeRoute(route) {
   return {
@@ -10,7 +11,11 @@ function normalizeRoute(route) {
 }
 
 export function migrateAuditConfig(config) {
-  if (config?.schemaVersion === '1.0.0') return config;
+  if (config?.schemaVersion === '1.0.0')
+    return {
+      ...config,
+      auditContractVersion: config.auditContractVersion ?? '1.0.0',
+    };
   if (config?.schemaVersion !== '0.1.0') {
     throw new DesignomeError('Audit config schema version is incompatible', {
       code: 'INCOMPATIBLE_AUDIT_CONFIG_VERSION',
@@ -23,6 +28,7 @@ export function migrateAuditConfig(config) {
   return {
     ...config,
     schemaVersion: '1.0.0',
+    auditContractVersion: config.auditContractVersion ?? '1.0.0',
     layers: {
       installation: true,
       mechanical: true,
@@ -88,6 +94,26 @@ function coverageFor(plan, captures, interactions) {
 }
 
 export function migrateAuditEvidence(evidence, plan) {
+  if (
+    plan?.auditContractVersion === auditContractVersion &&
+    evidence?.auditContractVersion !== auditContractVersion
+  ) {
+    throw new DesignomeError(
+      'This Audit Contract 2.0 plan requires fresh verification-aware evidence; recapture the target contexts with the current adapter.',
+      {
+        code: 'AUDIT_EVIDENCE_RECAPTURE_REQUIRED',
+        details: {
+          planAuditContractVersion: auditContractVersion,
+          evidenceAuditContractVersion: evidence?.auditContractVersion ?? null,
+          steps: [
+            'Regenerate the final Audit Contract 2.0 plan after preparing bindings.',
+            'Capture through the current browser adapter.',
+            'Submit the new evidence file to the audit command.',
+          ],
+        },
+      },
+    );
+  }
   if (evidence?.schemaVersion === '1.0.0') return evidence;
   if (evidence?.schemaVersion !== '0.1.0') {
     throw new DesignomeError('Audit evidence schema version is incompatible', {

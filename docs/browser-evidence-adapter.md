@@ -1,4 +1,4 @@
-# Browser evidence adapter 1.0
+# Browser evidence adapter 1.0 / Audit Contract 2.0
 
 The official `designome/audit` export removes manual assembly of `audit-evidence.json`. It is a normalization boundary, not a browser driver.
 
@@ -24,6 +24,10 @@ await session.finalize();
 
 `finalize()` validates plan routes, viewports, scenarios, LTR or RTL direction, configured flows, screenshot existence, document dimensions, element geometry and visibility, console severity, interaction outcomes, accessible names and states, focus metadata, and host-agent perceptual provenance. It normalizes and writes evidence schema `1.0.0`.
 
+When `plan.auditContractVersion` is `2.0.0`, the same adapter also enforces the verification registry. Before capture, bind established obligations to exact contexts in `.designome/audit.config.json` and regenerate the plan. Each perceptual observation has one `checkRef`, source references and target capture references; an `observed` or `inferred` pass/fail must be explained and traceable. `unknown` and `proposed` observations are recorded as `incomplete`. Numeric checks use `recordFidelityMeasurement({ id, checkRef, captureRef, target, property, unit, value, provenance, limitations })`; ratios are evaluated only within one capture context. Interactions and accessibility checks that satisfy a planned obligation carry `checkRefs` and `captureRef`.
+
+Target captures receive a `sha256:<digest>` content hash and native image metadata (`png`, `jpeg`, `gif`, or `webp`) in addition to their CSS viewport. Native dimensions identify the file and may differ from CSS dimensions. The adapter re-reads those files at finalization, and the audit command re-checks them at ingestion. A hash proves file identity; it does not establish a browser origin or visual fidelity.
+
 The complete runnable example is `examples/browser-adapter.reference.mjs`.
 
 ## Coverage and errors
@@ -42,8 +46,13 @@ Other stable errors include:
 - `INCOMPATIBLE_AUDIT_EVIDENCE_VERSION`
 - `AUDIT_EVIDENCE_PROVIDER_MISMATCH`
 - `AUDIT_EVIDENCE_PLAN_MISMATCH`
+- `AUDIT_EVIDENCE_RECAPTURE_REQUIRED`
+- `AUDIT_CAPTURE_FILE_MISMATCH`
+- `INVALID_AUDIT_VERIFICATION`
+- `INCOMPLETE_AUDIT_VERIFICATION`
+- `UNESTABLISHED_PERCEPTUAL_VERDICT`
 
-Evidence `0.1.0` remains accepted by the CLI through an explicit in-memory migration to `1.0.0`. Unknown versions fail closed.
+Evidence `0.1.0` remains accepted by the CLI through an explicit in-memory migration to `1.0.0`. A legacy evidence file cannot satisfy a `2.0.0` plan and returns `AUDIT_EVIDENCE_RECAPTURE_REQUIRED`; the original file remains untouched. Unknown versions fail closed. `allowIncomplete: true` permits a structurally valid missing-evidence report but never suppresses invalid links, stale hashes, duplicate contexts, or contract mismatches.
 
 ## Perceptual observations
 

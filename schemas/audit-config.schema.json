@@ -7,6 +7,7 @@
   "required": ["schemaVersion", "baseUrl", "layers", "routes"],
   "properties": {
     "schemaVersion": { "const": "1.0.0" },
+    "auditContractVersion": { "enum": ["1.0.0", "2.0.0"] },
     "baseUrl": { "type": "string", "format": "uri" },
     "startCommand": { "type": "string", "minLength": 1 },
     "outputDirectory": {
@@ -29,8 +30,20 @@
       "type": "array",
       "minItems": 1,
       "items": { "$ref": "#/$defs/route" }
+    },
+    "verification": {
+      "$ref": "#/$defs/verification"
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "required": ["auditContractVersion"],
+        "properties": { "auditContractVersion": { "const": "2.0.0" } }
+      },
+      "then": { "required": ["verification"] }
+    }
+  ],
   "$defs": {
     "viewport": {
       "type": "object",
@@ -87,6 +100,116 @@
           "uniqueItems": true,
           "items": { "enum": ["ltr", "rtl"] }
         }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dnaFingerprint", "bindings"],
+      "properties": {
+        "dnaFingerprint": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "bindings": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/verificationBinding" }
+        },
+        "exclusions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/verificationExclusion" }
+        }
+      }
+    },
+    "verificationBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "obligationRef",
+        "layer",
+        "method",
+        "targetContexts",
+        "sourceRefs"
+      ],
+      "properties": {
+        "obligationRef": { "type": "string", "minLength": 1 },
+        "layer": { "enum": ["mechanical", "perceptual", "usage"] },
+        "method": {
+          "enum": ["measurement", "perceptual", "interaction", "accessibility"]
+        },
+        "targetContexts": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/context" }
+        },
+        "sourceRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "excludedContexts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/excludedContext" }
+        },
+        "implementationRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "verificationExclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["obligationRef", "targetContexts", "reason", "references"],
+      "properties": {
+        "obligationRef": { "type": "string", "minLength": 1 },
+        "targetContexts": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/context" }
+        },
+        "reason": { "type": "string", "minLength": 1 },
+        "references": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "excludedContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["context", "reason", "references"],
+      "properties": {
+        "context": { "$ref": "#/$defs/context" },
+        "reason": { "type": "string", "minLength": 1 },
+        "references": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["routeId", "viewport", "scenario", "direction"],
+      "properties": {
+        "routeId": { "type": "string", "minLength": 1 },
+        "viewport": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["width", "height"],
+          "properties": {
+            "width": { "type": "number", "minimum": 1 },
+            "height": { "type": "number", "minimum": 1 }
+          }
+        },
+        "scenario": { "type": "string", "minLength": 1 },
+        "direction": { "enum": ["ltr", "rtl"] }
       }
     }
   }

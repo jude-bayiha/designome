@@ -16,6 +16,10 @@ import {
 import { fidelityReadiness } from './fidelity.mjs';
 import { DesignomeError } from './errors.mjs';
 import {
+  auditContractVersion,
+  designDnaFingerprint,
+} from './audit-contract.mjs';
+import {
   atomicWrite,
   jsonText,
   pathExists,
@@ -147,9 +151,10 @@ function renderOverridesCss() {
   ].join('\n');
 }
 
-function renderAuditConfig() {
+function renderAuditConfig(dna) {
   return jsonText({
     schemaVersion: '1.0.0',
+    auditContractVersion,
     baseUrl: 'http://127.0.0.1:3000',
     outputDirectory: 'audit',
     layers: {
@@ -171,6 +176,10 @@ function renderAuditConfig() {
         directions: ['ltr'],
       },
     ],
+    verification: {
+      dnaFingerprint: designDnaFingerprint(dna),
+      bindings: [],
+    },
   });
 }
 
@@ -211,7 +220,7 @@ function renderGuidanceBlock({
     `Read \`${documentationDirectory}/README.md\` and \`.designome/design-dna.json\` before generating UI.`,
     `Repository rule precedence is \`${integrationPolicy.rulePrecedence}\`; declared existing UI rules: ${existingRules}.`,
     `The detected styling adapter is \`${styling.strategy}\`. ${stylingInstruction}${uiKitInstruction}`,
-    'Preserve claim status, cover applicable business states and stress cases, and run `$designome-audit` before delivery.',
+    'Preserve claim status, cover applicable business states and stress cases, and run `$designome-audit` before delivery. New audit plans use Audit Contract 2.0: bind established obligations to exact contexts, record real capture hashes and measurements, and leave unresolved or perceptual unknowns incomplete.',
     guidanceEndMarker,
     '',
   ].join('\n');
@@ -2205,7 +2214,7 @@ export async function planInstallation({
     path: auditConfigRelativePath,
     kind: 'user-owned',
     action: auditConfigCurrent === null ? 'create' : 'preserve',
-    content: auditConfigCurrent === null ? renderAuditConfig() : null,
+    content: auditConfigCurrent === null ? renderAuditConfig(dna) : null,
     observedChecksum:
       auditConfigCurrent === null ? null : sha256(auditConfigCurrent),
   });

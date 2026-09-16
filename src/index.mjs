@@ -3,6 +3,7 @@ export {
   captureAdapter,
   createCaptureSession,
   loadCaptureEvidence,
+  validateAuditCaptureFiles,
   validateAuditEvidence,
 } from './runtime/capture-session.mjs';
 export {
@@ -22,6 +23,22 @@ export {
   fidelityReadiness,
   evaluateFidelityConstraints,
 } from './runtime/fidelity.mjs';
+export {
+  auditContractVersion,
+  auditPlanFingerprint,
+  canonicalJson,
+  contextKey,
+  contextsForRoutes,
+  designDnaFingerprint,
+  fingerprintFromPlan,
+} from './runtime/audit-contract.mjs';
+export {
+  buildAuditObligations,
+  buildAuditVerification,
+  evaluateAuditVerification,
+  validateAuditVerificationEvidence,
+  verificationCoverage,
+} from './runtime/audit-verification.mjs';
 export { projectDocumentation } from './runtime/install.mjs';
 export {
   prepareBenchmark,
