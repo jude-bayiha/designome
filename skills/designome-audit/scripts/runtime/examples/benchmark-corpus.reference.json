@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "benchmark.reference",
+  "repetitions": 2,
+  "cases": [
+    {
+      "id": "case.metric-region",
+      "family": "analytics",
+      "kind": "reference-reproduction",
+      "sourceRefs": ["source.ed-1"],
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "task": "Reconstruct the source-supported metric region from the dossier only.",
+      "scope": "Compare relationship fidelity; source scaling prevents exact pixel equivalence."
+    },
+    {
+      "id": "case.novel-metric",
+      "family": "analytics",
+      "kind": "grammar-transfer",
+      "sourceRefs": ["source.ed-1"],
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "task": "Create a new same-family metric card using different values and a long label.",
+      "scope": "Test transfer of the documented value/context hierarchy, not an unseen original screen."
+    }
+  ],
+  "limitations": [
+    "Illustrative corpus; replace source references with IDs from an actual supplied DNA.",
+    "One family is not cross-family validation."
+  ]
+}

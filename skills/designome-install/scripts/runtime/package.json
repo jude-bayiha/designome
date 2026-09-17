@@ -1,0 +1,9 @@
+{
+  "name": "designome",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  }
+}

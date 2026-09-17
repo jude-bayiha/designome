@@ -4,3 +4,5 @@ dist/
 .designome/runs/
 pnpm-lock.yaml
 CHANGELOG.md
+skills/*/scripts/runtime/
+skills/*/bundle-manifest.json

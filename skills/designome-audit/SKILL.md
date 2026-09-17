@@ -7,13 +7,15 @@ description: Audit generated or existing UI against an accepted Designome Design
 
 Compare implementation evidence with accepted Design DNA. Keep static, rendered, interaction, and accessibility validation explicitly separate.
 
-Context mode defaults to `full`. In plugin mode only, for explicitly selected experimental packs, first read `../../docs/lossless-context.md` and validate an `audit` pack against the request and accepted DNA. Packs retain every accepted rule and dependency. Project-local mode without the compiler keeps the documentation workflow below; do not install dependencies implicitly.
+Context mode defaults to `full`. In plugin mode only, for explicitly selected experimental packs, first read `scripts/runtime/docs/lossless-context.md` and validate an `audit` pack against the request and accepted DNA. Packs retain every accepted rule and dependency. Project-local mode without the compiler keeps the documentation workflow below; do not install dependencies implicitly.
+
+Requires Node.js 24 or newer for deterministic commands. Resolve resource paths from this skill, independently of the current working directory.
 
 ## Resolve the execution context
 
 This skill works from either the Designome plugin or an installed target project.
 
-- Plugin mode: when `../../prompts/17-generation-audit.md` exists, resolve the plugin root as `../..`. Read the shared contract, audit prompt, v0.3 concept matrix, accepted Design DNA, and relevant generated files. Read only the axis prompts needed to interpret affected axes, concepts, or UI domains.
+- Plugin mode: when `scripts/runtime/prompts/17-generation-audit.md` exists, resolve the plugin root as `scripts/runtime`. Read the shared contract, audit prompt, v0.3 concept matrix, accepted Design DNA, and relevant generated files. Read only the axis prompts needed to interpret affected axes, concepts, or UI domains.
 - Project-local mode: when `../../../.designome/design-dna.json` exists, resolve the project root as `../../..`. Read the accepted Design DNA plus the generated documentation index, `governance/coverage.md`, `governance/integration.md`, `governance/rules.md`, `components/states.md`, and every `patterns/` or `behavior/` document routed to the audited finding under the documentation directory recorded in `.designome/manifest.json`.
 
 Stop if neither context can be resolved. Never guess which Design DNA or project is in scope.
@@ -21,8 +23,8 @@ Stop if neither context can be resolved. Never guess which Design DNA or project
 ## Workflow
 
 1. Interpret the complete conversational request once. Normalize the project and optional Design DNA paths, focus axes, concepts, UI domains, provider, constraints, report or repair mode, and explicit implementation or browser-install authorizations into an `audit` request contract. Ambiguous language never authorizes repair or dependency installation.
-2. In plugin mode, read `../../schemas/request-contract.schema.json` and `../../docs/conversational-request-contract.md`. In project-local mode, read `references/request-contract.schema.json` and `references/conversational-request-contract.md`. Validate the contract with `validate-request --file <request-contract.json> --operation audit` when the helper is available; otherwise preserve it and report deterministic request validation as unavailable.
-3. Validate the Design DNA. In plugin mode, use the bundled helper. In project-local mode, use a `designome` executable already available in the environment when present; otherwise record deterministic validation as unavailable and continue with explicit evidence boundaries:
+2. In plugin mode, read `scripts/runtime/schemas/request-contract.schema.json` and `scripts/runtime/docs/conversational-request-contract.md`. In project-local mode, read `references/request-contract.schema.json` and `references/conversational-request-contract.md`. Validate the contract with `validate-request --file <request-contract.json> --operation audit` when the helper is available; otherwise preserve it and report deterministic request validation as unavailable.
+3. In plugin mode, import the browser evidence adapter from `<designome-plugin-root>/src/runtime/capture-session.mjs`; no npm installation or global `designome` command is needed. Validate the Design DNA. In plugin mode, use the bundled helper. In project-local mode, use a `designome` executable already available in the environment when present; otherwise record deterministic validation as unavailable and continue with explicit evidence boundaries:
 
    ```bash
    node <designome-plugin-root>/bin/designome.mjs validate-dna \

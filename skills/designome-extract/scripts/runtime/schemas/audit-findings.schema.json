@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designome.dev/schemas/audit-findings/1.0.0",
+  "title": "Designome evaluated audit findings",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "designDna",
+    "findings",
+    "calibrationCandidates"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "designDna": {
+      "type": "object",
+      "required": ["documentId", "revision"],
+      "properties": {
+        "documentId": { "type": "string", "minLength": 1 },
+        "revision": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "calibrationCandidates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/proposal" }
+    }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "layer",
+        "severity",
+        "scope",
+        "ruleRef",
+        "evidence",
+        "epistemicStatus",
+        "certainty",
+        "suggestedCorrection",
+        "verificationMethod"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": {
+          "enum": [
+            "mechanical-risk",
+            "design-deviation",
+            "perceptual-deviation"
+          ]
+        },
+        "layer": { "enum": ["mechanical", "perceptual", "usage"] },
+        "severity": { "enum": ["low", "medium", "high", "critical"] },
+        "scope": { "type": "string", "minLength": 1 },
+        "ruleRef": { "type": "string", "minLength": 1 },
+        "evidence": { "type": "string", "minLength": 1 },
+        "epistemicStatus": { "enum": ["observed", "inferred", "unknown"] },
+        "certainty": { "type": "number", "minimum": 0, "maximum": 1 },
+        "provenance": { "type": "object" },
+        "limitations": { "type": "array", "items": { "type": "string" } },
+        "suggestedCorrection": { "type": "string", "minLength": 1 },
+        "verificationMethod": { "type": "string", "minLength": 1 }
+      }
+    },
+    "proposal": {
+      "type": "object",
+      "required": [
+        "id",
+        "layer",
+        "scope",
+        "evidence",
+        "proposal",
+        "epistemicStatus",
+        "acceptanceRequired"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "layer": { "enum": ["mechanical", "perceptual", "usage"] },
+        "scope": { "type": "string", "minLength": 1 },
+        "evidence": { "type": "string", "minLength": 1 },
+        "proposal": { "type": "string", "minLength": 1 },
+        "epistemicStatus": { "const": "proposed" },
+        "acceptanceRequired": { "const": true }
+      }
+    }
+  }
+}

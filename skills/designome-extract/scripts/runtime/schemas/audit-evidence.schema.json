@@ -1,0 +1,391 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designome.dev/schemas/audit-evidence/1.0.0",
+  "title": "Designome normalized browser and host-agent audit evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "adapter",
+    "plan",
+    "provider",
+    "coverage",
+    "captures",
+    "interactions",
+    "consoleMessages",
+    "accessibilityChecks",
+    "perceptualObservations"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "auditContractVersion": { "enum": ["1.0.0", "2.0.0"] },
+    "designDnaFingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "adapter": {
+      "type": "object",
+      "required": ["name", "version", "evidenceSchemaVersion"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "evidenceSchemaVersion": { "const": "1.0.0" },
+        "migratedFrom": { "type": "string" }
+      }
+    },
+    "plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "fingerprint"],
+      "properties": {
+        "schemaVersion": { "const": "1.0.0" },
+        "fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "kind", "executionOwner", "status", "receivedAt"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["external", "target-project"] },
+        "executionOwner": { "enum": ["host-agent", "target-project"] },
+        "status": { "const": "evidence-received" },
+        "receivedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "coverage": { "$ref": "#/$defs/coverage" },
+    "captures": { "type": "array", "items": { "$ref": "#/$defs/capture" } },
+    "interactions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/interaction" }
+    },
+    "consoleMessages": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/consoleMessage" }
+    },
+    "accessibilityChecks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/accessibilityCheck" }
+    },
+    "perceptualObservations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/perceptualObservation" }
+    },
+    "fidelityMeasurements": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/fidelityMeasurement" }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["auditContractVersion"],
+        "properties": { "auditContractVersion": { "const": "2.0.0" } }
+      },
+      "then": {
+        "required": ["designDnaFingerprint", "fidelityMeasurements"]
+      }
+    }
+  ],
+  "$defs": {
+    "viewport": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "number", "minimum": 0 },
+        "height": { "type": "number", "minimum": 0 }
+      }
+    },
+    "coverageItem": {
+      "type": "object",
+      "required": ["routeId", "viewport", "scenario", "direction"],
+      "properties": {
+        "routeId": { "type": "string", "minLength": 1 },
+        "viewport": { "$ref": "#/$defs/viewport" },
+        "scenario": { "type": "string", "minLength": 1 },
+        "direction": { "enum": ["ltr", "rtl"] }
+      }
+    },
+    "interactionCoverage": {
+      "type": "object",
+      "required": ["routeId", "flowId"],
+      "properties": {
+        "routeId": { "type": "string", "minLength": 1 },
+        "flowId": { "type": "string", "minLength": 1 }
+      }
+    },
+    "coverageSet": {
+      "type": "object",
+      "required": ["captures", "interactions"],
+      "properties": {
+        "captures": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/coverageItem" }
+        },
+        "interactions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/interactionCoverage" }
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["complete", "expected", "actual", "missing"],
+      "properties": {
+        "complete": { "type": "boolean" },
+        "expected": { "$ref": "#/$defs/coverageSet" },
+        "actual": { "$ref": "#/$defs/coverageSet" },
+        "missing": { "$ref": "#/$defs/coverageSet" }
+      }
+    },
+    "element": {
+      "type": "object",
+      "required": [
+        "id",
+        "role",
+        "visible",
+        "hidden",
+        "clipped",
+        "rect",
+        "tokenRefs",
+        "ruleRefs"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "minLength": 1 },
+        "visible": { "type": "boolean" },
+        "hidden": { "type": "boolean" },
+        "clipped": { "type": "boolean" },
+        "rect": { "$ref": "#/$defs/viewport" },
+        "fontSize": { "type": "number", "minimum": 0 },
+        "lineHeight": { "type": "number", "minimum": 0 },
+        "flexShrink": { "type": "number", "minimum": 0 },
+        "alignItems": { "type": "string" },
+        "justifyContent": { "type": "string" },
+        "textAlign": { "type": "string" },
+        "gapBefore": { "type": "number", "minimum": 0 },
+        "panelPadding": { "type": "number", "minimum": 0 },
+        "tokenRefs": { "type": "array", "items": { "type": "string" } },
+        "ruleRefs": { "type": "array", "items": { "type": "string" } },
+        "accessibleName": { "type": ["string", "null"] },
+        "accessibleRole": { "type": ["string", "null"] },
+        "accessibleState": { "type": ["object", "null"] }
+      }
+    },
+    "capture": {
+      "type": "object",
+      "required": [
+        "id",
+        "routeId",
+        "viewport",
+        "scenario",
+        "direction",
+        "screenshotPath",
+        "document",
+        "elements",
+        "responsiveChecks",
+        "recordedAt"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "routeId": { "type": "string", "minLength": 1 },
+        "url": { "type": ["string", "null"] },
+        "viewport": { "$ref": "#/$defs/viewport" },
+        "scenario": { "type": "string", "minLength": 1 },
+        "direction": { "enum": ["ltr", "rtl"] },
+        "screenshotPath": { "type": "string", "minLength": 1 },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "nativeDimensions": {
+          "type": "object",
+          "required": ["format", "width", "height"],
+          "properties": {
+            "format": { "enum": ["png", "jpeg", "gif", "webp"] },
+            "width": { "type": "integer", "minimum": 1 },
+            "height": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "document": {
+          "type": "object",
+          "required": [
+            "scrollWidth",
+            "clientWidth",
+            "scrollHeight",
+            "clientHeight",
+            "horizontalOverflow"
+          ],
+          "properties": {
+            "scrollWidth": { "type": "number", "minimum": 0 },
+            "clientWidth": { "type": "number", "minimum": 0 },
+            "scrollHeight": { "type": "number", "minimum": 0 },
+            "clientHeight": { "type": "number", "minimum": 0 },
+            "horizontalOverflow": { "type": "boolean" }
+          }
+        },
+        "elements": { "type": "array", "items": { "$ref": "#/$defs/element" } },
+        "responsiveChecks": { "type": "array", "items": { "type": "object" } },
+        "recordedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "interaction": {
+      "type": "object",
+      "required": [
+        "id",
+        "routeId",
+        "flowId",
+        "kind",
+        "expected",
+        "observed",
+        "passed",
+        "urlChanged",
+        "ruleRefs",
+        "recordedAt"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "routeId": { "type": "string", "minLength": 1 },
+        "flowId": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "minLength": 1 },
+        "expected": { "type": "string", "minLength": 1 },
+        "observed": { "type": "string", "minLength": 1 },
+        "passed": { "type": "boolean" },
+        "urlBefore": { "type": ["string", "null"] },
+        "urlAfter": { "type": ["string", "null"] },
+        "urlChanged": { "type": "boolean" },
+        "disclosure": { "type": ["object", "null"] },
+        "dialog": { "type": ["object", "null"] },
+        "focus": { "type": ["object", "null"] },
+        "captureRef": { "type": "string", "minLength": 1 },
+        "checkRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "ruleRefs": { "type": "array", "items": { "type": "string" } },
+        "recordedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "consoleMessage": {
+      "type": "object",
+      "required": ["routeId", "level", "message", "source", "recordedAt"],
+      "properties": {
+        "routeId": { "type": "string", "minLength": 1 },
+        "level": { "enum": ["warning", "error"] },
+        "message": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "minLength": 1 },
+        "recordedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "accessibilityCheck": {
+      "type": "object",
+      "required": [
+        "id",
+        "routeId",
+        "expected",
+        "observed",
+        "passed",
+        "ruleRefs",
+        "recordedAt"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "routeId": { "type": "string", "minLength": 1 },
+        "expected": { "type": "string", "minLength": 1 },
+        "observed": { "type": "string", "minLength": 1 },
+        "passed": { "type": "boolean" },
+        "accessibleName": { "type": ["string", "null"] },
+        "accessibleRole": { "type": ["string", "null"] },
+        "accessibleState": { "type": ["object", "null"] },
+        "captureRef": { "type": "string", "minLength": 1 },
+        "checkRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "ruleRefs": { "type": "array", "items": { "type": "string" } },
+        "recordedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "perceptualObservation": {
+      "type": "object",
+      "required": [
+        "id",
+        "aspect",
+        "statement",
+        "epistemicStatus",
+        "certainty",
+        "result",
+        "provenance",
+        "sourceCaptureRefs",
+        "targetCaptureRefs",
+        "ruleRefs",
+        "tokenRefs",
+        "limitations",
+        "recordedAt"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "checkRef": { "type": "string", "minLength": 1 },
+        "aspect": { "type": "string", "minLength": 1 },
+        "statement": { "type": "string", "minLength": 1 },
+        "epistemicStatus": {
+          "enum": ["observed", "inferred", "proposed", "unknown"]
+        },
+        "certainty": { "type": "number", "minimum": 0, "maximum": 1 },
+        "result": { "enum": ["passed", "failed", "incomplete"] },
+        "severity": { "enum": ["low", "medium", "high", "critical"] },
+        "scope": { "type": "string" },
+        "provenance": {
+          "type": "object",
+          "required": ["evaluator", "method"],
+          "properties": {
+            "evaluator": { "const": "host-agent" },
+            "method": { "type": "string", "minLength": 1 },
+            "model": { "type": "string" },
+            "session": { "type": "string" }
+          }
+        },
+        "sourceCaptureRefs": { "type": "array", "items": { "type": "string" } },
+        "targetCaptureRefs": { "type": "array", "items": { "type": "string" } },
+        "ruleRefs": { "type": "array", "items": { "type": "string" } },
+        "tokenRefs": { "type": "array", "items": { "type": "string" } },
+        "limitations": { "type": "array", "items": { "type": "string" } },
+        "suggestedCorrection": { "type": "string" },
+        "recordedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "fidelityMeasurement": {
+      "type": "object",
+      "required": [
+        "id",
+        "checkRef",
+        "captureRef",
+        "target",
+        "property",
+        "unit",
+        "value",
+        "provenance",
+        "limitations",
+        "recordedAt"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "checkRef": { "type": "string", "minLength": 1 },
+        "captureRef": { "type": "string", "minLength": 1 },
+        "target": { "type": "string", "minLength": 1 },
+        "property": { "type": "string", "minLength": 1 },
+        "unit": { "type": "string", "minLength": 1 },
+        "value": { "type": ["string", "number", "boolean"] },
+        "provenance": { "type": "object" },
+        "limitations": { "type": "array", "items": { "type": "string" } },
+        "recordedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

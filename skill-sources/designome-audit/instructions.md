@@ -1,0 +1,77 @@
+---
+name: designome-audit
+description: Audit generated or existing UI against an accepted Designome Design DNA and its stress cases. Use when a user asks whether a generated screen follows extracted design guidance, wants state, content, responsive, accessibility, motion, or data-scale findings, or needs a non-regression report before revising the Design DNA or implementation.
+---
+
+# Audit generated UI
+
+Compare implementation evidence with accepted Design DNA. Keep static, rendered, interaction, and accessibility validation explicitly separate.
+
+Context mode defaults to `full`. In plugin mode only, for explicitly selected experimental packs, first read `../../docs/lossless-context.md` and validate an `audit` pack against the request and accepted DNA. Packs retain every accepted rule and dependency. Project-local mode without the compiler keeps the documentation workflow below; do not install dependencies implicitly.
+
+Requires Node.js 24 or newer for deterministic commands. Resolve resource paths from this skill, independently of the current working directory.
+
+## Resolve the execution context
+
+This skill works from either the Designome plugin or an installed target project.
+
+- Plugin mode: when `../../prompts/17-generation-audit.md` exists, resolve the plugin root as `../..`. Read the shared contract, audit prompt, v0.3 concept matrix, accepted Design DNA, and relevant generated files. Read only the axis prompts needed to interpret affected axes, concepts, or UI domains.
+- Project-local mode: when `../../../.designome/design-dna.json` exists, resolve the project root as `../../..`. Read the accepted Design DNA plus the generated documentation index, `governance/coverage.md`, `governance/integration.md`, `governance/rules.md`, `components/states.md`, and every `patterns/` or `behavior/` document routed to the audited finding under the documentation directory recorded in `.designome/manifest.json`.
+
+Stop if neither context can be resolved. Never guess which Design DNA or project is in scope.
+
+## Workflow
+
+1. Interpret the complete conversational request once. Normalize the project and optional Design DNA paths, focus axes, concepts, UI domains, provider, constraints, report or repair mode, and explicit implementation or browser-install authorizations into an `audit` request contract. Ambiguous language never authorizes repair or dependency installation.
+2. In plugin mode, read `../../schemas/request-contract.schema.json` and `../../docs/conversational-request-contract.md`. In project-local mode, read `references/request-contract.schema.json` and `references/conversational-request-contract.md`. Validate the contract with `validate-request --file <request-contract.json> --operation audit` when the helper is available; otherwise preserve it and report deterministic request validation as unavailable.
+3. In plugin mode, import the browser evidence adapter from `<designome-plugin-root>/src/runtime/capture-session.mjs`; no npm installation or global `designome` command is needed. Validate the Design DNA. In plugin mode, use the bundled helper. In project-local mode, use a `designome` executable already available in the environment when present; otherwise record deterministic validation as unavailable and continue with explicit evidence boundaries:
+
+   ```bash
+   node <designome-plugin-root>/bin/designome.mjs validate-dna \
+     --file <accepted-design-dna.json> \
+     --require-accepted
+   ```
+
+4. When Designome is installed, verify managed artifacts with the same available helper. Do not install a package or dependency merely to obtain the command:
+
+   ```bash
+   node <designome-plugin-root>/bin/designome.mjs verify-install \
+     --project <target-project>
+   ```
+
+5. Establish available evidence: changed code, rendered screenshots, viewport set, state fixtures, interaction results, accessibility checks, and host-agent perceptual observations.
+6. Initialize or dry-run the executable audit when the helper is available:
+
+   ```bash
+   node <designome-plugin-root>/bin/designome.mjs audit \
+     --project <target-project> \
+     --request <request-contract.json> \
+     --provider <auto|in-app-browser|existing-playwright|managed-playwright|static> \
+     --dry-run
+   ```
+
+7. Route the relevant axes, five-facet slices, UI-domain inspection contracts, concepts, and stress tests from the normalized focus. Inspect long and unbroken content, nulls, extreme values, states, reflow, localization, modalities, data scale and meaning, media failure, visual stability, content trust, platform behavior, component composition, and motion mode as applicable.
+8. Run repository checks only inside the audited target project. Do not run checks from the Designome plugin source unless the plugin itself is the audit target.
+9. Read `audit/plan.json`, prepare the explicit `verification.bindings` for the obligations and contexts that are actually in scope, then regenerate the final plan. Create an official adapter session with `createCaptureSession(plan)` and record real host-browser observations through `recordCapture`, `recordInteraction`, `recordConsoleMessage`, `recordAccessibilityCheck`, `recordPerceptualObservation`, and `recordFidelityMeasurement` when a planned measurement check exists. Perceptual observations use one `checkRef`, source references, target capture references, and a limitation; `unknown` or `proposed` observations remain `incomplete`. Call `finalize()` to validate, normalize, hash, and write external evidence. Do not assemble internal `audit-evidence.json` manually.
+10. Evaluate the adapter output with `--evidence <adapter-output> --overwrite`. The runtime produces canonical `audit/report.json`, Markdown from the same state, normalized `audit/evidence.json`, and `audit/findings.json`.
+11. Report installation, mechanical, perceptual, and usage layers independently with only `passed`, `failed`, `incomplete`, `not-requested`, or `unavailable`. Keep observed mechanical risks separate from host-agent perceptual observations and proposed calibration candidates.
+12. State which validation layers actually ran. A new Audit Contract 2.0 plan accepts only evidence declaring the same contract and Design DNA fingerprint; an older evidence file requires a fresh capture. Propose revisions, but do not modify the implementation without separate authorization.
+
+## Explicit repair mode
+
+Use repair mode only after the user authorizes implementation changes. Pass `--mode repair --implementation-authorized` and choose at most three passes. Apply the smallest implementation-only patch for observed finding IDs, run target-project checks, and recapture affected routes and interactions after every pass. Stop when findings pass, the maximum is reached, or a new product decision is required.
+
+Never patch an excluded calibration candidate, mutate accepted Design DNA, install a browser dependency, or initialize a UI kit as part of repair mode.
+
+## Guardrails
+
+- Do not claim rendered, responsive, keyboard, screen-reader, motion, or runtime proof unless it was executed.
+- Never execute a focus, provider, repair, or dependency action that differs from the validated request contract.
+- Do not report an unaccepted proposal as a defect.
+- Preserve documented exceptions.
+- Distinguish an implementation deviation from an incomplete or contradictory Design DNA.
+- Prefer the smallest corrective change and retain evidence for any proposed Design DNA revision.
+- Prefer the host in-app browser, then an existing target-project Playwright setup. Do not install managed Playwright without explicit authorization.
+- Provider state is canonical: `awaiting-evidence`, `evidence-received`, `running`, then `passed`, `failed`, or `incomplete`. Valid external evidence must never remain labeled as pending or unexecuted.
+- Perceptual comparison belongs to the host agent. Record its provenance, certainty, referenced source and target captures, and limitations; never describe it as a deterministic runtime check.
+- Audit Contract 2.0 binds every required check to an exact route, viewport, scenario, and direction. Missing bindings are unresolved; exclusions need a reason and references. Capture hashes identify files and native dimensions but do not prove visual fidelity.

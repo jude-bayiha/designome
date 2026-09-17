@@ -1,0 +1,386 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:designome:schema:concept-matrix:0.3.0",
+  "title": "Designome Concept Matrix",
+  "description": "Versioned routing contract for Designome's 13 specialist axes, 65 required facets, 33 cross-cutting concepts, 20 UI domains, and modular prompt stages.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "matrixVersion",
+    "requestContractVersion",
+    "designDnaSchemaVersion",
+    "epistemicStatuses",
+    "tokenCategories",
+    "ruleCategories",
+    "axes",
+    "concepts",
+    "uiDomains",
+    "documentationLayoutVersion",
+    "documentationProjection",
+    "promptStages"
+  ],
+  "properties": {
+    "contextContractVersion": { "const": "1.0.0" },
+    "fidelityContractVersion": { "const": "1.0.0" },
+    "auditContractVersion": { "const": "2.0.0" },
+    "matrixVersion": { "const": "0.3.0" },
+    "requestContractVersion": { "const": "1.1.0" },
+    "designDnaSchemaVersion": { "const": "0.3.0" },
+    "epistemicStatuses": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["observed", "inferred", "proposed", "unknown"]
+      }
+    },
+    "tokenCategories": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/tokenCategory" }
+    },
+    "ruleCategories": {
+      "type": "array",
+      "minItems": 21,
+      "maxItems": 21,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/ruleCategory" }
+    },
+    "axes": {
+      "type": "array",
+      "minItems": 13,
+      "maxItems": 13,
+      "items": { "$ref": "#/$defs/axis" }
+    },
+    "concepts": {
+      "type": "array",
+      "minItems": 33,
+      "maxItems": 33,
+      "items": { "$ref": "#/$defs/concept" }
+    },
+    "uiDomains": {
+      "type": "array",
+      "minItems": 20,
+      "maxItems": 20,
+      "items": { "$ref": "#/$defs/uiDomain" }
+    },
+    "documentationLayoutVersion": { "const": "2.1.0" },
+    "documentationProjection": {
+      "type": "array",
+      "minItems": 51,
+      "maxItems": 51,
+      "items": { "$ref": "#/$defs/documentationEntry" }
+    },
+    "promptStages": {
+      "type": "array",
+      "minItems": 18,
+      "maxItems": 18,
+      "items": { "$ref": "#/$defs/promptStage" }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stringList": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/nonEmptyString" },
+      "uniqueItems": true
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"
+    },
+    "identifierList": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/identifier" },
+      "uniqueItems": true
+    },
+    "tokenCategory": {
+      "enum": [
+        "color",
+        "space",
+        "size",
+        "typography",
+        "radius",
+        "border",
+        "elevation",
+        "opacity",
+        "layer",
+        "motion",
+        "iconography",
+        "data-visualization",
+        "asset",
+        "other"
+      ]
+    },
+    "ruleCategory": {
+      "enum": [
+        "layout",
+        "typography",
+        "color",
+        "content",
+        "component",
+        "state",
+        "interaction",
+        "navigation",
+        "form",
+        "data-display",
+        "visualization",
+        "responsive",
+        "platform",
+        "accessibility",
+        "localization",
+        "performance",
+        "trust",
+        "ethics",
+        "motion",
+        "media",
+        "governance"
+      ]
+    },
+    "facet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "question", "inspect", "screenshotLimits"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^facet\\.[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$"
+        },
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "question": { "$ref": "#/$defs/nonEmptyString" },
+        "inspect": { "$ref": "#/$defs/stringList" },
+        "screenshotLimits": { "$ref": "#/$defs/stringList" }
+      }
+    },
+    "axis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "order",
+        "name",
+        "purpose",
+        "promptRef",
+        "focusAreas",
+        "facets",
+        "conceptRefs"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^axis\\.[a-z][a-z0-9-]*$"
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "purpose": { "$ref": "#/$defs/nonEmptyString" },
+        "promptRef": {
+          "type": "string",
+          "pattern": "^prompts/[0-9]{2}-[a-z0-9-]+\\.md$"
+        },
+        "focusAreas": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "uniqueItems": true
+        },
+        "facets": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": { "$ref": "#/$defs/facet" }
+        },
+        "conceptRefs": { "$ref": "#/$defs/identifierList" }
+      }
+    },
+    "concept": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "description",
+        "axisRefs",
+        "inspect",
+        "screenshotLimits",
+        "stressTests",
+        "outputTargets"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^concept\\.[a-z][a-z0-9-]*$"
+        },
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "description": { "$ref": "#/$defs/nonEmptyString" },
+        "axisRefs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^axis\\.[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "inspect": { "$ref": "#/$defs/stringList" },
+        "screenshotLimits": { "$ref": "#/$defs/stringList" },
+        "stressTests": { "$ref": "#/$defs/stringList" },
+        "outputTargets": { "$ref": "#/$defs/stringList" }
+      }
+    },
+    "uiDomain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "description",
+        "detectionCues",
+        "axisRefs",
+        "conceptRefs",
+        "inspect",
+        "screenshotLimits",
+        "stressTests"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^domain\\.[a-z][a-z0-9-]*$"
+        },
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "description": { "$ref": "#/$defs/nonEmptyString" },
+        "detectionCues": { "$ref": "#/$defs/stringList" },
+        "axisRefs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^axis\\.[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "conceptRefs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^concept\\.[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "inspect": { "$ref": "#/$defs/stringList" },
+        "screenshotLimits": { "$ref": "#/$defs/stringList" },
+        "stressTests": { "$ref": "#/$defs/stringList" }
+      }
+    },
+    "documentationEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "title",
+        "purpose",
+        "renderer",
+        "conceptRefs",
+        "uiDomainRefs",
+        "tokenCategories",
+        "ruleCategories"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^(?:foundations|components|patterns|behavior|governance)/[a-z][a-z0-9-]*\\.md$"
+        },
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "purpose": { "$ref": "#/$defs/nonEmptyString" },
+        "renderer": {
+          "enum": [
+            "generic",
+            "component-catalogue",
+            "component-anatomy",
+            "component-variants",
+            "component-states",
+            "component-composition",
+            "component-mapping",
+            "ui-domain",
+            "coverage",
+            "rules",
+            "evidence",
+            "unknowns",
+            "calibration",
+            "source-routing",
+            "integration"
+          ]
+        },
+        "conceptRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^concept\\.[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "uiDomainRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^domain\\.[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "tokenCategories": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/tokenCategory" }
+        },
+        "ruleCategories": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/ruleCategory" }
+        }
+      }
+    },
+    "promptStage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "order", "kind", "file", "consumes", "produces"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^prompt\\.[a-z][a-z0-9-]*$"
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 17
+        },
+        "kind": {
+          "enum": [
+            "orchestrator",
+            "intake",
+            "axis",
+            "synthesis",
+            "integration",
+            "audit"
+          ]
+        },
+        "file": {
+          "type": "string",
+          "pattern": "^prompts/[0-9]{2}-[a-z0-9-]+\\.md$"
+        },
+        "consumes": { "$ref": "#/$defs/stringList" },
+        "produces": { "$ref": "#/$defs/stringList" }
+      }
+    }
+  }
+}
