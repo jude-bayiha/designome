@@ -5,5 +5,10 @@
     "MD033": false,
     "MD036": false,
   },
-  "ignores": ["node_modules/**", "CHANGELOG.md", ".designome/runs/**"],
+  "ignores": [
+    "node_modules/**",
+    "skills/*/scripts/runtime/**",
+    "CHANGELOG.md",
+    ".designome/runs/**",
+  ],
 }

@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0.0",
+  "auditContractVersion": "2.0.0",
+  "baseUrl": "http://127.0.0.1:3000",
+  "layers": {
+    "installation": true,
+    "mechanical": true,
+    "perceptual": true,
+    "usage": true
+  },
+  "routes": [
+    {
+      "id": "dashboard",
+      "path": "/",
+      "viewports": [{ "name": "desktop", "width": 1280, "height": 900 }],
+      "flows": [],
+      "scenarios": ["default"],
+      "directions": ["ltr"]
+    }
+  ],
+  "verification": {
+    "dnaFingerprint": "dfa1ce41149394ce005df9e2c208eaf984f4bfc270280dac44a106029eba08dc",
+    "bindings": [
+      {
+        "obligationRef": "obligation.component.metric.card.componentpatterns.0.states.0.assertions.appearance",
+        "layer": "perceptual",
+        "method": "perceptual",
+        "targetContexts": [
+          {
+            "routeId": "dashboard",
+            "viewport": { "width": 1280, "height": 900 },
+            "scenario": "default",
+            "direction": "ltr"
+          }
+        ],
+        "sourceRefs": ["source.ed-1"]
+      },
+      {
+        "obligationRef": "obligation.component.data.row.componentpatterns.1.states.0.assertions.appearance",
+        "layer": "perceptual",
+        "method": "perceptual",
+        "targetContexts": [
+          {
+            "routeId": "dashboard",
+            "viewport": { "width": 1280, "height": 900 },
+            "scenario": "default",
+            "direction": "ltr"
+          }
+        ],
+        "sourceRefs": ["source.ed-1"]
+      },
+      {
+        "obligationRef": "obligation.component.chart.card.componentpatterns.2.states.0.assertions.appearance",
+        "layer": "perceptual",
+        "method": "perceptual",
+        "targetContexts": [
+          {
+            "routeId": "dashboard",
+            "viewport": { "width": 1280, "height": 900 },
+            "scenario": "default",
+            "direction": "ltr"
+          }
+        ],
+        "sourceRefs": ["source.ed-1"]
+      },
+      {
+        "obligationRef": "obligation.quality.value.context.hierarchy.fidelity.qualities.0.claim",
+        "layer": "perceptual",
+        "method": "perceptual",
+        "targetContexts": [
+          {
+            "routeId": "dashboard",
+            "viewport": { "width": 1280, "height": 900 },
+            "scenario": "default",
+            "direction": "ltr"
+          }
+        ],
+        "sourceRefs": ["source.ed-1"]
+      }
+    ]
+  }
+}

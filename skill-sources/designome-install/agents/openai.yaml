@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Designome Install'
+  short_description: 'Install accepted Design DNA into a target project'
+  default_prompt: 'Use $designome-install to install this accepted Design DNA into my project.'

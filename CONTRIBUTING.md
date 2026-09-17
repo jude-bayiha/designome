@@ -34,6 +34,7 @@ Keep the description short, in English, and action-oriented. A commit stays atom
 ```bash
 pnpm install
 pnpm format
+pnpm build:skills
 pnpm format:check
 pnpm lint
 pnpm validate
@@ -46,6 +47,12 @@ pnpm designome --help
 - The `pre-commit` hook applies Prettier only to staged files through lint-staged.
 - The `commit-msg` hook checks the message with Commitlint.
 - Always inspect `git status --short` after a commit because lint-staged may have reformatted staged files.
+
+## Skill distributions
+
+Edit skill instructions and metadata in `skill-sources/`, and shared runtime, prompts, schemas, and documentation in their canonical directories. Never edit generated files under `skills/` directly. After formatting source changes, run `pnpm build:skills` and commit the refreshed distributions with their sources. `pnpm check:skills`, included in `pnpm check`, rejects missing, stale, or unexpected shipped files without rewriting them.
+
+The `skills` development dependency is pinned to exercise the real installer in isolated tests. It is not a runtime dependency. See [the distribution contract](docs/skill-distribution.md) for the bundle layout and test boundaries.
 
 ## Designome discipline
 

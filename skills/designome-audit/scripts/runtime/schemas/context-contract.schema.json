@@ -1,0 +1,295 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:designome:schema:context-contract:1.0.0",
+  "title": "Designome lossless context pack",
+  "description": "Structural contract only. Recompilation from trusted inputs additionally enforces exact selection, dependency closure, provenance and freshness.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "compilerVersion",
+    "phase",
+    "mode",
+    "axisRef",
+    "inputHash",
+    "canonicalHashes",
+    "routing",
+    "nodes",
+    "payload",
+    "packHash",
+    "metrics"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "compilerVersion": { "const": "1.0.0" },
+    "phase": {
+      "enum": [
+        "request",
+        "source",
+        "analysis",
+        "governance",
+        "synthesis",
+        "install",
+        "audit"
+      ]
+    },
+    "mode": { "enum": ["full", "lossless-pack", "shadow"] },
+    "axisRef": { "type": ["string", "null"] },
+    "inputHash": { "$ref": "#/$defs/hash" },
+    "packHash": { "$ref": "#/$defs/hash" },
+    "canonicalHashes": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/hash" }
+    },
+    "routing": { "$ref": "#/$defs/routing" },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source", "pointer", "hash", "reason", "value"],
+        "properties": {
+          "source": { "type": "string", "minLength": 1 },
+          "pointer": { "type": "string", "pattern": "^(|/.*)$" },
+          "hash": { "$ref": "#/$defs/hash" },
+          "reason": { "type": "string", "minLength": 1 },
+          "value": {}
+        }
+      }
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request",
+        "evidence",
+        "fragments",
+        "dna",
+        "compatibility",
+        "sourceHashes"
+      ],
+      "properties": {
+        "request": { "type": ["object", "null"] },
+        "evidence": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/evidence" }]
+        },
+        "fragments": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/envelope" }
+        },
+        "dna": { "type": ["object", "null"] },
+        "compatibility": { "type": ["object", "null"] },
+        "sourceHashes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "serializedBytes",
+        "canonicalBytes",
+        "tokenEstimate",
+        "semanticParity"
+      ],
+      "properties": {
+        "serializedBytes": { "type": "integer", "minimum": 0 },
+        "canonicalBytes": { "type": "integer", "minimum": 0 },
+        "tokenEstimate": { "type": "string" },
+        "semanticParity": { "const": "not-established" }
+      }
+    }
+  },
+  "$defs": {
+    "view": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "packHash",
+        "inputHash",
+        "phase",
+        "mode",
+        "axisRef",
+        "routing",
+        "payload",
+        "context"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "1.0.0" },
+        "packHash": { "$ref": "#/$defs/hash" },
+        "inputHash": { "$ref": "#/$defs/hash" },
+        "phase": { "$ref": "#/properties/phase" },
+        "mode": { "$ref": "#/properties/mode" },
+        "axisRef": { "$ref": "#/properties/axisRef" },
+        "routing": { "$ref": "#/$defs/routing" },
+        "payload": { "$ref": "#/properties/payload" },
+        "context": { "type": "object", "minProperties": 1 }
+      }
+    },
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "uncertain",
+        "axes",
+        "uiDomainRefs",
+        "decisions"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "1.0.0" },
+        "uncertain": { "type": "boolean" },
+        "axes": {
+          "type": "array",
+          "minItems": 13,
+          "maxItems": 13,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["axisRef", "executionStatus", "reasons", "facetRefs"],
+            "properties": {
+              "axisRef": { "type": "string" },
+              "executionStatus": { "enum": ["pending", "skipped"] },
+              "reasons": { "$ref": "#/$defs/refs" },
+              "facetRefs": {
+                "type": "array",
+                "minItems": 5,
+                "maxItems": 5,
+                "uniqueItems": true,
+                "items": { "type": "string" }
+              }
+            }
+          }
+        },
+        "uiDomainRefs": { "$ref": "#/$defs/refs" },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["evidenceRef", "disposition", "directive"],
+            "properties": {
+              "evidenceRef": { "type": "string" },
+              "disposition": { "enum": ["admitted", "hard-excluded"] },
+              "directive": { "type": "object" }
+            }
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["schemaVersion", "sources", "regions"],
+      "properties": {
+        "schemaVersion": { "const": "1.0.0" },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["path", "contentHash", "complete", "basis"],
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "contentHash": {
+                "type": "string",
+                "pattern": "^sha256:[a-f0-9]{64}$"
+              },
+              "complete": { "type": "boolean" },
+              "basis": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "sourcePath",
+              "region",
+              "basis",
+              "confidence",
+              "axisRefs",
+              "conceptRefs",
+              "uiDomainRefs",
+              "tokenCategories",
+              "ruleCategories"
+            ],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "sourcePath": { "type": "string", "minLength": 1 },
+              "region": { "type": "string", "minLength": 1 },
+              "basis": { "type": "string", "minLength": 1 },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "axisRefs": { "$ref": "#/$defs/refs" },
+              "conceptRefs": { "$ref": "#/$defs/refs" },
+              "uiDomainRefs": { "$ref": "#/$defs/refs" },
+              "tokenCategories": { "$ref": "#/$defs/refs" },
+              "ruleCategories": { "$ref": "#/$defs/refs" }
+            }
+          }
+        }
+      }
+    },
+    "envelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "axisRef",
+        "executionStatus",
+        "packHash",
+        "inputHash",
+        "reason",
+        "fragment",
+        "facetCoverage"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "1.0.0" },
+        "axisRef": { "type": "string" },
+        "executionStatus": {
+          "enum": ["pending", "skipped", "complete", "partial", "blocked"]
+        },
+        "packHash": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/hash" }]
+        },
+        "inputHash": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/hash" }]
+        },
+        "reason": { "type": "string", "minLength": 1 },
+        "fragment": { "type": ["object", "null"] },
+        "facetCoverage": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "required": ["facetRef", "coverageStatus", "claimRefs", "gaps"],
+            "properties": {
+              "facetRef": { "type": "string" },
+              "coverageStatus": {
+                "enum": ["complete", "partial", "unknown", "not-applicable"]
+              },
+              "claimRefs": { "$ref": "#/$defs/refs" },
+              "gaps": { "$ref": "#/$defs/refs" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

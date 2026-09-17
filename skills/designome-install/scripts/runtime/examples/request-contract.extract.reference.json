@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.1.0",
+  "matrixVersion": "0.3.0",
+  "requestId": "request.extract-corporate",
+  "operation": "extract",
+  "normalizedAt": "2026-09-01T12:00:00.000Z",
+  "summary": "Extract a reusable visual system for a corporate website while limiting dashboard captures to data presentation evidence.",
+  "interpretation": {
+    "status": "partial",
+    "ambiguities": [
+      "The supplied references do not establish corporate hero, public navigation, or footer patterns."
+    ],
+    "ignoredFragments": ["jjjggjgmsmssnfndndndnsnddjdjd"]
+  },
+  "constraints": [
+    "Do not use dashboard density as evidence for corporate page composition."
+  ],
+  "parameters": {
+    "kind": "extract",
+    "motionMode": "off",
+    "adaptationMode": "direct",
+    "focusAxisRefs": [],
+    "focusUiDomainRefs": [
+      "domain.stats-kpis",
+      "domain.charts-data-visualization"
+    ],
+    "targetUseCase": {
+      "raw": "for a corporate website",
+      "interpretationStatus": "usable",
+      "source": "user",
+      "surface": "website",
+      "archetype": "corporate"
+    },
+    "sources": [
+      {
+        "path": "/tmp/dashboard-stats.png",
+        "evidenceMode": "only",
+        "axisRefs": ["axis.data-display-visualization"],
+        "conceptRefs": [
+          "concept.data-comparison-context",
+          "concept.visualization-encoding-integrity",
+          "concept.data-scale-resilience"
+        ],
+        "uiDomainRefs": [
+          "domain.stats-kpis",
+          "domain.charts-data-visualization"
+        ],
+        "tokenCategories": [],
+        "ruleCategories": ["data-display", "visualization"],
+        "note": "Use only for statistics and data-visualization treatment."
+      },
+      {
+        "path": "/tmp/theme.png",
+        "evidenceMode": "only",
+        "axisRefs": ["axis.color-surface-identity"],
+        "conceptRefs": [
+          "concept.semantic-color-theme",
+          "concept.surface-depth-hierarchy"
+        ],
+        "uiDomainRefs": [],
+        "tokenCategories": ["color", "border", "elevation", "opacity"],
+        "ruleCategories": ["color"],
+        "note": "Use only for theme, color, contrast, and surfaces."
+      }
+    ]
+  }
+}

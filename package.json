@@ -23,7 +23,9 @@
     "lint": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" && node scripts/validate-repository.mjs",
     "test": "node --test scripts/*.test.mjs tests/**/*.test.mjs",
     "validate": "node scripts/validate-repository.mjs",
-    "check": "pnpm format:check && pnpm lint && pnpm test"
+    "check": "pnpm check:skills && pnpm format:check && pnpm lint && pnpm test",
+    "build:skills": "node scripts/build-skills.mjs",
+    "check:skills": "node scripts/build-skills.mjs --check"
   },
   "lint-staged": {
     "*.{cjs,css,js,json,jsonc,md,mjs,yaml,yml}": [
@@ -39,6 +41,7 @@
     "lint-staged": "^17.2.0",
     "markdownlint-cli2": "^0.23.2",
     "prettier": "^3.9.6",
+    "skills": "1.5.26",
     "yaml": "^2.9.0"
   }
 }

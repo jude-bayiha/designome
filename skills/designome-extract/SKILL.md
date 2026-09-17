@@ -7,22 +7,24 @@ description: Extract evidence-backed, framework-neutral UI Design DNA from one o
 
 Treat supplied screenshots as the only source of visual truth. Use the host model for visual reasoning and the bundled Node helper only for deterministic metadata and validation.
 
+Requires Node.js 24 or newer for deterministic commands. Resolve resource paths from this skill, independently of the current working directory.
+
 ## Resolve bundled files
 
-Resolve paths relative to this `SKILL.md`. The plugin root is `../..`. Convert it to an absolute path before invoking the helper; replace `<designome-plugin-root>` below with that path.
+Resolve paths relative to this `SKILL.md`. The plugin root is `scripts/runtime`. Convert it to an absolute path before invoking the helper; replace `<designome-plugin-root>` below with that path.
 
-Context mode defaults to `full`. If the user or run plan explicitly selects `lossless-pack` or `shadow`, first read `../../docs/lossless-context.md` completely. In `lossless-pack`, read each validated `viewPath` completely instead of the canonical matrix/prompt files listed below or the integrity pack. In `shadow`, continue full reads. Invalid packs or views require rebuilding, not skipping instructions. The workflow and guardrails below still apply.
+Context mode defaults to `full`. If the user or run plan explicitly selects `lossless-pack` or `shadow`, first read `scripts/runtime/docs/lossless-context.md` completely. In `lossless-pack`, read each validated `viewPath` completely instead of the canonical matrix/prompt files listed below or the integrity pack. In `shadow`, continue full reads. Invalid packs or views require rebuilding, not skipping instructions. The workflow and guardrails below still apply.
 
 In full mode, read completely before analysis:
 
-1. `../../prompts/_shared-contract.md`
-2. `../../prompts/00-orchestrator.md`
-3. `../../prompts/01-source-evidence.md`
-4. `../../concepts/concept-matrix.v0.3.json`
-5. `../../schemas/request-contract.schema.json`
-6. `../../docs/conversational-request-contract.md`
+1. `scripts/runtime/prompts/_shared-contract.md`
+2. `scripts/runtime/prompts/00-orchestrator.md`
+3. `scripts/runtime/prompts/01-source-evidence.md`
+4. `scripts/runtime/concepts/concept-matrix.v0.3.json`
+5. `scripts/runtime/schemas/request-contract.schema.json`
+6. `scripts/runtime/docs/conversational-request-contract.md`
 
-Read each axis prompt only when the orchestrator routes that axis. Read `../../prompts/15-synthesis.md` before synthesis and `../../schemas/design-dna.schema.json` before writing Design DNA.
+Read each axis prompt only when the orchestrator routes that axis. Read `scripts/runtime/prompts/15-synthesis.md` before synthesis and `scripts/runtime/schemas/design-dna.schema.json` before writing Design DNA.
 
 ## Workflow
 
@@ -64,8 +66,8 @@ When invoked from `designome run`, write the draft to the `expectedArtifact` pat
 
 ## Guardrails
 
-- New extraction emits Fidelity Contract `1.0.0` with ranked source-specific qualities, proposed calibration bounds and independent requirement/component assertions. Read `../../docs/fidelity-contract.md` before synthesis. Legacy DNA remains readable but is never upgraded through automatic status promotion.
-- Report structural completeness, benchmark readiness and rendered fidelity separately. If a benchmark is requested, follow `../../docs/fidelity-benchmark.md`; keep generator contexts isolated from screenshots and bind all evidence to immutable packets.
+- New extraction emits Fidelity Contract `1.0.0` with ranked source-specific qualities, proposed calibration bounds and independent requirement/component assertions. Read `scripts/runtime/docs/fidelity-contract.md` before synthesis. Legacy DNA remains readable but is never upgraded through automatic status promotion.
+- Report structural completeness, benchmark readiness and rendered fidelity separately. If a benchmark is requested, follow `scripts/runtime/docs/fidelity-benchmark.md`; keep generator contexts isolated from screenshots and bind all evidence to immutable packets.
 - Use only `observed`, `inferred`, `proposed`, and `unknown`.
 - Require evidence references for observed and inferred claims.
 - The bundled `validate-dna` command performs dependency-light semantic contract checks. Do not call it full JSON Schema validation unless a separate schema validator actually ran.

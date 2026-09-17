@@ -7,19 +7,21 @@ description: Install accepted Designome Design DNA into an authorized target pro
 
 Install accepted guidance without treating the target project's existing UI as visual evidence.
 
+Requires Node.js 24 or newer for deterministic commands. Resolve resource paths from this skill, independently of the current working directory.
+
 ## Resolve bundled files
 
-Resolve paths relative to this `SKILL.md`. The plugin root is `../..`. Convert it to an absolute path before invoking the helper; replace `<designome-plugin-root>` below with that path.
+Resolve paths relative to this `SKILL.md`. The plugin root is `scripts/runtime`. Convert it to an absolute path before invoking the helper; replace `<designome-plugin-root>` below with that path.
 
-Context mode defaults to `full`. For explicitly selected experimental packs, first read `../../docs/lossless-context.md` and validate an `install` pack against the request and accepted DNA. Installation packs retain the full matrix, schema and DNA; preflight and ownership checks below remain mandatory.
+Context mode defaults to `full`. For explicitly selected experimental packs, first read `scripts/runtime/docs/lossless-context.md` and validate an `install` pack against the request and accepted DNA. Installation packs retain the full matrix, schema and DNA; preflight and ownership checks below remain mandatory.
 
 Read completely before installation:
 
-1. `../../prompts/_shared-contract.md`
-2. `../../prompts/16-project-integration.md`
-3. `../../docs/installation-contract.md`
-4. `../../schemas/request-contract.schema.json`
-5. `../../docs/conversational-request-contract.md`
+1. `scripts/runtime/prompts/_shared-contract.md`
+2. `scripts/runtime/prompts/16-project-integration.md`
+3. `scripts/runtime/docs/installation-contract.md`
+4. `scripts/runtime/schemas/request-contract.schema.json`
+5. `scripts/runtime/docs/conversational-request-contract.md`
 6. The accepted Design DNA supplied by the user
 
 ## Workflow
