@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.11.0](https://github.com/jude-bayiha/designome/compare/v1.10.0...v1.11.0) (2026-09-17)
+
+
+### Features
+
+* **audit:** enforce source-bound verification evidence ([441edbb](https://github.com/jude-bayiha/designome/commit/441edbbac0ef3cace7c130c6dba07b5af52db1f0))
+* **runtime:** define scoped audit verification contracts ([dda3f75](https://github.com/jude-bayiha/designome/commit/dda3f75d890a86ee42ee209e09ed08cdfa0ae812))
+
+
+### Bug Fixes
+
+* **installer:** align audit handoffs and generated guidance ([d589427](https://github.com/jude-bayiha/designome/commit/d5894270e4744887823772cf23a8ad038d4e85cc))
+* **installer:** distribute self-contained Designome skills ([d7487d3](https://github.com/jude-bayiha/designome/commit/d7487d318ca947ce7e0584e4a15f0ca472dc725e))
+* **installer:** ship self-contained skill distributions ([6230938](https://github.com/jude-bayiha/designome/commit/623093875b7298be0b6016903ad57d967fa64264))
+* **runtime:** enforce bound audit evidence and fidelity checks ([27813f4](https://github.com/jude-bayiha/designome/commit/27813f4c20db851561843986b3a65efe36dd987f))
+
 ## [1.10.0](https://github.com/jude-bayiha/designome/compare/v1.9.0...v1.10.0) (2026-09-09)
 
 
