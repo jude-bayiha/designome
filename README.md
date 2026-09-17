@@ -58,6 +58,28 @@ Direct mode requires matching destination references before claiming destination
 
 ## Quick start
 
+### Install the agent skills
+
+From your target project, install the skills with Node.js 24 or newer:
+
+```bash
+npx skills@latest add https://github.com/jude-bayiha/designome
+```
+
+Select `designome-extract`, `designome-install`, and `designome-audit`, or only the skills you need. Each skill ships its own deterministic runtime, specialized prompts, matrix, schemas, and supporting documentation. No separate runtime installation, global executable, or clone beside the target project is required.
+
+For a project-local installation, check the extraction helper with:
+
+```bash
+node .agents/skills/designome-extract/scripts/runtime/bin/designome.mjs --help
+```
+
+Then ask the host agent to use `$designome-extract` with your screenshots. The host performs visual reasoning; the bundled helper performs metadata extraction and validation. Installing the skills does not extract or accept Design DNA or modify the target UI.
+
+If an earlier installation contains only skill instructions and no `scripts/runtime/`, reinstall after updating to a release containing the standalone distributions. See [skill distribution](docs/skill-distribution.md) for ownership, updates, and validation boundaries.
+
+### Run from the source repository
+
 Requirements: Node.js 24+ and pnpm 11.5.2. From this repository, use
 `pnpm designome <command>` in place of `designome <command>` if the CLI is
 not installed on `PATH`.
@@ -175,7 +197,8 @@ during audit.
 
 ```text
 .codex-plugin/ Codex plugin manifest
-skills/        Extract, install, and audit skill entry points
+skills/        Generated standalone extract, install, and audit distributions
+skill-sources/ Canonical skill instructions, contracts, and agent metadata
 bin/           Designome command-line entry point
 src/runtime/   Dependency-light deterministic operations
 concepts/    Versioned concept matrix
