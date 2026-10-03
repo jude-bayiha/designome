@@ -773,6 +773,134 @@ test('installation is idempotent, preserves overrides, and detects conflicts', a
   );
 });
 
+test('installation gives Codex and Claude Code the same audit skill and guidance', async (t) => {
+  const temporaryRoot = await temporaryDirectory(t, 'designome-hosts-test-');
+  const dna = await referenceDna();
+  dna.status = 'accepted';
+  const dnaPath = path.join(temporaryRoot, 'accepted-design-dna.json');
+  await fs.writeFile(dnaPath, `${JSON.stringify(dna, null, 2)}\n`);
+  const createProject = async (name, files = {}) => {
+    const projectRoot = path.join(temporaryRoot, name);
+    await fs.mkdir(projectRoot, { recursive: true });
+    await fs.writeFile(
+      path.join(projectRoot, 'package.json'),
+      `{"name":"${name}","private":true}\n`,
+    );
+    await fs.writeFile(path.join(projectRoot, 'styles.css'), ':root {}\n');
+    for (const [file, content] of Object.entries(files)) {
+      await fs.writeFile(path.join(projectRoot, file), content);
+    }
+    return projectRoot;
+  };
+  const options = (projectRoot) => ({
+    dnaPath,
+    projectPath: projectRoot,
+    cssEntry: 'styles.css',
+    instructionsReviewed: true,
+  });
+  const read = (projectRoot, file) =>
+    fs.readFile(path.join(projectRoot, file), 'utf8');
+  const guidanceCount = async (projectRoot, file) =>
+    (await read(projectRoot, file)).match(/designome:guidance:start/gu)
+      ?.length ?? 0;
+  const manifestOf = async (projectRoot) =>
+    JSON.parse(await read(projectRoot, '.designome/manifest.json'));
+
+  // Without agent instructions, both hosts still receive their entry points.
+  const fresh = await createProject('fresh');
+  await installDesignDna(options(fresh));
+  assert.deepEqual(
+    (
+      await fs.readdir(path.join(fresh, '.agents/skills/designome-audit'))
+    ).sort(),
+    ['SKILL.md', 'agents', 'contract.json', 'references'],
+  );
+  assert.deepEqual(
+    (
+      await fs.readdir(path.join(fresh, '.claude/skills/designome-audit'))
+    ).sort(),
+    ['SKILL.md', 'contract.json', 'references'],
+  );
+  assert.equal(
+    await read(fresh, '.claude/skills/designome-audit/SKILL.md'),
+    await read(fresh, '.agents/skills/designome-audit/SKILL.md'),
+  );
+  assert.equal(await guidanceCount(fresh, 'AGENTS.md'), 1);
+  assert.equal(await guidanceCount(fresh, 'CLAUDE.md'), 1);
+  assert.equal(await read(fresh, 'CLAUDE.md'), await read(fresh, 'AGENTS.md'));
+  assert.match(
+    await read(fresh, 'CLAUDE.md'),
+    /`\$designome-audit` in Codex, `\/designome-audit` in Claude Code/u,
+  );
+  const freshManifest = await manifestOf(fresh);
+  assert.deepEqual(freshManifest.adapter.instructionFiles, [
+    'AGENTS.md',
+    'CLAUDE.md',
+  ]);
+  assert.ok(
+    freshManifest.managedArtifacts.some(
+      (artifact) => artifact.path === 'CLAUDE.md' && artifact.kind === 'block',
+    ),
+  );
+  const second = await installDesignDna(options(fresh));
+  assert.equal(
+    second.actions.filter((action) =>
+      ['create', 'update', 'delete', 'conflict'].includes(action.action),
+    ).length,
+    0,
+  );
+  assert.equal((await verifyInstallation({ projectPath: fresh })).valid, true);
+
+  // Existing Claude Code instructions are preserved around one managed block.
+  const existing = await createProject('existing', {
+    'CLAUDE.md': '# Team rules\n\nKeep tests green.\n',
+  });
+  await installDesignDna(options(existing));
+  assert.match(
+    await read(existing, 'CLAUDE.md'),
+    /^# Team rules\n\nKeep tests green\.\n/u,
+  );
+  assert.equal(await guidanceCount(existing, 'CLAUDE.md'), 1);
+
+  // A CLAUDE.md that imports AGENTS.md already reaches the shared block.
+  const importing = await createProject('importing', {
+    'AGENTS.md': '# Shared rules\n',
+    'CLAUDE.md': '@AGENTS.md\n',
+  });
+  await installDesignDna(options(importing));
+  assert.equal(await read(importing, 'CLAUDE.md'), '@AGENTS.md\n');
+  assert.equal(await guidanceCount(importing, 'AGENTS.md'), 1);
+  const importingManifest = await manifestOf(importing);
+  assert.deepEqual(importingManifest.adapter.instructionFiles, [
+    'AGENTS.md',
+    'CLAUDE.md',
+  ]);
+  assert.ok(
+    !importingManifest.managedArtifacts.some(
+      (artifact) => artifact.path === 'CLAUDE.md',
+    ),
+  );
+  assert.ok(
+    importingManifest.managedArtifacts.some(
+      (artifact) => artifact.path === '.claude/skills/designome-audit/SKILL.md',
+    ),
+  );
+
+  // A manual edit to the Claude Code copy is a conflict, never overwritten.
+  await fs.appendFile(
+    path.join(fresh, '.claude/skills/designome-audit/SKILL.md'),
+    '\n<!-- manual edit -->\n',
+  );
+  const conflict = await planInstallation(options(fresh));
+  assert.equal(conflict.status, 'conflict');
+  assert.equal(
+    conflict.publicPlan.actions.find(
+      (action) => action.path === '.claude/skills/designome-audit/SKILL.md',
+    ).action,
+    'conflict',
+  );
+});
+
 test('documentation migration deletes only checksum-matching obsolete files', async (t) => {
   const temporaryRoot = await temporaryDirectory(
     t,

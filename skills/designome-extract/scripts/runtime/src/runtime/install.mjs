@@ -37,7 +37,20 @@ const manifestRelativePath = '.designome/manifest.json';
 const installedDnaRelativePath = '.designome/design-dna.json';
 const auditConfigRelativePath = '.designome/audit.config.json';
 const defaultDocumentationDirectory = 'docs/designome';
-const auditSkillRelativeDirectory = '.agents/skills/designome-audit';
+// Codex discovers project skills in .agents/skills and Claude Code in
+// .claude/skills; both hosts always receive the audit skill.
+const auditSkillTargets = [
+  {
+    directory: '.agents/skills/designome-audit',
+    excludedFiles: new Set(),
+  },
+  {
+    directory: '.claude/skills/designome-audit',
+    excludedFiles: new Set(['agents/openai.yaml']),
+  },
+];
+const claudeInstructionsRelativePath = 'CLAUDE.md';
+const agentsImportPattern = /^[ \t]*@(?:\.\/)?AGENTS\.md[ \t]*$/mu;
 const transactionRelativePath = '.designome/install-transaction.json';
 const supportedManifestVersions = new Set(['0.1.0', '0.2.0', '0.3.0']);
 const cssStartMarker = '/* designome:generated-import:start */';
@@ -220,7 +233,7 @@ function renderGuidanceBlock({
     `Read \`${documentationDirectory}/README.md\` and \`.designome/design-dna.json\` before generating UI.`,
     `Repository rule precedence is \`${integrationPolicy.rulePrecedence}\`; declared existing UI rules: ${existingRules}.`,
     `The detected styling adapter is \`${styling.strategy}\`. ${stylingInstruction}${uiKitInstruction}`,
-    'Preserve claim status, cover applicable business states and stress cases, and run `$designome-audit` before delivery. New audit plans use Audit Contract 2.0: bind established obligations to exact contexts, record real capture hashes and measurements, and leave unresolved or perceptual unknowns incomplete.',
+    'Preserve claim status, cover applicable business states and stress cases, and run the `designome-audit` skill before delivery (`$designome-audit` in Codex, `/designome-audit` in Claude Code). New audit plans use Audit Contract 2.0: bind established obligations to exact contexts, record real capture hashes and measurements, and leave unresolved or perceptual unknowns incomplete.',
     guidanceEndMarker,
     '',
   ].join('\n');
@@ -2140,6 +2153,29 @@ export async function planInstallation({
   if (!instructionFiles.includes(agentsRelative)) {
     instructionFiles.unshift(agentsRelative);
   }
+  // Claude Code reads CLAUDE.md rather than AGENTS.md. Skip a duplicate block
+  // when CLAUDE.md already imports AGENTS.md, unless the block is managed.
+  const claudeInstructions = await readTextIfExists(
+    path.join(projectRoot, claudeInstructionsRelativePath),
+  );
+  const writeClaudeGuidance =
+    Boolean(
+      manifestArtifact(
+        previousManifest,
+        claudeInstructionsRelativePath,
+        'block',
+      ),
+    ) || !agentsImportPattern.test(claudeInstructions ?? '');
+  if (
+    writeClaudeGuidance &&
+    !instructionFiles.includes(claudeInstructionsRelativePath)
+  ) {
+    instructionFiles.splice(
+      instructionFiles.indexOf(agentsRelative) + 1,
+      0,
+      claudeInstructionsRelativePath,
+    );
+  }
 
   const actions = [];
   actions.push(
@@ -2173,31 +2209,35 @@ export async function planInstallation({
       desiredPaths: desiredDocumentationPaths,
     })),
   );
-  // A standalone distribution belongs to the skill installer, not the DNA
-  // installation manifest. Preserve its instructions, runtime and user edits.
-  const externalAuditManifestPath = path.join(
-    projectRoot,
-    auditSkillRelativeDirectory,
-    'bundle-manifest.json',
-  );
-  const externalAuditManifest = (await pathExists(externalAuditManifestPath))
-    ? await readJson(externalAuditManifestPath)
-    : null;
-  const externalAudit =
-    externalAuditManifest?.bundleFormatVersion === '1.0.0' &&
-    externalAuditManifest?.skill === 'designome-audit' &&
-    !previousManifest?.managedArtifacts?.some(
-      (artifact) => artifact.path === `${auditSkillRelativeDirectory}/SKILL.md`,
+  for (const target of auditSkillTargets) {
+    // A standalone distribution belongs to the skill installer, not the DNA
+    // installation manifest. Preserve its instructions, runtime and user edits.
+    const externalAuditManifestPath = path.join(
+      projectRoot,
+      target.directory,
+      'bundle-manifest.json',
     );
-  for (const [filename, content] of externalAudit ? [] : auditSkill) {
-    actions.push(
-      await inspectOwnedFile(
-        projectRoot,
-        toPosixPath(path.join(auditSkillRelativeDirectory, filename)),
-        content,
-        previousManifest,
-      ),
-    );
+    const externalAuditManifest = (await pathExists(externalAuditManifestPath))
+      ? await readJson(externalAuditManifestPath)
+      : null;
+    const externalAudit =
+      externalAuditManifest?.bundleFormatVersion === '1.0.0' &&
+      externalAuditManifest?.skill === 'designome-audit' &&
+      !previousManifest?.managedArtifacts?.some(
+        (artifact) => artifact.path === `${target.directory}/SKILL.md`,
+      );
+    if (externalAudit) continue;
+    for (const [filename, content] of auditSkill) {
+      if (target.excludedFiles.has(filename)) continue;
+      actions.push(
+        await inspectOwnedFile(
+          projectRoot,
+          toPosixPath(path.join(target.directory, filename)),
+          content,
+          previousManifest,
+        ),
+      );
+    }
   }
   actions.push(
     await inspectOwnedFile(
@@ -2218,17 +2258,21 @@ export async function planInstallation({
       previousManifest,
     }),
   );
-  actions.push(
-    await inspectBlockFile({
-      projectRoot,
-      relativePath: agentsRelative,
-      desiredBlock: guidanceBlock,
-      startMarker: guidanceStartMarker,
-      endMarker: guidanceEndMarker,
-      placement: 'append',
-      previousManifest,
-    }),
-  );
+  for (const relativePath of writeClaudeGuidance
+    ? [agentsRelative, claudeInstructionsRelativePath]
+    : [agentsRelative]) {
+    actions.push(
+      await inspectBlockFile({
+        projectRoot,
+        relativePath,
+        desiredBlock: guidanceBlock,
+        startMarker: guidanceStartMarker,
+        endMarker: guidanceEndMarker,
+        placement: 'append',
+        previousManifest,
+      }),
+    );
+  }
 
   const overridesCurrent = await readTextIfExists(overridesCssPath);
   actions.push({
