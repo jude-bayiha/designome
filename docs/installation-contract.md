@@ -109,7 +109,7 @@ Generated documentation is managed and checksum-protected. Existing project docu
 
 Precedence never authorizes deletion or silent rewriting of existing documentation. Applicable `AGENTS.md` instructions may specify these choices in natural language; the invoking agent must pass the resolved values explicitly and the manifest records them.
 
-Installation also exports `designome-audit` to `.agents/skills/designome-audit`. Codex sessions started inside the target repository can therefore discover the audit workflow without relying on global plugin discovery. The exported skill resolves the accepted Design DNA and generated documentation from the project; it never treats implementation code as screenshot evidence.
+Installation also exports `designome-audit` to both `.agents/skills/designome-audit` and `.claude/skills/designome-audit`. Codex and Claude Code sessions started inside the target repository can therefore discover the audit workflow without relying on global plugin discovery. Both copies have the same instructions, contract, and references; only the Codex copy carries the Codex-specific `agents/openai.yaml` metadata. Each copy is a checksum-managed artifact. The exported skill resolves the accepted Design DNA and generated documentation from the project; it never treats implementation code as screenshot evidence.
 
 An independently installed [standalone audit distribution](skill-distribution.md) remains owned by the skill manager and is preserved when its bundle marker is present and its entry point is not already DNA-managed. DNA installation does not downgrade it to the lightweight export or claim its files in the DNA manifest. Existing DNA-managed skill conflicts still require resolution.
 
@@ -144,7 +144,7 @@ Example managed import:
 
 ## Managed agent guidance
 
-The installer may add one compact block to the applicable `AGENTS.md`:
+The installer adds the same compact block to `AGENTS.md`, read by Codex, and to `CLAUDE.md`, read by Claude Code. It creates either file when it is missing. When `CLAUDE.md` already imports `AGENTS.md` with an `@AGENTS.md` line and does not yet contain a managed block, the installer leaves `CLAUDE.md` unchanged because Claude Code already reads the `AGENTS.md` block:
 
 ```markdown
 <!-- designome:guidance:start -->

@@ -14,7 +14,7 @@ See the [non-regression assessment](docs/context-non-regression.md) for executed
 
 The repository now contains the first executable vertical slice:
 
-- a Codex plugin manifest with `designome-extract`, `designome-install`, and `designome-audit` skills;
+- Codex and Claude Code plugin manifests that ship the same `designome-extract`, `designome-install`, and `designome-audit` skills;
 - a v0.3 grammar with 13 specialist axes, 65 mandatory facets, 33 cross-cutting concepts, and 20 routable UI domains;
 - 18 modular prompts for evidence intake, specialist analysis, synthesis, integration, and audit;
 - deterministic screenshot metadata, Design DNA validation, installation, and verification commands;
@@ -25,7 +25,7 @@ The repository now contains the first executable vertical slice:
 - independent installation, mechanical, perceptual, and usage audit layers;
 - bounded repair planning and project-aware shadcn/ui component mapping;
 - a complete 52-file project-local design dossier spanning foundations, typed components, 20 UI-domain patterns, behavior, coverage, source routing, and governance;
-- a project-local `designome-audit` skill that fresh Codex sessions can discover;
+- a project-local `designome-audit` skill that fresh Codex and Claude Code sessions can discover;
 - idempotent managed CSS and agent guidance with checksums and user-owned overrides;
 - repository quality, commit, CI, and release guardrails.
 
@@ -44,7 +44,7 @@ The host agent performs multimodal reasoning with its installed model and accoun
 
 ## Conversational requests
 
-`$designome-extract`, `$designome-install`, and `$designome-audit` accept ordinary instructions. The host agent converts relevant intent, paths, constraints, evidence routing, preferences, and explicit authorization into `request-contract.json`; the deterministic runtime validates that contract and rejects mismatched execution inputs.
+The `designome-extract`, `designome-install`, and `designome-audit` skills accept ordinary instructions. Codex invokes them as `$designome-extract`; Claude Code invokes them as `/designome-extract`, or `/designome:designome-extract` when installed as a plugin. The examples use the Codex form. The host agent converts relevant intent, paths, constraints, evidence routing, preferences, and explicit authorization into `request-contract.json`; the deterministic runtime validates that contract and rejects mismatched execution inputs.
 
 Extraction requests may assign captures to axes, concepts, recognizable UI parts, token categories, or rule categories and request either direct destination fidelity or explicit cross-surface adaptation. For example:
 
@@ -60,21 +60,39 @@ Direct mode requires matching destination references before claiming destination
 
 ### Install the agent skills
 
-From your target project, install the skills with Node.js 24 or newer:
+Designome supports Codex and Claude Code equally. Both hosts receive the same three skills; only the discovery directory and invocation syntax differ.
+
+| Host        | Project skill directory | Plugin manifest                                                    | Invocation           |
+| ----------- | ----------------------- | ------------------------------------------------------------------ | -------------------- |
+| Codex       | `.agents/skills/`       | `.codex-plugin/plugin.json`                                        | `$designome-extract` |
+| Claude Code | `.claude/skills/`       | `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` | `/designome-extract` |
+
+From your target project, install the skills with Node.js 24 or newer. Choose the agent when prompted, or pass it explicitly:
 
 ```bash
-npx skills@latest add https://github.com/jude-bayiha/designome
+npx skills@latest add https://github.com/jude-bayiha/designome --agent codex
+npx skills@latest add https://github.com/jude-bayiha/designome --agent claude-code
 ```
 
 Select `designome-extract`, `designome-install`, and `designome-audit`, or only the skills you need. Each skill ships its own deterministic runtime, specialized prompts, matrix, schemas, and supporting documentation. No separate runtime installation, global executable, or clone beside the target project is required.
 
-For a project-local installation, check the extraction helper with:
+Claude Code can also install Designome as a plugin from this repository's marketplace. Plugin skills are namespaced, for example `/designome:designome-extract`:
+
+```text
+/plugin marketplace add jude-bayiha/designome
+/plugin install designome@designome
+```
+
+The repository root contains `bin/`, which Claude Code places on the Bash tool's `PATH` while the plugin is enabled. claude.ai and Cowork do not install plugins that contain a top-level `bin/` directory, so this plugin targets Claude Code.
+
+For a project-local installation, check the extraction helper with the directory that matches your host:
 
 ```bash
 node .agents/skills/designome-extract/scripts/runtime/bin/designome.mjs --help
+node .claude/skills/designome-extract/scripts/runtime/bin/designome.mjs --help
 ```
 
-Then ask the host agent to use `$designome-extract` with your screenshots. The host performs visual reasoning; the bundled helper performs metadata extraction and validation. Installing the skills does not extract or accept Design DNA or modify the target UI.
+Then ask the host agent to use `designome-extract` with your screenshots. The host performs visual reasoning; the bundled helper performs metadata extraction and validation. Installing the skills does not extract or accept Design DNA or modify the target UI.
 
 If an earlier installation contains only skill instructions and no `scripts/runtime/`, reinstall after updating to a release containing the standalone distributions. See [skill distribution](docs/skill-distribution.md) for ownership, updates, and validation boundaries.
 
@@ -197,6 +215,7 @@ during audit.
 
 ```text
 .codex-plugin/ Codex plugin manifest
+.claude-plugin/ Claude Code plugin and marketplace manifests
 skills/        Generated standalone extract, install, and audit distributions
 skill-sources/ Canonical skill instructions, contracts, and agent metadata
 bin/           Designome command-line entry point
@@ -239,7 +258,7 @@ Husky formats staged files and validates Conventional Commit messages. CI runs t
 ## Agent workflow
 
 1. Start `designome run --source <capture> --project <directory>`.
-2. Follow the `$designome-extract` host handoff and resume.
+2. Follow the `designome-extract` host handoff and resume.
 3. Review and accept the draft Design DNA once.
 4. Let the transactional runtime install it, then follow the host implementation handoff.
 5. Record real browser and perceptual observations through the official adapter.
@@ -247,4 +266,4 @@ Husky formats staged files and validates Conventional Commit messages. CI runs t
 
 That forward test measures the actual product outcome: whether extracted knowledge improves a new UI without copying an existing screen.
 
-Designome does not implement a second chat interface. Codex or another compatible host agent supplies the conversation, multimodal model, and authenticated account. The plugin supplies the specialized workflow; the Node helper owns deterministic file operations.
+Designome does not implement a second chat interface. Codex, Claude Code, or another compatible host agent supplies the conversation, multimodal model, and authenticated account. The plugin supplies the specialized workflow; the Node helper owns deterministic file operations.
