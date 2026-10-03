@@ -1,0 +1,11 @@
+{
+  "name": "designome",
+  "displayName": "Designome",
+  "version": "1.11.0",
+  "description": "Extract, install, and audit evidence-backed UI Design DNA with the host coding agent.",
+  "author": {
+    "name": "Designome contributors"
+  },
+  "repository": "https://github.com/jude-bayiha/designome",
+  "keywords": ["ui", "ux", "design-system", "screenshots", "agent"]
+}
