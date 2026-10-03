@@ -28,7 +28,7 @@ Transitions are validated. A valid external file records provider name and recep
 
 ## Browser provider order
 
-1. Use the Codex in-app browser when the host agent can execute and record the audit.
+1. Use the host agent's browser, such as the Codex in-app browser or a browser tool available to Claude Code, when the host can execute and record the audit.
 2. Reuse Playwright already installed in the target project.
 3. Use Designome-managed Playwright only after explicit dependency authorization.
 4. Fall back to a clearly labeled static-only audit.

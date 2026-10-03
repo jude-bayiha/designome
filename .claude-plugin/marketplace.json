@@ -1,0 +1,14 @@
+{
+  "name": "designome",
+  "description": "Designome plugin for Claude Code.",
+  "owner": {
+    "name": "Designome contributors"
+  },
+  "plugins": [
+    {
+      "name": "designome",
+      "source": "./",
+      "description": "Extract, install, and audit evidence-backed UI Design DNA with the host coding agent."
+    }
+  ]
+}

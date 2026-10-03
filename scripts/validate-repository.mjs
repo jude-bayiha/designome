@@ -396,6 +396,60 @@ function validatePluginSurface(rootDirectory) {
   return errors;
 }
 
+function validateClaudePluginSurface(rootDirectory) {
+  const errors = [];
+  const read = (relativePath) => {
+    const filePath = path.join(rootDirectory, relativePath);
+    if (!fs.existsSync(filePath)) {
+      errors.push(`plugin file is missing: ${relativePath}`);
+      return null;
+    }
+    try {
+      return readJson(filePath);
+    } catch (error) {
+      errors.push(`${relativePath} failed to parse: ${error.message}`);
+      return null;
+    }
+  };
+  const codex = read('.codex-plugin/plugin.json');
+  const claude = read('.claude-plugin/plugin.json');
+  const marketplace = read('.claude-plugin/marketplace.json');
+  if (!codex || !claude || !marketplace) return errors;
+
+  // Both hosts install the same skills, so their manifests must not drift.
+  for (const field of ['name', 'version', 'description']) {
+    if (claude[field] !== codex[field]) {
+      errors.push(
+        `Claude Code and Codex plugin manifests disagree on ${field}`,
+      );
+    }
+  }
+  const releaseVersion = readText(
+    path.join(rootDirectory, 'version.txt'),
+  ).trim();
+  if (codex.version !== releaseVersion) {
+    errors.push(
+      `plugin manifest versions must match version.txt ${releaseVersion}`,
+    );
+  }
+  if (claude.skills !== undefined) {
+    errors.push('Claude Code plugin must load the default skills/ directory');
+  }
+  const entries = marketplace.plugins ?? [];
+  if (
+    marketplace.name !== claude.name ||
+    !marketplace.owner?.name ||
+    entries.length !== 1 ||
+    entries[0].name !== claude.name ||
+    entries[0].source !== './'
+  ) {
+    errors.push(
+      'Claude Code marketplace must list the repository root as its only plugin',
+    );
+  }
+  return errors;
+}
+
 export function validateRepository(rootDirectory = repositoryRoot) {
   const errors = [];
   const ajv = new Ajv2020({
@@ -675,6 +729,7 @@ export function validateRepository(rootDirectory = repositoryRoot) {
 
   errors.push(...validateWorkflowYaml(rootDirectory));
   errors.push(...validatePluginSurface(rootDirectory));
+  errors.push(...validateClaudePluginSurface(rootDirectory));
   return errors;
 }
 
