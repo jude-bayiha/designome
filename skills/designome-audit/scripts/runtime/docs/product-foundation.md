@@ -35,7 +35,7 @@ Success means the new interface follows the extracted system in hierarchy, densi
 
 | Concern              | Choice                                                 | Role                                                                               |
 | -------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| Multimodal reasoning | Installed Codex or compatible coding-agent model       | Inspects screenshots and performs reasoning with the user's existing agent session |
+| Multimodal reasoning | Installed Codex, Claude Code, or compatible model      | Inspects screenshots and performs reasoning with the user's existing agent session |
 | Workflow             | Modular Markdown prompts                               | Keeps tasks focused, reviewable, and replaceable                                   |
 | Knowledge contract   | JSON Schema 2020-12 + JSON                             | Validates the matrix and Design DNA without a framework dependency                 |
 | Guidance             | Markdown                                               | Serves humans and coding agents                                                    |
@@ -76,4 +76,4 @@ This specification slice is complete when:
 - repository content and delivery metadata are English;
 - local checks pass twice without changing tracked files.
 
-The source-based Codex plugin, installer, executable audit planner, mechanical evidence evaluator, bounded repair plan, and initial CSS, Tailwind, and shadcn/ui adapter matrix are implemented. Browser control remains owned by the host or target project; Designome does not silently install or operate a second browser stack.
+The source-based Codex and Claude Code plugins, installer, executable audit planner, mechanical evidence evaluator, bounded repair plan, and initial CSS, Tailwind, and shadcn/ui adapter matrix are implemented. Browser control remains owned by the host or target project; Designome does not silently install or operate a second browser stack.

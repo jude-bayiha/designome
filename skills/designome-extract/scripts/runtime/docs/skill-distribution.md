@@ -2,7 +2,7 @@
 
 ## Installation contract
 
-Each directory under `skills/` is a complete installation unit for `skills add`. Each can be installed independently, without siblings, a global Designome executable, npm runtime dependencies, or access to the development checkout. Node.js 24 or newer is required. The host agent still supplies visual reasoning and browser interaction.
+Each directory under `skills/` is a complete installation unit for `skills add`, for Codex (`--agent codex`, installed under `.agents/skills/`) and Claude Code (`--agent claude-code`, installed under `.claude/skills/`). The same directories are the skills of both plugin manifests, `.codex-plugin/plugin.json` and `.claude-plugin/plugin.json`. Each can be installed independently, without siblings, a global Designome executable, npm runtime dependencies, or access to the development checkout. Node.js 24 or newer is required. The host agent still supplies visual reasoning and browser interaction.
 
 ```text
 skills/designome-extract/
@@ -38,13 +38,13 @@ Update canonical files, format them, regenerate, then run `pnpm check`. Commit g
 
 The skill manager owns standalone distributions. DNA installation continues to own generated design documentation, CSS, and its installation manifest. Project-owned CSS overrides remain preserved.
 
-When an independently installed `designome-audit` has a recognized bundle manifest and its entry point is not already DNA-managed, DNA installation leaves that skill untouched. Its runtime and integrity are outside `verify-install` coverage. The bundle marker identifies ownership; it does not certify runtime integrity. Without a standalone distribution, DNA installation still exports the lightweight project-local audit skill and its request references. That lightweight export reports deterministic tooling unavailable when none is installed.
+Each host directory is handled separately. When an independently installed `designome-audit` has a recognized bundle manifest and its entry point is not already DNA-managed, DNA installation leaves that skill untouched. Its runtime and integrity are outside `verify-install` coverage. The bundle marker identifies ownership; it does not certify runtime integrity. Without a standalone distribution, DNA installation still exports the lightweight project-local audit skill and its request references. That lightweight export reports deterministic tooling unavailable when none is installed.
 
 Replacing an already DNA-managed audit skill through another installer does not silently transfer ownership. Existing checksum conflict handling continues to apply.
 
 ## Validation boundaries
 
-The distribution tests invoke a pinned real `skills add` CLI twice per skill in a fresh project with only that skill available. They remove the installation source and run the installed helper under Node's filesystem permission model, allowing only the temporary workspace. A negative read test confirms the development checkout is inaccessible.
+The distribution tests invoke a pinned real `skills add` CLI twice per skill and per host, `codex` and `claude-code`, in a fresh project with only that skill available. They remove the installation source and run the installed helper under Node's filesystem permission model, allowing only the temporary workspace. A negative read test confirms the development checkout is inaccessible.
 
 The tests cover helper startup, normalized request validation, screenshot metadata initialization, lossless context construction, DNA validation, two consecutive DNA installations, override preservation, installation verification, doctor, static audit planning, and manual-change detection. They also check deterministic generation, missing and unexpected files, stale source detection, and absence of nested discoverable skills.
 

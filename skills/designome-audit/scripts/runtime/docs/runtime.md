@@ -123,10 +123,12 @@ Current target artifacts are:
 .designome/manifest.json
 docs/designome/ (or the configured documentation directory)
 .agents/skills/designome-audit/
+.claude/skills/designome-audit/
 <css-directory>/designome.generated.css
 <css-directory>/designome.overrides.css
 <css-entry> managed import block
 AGENTS.md managed guidance block
+CLAUDE.md managed guidance block, unless CLAUDE.md imports AGENTS.md
 ```
 
 The documentation directory contains `README.md` plus the 51 mandatory paths declared by `documentationProjection` in matrix v0.3 (52 files total). They are grouped under `foundations/`, `components/`, `patterns/`, `behavior/`, and `governance/`. Specialized renderers expose component variants/composition, every UI domain, complete facet/domain coverage, and source routing. A subject with no accepted visual claim still receives an honest `unknown` boundary or `proposed` stress-test contract; the runtime never fills the gap with fabricated observation.
