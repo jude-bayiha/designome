@@ -1,6 +1,6 @@
 ---
 name: designome-install
-description: Install accepted Designome Design DNA into an authorized target project with human-readable design documentation, repository-native styling context, managed CSS, agent guidance, checksums, conflict detection, and idempotency verification. Use when a user asks to apply extracted UI guidance to a project, generate Designome documentation or CSS artifacts, update AGENTS.md safely, or reinstall a revised accepted Design DNA.
+description: Install accepted Designome Design DNA into an authorized target project with human-readable design documentation, repository-native styling context, managed CSS, agent guidance, checksums, conflict detection, and idempotency verification. Use when a user asks to apply extracted UI guidance to a project, generate Designome documentation or CSS artifacts, update AGENTS.md and CLAUDE.md safely, or reinstall a revised accepted Design DNA.
 ---
 
 # Install Design DNA
@@ -30,7 +30,7 @@ Read completely before installation:
 2. Validate the contract with `validate-request --file <request-contract.json> --operation install`. Stop before target writes when its interpretation is blocked.
 3. Require an explicit target-project path and a Design DNA whose status is `accepted`. Confirm that source paths and notes contain no secret or private metadata that must be removed before the accepted file is copied into the target.
 4. Inspect technical facts only: framework, package manager, source roots, CSS entry points, aliases, scripts, installed compatible libraries, styling systems such as Tailwind, existing UI-documentation paths, and applicable agent instructions.
-5. Read every `AGENTS.md` that applies to the planned target files. Resolve the documentation directory, rule precedence (`complement`, `existing-first`, or `designome-first`), declared existing-rule paths, and styling strategy before writing. Pass the validated contract explicitly to the deterministic helper.
+5. Read every `AGENTS.md` and `CLAUDE.md` that applies to the planned target files. Resolve the documentation directory, rule precedence (`complement`, `existing-first`, or `designome-first`), declared existing-rule paths, and styling strategy before writing. Pass the validated contract explicitly to the deterministic helper.
 6. Run the read-only diagnostic before the dry-run:
 
    ```bash
