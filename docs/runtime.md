@@ -79,6 +79,18 @@ The command validates input paths, deduplicates identical images, reads PNG/JPEG
 
 Repeating the same command returns `unchanged`. Reusing the directory with different inputs fails instead of silently replacing the run.
 
+### Matrix brief and authoring expansion
+
+```bash
+node bin/designome.mjs matrix-brief --output <matrix-brief.md>
+node bin/designome.mjs expand-dna \
+  --file <design-dna.authoring.json> \
+  --output <design-dna.json> \
+  --require-fidelity
+```
+
+`matrix-brief` writes a compact Markdown view of the v0.3 matrix for extraction: every identifier, facet question, inspection list, screenshot limit and stress test, without the documentation projection or prompt registry. It is about half the size of the JSON, which stays authoritative. `expand-dna` completes the [assertion authoring shorthand](fidelity-contract.md#authoring-shorthand), writes the canonical Design DNA and returns the same semantic validation as `validate-dna`, with a nonzero exit code when errors remain.
+
 ### Validate Design DNA
 
 ```bash
@@ -131,7 +143,7 @@ AGENTS.md managed guidance block
 CLAUDE.md managed guidance block, unless CLAUDE.md imports AGENTS.md
 ```
 
-The documentation directory contains `README.md` plus the 51 mandatory paths declared by `documentationProjection` in matrix v0.3 (52 files total). They are grouped under `foundations/`, `components/`, `patterns/`, `behavior/`, and `governance/`. Specialized renderers expose component variants/composition, every UI domain, complete facet/domain coverage, and source routing. A subject with no accepted visual claim still receives an honest `unknown` boundary or `proposed` stress-test contract; the runtime never fills the gap with fabricated observation.
+The documentation directory contains the compact design brief `README.md` plus the 51 mandatory paths declared by `documentationProjection` in matrix v0.3 (52 files total). They are grouped under `foundations/`, `components/`, `patterns/`, `behavior/`, and `governance/`. Specialized renderers expose component variants/composition, every UI domain, complete facet/domain coverage, and source routing. A subject with no accepted visual claim still receives an honest `unknown` boundary or `proposed` stress-test contract; the runtime never fills the gap with fabricated observation.
 
 The installer detects Tailwind from project dependencies and CSS directives when `--styling auto` is used. It records the resolved adapter and rule-precedence policy in the manifest and generated integration documentation. Existing rule paths are read-only context and are never rewritten.
 
