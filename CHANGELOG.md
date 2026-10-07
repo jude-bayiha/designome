@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.12.0](https://github.com/jude-bayiha/designome/compare/v1.11.0...v1.12.0) (2026-10-07)
+
+
+### Features
+
+* cut extraction and generation token cost ([5b324a4](https://github.com/jude-bayiha/designome/commit/5b324a40706f0e2fbdb780d6e5aabf00b78852f3))
+* **installer:** export audit skill and guidance for Claude Code ([db1a3fe](https://github.com/jude-bayiha/designome/commit/db1a3feff661b6bc162920bf591115776c7f4de6))
+* **installer:** make the dossier README a compact design brief ([5360c2d](https://github.com/jude-bayiha/designome/commit/5360c2dff19322ff1c7eee4e78e4cebf2006f00d))
+* **repo:** add Claude Code plugin and marketplace manifests ([7f4f6fc](https://github.com/jude-bayiha/designome/commit/7f4f6fc89bc26f65718aa467c215ac9c80e896e5))
+* **runtime:** add matrix-brief and expand-dna commands ([551734d](https://github.com/jude-bayiha/designome/commit/551734db82f8fcd18e4d0de2ff5ca1f1891cd88b))
+* support Claude Code alongside Codex ([95d4815](https://github.com/jude-bayiha/designome/commit/95d4815469427d516c20962dc29daa9899e902af))
+
+
+### Bug Fixes
+
+* **cli:** exit cleanly when stdout is closed early ([4b44afe](https://github.com/jude-bayiha/designome/commit/4b44afe78ba007bafe5a8fa0d97d2f092258c43e))
+* **runtime:** keep run directories out of version control ([06799b6](https://github.com/jude-bayiha/designome/commit/06799b6afe7ef39934952253f5a4a8b735e438a8))
+
 ## [1.11.0](https://github.com/jude-bayiha/designome/compare/v1.10.0...v1.11.0) (2026-09-17)
 
 
