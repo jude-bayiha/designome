@@ -1,7 +1,7 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome-extract",
-  "contentFingerprint": "sha256:9abdd0eb9f658d3a556d56b25da808c559648544444afbc3920ce9b506d3a964",
+  "contentFingerprint": "sha256:32723be33a75721296126fa75c475dcd4c81adb6ac9a87270ee58064f095e7e7",
   "files": {
     "agents/openai.yaml": "1dc772d5b9b856d76e72c0814109d906765c71c6f2af3f2b5df63f6f030036d5",
     "contract.json": "ffb86681151861656be209b08480a30e3a0d934b81b9ae6bd4a75575f17f79e1",
@@ -15,7 +15,7 @@
     "scripts/runtime/docs/context-non-regression.md": "0922ac5cc92439ceaa1ae96eee73f4ae3fea9e7c242fc2ffa704aebd82eeb43f",
     "scripts/runtime/docs/conversational-request-contract.md": "4f944944e38a4d8659e2f53c468200051cab9088892f026080eea5b01aeaab16",
     "scripts/runtime/docs/fidelity-benchmark.md": "c9861eb9b00d1045c6c8b70b57d67a99894e4fe6faaf488799bbdcf64051cfee",
-    "scripts/runtime/docs/fidelity-contract.md": "3fc552c34ed6f3c07f3fbbb508b1d56d56d39eec285480dc1bc8e378a8055542",
+    "scripts/runtime/docs/fidelity-contract.md": "8068ff35d9a921c27ead77a1a6cb04438f9bc3f96558dfff184af9eddb11f6db",
     "scripts/runtime/docs/fidelity-evaluation.md": "985bbf2332524253004569902ad9bd771f05df90121bfdbfcd05a86c3ba64a78",
     "scripts/runtime/docs/installation-contract.md": "7e917319af22a7c246289cde21707fc8a6e0b7d815255ccb007afbe66aad3356",
     "scripts/runtime/docs/integration-and-calibration-matrix.md": "5dd1c01bb4f89896c13b3e1068d84b2a85845cfbcb604ff2648d1bf039be7e15",
@@ -23,7 +23,7 @@
     "scripts/runtime/docs/orchestration-and-host-contract.md": "7e81826aa54202698c482aad6552224fc5a29a552c6a0b01ba1bb4199f8334c7",
     "scripts/runtime/docs/product-foundation.md": "4358f6d3783d48a4c910588f7b469a94d19a6dd363bd49bd8394605054023667",
     "scripts/runtime/docs/reference-analysis.md": "c60a5bfb863e77cc2d7a9210946731042021ed2a8b3b1aeee82059e68209bae8",
-    "scripts/runtime/docs/runtime.md": "27dacdfcf5fb21ad111a03da62e28d73f047a372b33ffa0fa809eb8bac01fbfd",
+    "scripts/runtime/docs/runtime.md": "c983dad1aa7b53a5526d9e9c908117db2088edd55710994311e49b2a3d68102b",
     "scripts/runtime/docs/skill-distribution.md": "426b37936b2e5f84a5095fc230bbfa14196afdf2d286a81d7bd08e8387648b2c",
     "scripts/runtime/docs/transactional-installation.md": "1f1078afe4a5f652019c80f2ea0cd83d4d7aaca953b9f53662214b9d40b72874",
     "scripts/runtime/docs/v0.3-forward-test.md": "0af49cca4dd5f7cd93bfb3b912802ef374b9a0af25ee0da43ae2cb276068266c",
@@ -44,7 +44,7 @@
     "scripts/runtime/examples/request-contract.install.reference.json": "6b9d2a412e4570e736355fc746cc3a90ed735916dc29f8ec8d165d1e3d238501",
     "scripts/runtime/examples/run-state.reference.json": "065c636ff2c02114cad19d17ca92ddac93fad345a99e5db026861ac9a881044f",
     "scripts/runtime/package.json": "3e909271eb52d053491637a84befa2f04df6feb43e0a509bdb42018d2fcfef61",
-    "scripts/runtime/prompts/_shared-contract.md": "b393f1e26c8af77247cd6db7e5a12951a93d2da724d532ea0c42d8359f4bbd25",
+    "scripts/runtime/prompts/_shared-contract.md": "f79b13fc7e608017e85a2b20e6f9bcc2247c45ff54079cd03a628bd3df9effe3",
     "scripts/runtime/prompts/00-orchestrator.md": "1091860c1b767add3c23996a460d47bc5bd18cfd43cc2d4c6b3061935809353a",
     "scripts/runtime/prompts/01-source-evidence.md": "319e3a3773993baf47c26ecdc1c489bdd33bc60f39437c275a3bb3eeca69556c",
     "scripts/runtime/prompts/02-spatial-composition.md": "462309af23155f930896738e49f9d3c935864e8012318ba2393bb55c75873439",
@@ -60,7 +60,7 @@
     "scripts/runtime/prompts/12-content-trust-ethics.md": "24cb3032dda5fde90007ded9f7c5c897ea1919671a716432721d4e3517a6537b",
     "scripts/runtime/prompts/13-performance-resilience.md": "12378477c6cede0de016ce8b204d846c69173379e0cba4900078cf98045d3899",
     "scripts/runtime/prompts/14-system-governance.md": "66a6a0a462441a505ca48f06c2bdd9ed9bf7a1e0cf8b7dad24bc53ad21fb9824",
-    "scripts/runtime/prompts/15-synthesis.md": "a58c0df6a6325cbd457f154786acf86c93035a33f8f0e721718f7f840ee04bac",
+    "scripts/runtime/prompts/15-synthesis.md": "c63875a96a2db0592d6323c6ed4cf72d9e39a16ccbb1afe3c7bdf205bcbef111",
     "scripts/runtime/prompts/16-project-integration.md": "b0e99a2945134e72d88faedfa5e4e8580c0364aa3cebf1f2f99d3c0130d2b697",
     "scripts/runtime/prompts/17-generation-audit.md": "b3de2b8464b5cc703c1f966946ab6d4db0cb8819d11661bd0fac34abe0802983",
     "scripts/runtime/schemas/audit-config.schema.json": "807bd7764e363280f292bfd3c4994b81e2cf8cc8936f929217b42e7390524321",
@@ -81,7 +81,7 @@
     "scripts/runtime/skill-sources/designome-audit/instructions.md": "f15b7b86f3f7a0ab94352d9bf6728ff678acb3bd6e3bad5604ec35312e43284e",
     "scripts/runtime/skill-sources/designome-extract/agents/openai.yaml": "1dc772d5b9b856d76e72c0814109d906765c71c6f2af3f2b5df63f6f030036d5",
     "scripts/runtime/skill-sources/designome-extract/contract.json": "ffb86681151861656be209b08480a30e3a0d934b81b9ae6bd4a75575f17f79e1",
-    "scripts/runtime/skill-sources/designome-extract/instructions.md": "4b0aad3d4a95f397f56646b4bbdc964bc59ea00077e44797614c422d9df1febe",
+    "scripts/runtime/skill-sources/designome-extract/instructions.md": "7515dd821fef1837b839eb459f94a14bac0dc952158cfab4814f44bc32f537b4",
     "scripts/runtime/skill-sources/designome-install/agents/openai.yaml": "7947ef5dcc31caeaa3cceb94b5d1e0181aac003262ed2f07e2cacd1a0809c004",
     "scripts/runtime/skill-sources/designome-install/contract.json": "adf164658df080595a2a412f55d8b522fb7110eaa1ab31819fb8bf7d1475c47e",
     "scripts/runtime/skill-sources/designome-install/instructions.md": "ee22b97c5786625153a1c52b8c35aef76ecbbe2fc3386ba7c27a1c4b31ab6d46",
@@ -110,6 +110,6 @@
     "scripts/runtime/src/runtime/orchestrator.mjs": "4ed772e44afef9a1e4c8dbfa3ff6ef9033c02189b6d84791328f905a20a4848d",
     "scripts/runtime/src/runtime/request-contract.mjs": "6f194771366d3b69bf71f3b7f83dad04c00ce1fb5cc7bfd1c87b294800d3e210",
     "scripts/runtime/src/runtime/run.mjs": "24fffb357e752b237bf0aab5d6c17a90efe54fa5f64bee93bc1a9a2d68a14268",
-    "SKILL.md": "8e01a67b4a4666d7414eef5a0ea9dc36bc9b978fbab22ff80da49da8a0a96203"
+    "SKILL.md": "ce2c6a4b7d0c9bbd445f63eab94dc36e6603404c49d2cad7a8c0a4d151371e45"
   }
 }

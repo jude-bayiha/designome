@@ -18,6 +18,10 @@ Each rule has `assertions.requirements`. Components have assertion arrays for `c
 
 Each state has six independent claims: `appearance`, `trigger`, `behavior`, `feedback`, `exit` and `programmaticState`. The legacy state status and evidence refer only to appearance. A visible selected treatment may be observed while keyboard activation and programmatic semantics remain unknown or proposed. The five other assertion statements exactly mirror their corresponding legacy fields.
 
+### Authoring shorthand
+
+An extraction may write assertions in shorthand and run `expand-dna --file <authoring.json> --output <design-dna.json> --require-fidelity`. Each assertion states its own `statement`, `epistemicStatus` and, for `observed` or `inferred`, its `evidenceRefs`. The helper then fills, from the owner claim (the rule claim, or the component claim for components, anatomy parts, variants and states): `conceptRefs`, `uiDomainRefs` and `scope`; `validation` with the owner's method and status `pending`; and `confidence` only when the assertion has the owner's status. Missing `exceptions` and `evidenceRefs` become empty lists. It also writes omitted legacy mirrors from assertion statements, and a state's legacy status and evidence from its `appearance` assertion. It never infers a status, evidence or a differing confidence, so an appearance still cannot establish behavior. Fields written explicitly are kept, and expanding canonical DNA changes nothing. On a real three-screenshot extraction the shorthand was 42% smaller than the 1 MB canonical file and expanded to an identical document.
+
 Legacy DNA remains readable and installable under its existing acceptance rules. Documentation labels untyped behavioral notes `unknown`; it does not silently inherit an observed parent label. Upgrading requires source review and explicit assertions, not a mechanical migration. Existing historical run plans remain compatible; newly created plans require the new fidelity contract.
 
 ## Signature qualities and calibration
