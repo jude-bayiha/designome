@@ -191,7 +191,7 @@ Existing CSS, components, tokens, documentation, or rendered target UI cannot su
     └── findings.json
 ```
 
-An accepted installation projects 52 documentation files:
+An accepted installation projects 52 documentation files. `README.md` is a compact design brief that carries every artifact's statement and status; the other files hold the full evidence, coverage and validation detail:
 
 ```text
 docs/designome/
@@ -205,7 +205,7 @@ docs/designome/
 
 The project also receives the accepted Design DNA, namespaced token CSS, a user-owned override file, project-local audit skill, managed guidance, manifest, and user-owned audit configuration.
 
-Run artifacts are local evidence and are not committed by default. Accepted sanitized outputs may be promoted deliberately.
+Run artifacts are local evidence and are not committed by default. Run initialization writes a `.gitignore` that ignores everything in the run directory, so screenshot metadata, stage fragments and raw Design DNA stay out of the target repository even when it does not ignore `.designome/runs/`. Accepted sanitized outputs may be promoted deliberately.
 
 ## Validation layers
 
