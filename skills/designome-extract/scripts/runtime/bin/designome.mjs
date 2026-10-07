@@ -630,6 +630,12 @@ async function main() {
   process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
 }
 
+// A closed pipe (for example `designome --help | head`) is not a failure.
+process.stdout.on('error', (error) => {
+  if (error.code === 'EPIPE') process.exit(0);
+  throw error;
+});
+
 main().catch((error) => {
   const normalized =
     error instanceof DesignomeError
