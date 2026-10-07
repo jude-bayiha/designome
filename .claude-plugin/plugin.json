@@ -7,11 +7,5 @@
     "name": "Designome contributors"
   },
   "repository": "https://github.com/jude-bayiha/designome",
-  "keywords": [
-    "ui",
-    "ux",
-    "design-system",
-    "screenshots",
-    "agent"
-  ]
+  "keywords": ["ui", "ux", "design-system", "screenshots", "agent"]
 }
