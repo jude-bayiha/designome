@@ -1,6 +1,6 @@
 # Synthesize Design DNA v0.3
 
-Read `_shared-contract.md`, the full v0.3 matrix, every completed specialist fragment, source directives, evidence index, and compatibility report.
+Read `_shared-contract.md`, the v0.3 matrix (the `matrix-brief` view carries every identifier and inspection question), every completed specialist fragment, source directives, evidence index, and compatibility report.
 
 ## Inputs
 
@@ -22,7 +22,7 @@ Build the canonical grammar in this order:
 4. Normalize rules with category, strength, applies-to scope, rationale, requirements, failure modes, dependencies, validation cases, evidence, exceptions, and UI-domain references.
 5. Normalize component patterns with purpose, UI domains, typed anatomy, variants, states, composition, content constraints, adaptation, accessibility, anti-patterns, and canonical references.
 6. Preserve unknowns with missing evidence, affected axes, concepts, UI domains, impact, and resolution plan.
-7. Emit Fidelity Contract `1.0.0`: ranked signature qualities tied to canonical artifacts, proposed measurable reproduction constraints where useful, independent assertions for every requirement and component field, and explicit limitations. Preserve string fields as exact ordered mirrors of assertion statements. A state's legacy status and evidence mirror appearance only.
+7. Emit Fidelity Contract `1.0.0`: ranked signature qualities tied to canonical artifacts, proposed measurable reproduction constraints where useful, independent assertions for every requirement and component field, and explicit limitations. Preserve string fields as exact ordered mirrors of assertion statements. A state's legacy status and evidence mirror appearance only. Write these in the authoring shorthand and run `expand-dna`, which derives the mirrors and the routing, scope and validation that assertions share with their owner claim; status, evidence and any differing confidence stay explicit per assertion.
 8. Review each domain as a self-contained recipe: roles, parts, selection conditions, concrete differences, spacing ownership, content pressure, dependencies, exceptions and validation. Variants must say what changes and when; copying the variant name or saying only "adjust density" is not a recipe. Keep unknowns when references do not support a distinction.
 
 Resolve apparent duplication by semantic role, not similar wording. Never average contradictory sources into a false universal rule; scope them, preserve exceptions, or emit a conflict. A vague adjective such as compact, spacious, subtle, premium, prominent, clean, or clear is insufficient without the visible relationship and a proposed calibration or validation condition.
@@ -41,7 +41,7 @@ Produce schema-valid:
 
 The coverage report includes 13 axes, 65 facets, 33 concepts, 20 UI domains, excluded evidence routes, unresolved conflicts, and an acceptance checklist. Projection coverage means the installer can write the complete dossier; it does not mean every subject has an accepted visual claim.
 
-Validate new extraction with `validate-dna --file <draft> --require-fidelity`. Report readiness separately from visual fidelity. Only a completed, independently reviewed rendered benchmark can establish a scoped reconstruction result; schema validation and complete coverage cannot.
+Validate new extraction with `expand-dna --file <authoring-draft> --output <draft> --require-fidelity`, or `validate-dna --file <draft> --require-fidelity` for a draft written in full. Report readiness separately from visual fidelity. Only a completed, independently reviewed rendered benchmark can establish a scoped reconstruction result; schema validation and complete coverage cannot.
 
 ## Guardrails
 
