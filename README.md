@@ -4,7 +4,7 @@ Designome turns UI screenshots into an evidence-backed **Design DNA** that an ex
 
 ## Current status
 
-[Fidelity Contract 1.0](docs/fidelity-contract.md) adds actionable coverage gates, independent component assertions, ranked visual qualities and proposed reproduction bounds. The 52-file dossier now preserves token relationships and complete domain recipes. A [repeated documentation-only benchmark](docs/fidelity-benchmark.md) measures reconstruction across source families and component libraries, with visual finish evaluated separately from fidelity. See the [executed evaluation](docs/fidelity-evaluation.md) for results and limits.
+[Fidelity Contract 1.0](docs/fidelity-contract.md) adds actionable coverage gates, independent component assertions, ranked visual qualities and proposed reproduction bounds. The 52-file dossier now preserves token relationships and complete domain recipes. A [repeated documentation-only benchmark](docs/fidelity-benchmark.md) measures reconstruction across source families and component libraries, with visual finish evaluated separately from fidelity. See the [executed evaluation](docs/fidelity-evaluation.md) for results and limits. A later [Next.js and shadcn/ui evaluation](docs/next-shadcn-evaluation.md) compares the compact brief, screenshots and both together on five generated screens.
 
 [Audit Contract 2.0](docs/audit-contract.md) adds a DNA-bound verification registry, exact route/viewport/scenario/direction bindings, contextual fidelity measurements, and capture identity checks. It makes missing or unresolved evidence `incomplete`, preserves failed checks as failures, and requests explicit recapture for legacy evidence; it does not establish a visual improvement by itself.
 
