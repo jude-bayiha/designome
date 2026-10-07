@@ -20,7 +20,7 @@ In full mode, read completely before analysis:
 1. `scripts/runtime/prompts/_shared-contract.md`
 2. `scripts/runtime/prompts/00-orchestrator.md`
 3. `scripts/runtime/prompts/01-source-evidence.md`
-4. `scripts/runtime/concepts/concept-matrix.v0.3.json`
+4. the concept-matrix extraction brief. Generate it once, outside the run directory, with `node <designome-plugin-root>/bin/designome.mjs matrix-brief --output <file>.md`. It carries every axis, facet, concept, UI-domain and category identifier with its inspection questions and screenshot limits; open `scripts/runtime/concepts/concept-matrix.v0.3.json` only to resolve a detail the brief does not show.
 5. `scripts/runtime/schemas/request-contract.schema.json`
 6. `scripts/runtime/docs/conversational-request-contract.md`
 
@@ -52,12 +52,13 @@ Read each axis prompt only when the orchestrator routes that axis. Read `scripts
 6. Write `compatibility-report.json` against the requested use case. In `direct` mode, do not claim destination accuracy when matching source families are missing. Say this concretely: a corporate website needs representative corporate/marketing website captures; a mobile app needs representative mobile-app captures. A dashboard capture may still contribute only its explicitly routed statistics, charts, colors, components, or other visible subjects. In explicit `adapt` mode, preserve source observations and keep cross-surface additions `proposed` with a forward-test requirement.
 7. Apply per-source routing before every claim. For example, "capture 1 and 2 only for stats, capture 3 only for the theme and colors" maps the first sources to `domain.stats-kpis` and relevant data-display selectors, and the third to the color/surface axis and requested token categories. A source may support several visible UI domains. `only` never leaks into unrelated facets; `exclude` can never be used to support the excluded subject.
 8. Execute the routed axis prompts independently. Run every axis required by admitted visual evidence or global focus, and always run system governance. Evaluate all five facets of each selected axis. Every unselected or unsupported facet must still appear in final coverage as `unknown` or `not-applicable`; do not silently omit it.
-9. Run synthesis. Produce `design-dna.json`, `design-rules.md`, `confidence-report.md`, `unknowns.md`, and `coverage-report.md`. The canonical Design DNA must contain exact coverage records for all 13 axes, all 65 facets, and all 20 UI domains, including domains that are not applicable.
-10. Validate the candidate:
+9. Run synthesis. Write the draft as `design-dna.authoring.json` using the assertion authoring shorthand in `scripts/runtime/docs/fidelity-contract.md`: give each assertion its statement, status and evidence, and add confidence only when its status differs from the owner claim. Also produce `design-rules.md`, `confidence-report.md`, `unknowns.md`, and `coverage-report.md`. The Design DNA must contain exact coverage records for all 13 axes, all 65 facets, and all 20 UI domains, including domains that are not applicable.
+10. Expand and validate the candidate. The helper fills inherited assertion fields and legacy mirrors deterministically, writes the canonical `design-dna.json`, and validates it. Fix reported errors in the authoring file and rerun; never hand-edit the expanded file:
 
     ```bash
-    node <designome-plugin-root>/bin/designome.mjs validate-dna \
-      --file <run-directory>/design-dna.json --require-fidelity
+    node <designome-plugin-root>/bin/designome.mjs expand-dna \
+      --file <run-directory>/design-dna.authoring.json \
+      --output <run-directory>/design-dna.json --require-fidelity
     ```
 
 11. Report request interpretation, per-source routing, source-to-destination compatibility, detected UI domains, facet and domain coverage, conflicts, unknowns, unperformed validation, and the exact files produced. Leave the Design DNA as `draft` until the user explicitly accepts it.

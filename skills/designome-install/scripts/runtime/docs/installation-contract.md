@@ -36,7 +36,7 @@ The current helper exposes the plan as JSON on standard output. The invoking ski
 
 ## Project-local design documentation
 
-Installation writes human-readable documentation inside the target repository. The default directory is `docs/designome`; repository instructions may select another visible project-relative directory with `--docs-dir`. The v0.3 concept matrix owns a versioned, mandatory projection. The installer always writes its index plus all 51 projected documents (52 files total):
+Installation writes human-readable documentation inside the target repository. The default directory is `docs/designome`; repository instructions may select another visible project-relative directory with `--docs-dir`. The v0.3 concept matrix owns a versioned, mandatory projection. The installer always writes a compact design brief as `README.md` plus all 51 projected documents (52 files total). The brief is the entry point: it lists every signature quality, token, rule, component, calibration bound and unknown with its epistemic status, and links to the topic files. Evidence references, confidence, coverage and validation details stay in the topic files, so an agent reads one compact file first and opens a topic file only for the detail it needs:
 
 ```text
 docs/designome/

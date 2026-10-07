@@ -11,10 +11,16 @@ import {
   stageScaffold,
   validateStageEnvelope,
 } from '../src/runtime/context-stage.mjs';
-import { writeJsonIfChanged } from '../src/runtime/files.mjs';
+import { writeIfChanged, writeJsonIfChanged } from '../src/runtime/files.mjs';
 
 import { runAudit } from '../src/runtime/audit.mjs';
-import { assertValidDesignDna } from '../src/runtime/design-dna.mjs';
+import {
+  assertValidDesignDna,
+  loadConceptMatrix,
+  validateDesignDna,
+} from '../src/runtime/design-dna.mjs';
+import { expandDesignDna } from '../src/runtime/dna-authoring.mjs';
+import { renderMatrixBrief } from '../src/runtime/matrix-brief.mjs';
 import { fidelityReadiness } from '../src/runtime/fidelity.mjs';
 import {
   prepareBenchmark,
@@ -178,7 +184,9 @@ function printHelp() {
     `  validate-request --file <normalized-request.json> [--operation <extract|install|audit>]\n`,
   );
   process.stdout.write(
-    `  validate-dna --file <design-dna.json> [--require-accepted] [--require-fidelity]\n`,
+    `  matrix-brief --output <file.md>\n` +
+      `  expand-dna --file <authoring-dna.json> --output <design-dna.json> [--require-fidelity]\n` +
+      `  validate-dna --file <design-dna.json> [--require-accepted] [--require-fidelity]\n`,
   );
   process.stdout.write(
     `  install --dna <file> --project <dir> [--request <normalized-request.json>] [--css-entry <file>] [--scope <selector>] [--docs-dir <dir>] [--rule-precedence <mode>] [--existing-rules <path>] [--styling <strategy>] [--ui-kit <auto|none|shadcn>] --dry-run\n`,
@@ -382,6 +390,34 @@ async function main() {
       evidencePath: option(parsed, 'evidence', { required: true }),
       outputPath: option(parsed, 'output', { required: true }),
     });
+  } else if (command === 'matrix-brief') {
+    assertArguments(parsed, ['output', 'help']);
+    const output = path.resolve(option(parsed, 'output', { required: true }));
+    const brief = renderMatrixBrief(await loadConceptMatrix());
+    result = {
+      output,
+      action: await writeIfChanged(output, brief),
+      characters: brief.length,
+    };
+  } else if (command === 'expand-dna') {
+    assertArguments(parsed, ['file', 'output', 'require-fidelity', 'help']);
+    const filePath = path.resolve(option(parsed, 'file', { required: true }));
+    const output = path.resolve(option(parsed, 'output', { required: true }));
+    const { dna, filled } = expandDesignDna(await readJson(filePath));
+    const action = await writeJsonIfChanged(output, dna);
+    const errors = await validateDesignDna(dna, {
+      requireFidelity: Boolean(parsed.options.get('require-fidelity')),
+    });
+    result = {
+      valid: errors.length === 0,
+      validationLayer: 'runtime-semantic',
+      output,
+      action,
+      filled,
+      errorCount: errors.length,
+      errors: errors.slice(0, 50),
+    };
+    if (errors.length > 0) process.exitCode = 1;
   } else if (command === 'validate-dna') {
     assertArguments(parsed, [
       'file',
@@ -593,6 +629,12 @@ async function main() {
 
   process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
 }
+
+// A closed pipe (for example `designome --help | head`) is not a failure.
+process.stdout.on('error', (error) => {
+  if (error.code === 'EPIPE') process.exit(0);
+  throw error;
+});
 
 main().catch((error) => {
   const normalized =

@@ -204,3 +204,28 @@ test('calibration evaluates ratios and tolerance while preserving proposals and 
     'requirement',
   );
 });
+
+test('the dossier README is a compact brief that names every accepted artifact', async () => {
+  const dna = await reference();
+  const docs = await projectDocumentation(dna);
+  const brief = docs.get('README.md');
+  assert.match(brief, /^# Design brief: /u);
+  for (const token of dna.tokens) assert.ok(brief.includes(token.id), token.id);
+  for (const rule of dna.rules) assert.ok(brief.includes(rule.name), rule.id);
+  for (const component of dna.componentPatterns)
+    assert.ok(brief.includes(`### ${component.name}`), component.id);
+  for (const quality of dna.fidelity.qualities)
+    assert.ok(brief.includes(quality.name), quality.id);
+  for (const constraint of dna.fidelity.constraints)
+    assert.ok(brief.includes(constraint.name), constraint.id);
+  for (const unknown of dna.unknowns)
+    assert.ok(brief.includes(unknown.question), unknown.id);
+  // Every other projected file stays reachable from the brief.
+  for (const path of docs.keys())
+    if (path !== 'README.md') assert.ok(brief.includes(`(./${path})`), path);
+  // Statuses stay explicit; evidence and confidence details stay in topic files.
+  assert.match(brief, /`proposed`/u);
+  assert.doesNotMatch(brief, /Confidence: /u);
+  const total = [...docs.values()].reduce((sum, text) => sum + text.length, 0);
+  assert.ok(brief.length * 10 < total, `${brief.length} of ${total}`);
+});
