@@ -14,6 +14,7 @@ import {
   renderFidelityContract,
 } from './documentation.mjs';
 import { fidelityReadiness } from './fidelity.mjs';
+import { renderDesignBrief } from './design-brief.mjs';
 import { DesignomeError } from './errors.mjs';
 import {
   auditContractVersion,
@@ -230,7 +231,7 @@ function renderGuidanceBlock({
     guidanceStartMarker,
     '## Designome-generated UI',
     '',
-    `Read \`${documentationDirectory}/README.md\` and \`.designome/design-dna.json\` before generating UI.`,
+    `Read \`${documentationDirectory}/README.md\`, the compact design brief, completely before generating UI. Open its linked topic files or \`.designome/design-dna.json\` only for the evidence or detail behind an entry.`,
     `Repository rule precedence is \`${integrationPolicy.rulePrecedence}\`; declared existing UI rules: ${existingRules}.`,
     `The detected styling adapter is \`${styling.strategy}\`. ${stylingInstruction}${uiKitInstruction}`,
     'Preserve claim status, cover applicable business states and stress cases, and run the `designome-audit` skill before delivery (`$designome-audit` in Codex, `/designome-audit` in Claude Code). New audit plans use Audit Contract 2.0: bind established obligations to exact contexts, record real capture hashes and measurements, and leave unresolved or perceptual unknowns incomplete.',
@@ -1111,37 +1112,6 @@ function renderCalibrationDocument(dna, matrix, entry) {
   ].join('\n');
 }
 
-function renderDocumentationReadme(dna, matrix) {
-  const groups = new Map();
-  for (const entry of matrix.documentationProjection) {
-    const directory = entry.path.split('/')[0];
-    if (!groups.has(directory)) groups.set(directory, []);
-    groups.get(directory).push(entry);
-  }
-  return [
-    '# Designome UI documentation',
-    '',
-    `Design DNA: \`${dna.documentId}\`, revision ${dna.revision.number}, status \`${dna.status}\`. Documentation layout: \`${matrix.documentationLayoutVersion}\`.`,
-    '',
-    'This dossier preserves the supplied Design DNA status; completeness of file projection is not visual fidelity. Every UI claim remains `observed`, `inferred`, `proposed`, or `unknown`; proposed resilience guidance is never presented as screenshot evidence.',
-    '',
-    'These files are checksum-managed by Designome. Put manual additions in repository-owned documentation or Designome override files rather than editing generated documents.',
-    '',
-    `- Fidelity readiness: \`${fidelityReadiness(dna).status}\`; visual fidelity is not established by projection.`,
-    '',
-    renderFidelityContract(dna),
-    '',
-    ...[...groups].flatMap(([directory, entries]) => [
-      `## ${directory[0].toUpperCase()}${directory.slice(1)}`,
-      '',
-      ...entries.map(
-        (entry) => `- [${entry.title}](./${entry.path}) — ${entry.purpose}`,
-      ),
-      '',
-    ]),
-  ].join('\n');
-}
-
 export function renderDocumentation({
   dna,
   styling,
@@ -1150,7 +1120,12 @@ export function renderDocumentation({
   matrix,
 }) {
   const documents = new Map([
-    ['README.md', renderDocumentationReadme(dna, matrix)],
+    [
+      'README.md',
+      renderDesignBrief(dna, matrix, {
+        fidelityStatus: fidelityReadiness(dna).status,
+      }),
+    ],
   ]);
   for (const entry of matrix.documentationProjection) {
     const content =

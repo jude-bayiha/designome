@@ -131,7 +131,7 @@ AGENTS.md managed guidance block
 CLAUDE.md managed guidance block, unless CLAUDE.md imports AGENTS.md
 ```
 
-The documentation directory contains `README.md` plus the 51 mandatory paths declared by `documentationProjection` in matrix v0.3 (52 files total). They are grouped under `foundations/`, `components/`, `patterns/`, `behavior/`, and `governance/`. Specialized renderers expose component variants/composition, every UI domain, complete facet/domain coverage, and source routing. A subject with no accepted visual claim still receives an honest `unknown` boundary or `proposed` stress-test contract; the runtime never fills the gap with fabricated observation.
+The documentation directory contains the compact design brief `README.md` plus the 51 mandatory paths declared by `documentationProjection` in matrix v0.3 (52 files total). They are grouped under `foundations/`, `components/`, `patterns/`, `behavior/`, and `governance/`. Specialized renderers expose component variants/composition, every UI domain, complete facet/domain coverage, and source routing. A subject with no accepted visual claim still receives an honest `unknown` boundary or `proposed` stress-test contract; the runtime never fills the gap with fabricated observation.
 
 The installer detects Tailwind from project dependencies and CSS directives when `--styling auto` is used. It records the resolved adapter and rule-precedence policy in the manifest and generated integration documentation. Existing rule paths are read-only context and are never rewritten.
 
