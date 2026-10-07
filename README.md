@@ -1,269 +1,201 @@
 # Designome
 
-Designome turns UI screenshots into an evidence-backed **Design DNA** that an existing coding agent can use to generate more coherent interfaces. It extracts reusable relationships, rules, component contracts, edge-case expectations, and validation guidance. It does not recreate a brand pixel for pixel or invent an unseen product world.
+**Turn UI screenshots into a design grammar your coding agent can follow.**
 
-## Current status
+Designome studies screenshots of interfaces you admire and extracts what makes them well designed: hierarchy, proportions, rhythm, density, surface tiers, type roles, component anatomy and chart conventions. It turns those relationships into durable rules, installs them in your project, and checks that new screens follow them. Your product keeps its own content, brand and identity; it gains the same qualities.
 
-[Fidelity Contract 1.0](docs/fidelity-contract.md) adds actionable coverage gates, independent component assertions, ranked visual qualities and proposed reproduction bounds. The 52-file dossier now preserves token relationships and complete domain recipes. A [repeated documentation-only benchmark](docs/fidelity-benchmark.md) measures reconstruction across source families and component libraries, with visual finish evaluated separately from fidelity. See the [executed evaluation](docs/fidelity-evaluation.md) for results and limits. A later [Next.js and shadcn/ui evaluation](docs/next-shadcn-evaluation.md) compares the compact brief, screenshots and both together on five generated screens.
+Designome runs inside the coding agent you already use, Codex or Claude Code. The agent's own multimodal model reads the screenshots. Designome adds specialized prompts, versioned contracts and a deterministic Node runtime for validation, installation and audit.
 
-[Audit Contract 2.0](docs/audit-contract.md) adds a DNA-bound verification registry, exact route/viewport/scenario/direction bindings, contextual fidelity measurements, and capture identity checks. It makes missing or unresolved evidence `incomplete`, preserves failed checks as failures, and requests explicit recapture for legacy evidence; it does not establish a visual improvement by itself.
+## Why Designome
 
-An experimental [lossless context compiler](docs/lossless-context.md) provides hash-bound specialist packs and stage validation. Full context remains the default until behavioral parity is established.
+Coding agents can already turn a screenshot into code. What they struggle with is keeping one coherent design across many screens, sessions, real content and edge cases. Each new screen drifts a little.
 
-See the [non-regression assessment](docs/context-non-regression.md) for executed checks, measured view sizes and promotion limits.
+Designome gives the agent a durable design contract instead of a picture to imitate:
 
-The repository now contains the first executable vertical slice:
+- **Grammar, not copy.** It records the rule behind an element, such as "project icons are colored rounded-square tiles with a white glyph". It never records the logo, icon or illustration itself.
+- **Rules that travel.** Rules are written to apply to screens the screenshots never showed, such as settings, tables or empty states.
+- **Honest about evidence.** Every rule says whether it was seen, inferred, proposed or is unknown, so the agent never presents a guess as a fact.
+- **Safe in your repository.** Generated files are checksum-managed, your overrides are preserved, and reinstalling changes nothing unless the guidance changed.
 
-- Codex and Claude Code plugin manifests that ship the same `designome-extract`, `designome-install`, and `designome-audit` skills;
-- a v0.3 grammar with 13 specialist axes, 65 mandatory facets, 33 cross-cutting concepts, and 20 routable UI domains;
-- 18 modular prompts for evidence intake, specialist analysis, synthesis, integration, and audit;
-- deterministic screenshot metadata, Design DNA validation, installation, and verification commands;
-- one persistent `designome run` workflow with explicit human and host-agent handoffs and deterministic resume;
-- a read-only `designome doctor` plus transactional prepare, journal, apply, verify, manifest, and rollback installation;
-- executable audit planning with explicit browser-provider and evidence-layer boundaries;
-- a versioned browser capture adapter and canonical provider state shared by JSON and Markdown reports;
-- independent installation, mechanical, perceptual, and usage audit layers;
-- bounded repair planning and project-aware shadcn/ui component mapping;
-- a complete 52-file project-local design dossier spanning foundations, typed components, 20 UI-domain patterns, behavior, coverage, source routing, and governance;
-- a project-local `designome-audit` skill that fresh Codex and Claude Code sessions can discover;
-- idempotent managed CSS and agent guidance with checksums and user-owned overrides;
-- repository quality, commit, CI, and release guardrails.
+## How it works
 
-The host agent performs multimodal reasoning with its installed model and account. Designome does not require a separate OCR, computer-vision, model-training, or image-processing stack.
-
-## Non-negotiable rules
-
-1. Screenshots are the only source of visual truth.
-2. Every claim is `observed`, `inferred`, `proposed`, or `unknown`.
-3. `observed` and `inferred` claims retain localized evidence.
-4. Static screenshots do not prove motion, responsive behavior, accessibility semantics, or runtime states.
-5. A target project is an integration destination, never an implicit design source.
-6. Specialized prompts produce fragments; synthesis resolves the canonical Design DNA.
-7. Conversational skill requests are normalized once into a validated request contract before execution.
-8. Generated files, user overrides, and managed guidance remain separate and idempotent.
-
-## Conversational requests
-
-The `designome-extract`, `designome-install`, and `designome-audit` skills accept ordinary instructions. Codex invokes them as `$designome-extract`; Claude Code invokes them as `/designome-extract`, or `/designome:designome-extract` when installed as a plugin. The examples use the Codex form. The host agent converts relevant intent, paths, constraints, evidence routing, preferences, and explicit authorization into `request-contract.json`; the deterministic runtime validates that contract and rejects mismatched execution inputs.
-
-Extraction requests may assign captures to axes, concepts, recognizable UI parts, token categories, or rule categories and request either direct destination fidelity or explicit cross-surface adaptation. For example:
-
-```text
-$designome-extract for a corporate website.
-Use dashboard-1.png only for statistics and charts.
-Use theme.png only for colors and surfaces.
+```mermaid
+flowchart LR
+    A["Screenshots"] --> B["Extract<br/>your agent's model"]
+    B --> C["Draft Design DNA"]
+    C --> D["You review and accept"]
+    D --> E["Install into your project"]
+    E --> F["Agent builds new screens"]
+    F --> G["Audit against the grammar"]
 ```
 
-Direct mode requires matching destination references before claiming destination-specific accuracy: dashboard evidence does not establish corporate marketing composition, and desktop/web evidence does not establish a mobile-native shell. The scoped statistics or theme grammar can still be reused. Adaptation mode keeps unsupported destination rules proposed. Nonsensical optional text is recorded and ignored rather than becoming intent. See the [conversational request contract](docs/conversational-request-contract.md).
+1. **Extract.** Your agent analyses the screenshots through 13 specialist axes (layout, typography, color, components, data display, accessibility and more). It records each finding as a rule with its evidence.
+2. **Review and accept.** You read the draft and accept it explicitly. This is the only human approval in the workflow.
+3. **Install.** Designome writes a compact design brief, detailed topic files, a token CSS bridge and agent guidance into your project.
+4. **Build.** Your agent reads the brief before generating UI, on any screen.
+5. **Audit.** The audit skill compares rendered screens with the accepted rules. Mechanical, perceptual and usage results are kept separate.
+
+## What you get in your project
+
+| Artifact                                             | Purpose                                                                                                  |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `docs/designome/README.md`                           | The compact design brief: every signature quality, token, rule, component and unknown, read once in full |
+| `docs/designome/` topic files                        | Evidence, coverage, per-domain recipes and governance, opened only when the detail is needed             |
+| `.designome/design-dna.json`                         | The accepted Design DNA, the canonical machine-readable source                                           |
+| `designome.generated.css`, `designome.overrides.css` | Managed token bridge next to your CSS entry, and a file you own for your adjustments                     |
+| `AGENTS.md` and `CLAUDE.md` guidance block           | Tells Codex and Claude Code to read the brief before generating UI                                       |
+| `.agents/skills/` and `.claude/skills/` audit skill  | Lets either host audit generated screens against the grammar                                             |
 
 ## Quick start
 
-### Install the agent skills
+### 1. Install the skills
 
-Designome supports Codex and Claude Code equally. Both hosts receive the same three skills; only the discovery directory and invocation syntax differ.
-
-| Host        | Project skill directory | Plugin manifest                                                    | Invocation           |
-| ----------- | ----------------------- | ------------------------------------------------------------------ | -------------------- |
-| Codex       | `.agents/skills/`       | `.codex-plugin/plugin.json`                                        | `$designome-extract` |
-| Claude Code | `.claude/skills/`       | `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` | `/designome-extract` |
-
-From your target project, install the skills with Node.js 24 or newer. Choose the agent when prompted, or pass it explicitly:
+From your project, with Node.js 24 or newer:
 
 ```bash
-npx skills@latest add https://github.com/jude-bayiha/designome --agent codex
 npx skills@latest add https://github.com/jude-bayiha/designome --agent claude-code
+# or
+npx skills@latest add https://github.com/jude-bayiha/designome --agent codex
 ```
 
-Select `designome-extract`, `designome-install`, and `designome-audit`, or only the skills you need. Each skill ships its own deterministic runtime, specialized prompts, matrix, schemas, and supporting documentation. No separate runtime installation, global executable, or clone beside the target project is required.
-
-Claude Code can also install Designome as a plugin from this repository's marketplace. Plugin skills are namespaced, for example `/designome:designome-extract`:
+Each skill ships its own runtime, prompts and schemas; nothing else needs to be installed. Claude Code can also install Designome as a plugin:
 
 ```text
 /plugin marketplace add jude-bayiha/designome
 /plugin install designome@designome
 ```
 
-The repository root contains `bin/`, which Claude Code places on the Bash tool's `PATH` while the plugin is enabled. claude.ai and Cowork do not install plugins that contain a top-level `bin/` directory, so this plugin targets Claude Code.
+| Host        | Skill directory   | Invocation                                                          |
+| ----------- | ----------------- | ------------------------------------------------------------------- |
+| Claude Code | `.claude/skills/` | `/designome-extract`, or `/designome:designome-extract` as a plugin |
+| Codex       | `.agents/skills/` | `$designome-extract`                                                |
 
-For a project-local installation, check the extraction helper with the directory that matches your host:
+### 2. Extract the grammar
 
-```bash
-node .agents/skills/designome-extract/scripts/runtime/bin/designome.mjs --help
-node .claude/skills/designome-extract/scripts/runtime/bin/designome.mjs --help
-```
-
-Then ask the host agent to use `designome-extract` with your screenshots. The host performs visual reasoning; the bundled helper performs metadata extraction and validation. Installing the skills does not extract or accept Design DNA or modify the target UI.
-
-If an earlier installation contains only skill instructions and no `scripts/runtime/`, reinstall after updating to a release containing the standalone distributions. See [skill distribution](docs/skill-distribution.md) for ownership, updates, and validation boundaries.
-
-### Run from the source repository
-
-Requirements: Node.js 24+ and pnpm 11.5.2. From this repository, use
-`pnpm designome <command>` in place of `designome <command>` if the CLI is
-not installed on `PATH`.
-
-Start the complete workflow from a dedicated workspace directory:
-
-```bash
-designome run \
-  --source /absolute/reference.png \
-  --project /absolute/target-project \
-  --workspace /absolute/designome-workspace
-```
-
-The command stops at explicit handoffs instead of pretending that the
-deterministic runtime can perform visual reasoning, generate the interface, or
-control the host browser. Follow the returned JSON handoff, then resume from
-the same workspace:
-
-```bash
-# After the host agent writes the draft Design DNA
-designome run --resume --workspace /absolute/designome-workspace
-
-# The only mandatory human approval in the normal workflow
-designome run --resume \
-  --workspace /absolute/designome-workspace \
-  --accept-dna
-
-# After the host agent implements or modifies the target interface
-designome run --resume \
-  --workspace /absolute/designome-workspace \
-  --host-event implementation-complete
-
-# After the host browser records and finalizes the requested evidence
-designome run --resume \
-  --workspace /absolute/designome-workspace \
-  --host-event evidence-complete \
-  --evidence /absolute/external-evidence.json
-```
-
-Every completed step is persisted in `workflow-state.json`. A later
-`designome run --resume --workspace <directory>` continues from the first
-unfinished or failed step without repeating extraction, acceptance, or another
-completed operation.
-
-Run a read-only project diagnostic independently when needed:
-
-```bash
-designome doctor \
-  --project /absolute/target-project \
-  --dna /absolute/accepted-design-dna.json
-```
-
-`doctor` reports `readOnly: true` and `writesPerformed: false`. A missing
-`package.json`, invalid or unaccepted Design DNA, managed-file conflict, or
-incompatible provider fails before installation writes begin. The standalone
-`extract`, `install`, and `audit` commands remain supported; see
-[Runtime and CLI](docs/runtime.md) for their complete options.
-
-## Browser evidence boundary
-
-The runtime writes a capture plan, the host agent drives its real browser, and
-the versioned `designome/audit` adapter validates and normalizes observations.
-The audit engine only evaluates the finalized evidence:
-
-```js
-import { createCaptureSession } from 'designome/audit';
-
-const session = createCaptureSession(plan, {
-  provider: 'in-app-browser',
-  outputPath: 'audit/external-evidence.json',
-});
-
-await session.recordCapture(capture);
-await session.recordInteraction(interaction);
-await session.recordConsoleMessage(consoleMessage);
-await session.recordAccessibilityCheck(accessibilityCheck);
-await session.recordPerceptualObservation(perceptualObservation);
-await session.finalize();
-```
-
-The adapter keeps its evidence envelope at schema `1.0.0` and marks new
-plan-bound evidence with Audit Contract `2.0.0`; incompatible versions fail
-closed. New evidence binds each perceptual observation to one planned check,
-records SHA-256 and native dimensions for captures, and uses
-`recordFidelityMeasurement` for contextual numeric constraints. Incomplete
-route, viewport, scenario, direction, interaction, or obligation coverage
-fails finalization unless the host deliberately requests an `incomplete`
-report. Legacy evidence is readable for historical audits but cannot satisfy a
-new v2 plan without recapture. See the [browser evidence adapter contract](docs/browser-evidence-adapter.md)
-and its [runnable example](examples/browser-adapter.reference.mjs).
-
-## Audit result semantics
-
-Browser-provider execution uses one canonical state in both JSON and Markdown:
-`not-requested`, `provider-unavailable`, `awaiting-evidence`,
-`evidence-received`, `running`, `passed`, `failed`, or `incomplete`. Valid
-external evidence therefore never remains described as pending provider
-execution.
-
-The final result keeps four layers independent:
-
-| Layer        | What it establishes                                                   | Evaluator                         |
-| ------------ | --------------------------------------------------------------------- | --------------------------------- |
-| Installation | Accepted DNA, manifest, ownership, checksums, and artifact integrity  | Deterministic runtime             |
-| Mechanical   | Geometry, overflow, clipping, measurable constraints, console errors  | Runtime over browser observations |
-| Perceptual   | Hierarchy, density, composition, rhythm, palette, and visual fidelity | Host agent, with provenance       |
-| Usage        | Navigation, interactions, focus, states, responsive behavior, LTR/RTL | Browser observations and runtime  |
-
-Each layer is reported as `passed`, `failed`, `incomplete`, `not-requested`,
-or `unavailable`. A passing mechanical layer never implies that perceptual or
-usage evaluation passed. The runtime never modifies the accepted Design DNA
-during audit.
-
-## Repository map
+Ask your agent in plain language:
 
 ```text
-.codex-plugin/ Codex plugin manifest
-.claude-plugin/ Claude Code plugin and marketplace manifests
-skills/        Generated standalone extract, install, and audit distributions
-skill-sources/ Canonical skill instructions, contracts, and agent metadata
-bin/           Designome command-line entry point
-src/runtime/   Dependency-light deterministic operations
-concepts/    Versioned concept matrix
-prompts/     Modular agent workflow
-schemas/     Machine-readable contracts
-examples/    Schema-valid Design DNA example
-docs/        Product, architecture, concepts, evidence, and installation guidance
-scripts/     Repository contract validation
-tests/         Runtime and idempotency tests
+/designome-extract Extract the design grammar of these screenshots of a
+project-management web app: ./refs/overview.png ./refs/tasks.png ./refs/details.png.
+No motion.
 ```
 
-Start with:
+You can route each screenshot to the subjects it should teach:
 
-- [Product foundation](docs/product-foundation.md)
-- [Architecture and methodology](docs/architecture-and-methodology.md)
-- [Concept matrix](docs/concept-matrix.md)
-- [Target-project installation contract](docs/installation-contract.md)
-- [Rendered audit contract](docs/audit-contract.md)
-- [Orchestration and host-agent contract](docs/orchestration-and-host-contract.md)
-- [Browser evidence adapter](docs/browser-evidence-adapter.md)
-- [Transactional installation and doctor](docs/transactional-installation.md)
-- [Integration and calibration matrix](docs/integration-and-calibration-matrix.md)
-- [Runtime and CLI](docs/runtime.md)
-- [Reference screenshot analysis](docs/reference-analysis.md)
-- [v0.3 prompt forward test](docs/v0.3-forward-test.md)
-- [Design DNA v0.3 example](examples/design-dna.reference-v0.3.json)
+```text
+/designome-extract for a corporate website.
+Use dashboard-1.png only for statistics and charts.
+Use theme.png only for colors and surfaces.
+```
 
-## Local quality checks
+The agent writes a draft Design DNA and a readable summary of its rules, coverage and unknowns. Run artifacts stay local and are ignored by git.
+
+### 3. Review and accept
+
+Read the signature qualities, the rules and the unknowns, then tell your agent explicitly that you accept the draft. Nothing is installed before that.
+
+### 4. Install
+
+```text
+/designome-install Install the accepted Design DNA in this project.
+```
+
+Designome detects your styling stack (plain CSS, Tailwind or shadcn/ui), shows a dry run, and then writes the managed files transactionally. If anything fails, it rolls back.
+
+### 5. Build and audit
+
+Ask your agent for new screens as usual; the installed guidance makes it read the brief first. Then:
+
+```text
+/designome-audit Audit the new settings screen against the design grammar.
+```
+
+## Principles
+
+- **Screenshots are the only source of visual truth.** Your project's existing CSS, components or UI never become evidence for the extracted grammar.
+- **One status per claim.** The status tells the agent how far a rule can be trusted:
+
+  | Status     | Meaning                                                                    |
+  | ---------- | -------------------------------------------------------------------------- |
+  | `observed` | Directly visible in a screenshot, with the region that shows it            |
+  | `inferred` | The best explanation of repeated visible evidence                          |
+  | `proposed` | A useful rule the screenshots do not show, such as an empty or error state |
+  | `unknown`  | Not established; the agent must not invent it                              |
+
+- **Static images prove appearance, not behavior.** Motion, responsiveness, accessibility semantics and runtime states stay `proposed` or `unknown` until they are verified.
+- **Measurable beats vague.** "Bars are hairline strokes at most 4 px wide" survives a new screen; "bars are thin" often does not.
+- **You stay in control.** The single human approval is acceptance. Generated files, your overrides and the guidance block stay separate, and managed files are checksum-tracked so manual edits are detected, never overwritten.
+
+## What Designome is not
+
+- **Not screenshot-to-code.** It does not reproduce the source screen, its logo, icons, copy or data.
+- **Not a computer-vision pipeline.** There is no OCR, model training or pixel sampling; your agent's model does the visual reasoning.
+- **Not a page generator.** It does not invent page families, roles or flows the screenshots do not show.
+- **Not a browser.** The audit plans captures and evaluates evidence; your agent's browser or your project's Playwright records it.
+
+## Evidence so far
+
+- **Next.js and shadcn/ui test:** agents that only had the compact brief, and never saw the screenshots, kept the source's palette, surface tiers, card anatomy and chart conventions across five new screens. Their clearest miss came from a rule phrased as an adjective: "thin chart bars" became thick bars. See the [Next.js and shadcn/ui evaluation](docs/next-shadcn-evaluation.md).
+- **Token cost:** the brief entry point fell from a 3.1 MB dossier to about 15k tokens, and extraction took 15 instead of 24 minutes in the same test.
+- **Earlier runs:** see the [executed fidelity evaluation](docs/fidelity-evaluation.md) and the [v0.3 forward test](docs/v0.3-forward-test.md).
+- **Current focus:** making every signature quality carry a measurable bound, and evaluating on new products with their own content and brand.
+
+## Working from this repository
+
+Requirements: Node.js 24+ and pnpm 11.5.2.
 
 ```bash
 pnpm install
-pnpm check
+pnpm check            # format, lint, contract validation, skill bundles, tests
 pnpm designome --help
 ```
 
-Husky formats staged files and validates Conventional Commit messages. CI runs the same repository checks. Release Please prepares releases from conventional commits merged into `main`.
+`designome run` drives the whole workflow from a workspace. It stops at each step that belongs to your agent or to you, then resumes where it left off:
 
-## Agent workflow
+```bash
+pnpm designome run --source /abs/ref.png --project /abs/app --workspace /abs/ws
+pnpm designome run --resume --workspace /abs/ws              # after the draft DNA is written
+pnpm designome run --resume --workspace /abs/ws --accept-dna # your acceptance
+```
 
-1. Start `designome run --source <capture> --project <directory>`.
-2. Follow the `designome-extract` host handoff and resume.
-3. Review and accept the draft Design DNA once.
-4. Let the transactional runtime install it, then follow the host implementation handoff.
-5. Record real browser and perceptual observations through the official adapter.
-6. Resume for a consolidated four-layer audit result.
+Other commands include `doctor` (a read-only diagnostic), `install`, `audit`, `matrix-brief`, `expand-dna` and `validate-dna`. See [Runtime and CLI](docs/runtime.md).
 
-That forward test measures the actual product outcome: whether extracted knowledge improves a new UI without copying an existing screen.
+## Documentation
 
-Designome does not implement a second chat interface. Codex, Claude Code, or another compatible host agent supplies the conversation, multimodal model, and authenticated account. The plugin supplies the specialized workflow; the Node helper owns deterministic file operations.
+- **Understand:** [product foundation](docs/product-foundation.md), [architecture and methodology](docs/architecture-and-methodology.md), [concept matrix](docs/concept-matrix.md).
+- **Use:**
+  - [conversational requests](docs/conversational-request-contract.md)
+  - [installation contract](docs/installation-contract.md)
+  - [transactional installation and doctor](docs/transactional-installation.md)
+  - [integration and calibration](docs/integration-and-calibration-matrix.md)
+  - [skill distribution](docs/skill-distribution.md)
+  - [runtime and CLI](docs/runtime.md)
+- **Verify:**
+  - [fidelity contract](docs/fidelity-contract.md)
+  - [audit contract](docs/audit-contract.md)
+  - [browser evidence adapter](docs/browser-evidence-adapter.md)
+  - [benchmark workflow](docs/fidelity-benchmark.md)
+  - [orchestration and host contract](docs/orchestration-and-host-contract.md)
+- **Experimental:** [lossless context compiler](docs/lossless-context.md) and its [non-regression assessment](docs/context-non-regression.md).
+- **Examples:** [Design DNA v0.3](examples/design-dna.reference-v0.3.json) and [reference screenshot analysis](docs/reference-analysis.md).
+
+## Repository layout
+
+```text
+skill-sources/    Canonical skill instructions and contracts
+skills/           Generated standalone skill bundles (do not edit by hand)
+prompts/          Specialized extraction, synthesis, integration and audit prompts
+concepts/         Versioned concept matrix: axes, facets, concepts, UI domains
+schemas/          JSON Schemas for every contract
+src/runtime/      Deterministic runtime: validation, installation, audit
+bin/              designome CLI
+docs/             Product, contracts and evaluations
+examples/         Schema-valid reference artifacts
+scripts/, tests/  Repository validation and tests
+.codex-plugin/    Codex plugin manifest
+.claude-plugin/   Claude Code plugin and marketplace manifests
+```
+
+## Contributing
+
+Read [AGENTS.md](AGENTS.md) first: it states the product philosophy and the working rules for people and agents. Use Conventional Commits, run `pnpm check`, and deliver every change through a pull request. Husky formats staged files and checks commit messages, CI runs the same checks, and Release Please prepares releases from `main`.
