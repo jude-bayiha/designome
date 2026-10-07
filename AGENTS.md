@@ -2,6 +2,15 @@
 
 Designome is an agent-native project that turns UI screenshots into reusable design guidance. Supplied screenshots are the only source of visual truth.
 
+## Philosophy
+
+Designome extracts a visual grammar, not a copy. A screenshot is studied for the relationships that make it well designed, such as hierarchy, proportion, rhythm, density, surface tiers, type roles, component anatomy and chart conventions. Those relationships become durable rules that let a different product, with its own content and brand, reach the same quality. Reproducing the source screen is never the goal.
+
+- Treat logos, brand marks, icon glyphs, illustrations, photos, copy, names and data as replaceable assets of the source product. Record the rule they follow, such as "project icons are colored rounded-square tiles with a white glyph", never the asset itself.
+- Write rules a generator can apply on screens the source never showed. Prefer measurable, transferable relationships (ratios, bounds, weights, orders) over adjectives such as "thin" or "clean"; a rule that cannot be applied is lost.
+- Judge success on new screens with different content: do they follow the grammar and look as good? Pixel similarity, matching assets and copied content are not success. Reproducing a source screen is only a diagnostic for missing rules.
+- Do not make the source screenshots a generation input in target projects. The rules must carry the grammar on their own.
+
 ## Product scope
 
 - Write repository content, code comments, commit messages, branch metadata, and pull-request content in English.
