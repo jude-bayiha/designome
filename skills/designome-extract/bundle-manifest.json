@@ -1,11 +1,11 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome-extract",
-  "contentFingerprint": "sha256:32723be33a75721296126fa75c475dcd4c81adb6ac9a87270ee58064f095e7e7",
+  "contentFingerprint": "sha256:6baf38f9eb5990eaa6919c87ad672b6c69020ab9ceca979a660f384c7016dd9a",
   "files": {
     "agents/openai.yaml": "1dc772d5b9b856d76e72c0814109d906765c71c6f2af3f2b5df63f6f030036d5",
     "contract.json": "ffb86681151861656be209b08480a30e3a0d934b81b9ae6bd4a75575f17f79e1",
-    "scripts/runtime/bin/designome.mjs": "3c8e91ea0a7a2819b39bc34c2217294839c4c4a0f9c1cbc31199db15fd08592f",
+    "scripts/runtime/bin/designome.mjs": "418785b31f721bc17d8b070d62b4a8506142748e4f4f0cfe8c5f621e8292083a",
     "scripts/runtime/concepts/concept-matrix.v0.2.json": "1ceb9b420c1929750f3e61cd7117ff1e2998d8f92d381f467d634716dbe4c9f1",
     "scripts/runtime/concepts/concept-matrix.v0.3.json": "754c1eb850e422a4e344eb1f5ad139b2839310ab438bd365b704cbc833f0df33",
     "scripts/runtime/docs/architecture-and-methodology.md": "2970e5e68ff36b57575db60b83e4e7998e731b768d47f0514ae65c78ac9adc4e",
