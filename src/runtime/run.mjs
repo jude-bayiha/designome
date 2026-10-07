@@ -10,6 +10,7 @@ import {
   pluginRoot,
   readJson,
   sha256,
+  writeIfChanged,
   writeJsonIfChanged,
 } from './files.mjs';
 import { loadConceptMatrix } from './design-dna.mjs';
@@ -317,6 +318,15 @@ export async function initializeRun({
 
   await fs.mkdir(path.join(resolvedOutput, 'stages'), { recursive: true });
   const actions = [];
+  // Run artifacts reference private screenshots; keep them out of any
+  // repository the run directory happens to sit in.
+  actions.push({
+    path: path.join(resolvedOutput, '.gitignore'),
+    action: await writeIfChanged(
+      path.join(resolvedOutput, '.gitignore'),
+      '# Designome run artifacts are local evidence; never commit them.\n*\n',
+    ),
+  });
   actions.push({
     path: path.join(resolvedOutput, 'source-manifest.json'),
     action: await writeJsonIfChanged(

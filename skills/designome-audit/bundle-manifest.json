@@ -1,14 +1,14 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome-audit",
-  "contentFingerprint": "sha256:2178fba1d04d191547724431d74e1639407e46a332a162abdb86f4136970bc2f",
+  "contentFingerprint": "sha256:171f8abd41fa1672f95a3d8552d40b9e668541eab761ca774c8a19f4a7057321",
   "files": {
     "agents/openai.yaml": "e04d01b5fbdf80c26cefad0afeadff9d75a27a0f8bd6b6ebd9ba8a4a0696c36d",
     "contract.json": "f5b552cb49ae9dd994439f803baa8f194b805ab1f203db40364828b98e5301b1",
     "scripts/runtime/bin/designome.mjs": "97be901dea2211e4a409c9b4f835263d79002c830719c21bb5306f6bc944d0a3",
     "scripts/runtime/concepts/concept-matrix.v0.2.json": "1ceb9b420c1929750f3e61cd7117ff1e2998d8f92d381f467d634716dbe4c9f1",
     "scripts/runtime/concepts/concept-matrix.v0.3.json": "754c1eb850e422a4e344eb1f5ad139b2839310ab438bd365b704cbc833f0df33",
-    "scripts/runtime/docs/architecture-and-methodology.md": "47332aba9fe4f28dba82f88b8251fc644308d923c578e6be7ce197bb8e0bc348",
+    "scripts/runtime/docs/architecture-and-methodology.md": "2970e5e68ff36b57575db60b83e4e7998e731b768d47f0514ae65c78ac9adc4e",
     "scripts/runtime/docs/audit-contract.md": "62d6979a2f117bf9e32ac998f7074945e8cb1d4c54cb0712fc53c4f984759392",
     "scripts/runtime/docs/browser-evidence-adapter.md": "f3423d6ee280dad4b2a037b44b7673e8a0d9ee5477d0a2083f71144c0495e6db",
     "scripts/runtime/docs/concept-matrix.md": "557e633454d27c48b6976e6934e15ae7875095a14c45e609991d33d55da8a1bf",
@@ -107,7 +107,7 @@
     "scripts/runtime/src/runtime/migrations.mjs": "37f0b2fc66ca41e5b62a865e181c24c3ad49773da1e78a0865775e04e5efc13b",
     "scripts/runtime/src/runtime/orchestrator.mjs": "4ed772e44afef9a1e4c8dbfa3ff6ef9033c02189b6d84791328f905a20a4848d",
     "scripts/runtime/src/runtime/request-contract.mjs": "6f194771366d3b69bf71f3b7f83dad04c00ce1fb5cc7bfd1c87b294800d3e210",
-    "scripts/runtime/src/runtime/run.mjs": "e9ddf06d4dc9a9cdfa0896933e5a3d8627d58c0ccc66839cabbc12fa1aed605d",
+    "scripts/runtime/src/runtime/run.mjs": "24fffb357e752b237bf0aab5d6c17a90efe54fa5f64bee93bc1a9a2d68a14268",
     "SKILL.md": "6f56780c06db1199ff5cad9fd4ea119a7a6880b1addcfa032d88a4364dfef09f"
   }
 }

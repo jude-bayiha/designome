@@ -169,7 +169,11 @@ test('init-run records image metadata and is idempotent', async (t) => {
   assert.equal(first.duplicateSourceCount, 1);
   assert.deepEqual(
     first.actions.map((action) => action.action),
-    ['create', 'create', 'create', 'create'],
+    ['create', 'create', 'create', 'create', 'create'],
+  );
+  assert.match(
+    await fs.readFile(path.join(outputDirectory, '.gitignore'), 'utf8'),
+    /^\*$/mu,
   );
 
   const manifest = JSON.parse(
@@ -189,7 +193,7 @@ test('init-run records image metadata and is idempotent', async (t) => {
   });
   assert.deepEqual(
     second.actions.map((action) => action.action),
-    ['unchanged', 'unchanged', 'unchanged', 'unchanged'],
+    ['unchanged', 'unchanged', 'unchanged', 'unchanged', 'unchanged'],
   );
 
   await assert.rejects(
