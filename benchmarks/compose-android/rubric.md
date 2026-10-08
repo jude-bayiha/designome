@@ -1,6 +1,6 @@
 # Review rubric: grammar, not copy
 
-The rubric asks one question per screen: does this app follow the visual grammar of the source screenshots, and does it look as good, with its own content? It never rewards resemblance to a source screen. All eight screens carry Tally's own content, so every screen is a transfer test.
+The rubric asks one question per screen: does this app follow the visual grammar of the source screenshots, and does it look as good, with its own content? It never rewards resemblance to a source screen. All eight screens carry Plotline's own content, so every screen is a transfer test.
 
 The sources come from several products. Each one teaches only the subjects it was routed to in `routing.md`; judge an aspect against the screenshots routed to it, and never penalize an app for not following a source on a subject that source was excluded from.
 

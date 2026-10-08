@@ -61,7 +61,7 @@ for (const runId of runIds.sort()) {
       ? gradle(app, [
           'testDebugUnitTest',
           '--tests',
-          'bench.tally.BenchmarkCaptureTest',
+          'bench.app.BenchmarkCaptureTest',
           '-Proborazzi.test.record=true',
         ])
       : null;

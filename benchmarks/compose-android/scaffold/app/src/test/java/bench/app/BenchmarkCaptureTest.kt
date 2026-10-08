@@ -1,5 +1,5 @@
 // Benchmark contract: do not edit. Captures every screen on the JVM with Robolectric and Roborazzi.
-package bench.tally
+package bench.app
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot

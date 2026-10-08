@@ -1,4 +1,4 @@
-package bench.tally
+package bench.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

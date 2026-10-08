@@ -2,4 +2,4 @@ Design input: the Design DNA dossier in `{{INPUT_DIR}}/designome/` and the scree
 
 {{SOURCE_ROUTING}}
 
-The screenshots show other products: follow their visual relationships, not their logos, icons, illustrations, photos, copy, names or data. Tally keeps the brief's content.
+The screenshots show other products: follow their visual relationships, not their logos, icons, illustrations, photos, copy, names or data. Plotline keeps the brief's content.

@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "bench.tally"
+    namespace = "bench.app"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "bench.tally"
+        applicationId = "bench.app"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

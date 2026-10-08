@@ -11,11 +11,11 @@ export const benchmarkRoot = path.resolve(
 // Screen ids, in brief order; they match BenchmarkScreen in the scaffold contract.
 export const screens = [
   'home',
-  'spending',
-  'bills',
-  'bill-detail',
+  'harvest',
+  'plots',
+  'plot-detail',
   'compare',
-  'add-bill',
+  'log-planting',
   'goals',
   'settings',
 ];
@@ -29,6 +29,6 @@ export const tile = {
 export const hashIgnore = ['.gradle', '.kotlin', 'build'];
 // Files a generator must not change; render.mjs restores them before capturing.
 export const contractFiles = [
-  'app/src/main/java/bench/tally/BenchmarkContract.kt',
-  'app/src/test/java/bench/tally/BenchmarkCaptureTest.kt',
+  'app/src/main/java/bench/app/BenchmarkContract.kt',
+  'app/src/test/java/bench/app/BenchmarkCaptureTest.kt',
 ];

@@ -2,6 +2,8 @@
 
 This benchmark measures whether a coding agent reaches the design quality of a set of mobile screenshots on new native Android screens with its own content. It reuses the method of the [Next.js and shadcn/ui benchmark](../next-shadcn/README.md) on an eight-screen Jetpack Compose app, and it exercises per-source routing: the sources come from several products, and each one teaches only the subjects it is routed to.
 
+The brief describes Plotline, a community-garden app, so its domain has nothing in common with the sources: only an unrelated product shows whether rules inferred from other screenshots carry over to someone else's project. Keep that distance when you swap in your own screenshots.
+
 The benchmark judges grammar, not copy. Every screen carries the benchmark's own content from [`brief.md`](brief.md), and [`rubric.md`](rubric.md) never rewards matching logos, icons, copy or pixels.
 
 ## Contents

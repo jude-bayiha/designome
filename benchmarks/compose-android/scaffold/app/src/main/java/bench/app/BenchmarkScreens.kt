@@ -1,6 +1,6 @@
 // Generators replace this placeholder. BenchmarkScreenHost must render the full screen,
 // app chrome included, with the brief's sample data and no user interaction.
-package bench.tally
+package bench.app
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

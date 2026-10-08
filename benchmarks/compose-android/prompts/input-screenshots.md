@@ -2,4 +2,4 @@ Design input: the screenshots in `{{INPUT_DIR}}/screenshots/`. They show other p
 
 {{SOURCE_ROUTING}}
 
-Do not copy their logos, icons, illustrations, photos, copy, names or data; Tally keeps the brief's content.
+Do not copy their logos, icons, illustrations, photos, copy, names or data; Plotline keeps the brief's content.

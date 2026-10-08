@@ -1,13 +1,13 @@
 // Benchmark contract: do not edit. The screenshot harness renders every screen below by id.
-package bench.tally
+package bench.app
 
 enum class BenchmarkScreen(val id: String) {
     Home("home"),
-    Spending("spending"),
-    Bills("bills"),
-    BillDetail("bill-detail"),
+    Harvest("harvest"),
+    Plots("plots"),
+    PlotDetail("plot-detail"),
     Compare("compare"),
-    AddBill("add-bill"),
+    LogPlanting("log-planting"),
     Goals("goals"),
     Settings("settings"),
 }

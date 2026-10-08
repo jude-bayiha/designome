@@ -1,6 +1,6 @@
-# App brief: Tally
+# App brief: Plotline
 
-Tally is a fictional household-budget Android app. Every arm builds the same eight screens from this brief. The product name, people, providers and numbers below belong to the benchmark, not to any source screenshot, so every screen tests whether a design grammar transfers to new content.
+Plotline is a fictional Android app for a community garden. Every arm builds the same eight screens from this brief. The domain has nothing to do with the source screenshots on purpose: the product name, people, crops and numbers below belong to the benchmark, so every screen tests whether a design grammar learned from other products transfers to a new one.
 
 ## Technical frame
 
@@ -13,80 +13,80 @@ Tally is a fictional household-budget Android app. Every arm builds the same eig
 
 ## Shared content
 
-- **Household:** the Okafor-Lindqvist home, two members.
-- **Signed-in user:** Amara Okafor.
-- **Other member:** Jonas Lindqvist.
-- **Month:** October 2026. Today is October 8, 2026. Currency is euro.
-- **Accounts:** Nordbank checking, Joint card.
-- **Bill groups:** Housing, Energy, Telecom, Insurance, Transport, Leisure.
+- **Garden:** Linden Street Community Garden, 24 plots.
+- **Signed-in member:** Mei Tanaka, plot B4.
+- **Other members:** Rafael Okonkwo, Ines Albrecht, Tomás Varga, Priya Nair.
+- **Season:** 2026 summer season. Today is October 8, 2026. Weights are in kilograms, volumes in liters.
+- **Beds:** North beds, South beds, Greenhouse.
+- **Crops:** Tomatoes, Courgettes, Beans, Kale, Strawberries, Herbs.
 
-Use initials or simple shapes on colored tiles for providers. Do not use photographs or third-party logos.
+Use initials, simple shapes or generic crop marks on colored tiles. Do not use photographs or third-party logos.
 
 ## Screens
 
 ### 1. Home
 
-The month at a glance.
+The garden this week.
 
-- Headline figure: €2,148.60 spent of a €2,600 budget, 11 bills paid of 17.
-- Three highlights, each with a short explanation: "Energy is 18 % above September", "Car insurance renews in 9 days", "2 bills paid twice this month".
-- A primary action to review the highlights and a secondary action.
+- Headline figure: 412.6 kg harvested this season, against a goal of 500 kg; 18 of 24 plots active.
+- Three notices, each with a short explanation: "Frost expected Saturday night", "Compost delivery on October 12", "2 plots missed watering this week".
+- A primary action to review the notices and a secondary action.
 
-### 2. Spending by group
+### 2. Harvest by crop
 
-Where October's money went.
+What the garden produced this season.
 
-- A chart of the six bill groups: Housing €980.00, Energy €214.35, Telecom €96.80, Insurance €182.40, Transport €141.20, Leisure €73.85.
-- A legend or labels that tie every value to its group.
-- A comparison with September for the selected group.
+- A chart of the six crops: Tomatoes 148.2 kg, Courgettes 96.4 kg, Beans 61.8 kg, Kale 44.5 kg, Strawberries 33.9 kg, Herbs 27.8 kg.
+- A legend or labels that tie every value to its crop.
+- A comparison with the 2025 season for the selected crop: Tomatoes 131.0 kg in 2025.
 
-### 3. Bills
+### 3. Plots
 
-All recurring bills of the household.
+All plots of the garden.
 
-- Three tabs: Active 17, Paused 2, Ended 5, each with its count.
-- A one-line share-by-group summary for the active bills.
-- A sort control ("Next due" by default) and a search action.
-- The active bills grouped by bill group, with a per-group subtotal; each row shows provider, cadence, next due date, account and amount. At least one row carries a warning state ("Paid twice?").
+- Three tabs: Active 18, Resting 4, Waitlist 2, each with its count.
+- A one-line share-by-bed summary for the active plots.
+- A sort control ("Plot number" by default) and a search action.
+- The active plots grouped by bed, with a per-bed harvest subtotal; each row shows plot number, keeper, main crop, last watering and season harvest. At least one row carries a warning state ("Not watered for 6 days").
 
-### 4. Bill detail
+### 4. Plot detail
 
-One bill: Volta Energy, €71.45 a month, paid from Nordbank checking.
+Plot B4, kept by Mei Tanaka, in the South beds.
 
-- Provider, cadence, next due date (October 21), account and owner (Jonas).
-- A price history over 12 months with two increases: €64.90 until March, €68.20 from April, €71.45 from August.
-- Payment record for the last 12 months: 11 paid on time, 1 paid 4 days late in June.
-- Actions to pause the bill and to mark it as disputed.
+- Keeper, bed, size (12 m²), main crop (Tomatoes) and next shared work shift (October 14).
+- A weekly harvest history over the last 12 weeks with two peaks.
+- Watering record for the last 28 days: watered on 24 days, missed 4.
+- Actions to log a harvest and to hand the plot over.
 
-### 5. Compare plans
+### 5. Compare varieties
 
-Volta Energy against Brisa Power.
+Two tomato varieties grown on plot B4.
 
-- The two plans side by side with price, contract end and one key term each; the current plan is marked.
-- An explanation block ("Why we suggest it") with the yearly saving: €118.20.
+- The two varieties side by side with yield per plant, days to first harvest and one key trait each; the variety planted this season is marked.
+- An explanation block ("Why we suggest it") with the expected extra yield: 3.8 kg per season.
 - A short list of other suggestions with one dismissed item.
-- Two actions: keep the current plan, or switch.
+- Two actions: keep the current variety, or switch next season.
 
-### 6. Add a bill
+### 6. Log a planting
 
-A form to add a recurring bill.
+A form to record a new planting.
 
-- Provider name (text), amount (number), cadence (select: weekly, monthly, quarterly, yearly), first due date (date), account (select), group (select), owner (segmented choice: Amara, Jonas, shared).
-- A toggle for a reminder two days before the due date.
-- Inline validation on the amount, and save and cancel actions.
+- Crop (select), variety (text), plot (select), bed (select), sowing date (date), quantity (number of plants), watering cadence (segmented choice: daily, every 2 days, weekly).
+- A toggle for a watering reminder.
+- Inline validation on the quantity, and save and cancel actions.
 
-### 7. Savings goals
+### 7. Season goals
 
-Three goals with progress.
+Three shared goals with progress.
 
-- Summer trip: €1,240 of €2,000, target June 2027.
-- New laptop: €610 of €1,400, target March 2027.
-- Emergency fund: €4,800 of €6,000, no target date.
+- Harvest 500 kg: 412.6 kg so far.
+- Donate 120 kg to the food bank: 86 kg so far, target October 31.
+- Compost 2,000 liters: 1,540 liters so far, no target date.
 - An action to add a goal.
 
 ### 8. Settings
 
-Household and personal settings.
+Member and garden settings.
 
-- Sections for profile, household members, notifications and data export.
-- At least two toggles, one select and a destructive action ("Leave household") with a confirmation pattern.
+- Sections for profile, plot sharing, notifications and data export.
+- At least two toggles, one select and a destructive action ("Give up my plot") with a confirmation pattern.
