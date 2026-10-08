@@ -40,7 +40,7 @@ Cabinet is a collections registry for a natural-history museum. Its domain is un
 
 ## Routing in plain language
 
-The routing file holds, for each screenshot prefix, what the person who chose it likes about it, in their own words; [`prompts/routing.example.md`](prompts/routing.example.md) is the reference run's file. It does not name evidence modes. The extraction must read those words and write the request contract's per-source routing itself: `only` when a screenshot should teach one subject, `prefer` when it should lead on some subjects and still teach what else it shows, `exclude` when a subject must not come from it. The screenshot arms and the reviewer receive the same words.
+The routing file holds, for each screenshot prefix, what the person who chose it likes about it, in their own words; [`prompts/routing.example.md`](prompts/routing.example.md) is the reference run's file. It does not name evidence modes. The extraction must read those words and write the request contract's per-source routing itself: `only` when a screenshot should teach one subject, `prefer` when it should lead on some subjects and still teach what else it shows, `exclude` when a subject must not come from it. The screenshot arms and the reviewer receive the same words. In the reference run, "what I like here is…" alone was read as `only`; adding "use it as the base for everything else" made it `prefer`.
 
 After the extraction, compare its routing with the routing you expected:
 

@@ -7,8 +7,7 @@
       "forbidUiDomainRefs": [
         "domain.app-shell-navigation",
         "domain.cards-collections"
-      ],
-      "forbidAxisRefs": ["axis.color-surface-identity"]
+      ]
     },
     {
       "match": "flowai-",
