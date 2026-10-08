@@ -18,6 +18,7 @@ Extract semantic relationships instead of raw sampled palettes:
 3. Identify evidenced theme modes. For unshown dark, high-contrast, or branded modes, preserve semantic roles and propose verification without inventing palettes.
 4. Analyze icon family, stroke/fill balance, optical size, bounding box, cap and corner language, alignment, semantic role, directionality, labels, and state treatment. Analyze imagery, avatar, logo, illustration, crop, mask, ratio, fallback, and placeholder implications.
 5. Describe repeated visual-identity cues: shape language, saturation, contrast, photography, illustration, decoration, tone, and where expressive brand moments give way to neutral utility surfaces.
+6. Record the accent budget: which roles may carry each saturated or high-contrast color, how many accented elements a typical screen shows, and the approximate share of screen area that stays neutral. Record where the darkest fill is used, such as only the primary action and the active navigation item, because overusing it changes the identity as much as a new hue does.
 
 For charts, separate categorical, sequential, diverging, status, selection, and annotation color roles. For theme-only sources, admit color and surface evidence but reject unrelated layout, component, or behavior claims.
 
