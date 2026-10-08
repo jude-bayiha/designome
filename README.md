@@ -135,7 +135,7 @@ Ask your agent for new screens as usual; the installed guidance makes it read th
 
 ## Evidence so far
 
-- **Next.js and shadcn/ui test:** agents that only had the compact brief, and never saw the screenshots, kept the source's palette, surface tiers, card anatomy and chart conventions across five new screens. Their clearest miss came from a rule phrased as an adjective: "thin chart bars" became thick bars. See the [Next.js and shadcn/ui evaluation](docs/next-shadcn-evaluation.md).
+- **Next.js and shadcn/ui test:** agents that only had the compact brief, and never saw the screenshots, kept the source's palette, surface tiers, card anatomy and chart conventions across five new screens. Their clearest miss came from a rule phrased as an adjective: "thin chart bars" became thick bars. See the [Next.js and shadcn/ui evaluation](docs/next-shadcn-evaluation.md) and rerun it on your own screenshots with the [benchmark kit](benchmarks/next-shadcn/README.md).
 - **Token cost:** the brief entry point fell from a 3.1 MB dossier to about 15k tokens, and extraction took 15 instead of 24 minutes in the same test.
 - **Earlier runs:** see the [executed fidelity evaluation](docs/fidelity-evaluation.md) and the [v0.3 forward test](docs/v0.3-forward-test.md).
 - **Current focus:** making every signature quality carry a measurable bound, and evaluating on new products with their own content and brand.
