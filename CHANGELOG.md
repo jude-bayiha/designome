@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.0.0](https://github.com/jude-bayiha/designome/compare/v1.12.0...v2.0.0) (2026-10-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* **skills:** the designome-extract, designome-install and designome-audit skills are replaced by the designome skill. Invoke /designome or $designome and name the operation. Remove previously installed copies of the three skills. Target projects keep their project-local designome-audit skill.
+
+### Features
+
+* **installer:** export the project audit skill from the unified workflow ([dbca01f](https://github.com/jude-bayiha/designome/commit/dbca01f75119a035eb27192ab5eb1f979fd3a69d))
+* **skills:** add the unified designome skill source ([fefdedd](https://github.com/jude-bayiha/designome/commit/fefdeddac8e0c815c6b707f65ca9c4a47642c5d4))
+* **skills:** publish one designome skill instead of three ([853c188](https://github.com/jude-bayiha/designome/commit/853c18863b704126efdd47ee4782c66924356181))
+
+
+### Bug Fixes
+
+* **benchmarks:** pin scaffold package versions ([4fb0c13](https://github.com/jude-bayiha/designome/commit/4fb0c13f75ab0ea8869e3cbf361a0f5aee8c4a34))
+* **prompts:** keep source assets and values out of extracted claims ([37120cc](https://github.com/jude-bayiha/designome/commit/37120cccb874bcd85a6e289849d5238551aba363))
+* **runtime:** harden identifier trimming and context pointer writes ([3c3aa01](https://github.com/jude-bayiha/designome/commit/3c3aa017f87f7bc998419ea775d7f1a64ed63c5f))
+
 ## [1.12.0](https://github.com/jude-bayiha/designome/compare/v1.11.0...v1.12.0) (2026-10-07)
 
 
