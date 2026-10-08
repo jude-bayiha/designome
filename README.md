@@ -64,6 +64,31 @@ Rules the extraction recorded, and how they carried over:
 
 **Not carried over:** the source had no bar chart, so the DNA had no rule for chart marks, and the agent drew the Reporting bars as solid blocks with nothing to constrain them. One run, one model and one source; the [benchmark kit](benchmarks/next-shadcn/README.md) reruns this on your own screenshots.
 
+### Mix the parts you like from several products
+
+You can take the tables of one product, the charts of another and the theme of a third. Tell the agent which screenshot teaches what, and Designome keeps each one to its subjects.
+
+The Android screens below were built in Kotlin and Jetpack Compose by an agent that only read the extracted brief:
+
+- **Sources:** eight iOS screenshots from three unrelated apps, routed by subject. They are not reproduced here because they belong to their designers.
+  - A subscription tracker set the base identity: colors, surfaces, type, charts, grouped lists and comparisons.
+  - A password vault taught only forms, grouped cards and the navigation shell.
+  - A health app taught only progress and status displays, without its colors or type.
+- **Extraction:** about 11 minutes for $2.85 at list price. The run recorded every route it rejected, such as the vault's tile hues and the health app's green.
+- **Generation:** a fresh agent built Plotline, a fictional community-garden app with nothing in common with the sources, in about 8 minutes for $1.43.
+
+![Plotline home, harvest, plot and goals screens built from three routed sources](assets/showcase/plotline-overview.webp)
+
+![Plotline plots, comparison, form and settings screens built from three routed sources](assets/showcase/plotline-workflow.webp)
+
+How the routes carried over:
+
+- **Segmented progress from the health app, in the tracker's identity.** Goals, the home summary and the watering record use the segmented bars and grid, drawn in the tracker's ink and orange rather than the health app's green.
+- **Forms and grouped cards from the vault.** "Log a planting" keeps the vault's label-left, value-right rows with leading icons inside one grouped card.
+- **Type from the tracker only.** Large figures stay at regular weight with a smaller, lighter decimal part, and titles stay light.
+
+**Not carried over yet:** the segmented bars use the darkest ink where the source kept it for the primary action and the active tab. The first run of this test also exposed a broader gap: rules written as adjectives, such as "weight used sparingly", let the agent fall back to bold text everywhere. Extraction now records a weight band per text role, ratios and an accent budget. Captures are JVM renders without system bars; the [Compose benchmark kit](benchmarks/compose-android/README.md) reruns the test on your own screenshots.
+
 ## What you get in your project
 
 | Artifact                                             | Purpose                                                                                                  |
@@ -167,6 +192,7 @@ Ask your agent for new screens as usual; the installed guidance makes it read th
 ## Evidence so far
 
 - **Next.js and shadcn/ui test:** agents that only had the compact brief, and never saw the screenshots, kept the source's palette, surface tiers, card anatomy and chart conventions across five new screens. Their clearest miss came from a rule phrased as an adjective: "thin chart bars" became thick bars. See the [Next.js and shadcn/ui evaluation](docs/next-shadcn-evaluation.md) and rerun it on your own screenshots with the [benchmark kit](benchmarks/next-shadcn/README.md).
+- **Kotlin and Jetpack Compose test:** with eight screenshots from three products routed by subject, an agent that only had the brief applied each source to its subjects on an unrelated Android app. Before extraction recorded weight bands, the same test produced bold text where the sources used regular weight. See the [Compose benchmark kit](benchmarks/compose-android/README.md).
 - **Token cost:** the brief entry point fell from a 3.1 MB dossier to about 15k tokens, and extraction took 15 instead of 24 minutes in the same test.
 - **Earlier runs:** see the [executed fidelity evaluation](docs/fidelity-evaluation.md) and the [v0.3 forward test](docs/v0.3-forward-test.md).
 - **Current focus:** making every signature quality carry a measurable bound, and evaluating on new products with their own content and brand.
