@@ -1,7 +1,7 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome",
-  "contentFingerprint": "sha256:ea704288f5814c871c92e12ddf5e3535d22bac9134a804f994ee5c110f4f842d",
+  "contentFingerprint": "sha256:a3cf6aea4b391eb748250c1165f082837190cbb81aa83274734c4125a7f99c89",
   "files": {
     "agents/openai.yaml": "aeee0b3a3921828612f09507247c69041d02809a0ba0adb07fce4e3cb695d907",
     "contract.json": "65b2ba2b7324149f40628e6bcb3f8c56e7ef9c750f6632234c367d12999b2690",
@@ -89,12 +89,12 @@
     "scripts/runtime/src/index.mjs": "ea9715570e43715f44dfa9fdf092baea59641bc4798c8c3a01c0726840b6df3e",
     "scripts/runtime/src/runtime/audit-contract.mjs": "a2bdaf63fa3e994c3c319a20bd517cffd89df58e688b4bd94df6411083570a2e",
     "scripts/runtime/src/runtime/audit-state.mjs": "b543da557d93b14a39c797204d7f7190c8b48659ddab8f2bfca1089d81c399e8",
-    "scripts/runtime/src/runtime/audit-verification.mjs": "1a54fd4a13471b01649e3667aab10acb37fbc868b62faa1faed8fa6e50f42f2a",
+    "scripts/runtime/src/runtime/audit-verification.mjs": "90d3e6319de627713c6973a1a1040247abbf5f21a52b1df7a535023517d34f24",
     "scripts/runtime/src/runtime/audit.mjs": "a0c3fc15e648cb61f127be1dfb3d0bad5f956c3aff2ae3149c7551d313ce442d",
     "scripts/runtime/src/runtime/benchmark.mjs": "ae6f228f860c85de92bf03d822f62d3ab64436d46576cff2f992ffc9c18b3685",
     "scripts/runtime/src/runtime/capture-session.mjs": "ac6f7c3f8e05a1fd6d95b96ed0e0366e9b7866c2c396d89aa6f706855d7db1b1",
     "scripts/runtime/src/runtime/context-stage.mjs": "813d87e2ed1768befd9dbc2076b14ee15096adce67f8ede0cc4e3e64fb6f921c",
-    "scripts/runtime/src/runtime/context.mjs": "704d40c1d8e591163fe1dd852a19da39faaaad7a9e97d72312c44f0199a9abe3",
+    "scripts/runtime/src/runtime/context.mjs": "aaba2a9e02f84673c7d1c346c3c30ffd8e636b25ca65fd607d040853d8d8c481",
     "scripts/runtime/src/runtime/design-brief.mjs": "ee5e9b1e3070f5bf1c72275ea890ba8d8374206a6380aa78e806f902e259dc6a",
     "scripts/runtime/src/runtime/design-dna.mjs": "0a8abe80adcd003b3d0d0dccdca23e6fbf8851b4ca344dc69e15acf40dc172b5",
     "scripts/runtime/src/runtime/dna-authoring.mjs": "78e5adf2dcd79da55001f6f18f00c3c6c5a8b299039b3299615e6a0dd572d0e3",
