@@ -48,7 +48,7 @@ flowchart LR
 
 ## Quick start
 
-### 1. Install the skills
+### 1. Install the skill
 
 From your project, with Node.js 24 or newer:
 
@@ -58,24 +58,26 @@ npx skills@latest add https://github.com/jude-bayiha/designome --agent claude-co
 npx skills@latest add https://github.com/jude-bayiha/designome --agent codex
 ```
 
-Each skill ships its own runtime, prompts and schemas; nothing else needs to be installed. Claude Code can also install Designome as a plugin:
+Designome is one skill, `designome`, with three operations: extract, install and audit. It ships its own runtime, prompts and schemas; nothing else needs to be installed. Claude Code can also install Designome as a plugin:
 
 ```text
 /plugin marketplace add jude-bayiha/designome
 /plugin install designome@designome
 ```
 
-| Host        | Skill directory   | Invocation                                                          |
-| ----------- | ----------------- | ------------------------------------------------------------------- |
-| Claude Code | `.claude/skills/` | `/designome-extract`, or `/designome:designome-extract` as a plugin |
-| Codex       | `.agents/skills/` | `$designome-extract`                                                |
+| Host        | Skill directory   | Invocation                                          |
+| ----------- | ----------------- | --------------------------------------------------- |
+| Claude Code | `.claude/skills/` | `/designome`, or `/designome:designome` as a plugin |
+| Codex       | `.agents/skills/` | `$designome`                                        |
+
+Name the operation in your request, as in the examples below; the skill reads only the instructions of that operation. Upgrading from a version with three skills? Remove `designome-extract`, `designome-install` and `designome-audit` from your skill directories, then install `designome`.
 
 ### 2. Extract the grammar
 
 Ask your agent in plain language:
 
 ```text
-/designome-extract Extract the design grammar of these screenshots of a
+/designome Extract the design grammar of these screenshots of a
 project-management web app: ./refs/overview.png ./refs/tasks.png ./refs/details.png.
 No motion.
 ```
@@ -83,7 +85,7 @@ No motion.
 You can route each screenshot to the subjects it should teach:
 
 ```text
-/designome-extract for a corporate website.
+/designome Extract for a corporate website.
 Use dashboard-1.png only for statistics and charts.
 Use theme.png only for colors and surfaces.
 ```
@@ -97,7 +99,7 @@ Read the signature qualities, the rules and the unknowns, then tell your agent e
 ### 4. Install
 
 ```text
-/designome-install Install the accepted Design DNA in this project.
+/designome Install the accepted Design DNA in this project.
 ```
 
 Designome detects your styling stack (plain CSS, Tailwind or shadcn/ui), shows a dry run, and then writes the managed files transactionally. If anything fails, it rolls back.
@@ -107,7 +109,7 @@ Designome detects your styling stack (plain CSS, Tailwind or shadcn/ui), shows a
 Ask your agent for new screens as usual; the installed guidance makes it read the brief first. Then:
 
 ```text
-/designome-audit Audit the new settings screen against the design grammar.
+/designome Audit the new settings screen against the design grammar.
 ```
 
 ## Principles
@@ -182,8 +184,8 @@ Other commands include `doctor` (a read-only diagnostic), `install`, `audit`, `m
 ## Repository layout
 
 ```text
-skill-sources/    Canonical skill instructions and contracts
-skills/           Generated standalone skill bundles (do not edit by hand)
+skill-sources/    Canonical skill instructions, workflows and contracts
+skills/designome/ Generated standalone skill bundle (do not edit by hand)
 prompts/          Specialized extraction, synthesis, integration and audit prompts
 concepts/         Versioned concept matrix: axes, facets, concepts, UI domains
 schemas/          JSON Schemas for every contract
@@ -191,6 +193,7 @@ src/runtime/      Deterministic runtime: validation, installation, audit
 bin/              designome CLI
 docs/             Product, contracts and evaluations
 examples/         Schema-valid reference artifacts
+benchmarks/       Reusable generation benchmarks
 scripts/, tests/  Repository validation and tests
 .codex-plugin/    Codex plugin manifest
 .claude-plugin/   Claude Code plugin and marketplace manifests
