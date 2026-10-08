@@ -4,12 +4,12 @@
 
 ## Responsibility boundary
 
-| Actor             | Responsibilities                                                                                                                                                                                                 |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Designome runtime | Environment diagnostic, run initialization, semantic validation, persistent state transitions, transactional installation, capture plan, evidence normalization checks, mechanical evaluation, report generation |
-| Host agent        | Conversational request normalization, screenshot reasoning through `designome-extract`, target-interface implementation, real browser control, interaction execution, perceptual comparison                      |
-| Human             | One mandatory normal-workflow decision: accept or reject the draft Design DNA                                                                                                                                    |
-| Browser adapter   | Stable typed recording surface that normalizes host-browser observations into audit evidence 1.0 and Audit Contract 2.0 verification links                                                                       |
+| Actor             | Responsibilities                                                                                                                                                                                                       |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Designome runtime | Environment diagnostic, run initialization, semantic validation, persistent state transitions, transactional installation, capture plan, evidence normalization checks, mechanical evaluation, report generation       |
+| Host agent        | Conversational request normalization, screenshot reasoning through the extract operation of the `designome` skill, target-interface implementation, real browser control, interaction execution, perceptual comparison |
+| Human             | One mandatory normal-workflow decision: accept or reject the draft Design DNA                                                                                                                                          |
+| Browser adapter   | Stable typed recording surface that normalizes host-browser observations into audit evidence 1.0 and Audit Contract 2.0 verification links                                                                             |
 
 The runtime never claims to generate the target interface, control the host's integrated browser, or make a deterministic perceptual judgment.
 
@@ -45,7 +45,7 @@ The state machine uses `pending`, `in-progress`, `awaiting`, `completed`, `faile
 
 ## Normal handoffs
 
-After the host agent writes the draft `design-dna.json` to the path in the extraction handoff:
+The extraction handoff names `skill: designome` and `operation: extract`. After the host agent writes the draft `design-dna.json` to the path in that handoff:
 
 ```bash
 designome run --resume

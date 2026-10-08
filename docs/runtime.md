@@ -134,8 +134,8 @@ Current target artifacts are:
 .designome/design-dna.json
 .designome/manifest.json
 docs/designome/ (or the configured documentation directory)
-.agents/skills/designome-audit/
-.claude/skills/designome-audit/
+.agents/skills/designome-audit/ (unless a standalone designome skill is installed there)
+.claude/skills/designome-audit/ (same condition)
 <css-directory>/designome.generated.css
 <css-directory>/designome.overrides.css
 <css-entry> managed import block

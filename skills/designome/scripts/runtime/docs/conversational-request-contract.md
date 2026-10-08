@@ -2,7 +2,7 @@
 
 Designome skills accept ordinary conversational instructions. The host agent interprets that language once and serializes it as `request-contract.json`; the deterministic runtime validates the contract and executes only its bounded values. Downstream prompts consume the normalized contract instead of repeatedly reinterpreting the chat.
 
-Request contract v1.1 is shared by `designome-extract`, `designome-install`, and `designome-audit`. It records the active matrix version, operation, summary, constraints, ambiguities, ignored fragments, and operation-specific parameters. It never turns vague language into a path, evidence scope, design claim, target write, implementation repair, dependency installation, or human acceptance.
+Request contract v1.1 is shared by the extract, install and audit operations of the `designome` skill and by the project-local `designome-audit` skill. It records the active matrix version, operation, summary, constraints, ambiguities, ignored fragments, and operation-specific parameters. It never turns vague language into a path, evidence scope, design claim, target write, implementation repair, dependency installation, or human acceptance.
 
 ## Interpretation states
 
@@ -56,7 +56,7 @@ The evidence modes are:
 This conversational instruction is valid:
 
 ```text
-$designome-extract capture-1.png capture-2.png capture-3.png for a corporate website.
+$designome extract capture-1.png capture-2.png capture-3.png for a corporate website.
 Use capture-1.png and capture-2.png only for statistics and charts.
 Use capture-3.png only for the theme, colors, borders, and elevation.
 ```
