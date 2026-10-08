@@ -1,4 +1,12 @@
 {
   "proseWrap": "preserve",
-  "singleQuote": true
+  "singleQuote": true,
+  "overrides": [
+    {
+      "files": [".claude-plugin/plugin.json", ".codex-plugin/plugin.json"],
+      "options": {
+        "parser": "json-stringify"
+      }
+    }
+  ]
 }
