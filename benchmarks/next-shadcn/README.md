@@ -36,7 +36,7 @@ The `designome` arm is the product's target: Designome does not make screenshots
 
 - Node.js 24 or newer, npm, and the `claude` CLI signed in.
 - Playwright with Chromium, resolvable from the work directory (`npm install playwright` there) or through `NODE_PATH`.
-- Network access for the scaffold only.
+- Network access for the scaffold only. The scaffold pins `create-next-app`, `shadcn`, `lucide-react` and `recharts`; override them with `NEXT_VERSION`, `SHADCN_VERSION`, `LUCIDE_REACT_VERSION` and `RECHARTS_VERSION`.
 
 ## Run it
 
