@@ -1,7 +1,7 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome-extract",
-  "contentFingerprint": "sha256:54bd1cca3228e7d8868a5275deddaeca3a94e53c665d4d7719b87dfaa0ef0aef",
+  "contentFingerprint": "sha256:9f2250032fa4c6f06c4fd7709c91522a23dc11771e152c6c7e3a6189721b3647",
   "files": {
     "agents/openai.yaml": "1dc772d5b9b856d76e72c0814109d906765c71c6f2af3f2b5df63f6f030036d5",
     "contract.json": "ffb86681151861656be209b08480a30e3a0d934b81b9ae6bd4a75575f17f79e1",
@@ -20,7 +20,7 @@
     "scripts/runtime/docs/installation-contract.md": "7e917319af22a7c246289cde21707fc8a6e0b7d815255ccb007afbe66aad3356",
     "scripts/runtime/docs/integration-and-calibration-matrix.md": "5dd1c01bb4f89896c13b3e1068d84b2a85845cfbcb604ff2648d1bf039be7e15",
     "scripts/runtime/docs/lossless-context.md": "08ca2e8ab6adfe0fcf5c799f8b1a341c64c3579425ba2b950de5627c93506462",
-    "scripts/runtime/docs/next-shadcn-evaluation.md": "86d49ed3e4c4feb634f0079766d173984fc4fe3e96e21f9cc13af0c06ea4f740",
+    "scripts/runtime/docs/next-shadcn-evaluation.md": "99f20e87b1cc092de6c73a99f53a5588d3ddb5e29a540bee833eb7a7313a5993",
     "scripts/runtime/docs/orchestration-and-host-contract.md": "7e81826aa54202698c482aad6552224fc5a29a552c6a0b01ba1bb4199f8334c7",
     "scripts/runtime/docs/product-foundation.md": "4358f6d3783d48a4c910588f7b469a94d19a6dd363bd49bd8394605054023667",
     "scripts/runtime/docs/reference-analysis.md": "c60a5bfb863e77cc2d7a9210946731042021ed2a8b3b1aeee82059e68209bae8",
