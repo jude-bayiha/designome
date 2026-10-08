@@ -49,5 +49,6 @@ Validate new extraction with `expand-dna --file <authoring-draft> --output <draf
 - Do not promote a domain merely because its documentation page exists.
 - Exact values remain relationships, ranges, audit-only calibration, or unknown unless evidence establishes them.
 - Do not include target-project visual conventions.
+- Name the Design DNA, its qualities, rules and components after the grammar they describe, never after the source product or brand. Express content formats as patterns, not as source values.
 - Do not silently merge typography roles, color roles, components, states, statistics, or charts with different semantics.
 - Synthesis does not install, accept, generate, browse, or audit.
