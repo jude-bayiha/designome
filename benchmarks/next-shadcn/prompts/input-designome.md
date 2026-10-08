@@ -1,0 +1,1 @@
+Design input: the Design DNA dossier in `{{INPUT_DIR}}/designome/`. Read `{{INPUT_DIR}}/designome/README.md` in full first, then open topic files only when you need their detail. Follow its rules, tokens and recipes on every route, including routes the dossier does not describe. Treat `proposed` and `unknown` claims as the dossier states.
