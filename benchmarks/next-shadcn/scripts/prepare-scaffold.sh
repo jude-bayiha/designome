@@ -5,7 +5,10 @@ set -euo pipefail
 
 work="${1:?usage: prepare-scaffold.sh <work-directory>}"
 next_version="${NEXT_VERSION:-16.3.8}"
-shadcn_version="${SHADCN_VERSION:-latest}"
+# Pinned defaults keep runs reproducible and never execute a mutable tag.
+shadcn_version="${SHADCN_VERSION:-4.21.0}"
+lucide_react_version="${LUCIDE_REACT_VERSION:-1.48.0}"
+recharts_version="${RECHARTS_VERSION:-3.10.1}"
 scaffold="$work/scaffold"
 
 if [ -e "$scaffold" ]; then
@@ -20,7 +23,7 @@ npx --yes "create-next-app@$next_version" "$scaffold" \
 (
   cd "$scaffold"
   npm install
-  npm install lucide-react recharts
+  npm install "lucide-react@$lucide_react_version" "recharts@$recharts_version"
   npx --yes "shadcn@$shadcn_version" init --yes --defaults
   npx --yes "shadcn@$shadcn_version" add --yes \
     alert avatar badge breadcrumb button calendar card chart checkbox command \
