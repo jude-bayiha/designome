@@ -2,7 +2,7 @@
 // Usage: node project-dossier.mjs --dna <design-dna.json> --output <new-directory>
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { projectDocumentation } from '../../../src/index.mjs';
+import { projectDocumentation } from '../../src/index.mjs';
 import { exists, parseArgs, readJson, required, writeJson } from './lib.mjs';
 
 const options = parseArgs(process.argv.slice(2));

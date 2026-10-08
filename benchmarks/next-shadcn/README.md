@@ -16,10 +16,10 @@ The benchmark judges grammar, not copy. Every route carries the benchmark's own 
 | `prompts/reviewer.md`         | The blind reviewer task                                                          |
 | `scripts/prepare-scaffold.sh` | Creates the neutral Next.js and shadcn/ui scaffold every generator copies        |
 | `scripts/run-arm.mjs`         | Runs one arm as a fresh `claude -p` session and records time, tokens and hashes  |
-| `scripts/project-dossier.mjs` | Projects the Markdown dossier of a draft Design DNA, without accepting it        |
 | `scripts/render.mjs`          | Builds each app and captures every route in Chromium at 1440 × 1024              |
 | `scripts/boards.mjs`          | Anonymizes the apps, composes one board per route and prepares the review folder |
-| `scripts/summarize.mjs`       | Prints the run table with wall time, tokens and list cost                        |
+
+`project-dossier.mjs` and `summarize.mjs` are shared with the other benchmarks in [`../shared/`](../shared/README.md).
 
 ## Arms
 
@@ -44,6 +44,7 @@ Keep the work directory and the screenshots outside this repository. Runs, captu
 
 ```bash
 BENCH=$PWD/benchmarks/next-shadcn/scripts
+SHARED=$PWD/benchmarks/shared
 WORK=~/designome-bench/2026-10-08
 SOURCES=~/designome-bench/sources   # your screenshots, never committed
 
@@ -53,7 +54,7 @@ SOURCES=~/designome-bench/sources   # your screenshots, never committed
 # 2. Extract a draft Design DNA, then project its dossier.
 node "$BENCH/run-arm.mjs" --work "$WORK" --arm extract --run extract-1 \
   --sources "$SOURCES" --describe "a project-management web app" --effort medium
-node "$BENCH/project-dossier.mjs" --dna "$WORK/runs/extract-1/output/design-dna.json" \
+node "$SHARED/project-dossier.mjs" --dna "$WORK/runs/extract-1/output/design-dna.json" \
   --output "$WORK/dossier/designome"
 
 # 3. Generators: at least two runs per arm, same model and effort.
@@ -69,7 +70,7 @@ node "$BENCH/boards.mjs" --work "$WORK" --sources "$SOURCES"
   <prompt.md >review-result.json)
 
 # 5. Run table.
-node "$BENCH/summarize.mjs" --work "$WORK"
+node "$SHARED/summarize.mjs" --work "$WORK"
 ```
 
 Pass `--model` to `run-arm.mjs` to pin a model. Pass `--dry-run` to prepare a run folder and its exact command without starting a session.
