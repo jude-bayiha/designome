@@ -38,11 +38,35 @@ test('generated skills are current and contain no nested discoverable skills or 
     const manifest = JSON.parse(files.get('bundle-manifest.json'));
     for (const [file, hash] of Object.entries(manifest.files))
       assert.equal(digest(files.get(file)), hash, file);
-    const instructions = files.get('SKILL.md').toString();
-    for (const [, reference] of instructions.matchAll(
-      /`(scripts\/runtime\/[\w./-]+)`/gu,
-    ))
-      assert.ok(files.has(reference), `Missing ${name}/${reference}`);
+    // Every shipped instruction file resolves its paths from the skill root.
+    const instructionFiles = [...files.keys()].filter(
+      (file) => file.endsWith('.md') && !file.startsWith('scripts/'),
+    );
+    assert.deepEqual(instructionFiles.sort(), [
+      'SKILL.md',
+      'workflows/audit.md',
+      'workflows/extract.md',
+      'workflows/install.md',
+    ]);
+    for (const file of instructionFiles) {
+      const text = files.get(file).toString();
+      assert.doesNotMatch(
+        text,
+        /`\.\.\/\.\.\/(?:docs|prompts|concepts|schemas)\//u,
+      );
+      for (const [, reference] of text.matchAll(
+        /`((?:scripts\/runtime|workflows)\/[\w./-]+)`/gu,
+      ))
+        assert.ok(files.has(reference), `Missing ${name}/${reference}`);
+    }
+    const contract = JSON.parse(files.get('contract.json'));
+    assert.deepEqual(Object.keys(contract.operations), [
+      'extract',
+      'install',
+      'audit',
+    ]);
+    for (const operation of Object.values(contract.operations))
+      assert.ok(files.has(operation.workflow), operation.workflow);
   }
 });
 
@@ -77,14 +101,17 @@ test('generation is repeatable and detects stale, missing and unexpected shipped
   );
   await buildSkills(root);
   await fs.unlink(
-    path.join(
-      root,
-      'skills/designome-extract/scripts/runtime/bin/designome.mjs',
-    ),
+    path.join(root, 'skills/designome/scripts/runtime/bin/designome.mjs'),
   );
   await fs.writeFile(
-    path.join(root, 'skills/designome-extract/unexpected.txt'),
+    path.join(root, 'skills/designome/unexpected.txt'),
     'unexpected',
+  );
+  // A distribution that is no longer built is stale, then removed by the build.
+  await fs.mkdir(path.join(root, 'skills/designome-extract'));
+  await fs.writeFile(
+    path.join(root, 'skills/designome-extract/SKILL.md'),
+    'legacy',
   );
   const errors = await checkSkills(root);
   assert.ok(
@@ -95,8 +122,10 @@ test('generation is repeatable and detects stale, missing and unexpected shipped
   assert.ok(
     errors.some((error) => error.includes('unexpected.txt: unexpected file')),
   );
+  assert.ok(errors.includes('designome-extract: unexpected skill directory'));
   await buildSkills(root);
   assert.deepEqual(await checkSkills(root), []);
+  assert.deepEqual(await fs.readdir(path.join(root, 'skills')), skillNames);
 });
 
 // Each host discovers project skills in its own directory.
@@ -259,18 +288,21 @@ for (const { agent, skillsDirectory } of hosts) {
         'static',
         '--dry-run',
       );
-      if (name === 'designome-audit') {
-        assert.deepEqual(
-          await readTree(installed),
-          before,
-          'DNA installation must preserve the standalone audit distribution',
-        );
-        assert.ok(
-          !manifest.managedArtifacts.some((artifact) =>
-            artifact.path.startsWith(`${skillsDirectory}/designome-audit/`),
-          ),
-        );
-      }
+      // The standalone skill already serves audit for this host: DNA
+      // installation preserves it and exports no project-local audit skill.
+      assert.deepEqual(
+        await readTree(installed),
+        before,
+        'DNA installation must preserve the standalone distribution',
+      );
+      assert.ok(
+        !manifest.managedArtifacts.some((artifact) =>
+          artifact.path.startsWith(`${skillsDirectory}/`),
+        ),
+      );
+      assert.deepEqual(await fs.readdir(path.join(project, skillsDirectory)), [
+        name,
+      ]);
       const managed = manifest.managedArtifacts.find((artifact) =>
         artifact.path.endsWith('designome.generated.css'),
       );

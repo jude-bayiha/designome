@@ -1,4 +1,0 @@
-interface:
-  display_name: 'Designome'
-  short_description: 'Extract, install and audit evidence-backed Design DNA'
-  default_prompt: 'Use $designome to extract Design DNA from these UI screenshots, install it once accepted, or audit generated UI against it.'
