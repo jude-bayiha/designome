@@ -8,5 +8,5 @@ export const benchmarkRoot = path.resolve(
   '..',
 );
 
-export const routes = ['tasks', 'team', 'calendar', 'reporting', 'settings'];
+export const routes = ['objects', 'loans', 'calendar', 'reporting', 'settings'];
 export const viewport = { width: 1440, height: 1024 };
