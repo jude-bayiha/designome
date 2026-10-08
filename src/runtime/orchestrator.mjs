@@ -285,7 +285,8 @@ export async function initializeWorkflow({
   awaitStep(state, 'extract-design-dna', {
     owner: 'host-agent',
     type: 'extract-design-dna',
-    skill: 'designome-extract',
+    skill: 'designome',
+    operation: 'extract',
     responsibility:
       'Apply the validated request contract, inspect the source screenshots with the host multimodal model, write the compatibility report, and write a draft Design DNA. The deterministic runtime does not perform visual reasoning.',
     expectedArtifact: state.dnaPath,
@@ -429,7 +430,8 @@ export async function resumeWorkflow({
         awaitStep(state, 'extract-design-dna', {
           owner: 'host-agent',
           type: 'extract-design-dna',
-          skill: 'designome-extract',
+          skill: 'designome',
+          operation: 'extract',
           expectedArtifact: state.dnaPath,
           responsibility:
             'Write the draft Design DNA using host-agent visual reasoning, then resume.',

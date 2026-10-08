@@ -769,6 +769,8 @@ test('orchestrated run persists failure and resumes installation deterministical
   });
   assert.equal(initialized.status, 'awaiting-host');
   assert.equal(initialized.currentStep, 'extract-design-dna');
+  assert.equal(initialized.handoff.skill, 'designome');
+  assert.equal(initialized.handoff.operation, 'extract');
   await fs.writeFile(
     path.join(initialized.runDirectory, 'design-dna.json'),
     `${JSON.stringify(await referenceDna('draft'), null, 2)}\n`,

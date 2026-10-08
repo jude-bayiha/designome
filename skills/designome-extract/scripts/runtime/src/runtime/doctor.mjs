@@ -69,17 +69,17 @@ async function resolveTarget(projectPath) {
 }
 
 async function inspectSkillContracts() {
-  const skillNames = [
-    'designome-extract',
-    'designome-install',
-    'designome-audit',
+  // The published skill and the audit skill exported into target projects.
+  const skillSources = [
+    ['designome', 'designome'],
+    ['designome-audit', 'project-audit'],
   ];
   const contracts = [];
-  for (const skillName of skillNames) {
+  for (const [skillName, sourceDirectory] of skillSources) {
     const contractPath = path.join(
       pluginRoot,
       'skill-sources',
-      skillName,
+      sourceDirectory,
       'contract.json',
     );
     const contract = await readJson(contractPath).catch(() => null);

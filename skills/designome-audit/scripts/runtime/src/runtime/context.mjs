@@ -320,9 +320,10 @@ export async function compileContext(
     'src/runtime/context.mjs',
     'src/runtime/context-stage.mjs',
     'docs/lossless-context.md',
-    'skill-sources/designome-extract/instructions.md',
-    'skill-sources/designome-install/instructions.md',
-    'skill-sources/designome-audit/instructions.md',
+    'skill-sources/designome/instructions.md',
+    'skill-sources/designome/workflows/extract.md',
+    'skill-sources/designome/workflows/install.md',
+    'skill-sources/designome/workflows/audit.md',
   ])
     await read(file);
   if (!['request'].includes(phase))

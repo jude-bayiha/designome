@@ -340,7 +340,7 @@ async function main() {
       ...result,
       executionOwner: 'host-agent',
       handoff:
-        'The runtime initialized deterministic evidence metadata. Invoke the designome-extract skill for host-model visual reasoning.',
+        'The runtime initialized deterministic evidence metadata. Invoke the extract operation of the designome skill for host-model visual reasoning.',
     };
   } else if (command === 'init-run') {
     assertArguments(parsed, [
