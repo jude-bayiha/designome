@@ -1,5 +1,10 @@
 # Designome
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/designome-lockup-on-dark.svg">
+  <img alt="Designome logo" src="assets/brand/designome-lockup-on-light.svg" height="72">
+</picture>
+
 **Turn UI screenshots into a design grammar your coding agent can follow.**
 
 Designome studies screenshots of interfaces you admire and extracts what makes them well designed: hierarchy, proportions, rhythm, density, surface tiers, type roles, component anatomy and chart conventions. It turns those relationships into durable rules, installs them in your project, and checks that new screens follow them. Your product keeps its own content, brand and identity; it gains the same qualities.
