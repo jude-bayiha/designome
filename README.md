@@ -35,6 +35,30 @@ flowchart LR
 4. **Build.** Your agent reads the brief before generating UI, on any screen.
 5. **Audit.** The audit skill compares rendered screens with the accepted rules. Mechanical, perceptual and usage results are kept separate.
 
+## See it work
+
+The screens below were built by a coding agent that **never saw the source screenshots**. It only read the compact design brief that Designome installed in the project.
+
+- **Source:** four screenshots of a third-party HR performance-review dashboard. They are not reproduced here because they belong to their designer.
+- **Extraction:** the `designome` skill turned them into a draft Design DNA in about 6.5 minutes for $1.58 at list price.
+- **Generation:** a fresh agent got an ordinary request, "build the app in this brief", for a fictional project tool called Relay. The project guidance led it to the design brief. It built five routes in about 5.5 minutes for $1.01.
+- **Content:** the product, people, projects and numbers are new. Only the grammar came from the source.
+
+![Relay tasks screen built from the extracted grammar](assets/showcase/relay-tasks.webp)
+
+| Team                                                                                   | Reporting                                                                                        |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| ![Relay team screen built from the extracted grammar](assets/showcase/relay-team.webp) | ![Relay reporting screen built from the extracted grammar](assets/showcase/relay-reporting.webp) |
+
+Rules the extraction recorded, and how they carried over:
+
+- **Neutral canvas, color only in data.** Near-white surfaces; saturated color only in chips, tags, status marks and progress. Relay keeps the chrome black and white and colors only projects, priorities and statuses.
+- **Summary row above a dense table.** One wider featured card with a breakdown, then equal cards with a large value and a signed delta. Relay's sprint completion card follows that anatomy.
+- **Status by glyph, label and tint.** Every status pairs a hue, a mark and a word, never color alone.
+- **Uniform compact rows with typed columns.** IDs, people, chips, rings, badges and dates each keep one cell type. The ID rule was recorded as a pattern, an uppercase prefix with a zero-padded number, so Relay uses `RLY-0415` rather than the source's IDs.
+
+**Not carried over:** the source had no bar chart, so the DNA had no rule for chart marks, and the agent drew the Reporting bars as solid blocks with nothing to constrain them. One run, one model and one source; the [benchmark kit](benchmarks/next-shadcn/README.md) reruns this on your own screenshots.
+
 ## What you get in your project
 
 | Artifact                                             | Purpose                                                                                                  |
