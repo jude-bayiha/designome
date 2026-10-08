@@ -1,7 +1,7 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome-audit",
-  "contentFingerprint": "sha256:7854ee915f444ec07508188f309efe08eb5e312d06573b6d08ce8859ca16f1a2",
+  "contentFingerprint": "sha256:fe34a27fbfedce948d1fe3ba783db9490619377728668fdb80fba56fd09e86d9",
   "files": {
     "agents/openai.yaml": "e04d01b5fbdf80c26cefad0afeadff9d75a27a0f8bd6b6ebd9ba8a4a0696c36d",
     "contract.json": "f5b552cb49ae9dd994439f803baa8f194b805ab1f203db40364828b98e5301b1",
@@ -113,7 +113,7 @@
     "scripts/runtime/src/runtime/fidelity.mjs": "9938e8cc8ceaf77aa2d3d91d74c615d6d12a71b8fbd2f0f20841d7825c0f371f",
     "scripts/runtime/src/runtime/files.mjs": "c6fbbc480e3c7cf24ea4c24a8c660e0e46915e78e174d0e8c4460ae7e1f38d66",
     "scripts/runtime/src/runtime/images.mjs": "c1887598f1f10d86926097d5402889bb66abaa980d975afae4f3c5c4bf9e80f1",
-    "scripts/runtime/src/runtime/install.mjs": "6510072baa63e88cb8fc99395faeceed972417c86aa0581b92d8618d902749e1",
+    "scripts/runtime/src/runtime/install.mjs": "8c0ef1fd7d57d8e350863a96ea60edacafcf5901d31335166a50265a365fdb04",
     "scripts/runtime/src/runtime/markers.mjs": "a149b86974d30b633e6f2ffbf212420491803c40c119ecfdf3ba08b2e099c28e",
     "scripts/runtime/src/runtime/matrix-brief.mjs": "fc9315348173ab744b08be1065075469b60bca9f5438c0b337d6cb79ce61d0f2",
     "scripts/runtime/src/runtime/migrations.mjs": "37f0b2fc66ca41e5b62a865e181c24c3ad49773da1e78a0865775e04e5efc13b",
