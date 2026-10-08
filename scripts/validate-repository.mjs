@@ -376,11 +376,38 @@ function validatePluginSurface(rootDirectory) {
       try {
         const contract = readJson(contractPath);
         if (
-          contract.schemaVersion !== '1.0.0' ||
+          contract.schemaVersion !== '2.0.0' ||
           contract.runtimeContractVersion !== '1.0.0' ||
           contract.requestContractVersion !== '1.1.0'
         ) {
           errors.push(`${skillName} has an incompatible runtime contract`);
+        }
+        // Skill contract 2.0 routes every operation to a shipped workflow.
+        const operations = Object.entries(contract.operations ?? {});
+        if (
+          JSON.stringify(operations.map(([name]) => name)) !==
+          JSON.stringify(['extract', 'install', 'audit'])
+        ) {
+          errors.push(
+            `${skillName} contract must route extract, install and audit`,
+          );
+        }
+        for (const [operation, route] of operations) {
+          if (
+            typeof route?.workflow !== 'string' ||
+            !fs.existsSync(path.join(skillDirectory, route.workflow))
+          ) {
+            errors.push(
+              `${skillName} ${operation} workflow is missing: ${route?.workflow}`,
+            );
+          }
+          if (
+            !['host-agent', 'designome-runtime', 'shared'].includes(
+              route?.executionOwner,
+            )
+          ) {
+            errors.push(`${skillName} ${operation} has no execution owner`);
+          }
         }
       } catch (error) {
         errors.push(
