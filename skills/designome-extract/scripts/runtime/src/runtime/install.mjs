@@ -39,17 +39,21 @@ const installedDnaRelativePath = '.designome/design-dna.json';
 const auditConfigRelativePath = '.designome/audit.config.json';
 const defaultDocumentationDirectory = 'docs/designome';
 // Codex discovers project skills in .agents/skills and Claude Code in
-// .claude/skills; both hosts always receive the audit skill.
+// .claude/skills; both hosts receive the project-local audit skill unless the
+// full designome skill, or a legacy standalone audit skill, already serves them.
 const auditSkillTargets = [
   {
+    skillsDirectory: '.agents/skills',
     directory: '.agents/skills/designome-audit',
     excludedFiles: new Set(),
   },
   {
+    skillsDirectory: '.claude/skills',
     directory: '.claude/skills/designome-audit',
     excludedFiles: new Set(['agents/openai.yaml']),
   },
 ];
+const standaloneAuditSkills = ['designome', 'designome-audit'];
 const claudeInstructionsRelativePath = 'CLAUDE.md';
 const agentsImportPattern = /^[ \t]*@(?:\.\/)?AGENTS\.md[ \t]*$/mu;
 const transactionRelativePath = '.designome/install-transaction.json';
@@ -234,7 +238,7 @@ function renderGuidanceBlock({
     `Read \`${documentationDirectory}/README.md\`, the compact design brief, completely before generating UI. Open its linked topic files or \`.designome/design-dna.json\` only for the evidence or detail behind an entry.`,
     `Repository rule precedence is \`${integrationPolicy.rulePrecedence}\`; declared existing UI rules: ${existingRules}.`,
     `The detected styling adapter is \`${styling.strategy}\`. ${stylingInstruction}${uiKitInstruction}`,
-    'Preserve claim status, cover applicable business states and stress cases, and run the `designome-audit` skill before delivery (`$designome-audit` in Codex, `/designome-audit` in Claude Code). New audit plans use Audit Contract 2.0: bind established obligations to exact contexts, record real capture hashes and measurements, and leave unresolved or perceptual unknowns incomplete.',
+    'Preserve claim status, cover applicable business states and stress cases, and audit before delivery with the project-local `designome-audit` skill (`$designome-audit` in Codex, `/designome-audit` in Claude Code) or, when it is installed instead, the audit operation of the `designome` skill. New audit plans use Audit Contract 2.0: bind established obligations to exact contexts, record real capture hashes and measurements, and leave unresolved or perceptual unknowns incomplete.',
     guidanceEndMarker,
     '',
   ].join('\n');
@@ -1524,6 +1528,25 @@ async function inspectOwnedFile(
   };
 }
 
+async function hasStandaloneAuditSkill(projectRoot, skillsDirectory) {
+  for (const skill of standaloneAuditSkills) {
+    const bundleManifestPath = path.join(
+      projectRoot,
+      skillsDirectory,
+      skill,
+      'bundle-manifest.json',
+    );
+    if (!(await pathExists(bundleManifestPath))) continue;
+    const bundleManifest = await readJson(bundleManifestPath).catch(() => null);
+    if (
+      bundleManifest?.bundleFormatVersion === '1.0.0' &&
+      bundleManifest.skill === skill
+    )
+      return true;
+  }
+  return false;
+}
+
 async function inspectObsoleteDocumentationFiles({
   projectRoot,
   previousManifest,
@@ -2066,43 +2089,40 @@ export async function planInstallation({
     documentationDirectory: documentationRelative,
     matrix: conceptMatrix,
   });
+  // The project-local audit skill shares the audit workflow of the unified
+  // designome skill, so both always carry the same instructions.
+  const projectAuditSource = path.join(
+    pluginRoot,
+    'skill-sources',
+    'project-audit',
+  );
   const auditSkill = new Map([
     [
       'SKILL.md',
-      await fs.readFile(
+      `${await fs.readFile(
+        path.join(projectAuditSource, 'frontmatter.md'),
+        'utf8',
+      )}\n${await fs.readFile(
         path.join(
           pluginRoot,
           'skill-sources',
-          'designome-audit',
-          'instructions.md',
+          'designome',
+          'workflows',
+          'audit.md',
         ),
         'utf8',
-      ),
+      )}`,
     ],
     [
       'agents/openai.yaml',
       await fs.readFile(
-        path.join(
-          pluginRoot,
-          'skill-sources',
-          'designome-audit',
-          'agents',
-          'openai.yaml',
-        ),
+        path.join(projectAuditSource, 'agents', 'openai.yaml'),
         'utf8',
       ),
     ],
     [
       'contract.json',
-      await fs.readFile(
-        path.join(
-          pluginRoot,
-          'skill-sources',
-          'designome-audit',
-          'contract.json',
-        ),
-        'utf8',
-      ),
+      await fs.readFile(path.join(projectAuditSource, 'contract.json'), 'utf8'),
     ],
     [
       'references/request-contract.schema.json',
@@ -2187,21 +2207,15 @@ export async function planInstallation({
   for (const target of auditSkillTargets) {
     // A standalone distribution belongs to the skill installer, not the DNA
     // installation manifest. Preserve its instructions, runtime and user edits.
-    const externalAuditManifestPath = path.join(
-      projectRoot,
-      target.directory,
-      'bundle-manifest.json',
+    // Once exported, the project-local skill stays managed so it never orphans.
+    const previouslyExported = previousManifest?.managedArtifacts?.some(
+      (artifact) => artifact.path === `${target.directory}/SKILL.md`,
     );
-    const externalAuditManifest = (await pathExists(externalAuditManifestPath))
-      ? await readJson(externalAuditManifestPath)
-      : null;
-    const externalAudit =
-      externalAuditManifest?.bundleFormatVersion === '1.0.0' &&
-      externalAuditManifest?.skill === 'designome-audit' &&
-      !previousManifest?.managedArtifacts?.some(
-        (artifact) => artifact.path === `${target.directory}/SKILL.md`,
-      );
-    if (externalAudit) continue;
+    if (
+      !previouslyExported &&
+      (await hasStandaloneAuditSkill(projectRoot, target.skillsDirectory))
+    )
+      continue;
     for (const [filename, content] of auditSkill) {
       if (target.excludedFiles.has(filename)) continue;
       actions.push(
