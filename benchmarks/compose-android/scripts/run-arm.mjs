@@ -4,6 +4,12 @@
 //     [--sources <dir>] [--routing <file>] [--dossier <dir>] [--describe <text>]
 //     [--model <id>] [--effort <level>] [--dry-run]
 import { runArm } from '../../shared/run-arm.mjs';
-import { benchmarkRoot } from './lib.mjs';
+import { benchmarkRoot, hashIgnore } from './lib.mjs';
 
-process.exit(await runArm({ benchmarkRoot }));
+process.exit(
+  await runArm({
+    benchmarkRoot,
+    hashIgnore,
+    defaultDescription: 'mobile apps',
+  }),
+);

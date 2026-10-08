@@ -13,10 +13,11 @@ Read `_shared-contract.md`, the `axis.component-morphology` matrix slice, and ro
 Promote a visual structure to a component candidate only when repetition, stable anatomy, or a clear semantic contract supports reuse:
 
 1. Define required, optional, conditional, and repeatable parts. Give every part a purpose, content constraints, and applicable token references.
-2. Define variants by purpose and selection condition, not merely appearance. Cover size, density, emphasis, intent, layout, media, and context variants; list unsupported combinations.
-3. Build a state matrix for default, hover, focus, pressed, selected, disabled, read-only, loading, empty, error, success, warning, stale, and offline as applicable. Each state records trigger, feedback, exit, programmatic-state requirement, evidence status, and validation.
-4. Define valid composition: parent-child ownership, sibling grouping, toolbars, field groups, cards, lists, nested surfaces, spacing ownership, repetition, and responsive transformations.
-5. Preserve exceptions and anti-patterns. State when a deviation is one-off, when a new component is warranted, and which nesting, density, action, or variant combinations would collapse meaning.
+2. Record the proportions that make each component recognizable: height relative to body text, radius relative to height (fully rounded, rounded or square), border or stroke width band, icon size relative to its label, internal padding relative to peer gap, and the weight band of each text part. Prefer these ratios to absolute pixels.
+3. Define variants by purpose and selection condition, not merely appearance. Cover size, density, emphasis, intent, layout, media, and context variants; list unsupported combinations.
+4. Build a state matrix for default, hover, focus, pressed, selected, disabled, read-only, loading, empty, error, success, warning, stale, and offline as applicable. Each state records trigger, feedback, exit, programmatic-state requirement, evidence status, and validation.
+5. Define valid composition: parent-child ownership, sibling grouping, toolbars, field groups, cards, lists, nested surfaces, spacing ownership, repetition, and responsive transformations.
+6. Preserve exceptions and anti-patterns. State when a deviation is one-off, when a new component is warranted, and which nesting, density, action, or variant combinations would collapse meaning.
 
 Use UI-domain definitions to avoid generic components. A KPI card, media card, settings row, notification row, and commerce line item may share surface tokens while retaining different anatomy and state contracts.
 

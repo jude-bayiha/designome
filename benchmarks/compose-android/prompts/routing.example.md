@@ -1,0 +1,3 @@
+- Screenshots whose names start with `subscriptions-`: use them for every subject they visibly support. They set the base identity: color roles, surfaces, typography, spacing, charts, grouped lists and comparisons.
+- Screenshots whose names start with `vault-`: use them only for forms and data entry, cards and collections, settings, the application shell and navigation, and the mobile-native shell. Do not use their colors.
+- Screenshots whose names start with `health-`: use them only for status and progress, and for actions and controls. Do not use their colors or typography.

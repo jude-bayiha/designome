@@ -1,0 +1,6 @@
+// Prompts are sent verbatim to the agent, so they start with an instruction, not a heading.
+{
+  "config": {
+    "MD041": false,
+  },
+}
