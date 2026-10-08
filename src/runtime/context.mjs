@@ -607,6 +607,11 @@ export function contextView(pack) {
     context[node.source] ??= {};
     let cursor = context[node.source];
     segments.forEach((key, index) => {
+      // Repeat the guard at the write so no prototype key reaches an object.
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype')
+        throw new DesignomeError('Unsafe context pointer', {
+          code: 'INVALID_CONTEXT',
+        });
       if (index === segments.length - 1)
         cursor[key] = structuredClone(node.value);
       else {

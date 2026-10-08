@@ -52,11 +52,16 @@ function captureContextOrFail(capture, label) {
 }
 
 function identifierPart(value) {
-  return String(value)
-    .replace(/^\//u, '')
-    .replace(/[^a-zA-Z0-9]+/gu, '.')
-    .replace(/^\.+|\.+$/gu, '')
-    .toLowerCase();
+  return (
+    String(value)
+      .replace(/^\//u, '')
+      .replace(/[^a-zA-Z0-9]+/gu, '.')
+      // Runs are already collapsed to one dot, so trim at most one per end;
+      // an unanchored `\.+$` would backtrack quadratically on long inputs.
+      .replace(/^\./u, '')
+      .replace(/\.$/u, '')
+      .toLowerCase()
+  );
 }
 
 function uniqueContexts(contexts, label) {
