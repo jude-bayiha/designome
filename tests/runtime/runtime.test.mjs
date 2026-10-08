@@ -905,6 +905,121 @@ test('installation gives Codex and Claude Code the same audit skill and guidance
   );
 });
 
+test('the project-local audit skill shares the unified audit workflow and yields to a standalone designome skill', async (t) => {
+  const temporaryRoot = await temporaryDirectory(t, 'designome-unified-test-');
+  const dna = await referenceDna();
+  dna.status = 'accepted';
+  const dnaPath = path.join(temporaryRoot, 'accepted-design-dna.json');
+  await fs.writeFile(dnaPath, `${JSON.stringify(dna, null, 2)}\n`);
+  const createProject = async (name) => {
+    const projectRoot = path.join(temporaryRoot, name);
+    await fs.mkdir(projectRoot, { recursive: true });
+    await fs.writeFile(
+      path.join(projectRoot, 'package.json'),
+      `{"name":"${name}","private":true}\n`,
+    );
+    await fs.writeFile(path.join(projectRoot, 'styles.css'), ':root {}\n');
+    return projectRoot;
+  };
+  const options = (projectRoot) => ({
+    dnaPath,
+    projectPath: projectRoot,
+    cssEntry: 'styles.css',
+    instructionsReviewed: true,
+  });
+  const read = (projectRoot, file) =>
+    fs.readFile(path.join(projectRoot, file), 'utf8');
+  const managedPaths = async (projectRoot) =>
+    JSON.parse(
+      await read(projectRoot, '.designome/manifest.json'),
+    ).managedArtifacts.map((artifact) => artifact.path);
+
+  // The exported SKILL.md is the audit frontmatter plus the shared workflow.
+  const plain = await createProject('plain');
+  await installDesignDna(options(plain));
+  const exported = await read(plain, '.claude/skills/designome-audit/SKILL.md');
+  assert.equal(
+    exported,
+    `${await fs.readFile(
+      path.join(repositoryRoot, 'skill-sources/project-audit/frontmatter.md'),
+      'utf8',
+    )}\n${await fs.readFile(
+      path.join(repositoryRoot, 'skill-sources/designome/workflows/audit.md'),
+      'utf8',
+    )}`,
+  );
+  assert.match(exported, /^---\nname: designome-audit\n/u);
+  assert.match(exported, /Project-local mode/u);
+
+  // A standalone designome skill already serves its host; the other host
+  // still receives the project-local audit skill.
+  const standalone = await createProject('standalone');
+  const bundleDirectory = path.join(standalone, '.claude/skills/designome');
+  await fs.mkdir(bundleDirectory, { recursive: true });
+  await fs.writeFile(path.join(bundleDirectory, 'SKILL.md'), 'standalone\n');
+  await fs.writeFile(
+    path.join(bundleDirectory, 'bundle-manifest.json'),
+    JSON.stringify({ bundleFormatVersion: '1.0.0', skill: 'designome' }),
+  );
+  await installDesignDna(options(standalone));
+  const standalonePaths = await managedPaths(standalone);
+  assert.ok(
+    !standalonePaths.some((file) => file.startsWith('.claude/skills/')),
+  );
+  assert.ok(
+    standalonePaths.includes('.agents/skills/designome-audit/SKILL.md'),
+  );
+  assert.equal(
+    await read(standalone, '.claude/skills/designome/SKILL.md'),
+    'standalone\n',
+  );
+  await assert.rejects(
+    fs.access(path.join(standalone, '.claude/skills/designome-audit')),
+  );
+  assert.match(
+    await read(standalone, 'CLAUDE.md'),
+    /audit operation of the `designome` skill/u,
+  );
+
+  // An unrelated bundle manifest is not a standalone audit skill.
+  const unrelated = await createProject('unrelated');
+  await fs.mkdir(path.join(unrelated, '.claude/skills/designome'), {
+    recursive: true,
+  });
+  await fs.writeFile(
+    path.join(unrelated, '.claude/skills/designome/bundle-manifest.json'),
+    JSON.stringify({ bundleFormatVersion: '1.0.0', skill: 'other' }),
+  );
+  await installDesignDna(options(unrelated));
+  assert.ok(
+    (await managedPaths(unrelated)).includes(
+      '.claude/skills/designome-audit/SKILL.md',
+    ),
+  );
+
+  // Once exported, the project-local skill stays managed after the full skill
+  // is added, so reinstalling neither orphans nor rewrites it.
+  await fs.mkdir(path.join(plain, '.claude/skills/designome'), {
+    recursive: true,
+  });
+  await fs.writeFile(
+    path.join(plain, '.claude/skills/designome/bundle-manifest.json'),
+    JSON.stringify({ bundleFormatVersion: '1.0.0', skill: 'designome' }),
+  );
+  const replan = await planInstallation(options(plain));
+  assert.equal(replan.status, 'ready');
+  assert.ok(
+    replan.publicPlan.actions
+      .filter((action) => action.path.includes('/designome-audit/'))
+      .every((action) => action.action === 'unchanged'),
+  );
+  assert.ok(
+    (await managedPaths(plain)).includes(
+      '.claude/skills/designome-audit/SKILL.md',
+    ),
+  );
+});
+
 test('documentation migration deletes only checksum-matching obsolete files', async (t) => {
   const temporaryRoot = await temporaryDirectory(
     t,

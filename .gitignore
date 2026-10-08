@@ -11,3 +11,6 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/settings.json
+
+# Benchmark work directories (screenshots, generated apps, captures)
+benchmarks/*/work/

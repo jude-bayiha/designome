@@ -35,6 +35,30 @@ flowchart LR
 4. **Build.** Your agent reads the brief before generating UI, on any screen.
 5. **Audit.** The audit skill compares rendered screens with the accepted rules. Mechanical, perceptual and usage results are kept separate.
 
+## See it work
+
+The screens below were built by a coding agent that **never saw the source screenshots**. It only read the compact design brief that Designome installed in the project.
+
+- **Source:** four screenshots of a third-party HR performance-review dashboard. They are not reproduced here because they belong to their designer.
+- **Extraction:** the `designome` skill turned them into a draft Design DNA in about 6.5 minutes for $1.58 at list price.
+- **Generation:** a fresh agent got an ordinary request, "build the app in this brief", for a fictional project tool called Relay. The project guidance led it to the design brief. It built five routes in about 5.5 minutes for $1.01.
+- **Content:** the product, people, projects and numbers are new. Only the grammar came from the source.
+
+![Relay tasks screen built from the extracted grammar](assets/showcase/relay-tasks.webp)
+
+| Team                                                                                   | Reporting                                                                                        |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| ![Relay team screen built from the extracted grammar](assets/showcase/relay-team.webp) | ![Relay reporting screen built from the extracted grammar](assets/showcase/relay-reporting.webp) |
+
+Rules the extraction recorded, and how they carried over:
+
+- **Neutral canvas, color only in data.** Near-white surfaces; saturated color only in chips, tags, status marks and progress. Relay keeps the chrome black and white and colors only projects, priorities and statuses.
+- **Summary row above a dense table.** One wider featured card with a breakdown, then equal cards with a large value and a signed delta. Relay's sprint completion card follows that anatomy.
+- **Status by glyph, label and tint.** Every status pairs a hue, a mark and a word, never color alone.
+- **Uniform compact rows with typed columns.** IDs, people, chips, rings, badges and dates each keep one cell type. The ID rule was recorded as a pattern, an uppercase prefix with a zero-padded number, so Relay uses `RLY-0415` rather than the source's IDs.
+
+**Not carried over:** the source had no bar chart, so the DNA had no rule for chart marks, and the agent drew the Reporting bars as solid blocks with nothing to constrain them. One run, one model and one source; the [benchmark kit](benchmarks/next-shadcn/README.md) reruns this on your own screenshots.
+
 ## What you get in your project
 
 | Artifact                                             | Purpose                                                                                                  |
@@ -48,7 +72,7 @@ flowchart LR
 
 ## Quick start
 
-### 1. Install the skills
+### 1. Install the skill
 
 From your project, with Node.js 24 or newer:
 
@@ -58,24 +82,26 @@ npx skills@latest add https://github.com/jude-bayiha/designome --agent claude-co
 npx skills@latest add https://github.com/jude-bayiha/designome --agent codex
 ```
 
-Each skill ships its own runtime, prompts and schemas; nothing else needs to be installed. Claude Code can also install Designome as a plugin:
+Designome is one skill, `designome`, with three operations: extract, install and audit. It ships its own runtime, prompts and schemas; nothing else needs to be installed. Claude Code can also install Designome as a plugin:
 
 ```text
 /plugin marketplace add jude-bayiha/designome
 /plugin install designome@designome
 ```
 
-| Host        | Skill directory   | Invocation                                                          |
-| ----------- | ----------------- | ------------------------------------------------------------------- |
-| Claude Code | `.claude/skills/` | `/designome-extract`, or `/designome:designome-extract` as a plugin |
-| Codex       | `.agents/skills/` | `$designome-extract`                                                |
+| Host        | Skill directory   | Invocation                                          |
+| ----------- | ----------------- | --------------------------------------------------- |
+| Claude Code | `.claude/skills/` | `/designome`, or `/designome:designome` as a plugin |
+| Codex       | `.agents/skills/` | `$designome`                                        |
+
+Name the operation in your request, as in the examples below; the skill reads only the instructions of that operation. Upgrading from a version with three skills? Remove `designome-extract`, `designome-install` and `designome-audit` from your skill directories, then install `designome`.
 
 ### 2. Extract the grammar
 
 Ask your agent in plain language:
 
 ```text
-/designome-extract Extract the design grammar of these screenshots of a
+/designome Extract the design grammar of these screenshots of a
 project-management web app: ./refs/overview.png ./refs/tasks.png ./refs/details.png.
 No motion.
 ```
@@ -83,7 +109,7 @@ No motion.
 You can route each screenshot to the subjects it should teach:
 
 ```text
-/designome-extract for a corporate website.
+/designome Extract for a corporate website.
 Use dashboard-1.png only for statistics and charts.
 Use theme.png only for colors and surfaces.
 ```
@@ -97,7 +123,7 @@ Read the signature qualities, the rules and the unknowns, then tell your agent e
 ### 4. Install
 
 ```text
-/designome-install Install the accepted Design DNA in this project.
+/designome Install the accepted Design DNA in this project.
 ```
 
 Designome detects your styling stack (plain CSS, Tailwind or shadcn/ui), shows a dry run, and then writes the managed files transactionally. If anything fails, it rolls back.
@@ -107,7 +133,7 @@ Designome detects your styling stack (plain CSS, Tailwind or shadcn/ui), shows a
 Ask your agent for new screens as usual; the installed guidance makes it read the brief first. Then:
 
 ```text
-/designome-audit Audit the new settings screen against the design grammar.
+/designome Audit the new settings screen against the design grammar.
 ```
 
 ## Principles
@@ -135,7 +161,7 @@ Ask your agent for new screens as usual; the installed guidance makes it read th
 
 ## Evidence so far
 
-- **Next.js and shadcn/ui test:** agents that only had the compact brief, and never saw the screenshots, kept the source's palette, surface tiers, card anatomy and chart conventions across five new screens. Their clearest miss came from a rule phrased as an adjective: "thin chart bars" became thick bars. See the [Next.js and shadcn/ui evaluation](docs/next-shadcn-evaluation.md).
+- **Next.js and shadcn/ui test:** agents that only had the compact brief, and never saw the screenshots, kept the source's palette, surface tiers, card anatomy and chart conventions across five new screens. Their clearest miss came from a rule phrased as an adjective: "thin chart bars" became thick bars. See the [Next.js and shadcn/ui evaluation](docs/next-shadcn-evaluation.md) and rerun it on your own screenshots with the [benchmark kit](benchmarks/next-shadcn/README.md).
 - **Token cost:** the brief entry point fell from a 3.1 MB dossier to about 15k tokens, and extraction took 15 instead of 24 minutes in the same test.
 - **Earlier runs:** see the [executed fidelity evaluation](docs/fidelity-evaluation.md) and the [v0.3 forward test](docs/v0.3-forward-test.md).
 - **Current focus:** making every signature quality carry a measurable bound, and evaluating on new products with their own content and brand.
@@ -182,8 +208,8 @@ Other commands include `doctor` (a read-only diagnostic), `install`, `audit`, `m
 ## Repository layout
 
 ```text
-skill-sources/    Canonical skill instructions and contracts
-skills/           Generated standalone skill bundles (do not edit by hand)
+skill-sources/    Canonical skill instructions, workflows and contracts
+skills/designome/ Generated standalone skill bundle (do not edit by hand)
 prompts/          Specialized extraction, synthesis, integration and audit prompts
 concepts/         Versioned concept matrix: axes, facets, concepts, UI domains
 schemas/          JSON Schemas for every contract
@@ -191,6 +217,7 @@ src/runtime/      Deterministic runtime: validation, installation, audit
 bin/              designome CLI
 docs/             Product, contracts and evaluations
 examples/         Schema-valid reference artifacts
+benchmarks/       Reusable generation benchmarks
 scripts/, tests/  Repository validation and tests
 .codex-plugin/    Codex plugin manifest
 .claude-plugin/   Claude Code plugin and marketplace manifests

@@ -7,11 +7,8 @@ export const repositoryRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '..',
 );
-export const skillNames = [
-  'designome-audit',
-  'designome-extract',
-  'designome-install',
-];
+// One published skill; its SKILL.md routes extract, install and audit.
+export const skillNames = ['designome'];
 const runtimePrefix = 'scripts/runtime';
 // Explicit allowlist: never ship tests, dependencies, private runs or targets.
 const runtimeDirectories = [
@@ -44,6 +41,18 @@ export async function readTree(directory, prefix = '') {
   return result;
 }
 
+// Source paths are written from skill-sources/<skill>/ to the repository root;
+// shipped paths point into the bundled runtime instead.
+function rewriteRuntimePaths(text) {
+  return text
+    .replaceAll('../../docs/', `${runtimePrefix}/docs/`)
+    .replaceAll('../../prompts/', `${runtimePrefix}/prompts/`)
+    .replaceAll('../../concepts/', `${runtimePrefix}/concepts/`)
+    .replaceAll('../../schemas/', `${runtimePrefix}/schemas/`)
+    .replaceAll('root is `../..`', `root is \`${runtimePrefix}\``)
+    .replaceAll('root as `../..`', `root as \`${runtimePrefix}\``);
+}
+
 const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const json = (value) => Buffer.from(`${JSON.stringify(value, null, 2)}\n`);
 
@@ -67,18 +76,13 @@ export async function expectedSkills(root = repositoryRoot) {
   for (const name of skillNames) {
     const files = new Map(runtime);
     const source = await readTree(path.join(root, 'skill-sources', name));
-    const instructions = source
-      .get('instructions.md')
-      .toString('utf8')
-      .replaceAll('../../docs/', `${runtimePrefix}/docs/`)
-      .replaceAll('../../prompts/', `${runtimePrefix}/prompts/`)
-      .replaceAll('../../concepts/', `${runtimePrefix}/concepts/`)
-      .replaceAll('../../schemas/', `${runtimePrefix}/schemas/`)
-      .replaceAll('root is `../..`', `root is \`${runtimePrefix}\``)
-      .replaceAll('root as `../..`', `root as \`${runtimePrefix}\``);
-    files.set('SKILL.md', Buffer.from(instructions));
-    source.delete('instructions.md');
-    for (const [file, bytes] of source) files.set(file, bytes);
+    for (const [file, bytes] of source)
+      files.set(
+        file === 'instructions.md' ? 'SKILL.md' : file,
+        file.endsWith('.md')
+          ? Buffer.from(rewriteRuntimePaths(bytes.toString('utf8')))
+          : bytes,
+      );
     const hashes = Object.fromEntries(
       [...files]
         .sort(([a], [b]) => a.localeCompare(b, 'en'))
@@ -98,8 +102,21 @@ export async function expectedSkills(root = repositoryRoot) {
   return distributions;
 }
 
+async function generatedSkillDirectories(root) {
+  const entries = await fs
+    .readdir(path.join(root, 'skills'), { withFileTypes: true })
+    .catch((error) => {
+      if (error.code === 'ENOENT') return [];
+      throw error;
+    });
+  return entries.filter((entry) => entry.isDirectory()).map((e) => e.name);
+}
+
 export async function checkSkills(root = repositoryRoot) {
   const errors = [];
+  for (const name of await generatedSkillDirectories(root))
+    if (!skillNames.includes(name))
+      errors.push(`${name}: unexpected skill directory`);
   for (const [name, expected] of await expectedSkills(root)) {
     const actual = await readTree(path.join(root, 'skills', name)).catch(
       (error) => {
@@ -119,6 +136,13 @@ export async function checkSkills(root = repositoryRoot) {
 export async function buildSkills(root = repositoryRoot) {
   // Collect all inputs before replacing the generated directories.
   const distributions = await expectedSkills(root);
+  // skills/ is fully generated: remove distributions that are no longer built.
+  for (const name of await generatedSkillDirectories(root))
+    if (!skillNames.includes(name))
+      await fs.rm(path.join(root, 'skills', name), {
+        recursive: true,
+        force: true,
+      });
   for (const [name, files] of distributions) {
     const destination = path.join(root, 'skills', name);
     await fs.rm(destination, { recursive: true, force: true });
@@ -144,6 +168,8 @@ if (
     } else console.log('Skill distributions match canonical sources.');
   } else {
     await buildSkills();
-    console.log('Built three self-contained skill distributions.');
+    console.log(
+      `Built ${skillNames.length} self-contained skill distribution(s).`,
+    );
   }
 }
