@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Designome Audit'
+  short_description: 'Audit generated UI against accepted Design DNA'
+  default_prompt: 'Use $designome-audit to audit this generated UI against its Design DNA.'

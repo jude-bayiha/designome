@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "2.0.0",
+  "runtimeContractVersion": "1.0.0",
+  "requestContractVersion": "1.1.0",
+  "auditContractVersion": "2.0.0",
+  "operations": {
+    "extract": {
+      "workflow": "workflows/extract.md",
+      "executionOwner": "host-agent"
+    },
+    "install": {
+      "workflow": "workflows/install.md",
+      "executionOwner": "designome-runtime"
+    },
+    "audit": {
+      "workflow": "workflows/audit.md",
+      "executionOwner": "shared"
+    }
+  }
+}
