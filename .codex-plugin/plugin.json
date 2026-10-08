@@ -5,7 +5,13 @@
   "author": {
     "name": "Designome contributors"
   },
-  "keywords": ["ui", "ux", "design-system", "screenshots", "agent"],
+  "keywords": [
+    "ui",
+    "ux",
+    "design-system",
+    "screenshots",
+    "agent"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Designome",
@@ -13,7 +19,10 @@
     "longDescription": "Use the host coding agent to extract framework-neutral Design DNA from screenshots, install accepted guidance safely, and audit generated interfaces.",
     "developerName": "Designome contributors",
     "category": "Productivity",
-    "capabilities": ["Interactive", "Write"],
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
     "defaultPrompt": [
       "Extract Design DNA from these UI screenshots.",
       "Install this accepted Design DNA into my project.",
