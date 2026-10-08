@@ -10,7 +10,7 @@ The benchmark judges grammar, not copy. Every route carries the benchmark's own 
 | ----------------------------- | -------------------------------------------------------------------------------- |
 | `brief.md`                    | The five-route app every generator builds, with fictional content                |
 | `rubric.md`                   | The blind review grid: grammar aspects, finish, copy flags and rule gaps         |
-| `prompts/extract.md`          | The extraction run, through the `designome-extract` skill                        |
+| `prompts/extract.md`          | The extraction run, through the `designome` skill's extract operation            |
 | `prompts/generator.md`        | The task shared by every generator arm                                           |
 | `prompts/input-<arm>.md`      | The only paragraph that differs between arms                                     |
 | `prompts/reviewer.md`         | The blind reviewer task                                                          |
