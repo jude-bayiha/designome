@@ -1,0 +1,19 @@
+{
+  "sources": [
+    {
+      "match": "clickup-",
+      "evidenceMode": ["only"],
+      "requireUiDomainRefs": ["domain.tables-lists"],
+      "forbidUiDomainRefs": [
+        "domain.app-shell-navigation",
+        "domain.cards-collections"
+      ],
+      "forbidAxisRefs": ["axis.color-surface-identity"]
+    },
+    {
+      "match": "flowai-",
+      "evidenceMode": ["prefer", "all"],
+      "requireUiDomainRefs": ["domain.app-shell-navigation"]
+    }
+  ]
+}
