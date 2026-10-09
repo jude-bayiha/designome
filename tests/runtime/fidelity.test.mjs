@@ -231,6 +231,14 @@ test('the dossier README is a compact brief that names every accepted artifact',
   assert.ok(precedence > 0 && precedence < brief.indexOf('## Tokens'));
   assert.match(brief, /1\. The person's explicit request/u);
   assert.match(brief, /3\. The Designome defaults below, only where/u);
+  // Detail guardrails keep sibling charts, screen bands and slots consistent.
+  for (const guardrail of [
+    'One recipe per chart family.',
+    'One screen skeleton.',
+    'Proportions hold at every width.',
+  ])
+    assert.ok(brief.includes(guardrail), guardrail);
+  assert.match(brief, /the need its purpose names/u);
   const total = [...docs.values()].reduce((sum, text) => sum + text.length, 0);
   assert.ok(brief.length * 10 < total, `${brief.length} of ${total}`);
 });

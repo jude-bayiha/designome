@@ -1,4 +1,5 @@
-// Build and render every generated app, then capture each route at the benchmark viewport.
+// Build and render every generated app, then capture each route at the benchmark
+// viewport and again at a phone width.
 // Usage: node render.mjs --work <dir> [--run <id>]... [--port <number>]
 import { spawn, spawnSync } from 'node:child_process';
 import fs from 'node:fs/promises';
@@ -6,6 +7,7 @@ import path from 'node:path';
 import {
   exists,
   loadPlaywright,
+  narrowViewport,
   parseArgs,
   required,
   routes,
@@ -125,6 +127,19 @@ for (const runId of runIds.sort()) {
         loadedFonts: [...new Set(metrics.fonts)],
         console: console_,
       });
+      // Same page at phone width: the full page, and whether it scrolls sideways.
+      await page.setViewportSize(narrowViewport);
+      await page.waitForLoadState('networkidle');
+      const narrow = path.join(output, `${route}.narrow.png`);
+      await page.screenshot({ path: narrow, fullPage: true });
+      const narrowWidth = await page.evaluate(
+        () => document.documentElement.scrollWidth,
+      );
+      captures.at(-1).narrow = {
+        path: `${route}.narrow.png`,
+        hash: await sha256File(narrow),
+        horizontalOverflow: narrowWidth > narrowViewport.width,
+      };
       await context.close();
     }
   } finally {
@@ -134,6 +149,7 @@ for (const runId of runIds.sort()) {
     runId,
     build: 'passed',
     viewport,
+    narrowViewport,
     deviceScaleFactor: 1,
     colorScheme: 'light',
     captures,

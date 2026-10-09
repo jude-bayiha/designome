@@ -106,7 +106,13 @@ function componentLines(component) {
 function componentsSection(dna) {
   const components = dna.componentPatterns ?? [];
   if (components.length === 0) return [];
-  return ['## Components', '', ...components.flatMap(componentLines)];
+  return [
+    '## Components',
+    '',
+    'Reach for a recipe whenever the product has the need its purpose names, including on screens the sources never showed. Change its content, never its anatomy.',
+    '',
+    ...components.flatMap(componentLines),
+  ];
 }
 
 function constraintsSection(dna) {
@@ -157,7 +163,10 @@ function guardrailsSection() {
     'Defects, not taste. Apply them on every screen unless the person explicitly asks otherwise.',
     '',
     '- **One recipe per repeated component.** A component that repeats across screens, such as a KPI tile, list row, card, chip or badge, keeps the same parts, order and proportions everywhere. Add a second variant only when this brief records one with its selection condition.',
-    '- **Content stays in its container.** Text, chips, badges and marks never overflow the cell, card, row or control that holds them, and no bar or overlay covers content. Past the available width, truncate with an ellipsis or collapse the excess into a "+N" count.',
+    '- **One recipe per chart family.** Sibling charts of one family, such as columns, bars, progress or segmented indicators, share mark thickness relative to their pitch, gap ratio, corners, gridlines and tone assignment on every screen.',
+    '- **One screen skeleton.** Every screen keeps the band order and the primary-action position this brief records. A screen may omit an optional band; it never reorders bands or moves the primary action.',
+    '- **Content stays in its container.** Text, chips, badges and marks never overflow the cell, card, row or control that holds them, and no bar or overlay covers content. Past the available width, first drop the optional part the slot rule names, then truncate with an ellipsis or collapse the excess into a "+N" count, never below the minimum visible characters the rule records.',
+    '- **Proportions hold at every width.** Apply ratios and minimums at each viewport. When space shrinks, stack or wrap regions in their recorded order instead of squeezing components below their measured proportions, and never scroll the page sideways.',
     '',
     '### Budget defaults',
     '',
@@ -165,6 +174,7 @@ function guardrailsSection() {
     '',
     '- **Status colors:** at most 4 saturated status hues, in a fixed order such as neutral, in progress, attention, done. Further statuses reuse one of them or stay neutral; no per-category hue families.',
     '- **Chart series:** data series use one neutral tone; the accent marks at most one highlighted series or mark per chart.',
+    '- **Text slots:** a chip, badge or table cell shows at least 12 characters of its main text, and a title is never truncated while its container has free space that could hold it.',
     '- **Accent:** reserved for the primary action, the active navigation item and the one highlighted chart mark. Progress bars, segmented bars and meters fill with a neutral grey or the body-text ink on a lighter track, never the accent.',
     '',
   ];

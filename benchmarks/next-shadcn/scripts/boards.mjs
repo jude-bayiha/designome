@@ -4,4 +4,9 @@
 import { composeBoards } from '../../shared/boards.mjs';
 import { benchmarkRoot, routes, viewport } from './lib.mjs';
 
-await composeBoards({ benchmarkRoot, screens: routes, tile: viewport });
+await composeBoards({
+  benchmarkRoot,
+  screens: routes,
+  tile: viewport,
+  suffixes: ['.png', '.full.png', '.narrow.png'],
+});
