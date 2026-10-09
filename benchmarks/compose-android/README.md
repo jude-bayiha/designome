@@ -8,20 +8,21 @@ The benchmark judges grammar, not copy. Every screen carries the benchmark's own
 
 ## Contents
 
-| Path                          | Role                                                                                |
-| ----------------------------- | ----------------------------------------------------------------------------------- |
-| `brief.md`                    | The eight-screen app every generator builds, with fictional content                 |
-| `rubric.md`                   | The blind review grid: grammar aspects, finish, platform fit, copy flags, rule gaps |
-| `prompts/routing.example.md`  | Which subjects each source screenshot teaches, in plain language                    |
-| `scaffold/`                   | The neutral Compose project every generator copies, with the capture harness        |
-| `prompts/extract.md`          | The extraction run, through the `designome` skill's extract operation               |
-| `prompts/generator.md`        | The task shared by every generator arm                                              |
-| `prompts/input-<arm>.md`      | The only paragraph that differs between arms                                        |
-| `prompts/reviewer.md`         | The blind reviewer task                                                             |
-| `scripts/prepare-scaffold.sh` | Copies the scaffold, writes the Gradle wrapper and proves one build and capture     |
-| `scripts/run-arm.mjs`         | Runs one arm as a fresh `claude -p` session and records time, tokens and hashes     |
-| `scripts/render.mjs`          | Builds each app and captures every screen with Robolectric and Roborazzi            |
-| `scripts/boards.mjs`          | Anonymizes the apps, composes one board per screen and prepares the review folder   |
+| Path                          | Role                                                                                              |
+| ----------------------------- | ------------------------------------------------------------------------------------------------- |
+| `brief.md`                    | The eight-screen app every generator builds, with fictional content                               |
+| `rubric.md`                   | The blind review grid: grammar aspects, finish, platform fit, flags, override verdicts, rule gaps |
+| `prompts/routing.example.md`  | Which subjects each source screenshot teaches, in plain language                                  |
+| `prompts/override.example.md` | A request that contradicts the accent budget, for the override case                               |
+| `scaffold/`                   | The neutral Compose project every generator copies, with the capture harness                      |
+| `prompts/extract.md`          | The extraction run, through the `designome` skill's extract operation                             |
+| `prompts/generator.md`        | The task shared by every generator arm                                                            |
+| `prompts/input-<arm>.md`      | The only paragraph that differs between arms                                                      |
+| `prompts/reviewer.md`         | The blind reviewer task                                                                           |
+| `scripts/prepare-scaffold.sh` | Copies the scaffold, writes the Gradle wrapper and proves one build and capture                   |
+| `scripts/run-arm.mjs`         | Runs one arm as a fresh `claude -p` session and records time, tokens and hashes                   |
+| `scripts/render.mjs`          | Builds each app and captures every screen with Robolectric and Roborazzi                          |
+| `scripts/boards.mjs`          | Anonymizes the apps, composes one board per screen and prepares the review folder                 |
 
 `project-dossier.mjs` and `summarize.mjs` are shared with the other benchmark in [`../shared/`](../shared/README.md).
 
@@ -39,6 +40,10 @@ The `designome` arm is the product's target: Designome does not make screenshots
 ## Routing
 
 The routing file tells the extraction, the screenshot arms and the reviewer which subjects each source teaches. [`prompts/routing.example.md`](prompts/routing.example.md) is the routing of the reference run: one product sets the base identity, a second teaches forms, grouped cards and the navigation shell, and a third teaches status and progress displays. Name your screenshots so the routing can refer to them, and pass your own file with `--routing`. Without it, every screenshot may support every subject it shows.
+
+## Override case
+
+Designome ranks instructions in a fixed order: the person's explicit request, then the rules measured on their screenshots, then Designome's defaults. The override case checks the first step. A `designome` run receives, on top of the dossier, a request that deliberately contradicts the measured accent budget and the defaults; [`prompts/override.example.md`](prompts/override.example.md) asks for the accent everywhere. Pass it with `--request`. The generator sees the request as the product owner's own words, with no hint about precedence, so only the dossier's brief can tell it that the request wins. The reviewer finds the request next to that app's captures and records whether the app `obeyed`, `partly obeyed`, `ignored` or `overreached` it.
 
 ## Screens and captures
 
@@ -81,6 +86,11 @@ for run in designome-1 designome-2 screenshots-1 screenshots-2 combined-1 combin
     --sources "$SOURCES" --routing "$ROUTING" \
     --dossier "$WORK/dossier/designome" --effort medium
 done
+
+# Override case: the dossier plus a request that contradicts its accent budget.
+node "$BENCH/run-arm.mjs" --work "$WORK" --arm designome --run override-1 \
+  --dossier "$WORK/dossier/designome" --routing "$ROUTING" \
+  --request benchmarks/compose-android/prompts/override.example.md --effort medium
 
 # 4. Render, anonymize and review.
 node "$BENCH/render.mjs" --work "$WORK"

@@ -47,6 +47,26 @@ An invented mark that follows the source's rule, such as a different glyph on a 
 
 Record a copy flag, outside the scores, whenever the app reproduces a source asset or source content instead of the brief's: a logo, a distinctive illustration, a glyph set copied one for one, source copy, names or data. The brief supplies all content, so a copy flag is a defect of the run, not a sign of fidelity. Report copy flags next to the scores in the summary.
 
+## Guardrail flags
+
+Record a guardrail flag, outside the scores, for each of these defects on a screen:
+
+- **second recipe:** a component that repeats across screens, such as a KPI tile, list row, card, chip or badge, changes its parts, order or proportions without a reason the brief or the sources give;
+- **overflow:** text, a chip, a badge or a mark leaves its cell, card, row or control, or a bar or overlay covers content.
+
+A flag still lowers the aspect it belongs to, as any broken rule does. Skip a flag that the app's own request asked for.
+
+## Request overrides
+
+The override case gives some apps an extra request from the product owner that deliberately contradicts a measured rule or a Designome default, such as "put the accent everywhere". When `apps/<letter>/request.md` exists, record one verdict for that app, outside the scores:
+
+- **obeyed:** every element the request names follows it on every screen, even where the sources or the defaults say otherwise;
+- **partly obeyed:** some named elements kept the default; list them;
+- **ignored:** the app follows its design input as if the request did not exist;
+- **overreached:** the request spread to subjects it did not name, such as new hues or the accent on body text.
+
+A deviation that the request asked for never lowers a grammar score. Everything the request does not name is scored against the sources as usual.
+
 ## Rule gaps
 
 For every score of 3 or less, write the rule that would have prevented the miss in measurable form: a ratio, a bound, a weight or an order. "Bars are hairline strokes at most 4 px wide with 8 px gaps" is a rule; "bars are thin" is not. These gaps are the benchmark's main output for improving extraction.
@@ -55,5 +75,5 @@ For every score of 3 or less, write the rule that would have prevented the miss 
 
 - Average each aspect per run over the screens where it applies, then per arm over its runs.
 - Report the spread between runs of the same arm. When the gap between two arms is smaller than that spread, do not rank them.
-- Do not combine grammar scores, finish, platform fit and copy flags into one number.
+- Do not combine grammar scores, finish, platform fit, copy flags, guardrail flags and override verdicts into one number.
 - A reproduction of a source screen, if an operator adds one, is a diagnostic for missing rules and stays outside the ranking.

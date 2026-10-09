@@ -140,6 +140,36 @@ function unknownsSection(dna) {
   ];
 }
 
+// Product defaults, not source evidence: they rank below the person's request
+// and below every rule measured on the screenshots.
+function guardrailsSection() {
+  return [
+    '## Precedence, guardrails and budgets',
+    '',
+    'When instructions disagree, follow this order:',
+    '',
+    "1. The person's explicit request for this project, even when it contradicts an entry of this brief.",
+    '2. Entries of this brief: `observed` and `inferred` ones were measured on the screenshots.',
+    '3. The Designome defaults below, only where neither speaks.',
+    '',
+    '### Quality guardrails',
+    '',
+    'Defects, not taste. Apply them on every screen unless the person explicitly asks otherwise.',
+    '',
+    '- **One recipe per repeated component.** A component that repeats across screens, such as a KPI tile, list row, card, chip or badge, keeps the same parts, order and proportions everywhere. Add a second variant only when this brief records one with its selection condition.',
+    '- **Content stays in its container.** Text, chips, badges and marks never overflow the cell, card, row or control that holds them, and no bar or overlay covers content. Past the available width, truncate with an ellipsis or collapse the excess into a "+N" count.',
+    '',
+    '### Budget defaults',
+    '',
+    'Use the count, order or share that the rules below measured. These defaults apply only when this brief records none for a budget, and they carry the status `proposed`.',
+    '',
+    '- **Status colors:** at most 4 saturated status hues, in a fixed order such as neutral, in progress, attention, done. Further statuses reuse one of them or stay neutral; no per-category hue families.',
+    '- **Chart series:** data series use one neutral tone; the accent marks at most one highlighted series or mark per chart.',
+    '- **Accent:** reserved for the primary action, the active navigation item and the one highlighted chart mark. Progress bars, segmented bars and meters fill with a neutral grey or the body-text ink on a lighter track, never the accent.',
+    '',
+  ];
+}
+
 function referenceSection(matrix) {
   const groups = new Map();
   for (const entry of matrix.documentationProjection) {
@@ -173,6 +203,7 @@ export function renderDesignBrief(dna, matrix, { fidelityStatus }) {
     '',
     'These files are checksum-managed by Designome. Put manual additions in repository-owned documentation or Designome override files.',
     '',
+    ...guardrailsSection(),
     ...qualitiesSection(dna),
     ...tokensSection(dna),
     ...rulesSection(dna),

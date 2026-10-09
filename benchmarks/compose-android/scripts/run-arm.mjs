@@ -2,7 +2,7 @@
 // Usage:
 //   node run-arm.mjs --work <dir> --arm <extract|designome|screenshots|combined|none> --run <id>
 //     [--sources <dir>] [--routing <file>] [--dossier <dir>] [--describe <text>]
-//     [--model <id>] [--effort <level>] [--dry-run]
+//     [--request <file>] [--model <id>] [--effort <level>] [--dry-run]
 import { runArm } from '../../shared/run-arm.mjs';
 import { benchmarkRoot, hashIgnore } from './lib.mjs';
 

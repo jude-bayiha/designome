@@ -17,7 +17,9 @@ Promote a visual structure to a component candidate only when repetition, stable
 3. Define variants by purpose and selection condition, not merely appearance. Cover size, density, emphasis, intent, layout, media, and context variants; list unsupported combinations.
 4. Build a state matrix for default, hover, focus, pressed, selected, disabled, read-only, loading, empty, error, success, warning, stale, and offline as applicable. Each state records trigger, feedback, exit, programmatic-state requirement, evidence status, and validation.
 5. Define valid composition: parent-child ownership, sibling grouping, toolbars, field groups, cards, lists, nested surfaces, spacing ownership, repetition, and responsive transformations.
-6. Preserve exceptions and anti-patterns. State when a deviation is one-off, when a new component is warranted, and which nesting, density, action, or variant combinations would collapse meaning.
+6. Count the variants of every repeated component across all admitted screenshots, such as KPI tiles, list rows, cards, chips and badges. When the same component keeps one anatomy everywhere, record that as a rule with its parts, order and proportions, so a generator reuses one recipe on every screen. When it varies, record each variant with its selection condition; an unexplained second look is a contradiction to report, not a variant.
+7. Record how content stays inside its container: the width or line limit of chips, badges, labels and cells, and what happens past it (ellipsis, wrap, "+N" overflow count, clipping). Mark the behavior `unknown` when no long content is visible.
+8. Preserve exceptions and anti-patterns. State when a deviation is one-off, when a new component is warranted, and which nesting, density, action, or variant combinations would collapse meaning.
 
 Use UI-domain definitions to avoid generic components. A KPI card, media card, settings row, notification row, and commerce line item may share surface tokens while retaining different anatomy and state contracts.
 

@@ -27,6 +27,8 @@ The host agent controls the real browser and records captures, console messages,
 
 Audit every accepted required rule plus explicitly focused axis facets and UI domains. Use matrix domain stress tests for statistics, charts, tables, forms, mobile shell, overlays, media, commerce, authentication, settings, files, and other applicable patterns. A missing implementation needed by an accepted rule is a finding; a missing proposed pattern is a calibration or product decision, not a defect.
 
+Check the brief's quality guardrails on every captured screen: one recipe per repeated component and no content outside its container. Check budgets against the measured rule, or against the brief's default when the Design DNA leaves the budget unknown. A deviation the person explicitly requested is recorded as requested, never as a finding.
+
 Classify deviations by layer, impact, confidence, scope, provenance, and affected axis, facet, concept, UI domain, token, rule, or component. Propose the smallest corrective change. In explicitly authorized repair mode, limit the loop to one to three passes, patch only observed scoped findings, run target checks, and recapture affected evidence.
 
 ## Output
