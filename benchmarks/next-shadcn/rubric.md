@@ -1,6 +1,6 @@
 # Review rubric: grammar, not copy
 
-The rubric asks one question per screen: does this app follow the visual grammar of the source screenshots, and does it look as good, with its own content? It never rewards resemblance to a source screen. All five routes carry Relay's own content, so every route is a transfer test.
+The rubric asks one question per screen: does this app follow the visual grammar of the source screenshots, and does it look as good, with its own content? It never rewards resemblance to a source screen. All five routes carry Cabinet's own content, so every route is a transfer test.
 
 ## What is scored
 
@@ -43,6 +43,16 @@ An invented mark that follows the source's rule, such as a different glyph on a 
 
 Record a copy flag, outside the scores, whenever the app reproduces a source asset or source content instead of the brief's: a logo, a distinctive illustration, a glyph set copied one for one, source copy, names or data. The brief supplies all content, so a copy flag is a defect of the run, not a sign of fidelity. Report copy flags next to the scores in the summary.
 
+## Routing verdicts
+
+When the screenshots come from several products, a routing file says, in the words of the person who chose them, what each one should teach. Record one verdict per source and app, outside the scores:
+
+- **followed:** the subjects the source was meant to teach follow its grammar, and nothing else from it shows up;
+- **leaked:** a subject the source was not meant to teach shows up, such as its accent color or shell in an app where it was chosen only for tables;
+- **missing:** a subject it was meant to teach does not follow its grammar.
+
+Score each aspect only against the sources routed to that subject.
+
 ## Rule gaps
 
 For every score of 3 or less, write the rule that would have prevented the miss in measurable form: a ratio, a bound, a weight or an order. "Bars are hairline strokes at most 4 px wide with 8 px gaps" is a rule; "bars are thin" is not. These gaps are the benchmark's main output for improving extraction.
@@ -51,5 +61,5 @@ For every score of 3 or less, write the rule that would have prevented the miss 
 
 - Average each aspect per run over the routes where it applies, then per arm over its runs.
 - Report the spread between runs of the same arm. When the gap between two arms is smaller than that spread, do not rank them.
-- Do not combine grammar scores, finish and copy flags into one number.
+- Do not combine grammar scores, finish, copy flags and routing verdicts into one number.
 - A reproduction of a source screen, if an operator adds one, is a diagnostic for missing rules and stays outside the ranking.
