@@ -89,13 +89,17 @@ How the routes carried over:
 
 **Not carried over yet:** the segmented bars use the darkest ink where the source kept it for the primary action and the active tab. The first run of this test also exposed a broader gap: rules written as adjectives, such as "weight used sparingly", let the agent fall back to bold text everywhere. Extraction now records a weight band per text role, ratios and an accent budget. Captures are JVM renders without system bars; the [Compose benchmark kit](benchmarks/compose-android/README.md) reruns the test on your own screenshots.
 
-It also works on the web, in your own words. A person said what they liked in two screenshots: the table of one product, and the sidebar, theme and layout of another. The extraction kept the first to tables. One more sentence, "use it as the base for everything else", let it take cards, figure tiles and toggles from the second as well:
+It also works on the web, in your own words. A person said what they liked in two screenshots: the table of one product, and the sidebar, theme and layout of another. The extraction kept the first to tables. One more sentence, "use it as the base for everything else", let it take cards, figure tiles and toggles from the second as well.
+
+![Objects screen of Cabinet, a fictional museum registry: an open grouped table from the first source inside the shell, figure tiles and theme of the second](assets/showcase/cabinet-with-base-objects.webp)
+
+The same Settings screen, before and after that sentence:
 
 | Words only: the second screenshot teaches only what was named                                                                                        | With "use it as the base": it also teaches what else it shows                                                                                                   |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ![Settings screen of a museum app, built when the second source was limited to the named subjects](assets/showcase/cabinet-words-only-settings.webp) | ![The same settings screen, built when the second source was the base, with its toggles and integration cards](assets/showcase/cabinet-with-base-settings.webp) |
 
-Both screens show Cabinet, a fictional museum registry unrelated to either source. The [web routing evaluation](docs/web-routing-evaluation.md) has every screen, the costs and the limits.
+All three screens show Cabinet, a fictional museum registry unrelated to either source. The [web routing evaluation](docs/web-routing-evaluation.md) has every screen, the costs and the limits.
 
 ## What you get in your project
 
