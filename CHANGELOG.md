@@ -1,5 +1,33 @@
 # Changelog
 
+## [2.1.0](https://github.com/jude-bayiha/designome/compare/v2.0.0...v2.1.0) (2026-10-09)
+
+
+### Features
+
+* **benchmarks:** add a Kotlin and Jetpack Compose benchmark with routed sources ([cfca810](https://github.com/jude-bayiha/designome/commit/cfca810abccb36ff9084a7cf709f2fd53677077e))
+* **benchmarks:** add the Kotlin and Jetpack Compose benchmark ([311587b](https://github.com/jude-bayiha/designome/commit/311587b9332f1fb98e05510ecf93edee7197b2f1))
+* **benchmarks:** add the override case and guardrail flags ([154d273](https://github.com/jude-bayiha/designome/commit/154d2733de6879739aa6d84aad17f6af63ed411c))
+* **benchmarks:** capture routes at 390 px and flag detail guardrails ([9b11591](https://github.com/jude-bayiha/designome/commit/9b1159142c57eef23e48644a80b220c7d160a2ed))
+* **benchmarks:** check extracted routing against the expected split ([a648cb4](https://github.com/jude-bayiha/designome/commit/a648cb496a9724cc9f3cf00076e26a7dc3314018))
+* **benchmarks:** route Next.js sources from plain-language wishes ([8f8cda0](https://github.com/jude-bayiha/designome/commit/8f8cda09be5496dee37d96ad47a53f03f7b266dc))
+* **benchmarks:** route web screenshots from plain-language wishes ([2cd4596](https://github.com/jude-bayiha/designome/commit/2cd45962bd87910440410bc9a991a5f5ed6a341f))
+* **benchmarks:** set the Compose brief in a domain unrelated to the sources ([d3aac6f](https://github.com/jude-bayiha/designome/commit/d3aac6f1bf43741e977e9e042440ea54a938e6be))
+* **benchmarks:** set the Next.js brief in a domain unrelated to the sources ([29a4bf2](https://github.com/jude-bayiha/designome/commit/29a4bf2e217be9b1b709ad484a46f9a94dc68315))
+* **brand:** add the Designome logo ([3b83e3a](https://github.com/jude-bayiha/designome/commit/3b83e3a8694468d1e2e2731fa2647b5f69de7470))
+* **brand:** add the Designome logo and listing assets ([4805acd](https://github.com/jude-bayiha/designome/commit/4805acd2227ada9c5807d431f1f3a4954d4e5072))
+* quality guardrails, measured budgets and request precedence ([b4ee464](https://github.com/jude-bayiha/designome/commit/b4ee464ceab371fde8c052554ddcaa1a953146c6))
+* **runtime:** add detail guardrails and recipes by need to the dossier brief ([229dba8](https://github.com/jude-bayiha/designome/commit/229dba892133655e51747051a733cb2b71780e54))
+* **runtime:** open the dossier brief with precedence, guardrails and budgets ([59ec9a9](https://github.com/jude-bayiha/designome/commit/59ec9a9fa9f9e8fdb4a15b1cb67e65e315d289a9))
+
+
+### Bug Fixes
+
+* **prompts:** measure guardrails and budgets on the screenshots ([c53e4db](https://github.com/jude-bayiha/designome/commit/c53e4db10060f34f2d042b7d8b6ee66898f06f70))
+* **prompts:** measure size anchors, slot budgets, skeleton, chart recipes and optical finish ([edadb21](https://github.com/jude-bayiha/designome/commit/edadb217c2bb1c87bb9a5eb235160573bee5d725))
+* **prompts:** measure the detail rules that separate polished screens from generic ones ([3191f5b](https://github.com/jude-bayiha/designome/commit/3191f5b7a2c9baf207cd149e9154f0051222bb44))
+* **prompts:** require measurable bands for hierarchy and identity ([64a4f0a](https://github.com/jude-bayiha/designome/commit/64a4f0a4c8bc97d3ea4ff061898012211171be08))
+
 ## [2.0.0](https://github.com/jude-bayiha/designome/compare/v1.12.0...v2.0.0) (2026-10-08)
 
 

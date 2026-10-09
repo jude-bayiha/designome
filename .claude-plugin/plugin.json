@@ -1,7 +1,7 @@
 {
   "name": "designome",
   "displayName": "Designome",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Extract, install, and audit evidence-backed UI Design DNA with the host coding agent.",
   "author": {
     "name": "Designome contributors"
