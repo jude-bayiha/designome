@@ -3,7 +3,9 @@
 // Options:
 //   --work <dir> --arm <extract|designome|screenshots|combined|none> --run <id>
 //   [--sources <dir>] [--routing <file>] [--dossier <dir>] [--describe <text>]
-//   [--model <id>] [--effort <level>] [--dry-run]
+//   [--request <file>] [--model <id>] [--effort <level>] [--dry-run]
+// --request adds the product owner's own wishes to a generator arm's task, unchanged;
+// the override case uses it to check that an explicit request beats the dossier's defaults.
 import { spawn } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -50,6 +52,12 @@ export async function runArm({
   if (!arms[arm]) throw new Error(`Unknown arm ${arm}`);
   if (!/^[a-z0-9][a-z0-9-]*$/u.test(runId))
     throw new Error('--run must be lowercase letters, digits and hyphens');
+
+  const request = options.request
+    ? (await fs.readFile(path.resolve(options.request), 'utf8')).trim()
+    : null;
+  if (request && arm === 'extract')
+    throw new Error('--request applies to generator arms only');
 
   const runDirectory = path.join(work, 'runs', runId);
   if (await exists(runDirectory))
@@ -124,7 +132,12 @@ export async function runArm({
       ),
       { ...values, DESIGN_INPUT: designInput },
     );
+    // No precedence hint: the design input alone must say that the request wins.
+    if (request)
+      prompt += `\nThe product owner also asks, in their own words:\n\n${request}\n`;
   }
+  if (request)
+    await fs.writeFile(path.join(runDirectory, 'request.md'), request + '\n');
   await fs.writeFile(path.join(runDirectory, 'prompt.md'), prompt);
 
   const args = [
@@ -153,6 +166,7 @@ export async function runArm({
     arm,
     model: options.model ?? 'host default',
     effort: options.effort ?? 'host default',
+    request,
     command: ['claude', ...args],
     inputHash: await hashTree(inputDirectory, hashIgnore),
     startedAt: new Date().toISOString(),

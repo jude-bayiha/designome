@@ -80,6 +80,10 @@ export async function composeBoards({
           path.join(work, 'captures', runId, screen + suffix),
           path.join(target, screen + suffix),
         );
+    // The override case: the reviewer checks this app against its own request.
+    const request = path.join(work, 'runs', runId, 'request.md');
+    if (await exists(request))
+      await fs.copyFile(request, path.join(target, 'request.md'));
   }
 
   const { chromium } = await loadPlaywright();
