@@ -6,21 +6,21 @@ The benchmark judges grammar, not copy. Every route carries the benchmark's own 
 
 ## Contents
 
-| Path                                    | Role                                                                                             |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `brief.md`                              | Cabinet, the five-route app every generator builds, with fictional content                       |
-| `rubric.md`                             | The blind review grid: grammar aspects, finish, copy, guardrail and override verdicts, rule gaps |
-| `prompts/extract.md`                    | The extraction run, through the `designome` skill's extract operation                            |
-| `prompts/generator.md`                  | The task shared by every generator arm                                                           |
-| `prompts/input-<arm>.md`                | The only paragraph that differs between arms                                                     |
-| `prompts/reviewer.md`                   | The blind reviewer task                                                                          |
-| `prompts/routing.example.md`            | What each source screenshot should teach, in the chooser's own words                             |
-| `prompts/routing.example.expected.json` | The per-source routing those words should produce                                                |
-| `prompts/override.example.md`           | A request that contradicts the accent budget, for the override case                              |
-| `scripts/prepare-scaffold.sh`           | Creates the neutral Next.js and shadcn/ui scaffold every generator copies                        |
-| `scripts/run-arm.mjs`                   | Runs one arm as a fresh `claude -p` session and records time, tokens and hashes                  |
-| `scripts/render.mjs`                    | Builds each app and captures every route in Chromium at 1440 × 1024                              |
-| `scripts/boards.mjs`                    | Anonymizes the apps, composes one board per route and prepares the review folder                 |
+| Path                                    | Role                                                                                                           |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `brief.md`                              | Cabinet, the five-route app every generator builds, with fictional content                                     |
+| `rubric.md`                             | The blind review grid: grammar aspects, finish, copy, guardrail, narrow-width and override verdicts, rule gaps |
+| `prompts/extract.md`                    | The extraction run, through the `designome` skill's extract operation                                          |
+| `prompts/generator.md`                  | The task shared by every generator arm                                                                         |
+| `prompts/input-<arm>.md`                | The only paragraph that differs between arms                                                                   |
+| `prompts/reviewer.md`                   | The blind reviewer task                                                                                        |
+| `prompts/routing.example.md`            | What each source screenshot should teach, in the chooser's own words                                           |
+| `prompts/routing.example.expected.json` | The per-source routing those words should produce                                                              |
+| `prompts/override.example.md`           | A request that contradicts the accent budget, for the override case                                            |
+| `scripts/prepare-scaffold.sh`           | Creates the neutral Next.js and shadcn/ui scaffold every generator copies                                      |
+| `scripts/run-arm.mjs`                   | Runs one arm as a fresh `claude -p` session and records time, tokens and hashes                                |
+| `scripts/render.mjs`                    | Builds each app and captures every route in Chromium at 1440 × 1024, then the full page at 390 px              |
+| `scripts/boards.mjs`                    | Anonymizes the apps, composes one board per route and prepares the review folder                               |
 
 `project-dossier.mjs`, `check-routing.mjs` and `summarize.mjs` are shared with the other benchmarks in [`../shared/`](../shared/README.md).
 
@@ -117,5 +117,5 @@ Report results in the shape of the [evaluation](../../docs/next-shadcn-evaluatio
 
 - **Isolation is a discipline, not a sandbox.** Each run gets its own copies of its inputs and a fresh session, but runs use `bypassPermissions` and could read other paths. Keep unrelated material out of the work directory.
 - **Small samples:** one or two runs per arm vary as much as arms do. Report the spread and do not rank arms inside it.
-- **Static first screens:** captures do not show responsiveness, accessibility, interaction or content resilience. Full-page captures are kept for lower regions.
+- **Static captures:** two widths, 1440 and 390 px, show layout regimes but not continuous resizing, accessibility, interaction or content resilience. Full-page captures are kept for lower regions.
 - **One reviewer agent is one opinion.** Add a human ranking before changing product defaults.

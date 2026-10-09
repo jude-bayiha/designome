@@ -59,8 +59,21 @@ Record a guardrail flag, outside the scores, for each of these defects on a rout
 
 - **second recipe:** a component that repeats across routes, such as a KPI tile, list row, card, chip or badge, changes its parts, order or proportions without a reason the brief or the sources give;
 - **overflow:** text, a chip, a badge or a mark leaves its cell, card, row or control, or a bar or overlay covers content.
+- **second chart recipe:** sibling charts of one family, such as bars, columns, progress or segmented indicators, differ in mark thickness relative to their pitch, gap ratio, corners or tone without a reason the brief or the sources give;
+- **moved skeleton:** a screen reorders its bands, such as title row, filters, KPI strip and content, or moves the primary action compared with the app's other routes;
+- **cut text:** a chip, badge, cell or title shows fewer than 12 characters of its main text, or is truncated while its container has free room.
 
 A flag still lowers the aspect it belongs to, as any broken rule does. Skip a flag that the app's own request asked for.
+
+## Narrow-width check
+
+Each route also has `<route>.narrow.png`, the full page rendered 390 px wide. Record one verdict per app, outside the scores:
+
+- **holds:** no sideways page scroll; regions stack in a sensible order; components keep their proportions and text stays readable;
+- **squeezed:** the page fits, but components shrink below their proportions, columns become unreadably narrow or text is cut;
+- **broken:** the page scrolls sideways, or content overlaps or disappears.
+
+The brief does not ask for a phone layout, so this check compares arms: a design input must not make a narrow layout worse than the app's other arms. It never changes the grammar scores.
 
 ## Request overrides
 
@@ -81,5 +94,5 @@ For every score of 3 or less, write the rule that would have prevented the miss 
 
 - Average each aspect per run over the routes where it applies, then per arm over its runs.
 - Report the spread between runs of the same arm. When the gap between two arms is smaller than that spread, do not rank them.
-- Do not combine grammar scores, finish, copy flags, guardrail flags, routing verdicts and override verdicts into one number.
+- Do not combine grammar scores, finish, copy flags, guardrail flags, routing verdicts, narrow-width verdicts and override verdicts into one number.
 - A reproduction of a source screen, if an operator adds one, is a diagnostic for missing rules and stays outside the ranking.

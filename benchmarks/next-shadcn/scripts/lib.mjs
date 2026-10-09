@@ -10,3 +10,5 @@ export const benchmarkRoot = path.resolve(
 
 export const routes = ['objects', 'loans', 'calendar', 'reporting', 'settings'];
 export const viewport = { width: 1440, height: 1024 };
+// A phone-width pass shows whether the design input survives a narrow layout.
+export const narrowViewport = { width: 390, height: 844 };

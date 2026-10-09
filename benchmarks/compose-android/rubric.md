@@ -53,6 +53,9 @@ Record a guardrail flag, outside the scores, for each of these defects on a scre
 
 - **second recipe:** a component that repeats across screens, such as a KPI tile, list row, card, chip or badge, changes its parts, order or proportions without a reason the brief or the sources give;
 - **overflow:** text, a chip, a badge or a mark leaves its cell, card, row or control, or a bar or overlay covers content.
+- **second chart recipe:** sibling charts of one family, such as bars, columns, progress or segmented indicators, differ in mark thickness relative to their pitch, gap ratio, corners or tone without a reason the brief or the sources give;
+- **moved skeleton:** a screen reorders its bands, such as title row, filters, KPI strip and content, or moves the primary action compared with the app's other screens;
+- **cut text:** a chip, badge, cell or title shows fewer than 12 characters of its main text, or is truncated while its container has free room.
 
 A flag still lowers the aspect it belongs to, as any broken rule does. Skip a flag that the app's own request asked for.
 
