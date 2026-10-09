@@ -1,7 +1,7 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome",
-  "contentFingerprint": "sha256:bb3242038a3f86a7d241c7e65927c7bfe2056bc25e2cd2240d5a40fa0cb95cbc",
+  "contentFingerprint": "sha256:ff300cffc4a5860a76c0a9f6dbc88b5e5ff06fdc34db338b285b0ad5cb073591",
   "files": {
     "agents/openai.yaml": "aeee0b3a3921828612f09507247c69041d02809a0ba0adb07fce4e3cb695d907",
     "contract.json": "65b2ba2b7324149f40628e6bcb3f8c56e7ef9c750f6632234c367d12999b2690",
@@ -28,7 +28,7 @@
     "scripts/runtime/docs/skill-distribution.md": "94d87bdb03e46314b9e4a5f811d1142cac6194ba0e2fdcc5f45c9d0762f56c2e",
     "scripts/runtime/docs/transactional-installation.md": "1f1078afe4a5f652019c80f2ea0cd83d4d7aaca953b9f53662214b9d40b72874",
     "scripts/runtime/docs/v0.3-forward-test.md": "0af49cca4dd5f7cd93bfb3b912802ef374b9a0af25ee0da43ae2cb276068266c",
-    "scripts/runtime/docs/web-routing-evaluation.md": "5d2316dea00c9b4157651e11fe76d1738188c8d0a41c0c24b0b55bdf3eeaacbb",
+    "scripts/runtime/docs/web-routing-evaluation.md": "a44b2e58c7ee00e256157d8dac3a09d750f3d498e37a1cf7e3eca3f4602e3d5e",
     "scripts/runtime/examples/audit-config.reference.json": "a399e1b44b0c8574f90509e52e17422ffadf86ca13993fcec0b22584e7837d55",
     "scripts/runtime/examples/audit-config.v2.reference.json": "1dda345d9a390c8577661a2b6326b7c23f69deb1ef32654da12f5d4213fdfa32",
     "scripts/runtime/examples/audit-evidence.reference.json": "53811a5972555d8af9dbe6da394f8ea77ac44570b540fe293029da5e9ad69ae2",

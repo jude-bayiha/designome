@@ -30,9 +30,33 @@ What the generated apps showed:
 - **Shell, in every run:** a sidebar with grouped sections and count badges, a top bar, and content framed in rounded panels with space around them.
 - **Base, only after extract 2:** black toggles, figure tiles with a leading icon, small integration cards with a colored status dot, and dotted-circle section marks in the sidebar. After extract 1, the same places used generic or invented treatments.
 
-![Cabinet objects screen built from the routed dossier, with the dashboard as base](../assets/showcase/cabinet-objects.webp)
+## Captures
 
-![Cabinet settings screen built from the routed dossier, with toggles and integration cards from the base source](../assets/showcase/cabinet-settings.webp)
+Every capture is the first screen at 1440 × 1024, rendered at 2x. The two dossier columns show run 1 of each extraction; the screenshot column shows the screenshot arm with the base sentence. The arms never saw each other's output.
+
+### Objects
+
+| Dossier, words only                                                                                                 | Dossier, with the base sentence                                                                                                | Screenshots, with the base sentence                                                                |
+| ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| ![Objects screen from the dossier of the words-only extraction](../assets/showcase/cabinet-words-only-objects.webp) | ![Objects screen from the dossier of the extraction with the base sentence](../assets/showcase/cabinet-with-base-objects.webp) | ![Objects screen from the screenshot arm](../assets/showcase/cabinet-screenshots-arm-objects.webp) |
+
+### Loans
+
+| Dossier, words only                                                                                             | Dossier, with the base sentence                                                                                            | Screenshots, with the base sentence                                                            |
+| --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| ![Loans screen from the dossier of the words-only extraction](../assets/showcase/cabinet-words-only-loans.webp) | ![Loans screen from the dossier of the extraction with the base sentence](../assets/showcase/cabinet-with-base-loans.webp) | ![Loans screen from the screenshot arm](../assets/showcase/cabinet-screenshots-arm-loans.webp) |
+
+### Reporting
+
+| Dossier, words only                                                                                                     | Dossier, with the base sentence                                                                                                    | Screenshots, with the base sentence                                                                    |
+| ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| ![Reporting screen from the dossier of the words-only extraction](../assets/showcase/cabinet-words-only-reporting.webp) | ![Reporting screen from the dossier of the extraction with the base sentence](../assets/showcase/cabinet-with-base-reporting.webp) | ![Reporting screen from the screenshot arm](../assets/showcase/cabinet-screenshots-arm-reporting.webp) |
+
+### Settings
+
+| Dossier, words only                                                                                                   | Dossier, with the base sentence                                                                                                  | Screenshots, with the base sentence                                                                  |
+| --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| ![Settings screen from the dossier of the words-only extraction](../assets/showcase/cabinet-words-only-settings.webp) | ![Settings screen from the dossier of the extraction with the base sentence](../assets/showcase/cabinet-with-base-settings.webp) | ![Settings screen from the screenshot arm](../assets/showcase/cabinet-screenshots-arm-settings.webp) |
 
 ## Runs
 
