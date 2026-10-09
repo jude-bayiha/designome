@@ -135,10 +135,23 @@ Repeated unsupported statements never increase status. Synthesis merges compatib
 
 Designome separates two kinds of generation rules so that its defaults never limit what a person asks for.
 
-- **Quality guardrails** are defects no source wants: a repeated component, such as a KPI tile, row, card or chip, that changes its recipe from one screen to the next, and content that overflows its container. They apply on every screen unless the person explicitly asks otherwise.
+- **Quality guardrails** are defects no source wants: a repeated component, such as a KPI tile, row, card or chip, that changes its recipe from one screen to the next; sibling charts drawn with different mark recipes; a screen skeleton that reorders its bands or moves its primary action; content that overflows its container or is cut below its slot's minimum; and proportions squeezed at a narrow width instead of reflowing. They apply on every screen unless the person explicitly asks otherwise.
 - **Budgets** are identity: the number and order of status colors, the series budget of each chart, and the accent budget, including the tone of progress and segmented fills. Extraction measures them on the admitted screenshots as counts, orders or shares. A source with six status hues records six.
 
 The dossier brief opens with the precedence order every generator follows: the person's explicit request first, then the rules measured on their screenshots, then Designome's `proposed` defaults. The defaults (at most four status hues in a fixed order, one neutral data series with at most one accented mark, the accent reserved for the primary action, the active navigation item and one highlighted mark) fill only budgets the Design DNA leaves `unknown`; extraction never writes them as claims. The benchmarks' override case checks the first step: a generator that receives a request contradicting the measured accent budget must follow the request.
+
+### Detail rules
+
+Generators fall back on their own defaults wherever a rule is vague, so extraction records the details that separate a polished screen from a generic one as measures:
+
+- **Size anchors:** component heights, insets and icon sizes as multiples of the body-text size or the row pitch, so a KPI tile or chip keeps its proportion on new content.
+- **Text slot budgets:** the minimum visible characters of each chip, badge, cell and title, the maximum lines, and which part yields first.
+- **Screen skeleton:** the band order shared by the admitted screens, the primary action's position and the order in which bands stack when width shrinks.
+- **Chart family recipes:** one mark recipe (thickness relative to pitch, gap ratio, maximum thickness, corners, gridlines, tones) per family of charts.
+- **Recipes by need:** each component's purpose states the need it serves ("Use when…"), so a generator reuses it when a new product has the same need.
+- **Optical finish:** nested radius relative to the parent radius and inset, the separation cue of each surface tier, icon and divider stroke relative to text weight, and icon size relative to its label.
+
+Every one is a ratio, minimum, order or priority, never a fixed width, so it holds at every viewport. The web benchmark captures each route at 390 px as well as 1440 px to check that the rules do not make narrow layouts worse.
 
 ## Complete coverage model
 
