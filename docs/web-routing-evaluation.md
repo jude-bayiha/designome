@@ -58,6 +58,24 @@ Every capture is the first screen at 1440 × 1024, rendered at 2x. The two dossi
 | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | ![Settings screen from the dossier of the words-only extraction](../assets/showcase/cabinet-words-only-settings.webp) | ![Settings screen from the dossier of the extraction with the base sentence](../assets/showcase/cabinet-with-base-settings.webp) | ![Settings screen from the screenshot arm](../assets/showcase/cabinet-screenshots-arm-settings.webp) |
 
+## Blind review
+
+A separate reviewer agent scored the seven apps, anonymized as letters, against the [rubric](../benchmarks/next-shadcn/rubric.md), with the sources and the routing that names the dashboard as the base. It did not know which arm built which app. Scores are 1 to 5, averaged over the routes where each aspect applies.
+
+| Arm                         | Runs | Hierarchy | Spacing  | Type     | Color    | Components | Data     | Identity | Routing verdicts       |
+| --------------------------- | ---- | --------- | -------- | -------- | -------- | ---------- | -------- | -------- | ---------------------- |
+| Dossier, with base sentence | 2    | 4.0, 4.0  | 4.0, 3.8 | 4.0, 4.0 | 4.2, 3.8 | 4.2, 3.8   | 4.0, 3.8 | 4.2, 3.4 | followed, both sources |
+| Dossier, words only         | 2    | 4.0, 4.0  | 4.2, 4.0 | 4.0, 4.0 | 3.4, 4.0 | 3.6, 4.0   | 4.0, 3.8 | 3.2, 3.0 | followed, both sources |
+| Screenshots                 | 2    | 4.0, 4.2  | 3.8, 4.0 | 4.0, 3.6 | 3.4, 3.6 | 3.6, 4.0   | 3.8, 3.8 | 3.0, 4.0 | followed, both sources |
+| None                        | 1    | 3.0       | 2.8      | 2.0      | 2.0      | 2.4        | 2.5      | 2.0      | missing, both sources  |
+
+- **Observed:** every app built from a design input followed both routes, and none leaked the table source's purple, banner or icon rail. No copy flags.
+- **Observed:** the run with no visual reference scored about 1.5 points lower on type, color, components and identity.
+- **Inferred:** the base sentence raised identity on both dossier runs (4.2 and 3.4 against 3.2 and 3.0), in line with the components it unlocked. The other gaps between arms with a design input stay within the spread between runs, so the review does not rank them.
+- **Rule gaps the reviewer wrote, for extraction:** the same figure-tile recipe on every route; entity marks as rounded-square tiles, with circles kept for people; calendar chips confined to their day cell; saturated hue only for semantic status, with at most four roles; one neutral chart series; and settings content filling at least two thirds of the width.
+
+The scored review, its key and the anonymized boards are kept outside the repository with the run.
+
 ## Runs
 
 Times and list cost from `run.json`; usage includes subagents.
@@ -70,10 +88,11 @@ Times and list cost from `run.json`; usage includes subagents.
 | Dossier 2, runs 1 and 2   | Dossier from extract 2                     | 4.4, 4.6 min | $0.90, $1.07 |
 | Screenshots, runs 1 and 2 | Screenshots and the words, one per wording | 2.8, 3.3 min | $0.56, $0.72 |
 | None                      | No visual reference                        | 2.6 min      | $0.52        |
+| Blind review              | Seven anonymized apps                      | n/a          | $1.19        |
 
 ## Limits
 
-- **No blind review yet:** the results above come from reading the captures, not from the [rubric](../benchmarks/next-shadcn/rubric.md) applied blind. Routing verdicts were not scored.
+- **One reviewer agent:** the blind review is one opinion, with no human ranking yet.
 - **Small samples:** two dossier runs per extraction and one screenshot run per wording.
 - **The base sentence was added by the operator:** the person's own sentences produced `only`. Whether another person would phrase it the same way is not tested.
 - **No charts source:** neither screenshot shows a chart, so chart marks stayed `unknown` and were invented.
