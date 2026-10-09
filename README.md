@@ -89,6 +89,8 @@ How the routes carried over:
 
 **Not carried over yet:** the segmented bars use the darkest ink where the source kept it for the primary action and the active tab. The first run of this test also exposed a broader gap: rules written as adjectives, such as "weight used sparingly", let the agent fall back to bold text everywhere. Extraction now records a weight band per text role, ratios and an accent budget. Captures are JVM renders without system bars; the [Compose benchmark kit](benchmarks/compose-android/README.md) reruns the test on your own screenshots.
 
+The same works on the web, with your own words. In a second test, a person said what they liked in two screenshots: the table of one product, and the sidebar, theme and layout of another. The extraction kept the first to tables. It needed one more sentence, "use it as the base for everything else", before it took cards, tiles and toggles from the second. See the [web routing evaluation](docs/web-routing-evaluation.md).
+
 ## What you get in your project
 
 | Artifact                                             | Purpose                                                                                                  |
@@ -193,6 +195,7 @@ Ask your agent for new screens as usual; the installed guidance makes it read th
 
 - **Next.js and shadcn/ui test:** agents that only had the compact brief, and never saw the screenshots, kept the source's palette, surface tiers, card anatomy and chart conventions across five new screens. Their clearest miss came from a rule phrased as an adjective: "thin chart bars" became thick bars. See the [Next.js and shadcn/ui evaluation](docs/next-shadcn-evaluation.md) and rerun it on your own screenshots with the [benchmark kit](benchmarks/next-shadcn/README.md).
 - **Kotlin and Jetpack Compose test:** with eight screenshots from three products routed by subject, an agent that only had the brief applied each source to its subjects on an unrelated Android app. Before extraction recorded weight bands, the same test produced bold text where the sources used regular weight. See the [Compose benchmark kit](benchmarks/compose-android/README.md).
+- **Web routing test:** a person's plain-language wishes per screenshot became the right routing, once one screenshot was named as the base. See the [web routing evaluation](docs/web-routing-evaluation.md).
 - **Token cost:** the brief entry point fell from a 3.1 MB dossier to about 15k tokens, and extraction took 15 instead of 24 minutes in the same test.
 - **Earlier runs:** see the [executed fidelity evaluation](docs/fidelity-evaluation.md) and the [v0.3 forward test](docs/v0.3-forward-test.md).
 - **Current focus:** making every signature quality carry a measurable bound, and evaluating on new products with their own content and brand.
