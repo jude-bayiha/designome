@@ -226,6 +226,11 @@ test('the dossier README is a compact brief that names every accepted artifact',
   // Statuses stay explicit; evidence and confidence details stay in topic files.
   assert.match(brief, /`proposed`/u);
   assert.doesNotMatch(brief, /Confidence: /u);
+  // The person's request outranks measured rules, which outrank product defaults.
+  const precedence = brief.indexOf('## Precedence, guardrails and budgets');
+  assert.ok(precedence > 0 && precedence < brief.indexOf('## Tokens'));
+  assert.match(brief, /1\. The person's explicit request/u);
+  assert.match(brief, /3\. The Designome defaults below, only where/u);
   const total = [...docs.values()].reduce((sum, text) => sum + text.length, 0);
   assert.ok(brief.length * 10 < total, `${brief.length} of ${total}`);
 });

@@ -131,6 +131,15 @@ Components add:
 
 Repeated unsupported statements never increase status. Synthesis merges compatible claims, retains scoped exceptions, exposes conflicts, and rejects evidence leakage.
 
+## Guardrails, budgets and precedence
+
+Designome separates two kinds of generation rules so that its defaults never limit what a person asks for.
+
+- **Quality guardrails** are defects no source wants: a repeated component, such as a KPI tile, row, card or chip, that changes its recipe from one screen to the next, and content that overflows its container. They apply on every screen unless the person explicitly asks otherwise.
+- **Budgets** are identity: the number and order of status colors, the series budget of each chart, and the accent budget, including the tone of progress and segmented fills. Extraction measures them on the admitted screenshots as counts, orders or shares. A source with six status hues records six.
+
+The dossier brief opens with the precedence order every generator follows: the person's explicit request first, then the rules measured on their screenshots, then Designome's `proposed` defaults. The defaults (at most four status hues in a fixed order, one neutral data series with at most one accented mark, the accent reserved for the primary action, the active navigation item and one highlighted mark) fill only budgets the Design DNA leaves `unknown`; extraction never writes them as claims. The benchmarks' override case checks the first step: a generator that receives a request contradicting the measured accent budget must follow the request.
+
 ## Complete coverage model
 
 Design DNA v0.3 contains:
