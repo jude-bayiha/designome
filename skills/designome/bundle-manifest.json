@@ -1,7 +1,7 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome",
-  "contentFingerprint": "sha256:8e93e5441e902d0c8fe8e8a75096547b18578e35395e65e39849f2e59b730f8f",
+  "contentFingerprint": "sha256:ddbfeb3bf8a6f3a0bf72c5e0219a6ba5f92af4cea15b7d788c9ebb52d4e5a2e7",
   "files": {
     "agents/openai.yaml": "aeee0b3a3921828612f09507247c69041d02809a0ba0adb07fce4e3cb695d907",
     "contract.json": "65b2ba2b7324149f40628e6bcb3f8c56e7ef9c750f6632234c367d12999b2690",
@@ -96,7 +96,7 @@
     "scripts/runtime/src/runtime/capture-session.mjs": "ac6f7c3f8e05a1fd6d95b96ed0e0366e9b7866c2c396d89aa6f706855d7db1b1",
     "scripts/runtime/src/runtime/context-stage.mjs": "813d87e2ed1768befd9dbc2076b14ee15096adce67f8ede0cc4e3e64fb6f921c",
     "scripts/runtime/src/runtime/context.mjs": "aaba2a9e02f84673c7d1c346c3c30ffd8e636b25ca65fd607d040853d8d8c481",
-    "scripts/runtime/src/runtime/design-brief.mjs": "a9ce163efbc077eca775455bd9cdb1df5bb536526c8d30c250b1012eea2279f4",
+    "scripts/runtime/src/runtime/design-brief.mjs": "fd97fdf0df4e8e9952211e8eaaa138c05ddeeba0ae29d4f1fe34876a9970e500",
     "scripts/runtime/src/runtime/design-dna.mjs": "0a8abe80adcd003b3d0d0dccdca23e6fbf8851b4ca344dc69e15acf40dc172b5",
     "scripts/runtime/src/runtime/dna-authoring.mjs": "78e5adf2dcd79da55001f6f18f00c3c6c5a8b299039b3299615e6a0dd572d0e3",
     "scripts/runtime/src/runtime/doctor.mjs": "ab6bb12e33a8818640dfb23a54d0c719a744c68a15a5ee42a51fb8f105951343",
