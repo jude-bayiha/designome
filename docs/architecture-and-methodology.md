@@ -135,10 +135,10 @@ Repeated unsupported statements never increase status. Synthesis merges compatib
 
 Designome separates two kinds of generation rules so that its defaults never limit what a person asks for.
 
-- **Quality guardrails** are defects no source wants: a repeated component, such as a KPI tile, row, card or chip, that changes its recipe from one screen to the next; sibling charts drawn with different mark recipes; a screen skeleton that reorders its bands or moves its primary action; content that overflows its container or is cut below its slot's minimum; and proportions squeezed at a narrow width instead of reflowing. They apply on every screen unless the person explicitly asks otherwise.
-- **Budgets** are identity: the number and order of status colors, the series budget of each chart, and the accent budget, including the tone of progress and segmented fills. Extraction measures them on the admitted screenshots as counts, orders or shares. A source with six status hues records six.
+- **Quality guardrails** are defects no source wants: a repeated component, such as a KPI tile, row, card or chip, that changes its recipe from one screen to the next; sibling charts drawn with different mark recipes; a screen skeleton that reorders its bands or moves its primary action; content that overflows its container or is cut below its slot's minimum; proportions squeezed at a narrow width instead of reflowing; a screen that hides where the user is; one thing called by two names; an action label that does not name its result; and a primary action, required field, error or status hidden behind a disclosure. They apply on every screen unless the person explicitly asks otherwise.
+- **Budgets** are identity: the number and order of status colors, the series budget of each chart, the accent budget, including the tone of progress and segmented fills, and the interaction budgets: destinations per navigation group, primary and inline actions, items shown before a disclosure trigger, and the case and form of labels. Extraction measures them on the admitted screenshots as counts, orders or shares. A source with six status hues records six.
 
-The dossier brief opens with the precedence order every generator follows: the person's explicit request first, then the rules measured on their screenshots, then Designome's `proposed` defaults. The defaults (at most four status hues in a fixed order, one neutral data series with at most one accented mark, the accent reserved for the primary action, the active navigation item and one highlighted mark) fill only budgets the Design DNA leaves `unknown`; extraction never writes them as claims. The benchmarks' override case checks the first step: a generator that receives a request contradicting the measured accent budget must follow the request.
+The dossier brief opens with the precedence order every generator follows: the person's explicit request first, then the rules measured on their screenshots, then Designome's `proposed` defaults. The defaults (at most four status hues in a fixed order, one neutral data series with at most one accented mark, the accent reserved for the primary action, the active navigation item and one highlighted mark, one primary action per screen, at most two inline actions per row, at most seven destinations per navigation group, five preview items before "View all", and sentence-case labels) fill only budgets the Design DNA leaves `unknown`; extraction never writes them as claims. The benchmarks' override case checks the first step: a generator that receives a request contradicting the measured accent budget must follow the request.
 
 ### Detail rules
 
@@ -152,6 +152,18 @@ Generators fall back on their own defaults wherever a rule is vague, so extracti
 - **Optical finish:** nested radius relative to the parent radius and inset, the separation cue of each surface tier, icon and divider stroke relative to text weight, and icon size relative to its label.
 
 Every one is a ratio, minimum, order or priority, never a fixed width, so it holds at every viewport. The web benchmark captures each route at 390 px as well as 1440 px to check that the rules do not make narrow layouts worse.
+
+### Interaction architecture rules
+
+Hierarchy, navigation, disclosure and labels are where generated interfaces drift most once the look is right, because a generator fills every unquantified decision with its own habits. Extraction records them as measures too:
+
+- **Navigation budget:** destinations per group, how groups are labeled, and the depth levels shown at once with the carrier of each level, such as sidebar, tabs, breadcrumb or back control.
+- **Location:** every carrier of the current location and whether the page title repeats the term of the active navigation item.
+- **Action budget:** primary actions per screen and dialog, inline actions before an overflow menu, the order of primary, secondary and cancel actions, and how a destructive action is set apart.
+- **Disclosure grammar:** the trigger types the screenshots show, the items a preview shows before its trigger, and the content that never sits behind a disclosure. What lies behind a closed trigger stays `unknown`.
+- **Label grammar:** the form, length band in words and case of each label role, and whether one thing keeps one term across screens. Labels are recorded as patterns, never as the source's words.
+
+A count describes the budget a design carries on a capture, not the product's full set of destinations or actions. Screenshots teach the pattern, such as how a settings list discloses its advanced options; they never decide which of the target product's features are primary, which stays a product decision.
 
 ## Complete coverage model
 

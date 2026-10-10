@@ -1,14 +1,14 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome",
-  "contentFingerprint": "sha256:ddbfeb3bf8a6f3a0bf72c5e0219a6ba5f92af4cea15b7d788c9ebb52d4e5a2e7",
+  "contentFingerprint": "sha256:66989944cffdd06b5fd583a7cdc7f21593be4696e7ef8ac5e81eadfe12ec367f",
   "files": {
     "agents/openai.yaml": "aeee0b3a3921828612f09507247c69041d02809a0ba0adb07fce4e3cb695d907",
     "contract.json": "65b2ba2b7324149f40628e6bcb3f8c56e7ef9c750f6632234c367d12999b2690",
     "scripts/runtime/bin/designome.mjs": "9e95461d0d342bb667df840bee7ad4ac64b1ef2d9b9611ae16712bddca6e1953",
     "scripts/runtime/concepts/concept-matrix.v0.2.json": "1ceb9b420c1929750f3e61cd7117ff1e2998d8f92d381f467d634716dbe4c9f1",
     "scripts/runtime/concepts/concept-matrix.v0.3.json": "754c1eb850e422a4e344eb1f5ad139b2839310ab438bd365b704cbc833f0df33",
-    "scripts/runtime/docs/architecture-and-methodology.md": "bc3ec680f9b51b9599bd16b3de8b9915bd3822fb7326c94ecbffd83cd367f71c",
+    "scripts/runtime/docs/architecture-and-methodology.md": "e17c50a9f3f5ce15c97ed8a51a01fcaa98073e2da3bb0d3c5eee5b8333573a3d",
     "scripts/runtime/docs/audit-contract.md": "62d6979a2f117bf9e32ac998f7074945e8cb1d4c54cb0712fc53c4f984759392",
     "scripts/runtime/docs/browser-evidence-adapter.md": "f3423d6ee280dad4b2a037b44b7673e8a0d9ee5477d0a2083f71144c0495e6db",
     "scripts/runtime/docs/concept-matrix.md": "557e633454d27c48b6976e6934e15ae7875095a14c45e609991d33d55da8a1bf",
