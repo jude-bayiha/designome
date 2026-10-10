@@ -55,7 +55,11 @@ Record a guardrail flag, outside the scores, for each of these defects on a scre
 - **overflow:** text, a chip, a badge or a mark leaves its cell, card, row or control, or a bar or overlay covers content.
 - **second chart recipe:** sibling charts of one family, such as bars, columns, progress or segmented indicators, differ in mark thickness relative to their pitch, gap ratio, corners or tone without a reason the brief or the sources give;
 - **moved skeleton:** a screen reorders its bands, such as title row, filters, KPI strip and content, or moves the primary action compared with the app's other screens;
-- **cut text:** a chip, badge, cell or title shows fewer than 12 characters of its main text, or is truncated while its container has free room.
+- **cut text:** a chip, badge, cell or title shows fewer than 12 characters of its main text, or is truncated while its container has free room;
+- **lost location:** a screen does not mark its active navigation item, its title uses a different term from that item, or a page below a top-level destination shows no way back;
+- **two names:** one object, action or destination is called by different terms across screens;
+- **vague action:** a button or menu item does not name its result, such as "OK", "Yes" or "Submit", or an icon stands without a label outside close, search and overflow-menu controls and the places the brief or the sources give icon-only controls;
+- **hidden task:** the primary action, a required field, an error or the current status sits behind a menu, tab, collapsed section or drawer.
 
 A flag still lowers the aspect it belongs to, as any broken rule does. Skip a flag that the app's own request asked for.
 

@@ -239,6 +239,17 @@ test('the dossier README is a compact brief that names every accepted artifact',
   ])
     assert.ok(brief.includes(guardrail), guardrail);
   assert.match(brief, /the need its purpose names/u);
+  // Interaction guardrails and budget defaults cover location, terms,
+  // action labels, disclosure and navigation size.
+  for (const guardrail of [
+    'Location is always visible.',
+    'One name per thing.',
+    'Actions name their result.',
+    'Disclosure never hides the task.',
+  ])
+    assert.ok(brief.includes(guardrail), guardrail);
+  for (const budget of ['Actions:', 'Navigation:', 'Disclosure:', 'Labels:'])
+    assert.ok(brief.includes(`- **${budget}**`), budget);
   const total = [...docs.values()].reduce((sum, text) => sum + text.length, 0);
   assert.ok(brief.length * 10 < total, `${brief.length} of ${total}`);
 });
