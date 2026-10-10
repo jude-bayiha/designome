@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.2.0](https://github.com/jude-bayiha/designome/compare/v2.1.0...v2.2.0) (2026-10-10)
+
+
+### Features
+
+* **benchmarks:** flag lost location, two names, vague actions and hidden tasks ([49609d8](https://github.com/jude-bayiha/designome/commit/49609d8c80caf6816a3df401055d2cee468df099))
+* **runtime:** add interaction guardrails and budget defaults to the dossier brief ([8d762fd](https://github.com/jude-bayiha/designome/commit/8d762fdc46f0221ac42ae9c636ea9bc427ce2343))
+
+
+### Bug Fixes
+
+* **prompts:** measure navigation, action, disclosure and label budgets ([cfe8d7b](https://github.com/jude-bayiha/designome/commit/cfe8d7b71716d270011f68481ade2a7b95d61da4))
+
 ## [2.1.0](https://github.com/jude-bayiha/designome/compare/v2.0.0...v2.1.0) (2026-10-09)
 
 
