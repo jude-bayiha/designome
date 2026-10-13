@@ -223,9 +223,38 @@ test('the dossier README is a compact brief that names every accepted artifact',
   // Every other projected file stays reachable from the brief.
   for (const path of docs.keys())
     if (path !== 'README.md') assert.ok(brief.includes(`(./${path})`), path);
-  // Statuses stay explicit; evidence and confidence details stay in topic files.
+  // Statuses stay explicit; confidence details stay in topic files.
   assert.match(brief, /`proposed`/u);
   assert.doesNotMatch(brief, /Confidence: /u);
+  // The screenshot regions behind each entry travel with the brief.
+  assert.match(brief, /## What the screenshots show/u);
+  for (const entry of dna.evidence) {
+    assert.ok(brief.includes(`\`${entry.id}\``), entry.id);
+    assert.ok(brief.includes(entry.visibleSummary), entry.id);
+  }
+  assert.ok(
+    brief.indexOf('## What the screenshots show') < brief.indexOf('## Tokens'),
+  );
+  for (const rule of dna.rules) {
+    for (const exception of rule.claim.exceptions)
+      assert.ok(brief.includes(exception), rule.id);
+    if (rule.claim.evidenceRefs.length)
+      assert.ok(
+        brief.includes(`Seen in: \`${rule.claim.evidenceRefs[0]}\``),
+        rule.id,
+      );
+  }
+  // Presentation material is not design, and the typeface never falls back to the browser default.
+  assert.match(
+    brief,
+    /backdrop, padding, frame or drop shadow, is not part of the design/u,
+  );
+  assert.ok(brief.includes('The typeface follows the observed character.'));
+  // The identity topic files are read in full before the first screen.
+  assert.match(
+    brief,
+    /Before generating the first screen, also read \[foundations\/color-and-themes\.md\]/u,
+  );
   // The person's request outranks measured rules, which outrank product defaults.
   const precedence = brief.indexOf('## Precedence, guardrails and budgets');
   assert.ok(precedence > 0 && precedence < brief.indexOf('## Tokens'));

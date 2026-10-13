@@ -1,13 +1,37 @@
 import { designValue } from './documentation.mjs';
 
-// The brief is the dossier's entry point: one compact read that carries every
-// accepted artifact's statement and status. Evidence, confidence, routing and
-// validation details stay in the topic files it links to.
+// The brief is the dossier's entry point: one read that carries every accepted
+// artifact's statement, status, scope, exceptions and the screenshot evidence
+// behind it. Confidence, routing and validation details stay in the topic files.
 
 const statusTag = (status) => `\`${status ?? 'unknown'}\``;
 const sentence = (text) => String(text ?? '').trim();
 const joined = (values = [], separator = '; ') =>
   values.map(sentence).filter(Boolean).join(separator);
+
+// The identity files a generator reads in full with the brief: they carry the
+// surfaces, type, spacing and anatomy that make screens look like the sources.
+export const identityTopicPaths = [
+  'foundations/color-and-themes.md',
+  'foundations/surfaces-and-depth.md',
+  'foundations/typography.md',
+  'foundations/spatial-composition.md',
+  'foundations/visual-identity.md',
+  'components/anatomy.md',
+  'components/variants-and-density.md',
+];
+
+// Scope, exceptions and evidence keep a statement tied to what was seen.
+function claimContext(claim) {
+  const scope = joined(claim?.scope, ', ');
+  const exceptions = joined(claim?.exceptions);
+  const evidence = (claim?.evidenceRefs ?? []).map((id) => `\`${id}\``);
+  return [
+    scope ? ` Scope: ${scope}.` : '',
+    exceptions ? ` Except: ${exceptions}.` : '',
+    evidence.length ? ` Seen in: ${evidence.join(', ')}.` : '',
+  ].join('');
+}
 
 function qualitiesSection(dna) {
   const qualities = dna.fidelity?.qualities ?? [];
@@ -19,9 +43,44 @@ function qualitiesSection(dna) {
     '',
     ...qualities.map((quality, index) => {
       const failures = joined(quality.failureModes);
-      return `${index + 1}. **${quality.name}** (${quality.priority}) ${statusTag(quality.claim.epistemicStatus)} ${sentence(quality.claim.statement)}${failures ? ` Breaks when: ${failures}.` : ''}`;
+      return `${index + 1}. **${quality.name}** (${quality.priority}) ${statusTag(quality.claim.epistemicStatus)} ${sentence(quality.claim.statement)}${failures ? ` Breaks when: ${failures}.` : ''}${claimContext(quality.claim)}`;
     }),
     '',
+  ];
+}
+
+// What the screenshots show, in the extractor's words: the concrete look that a
+// statement alone loses. Names, copy and data stay out of claims, so these
+// summaries describe regions, not content to reuse.
+function evidenceSection(dna) {
+  const evidence = dna.evidence ?? [];
+  if (evidence.length === 0) return [];
+  const sources = new Map(
+    (dna.sources ?? []).map((source) => [source.id, source]),
+  );
+  const bySource = new Map();
+  for (const entry of evidence) {
+    if (!bySource.has(entry.sourceRef)) bySource.set(entry.sourceRef, []);
+    bySource.get(entry.sourceRef).push(entry);
+  }
+  return [
+    '## What the screenshots show',
+    '',
+    'The regions the entries below were read from. Use them to see how a rule looks on screen, then apply the rule to your own content: names, copy, data, logos and pictures in the sources are replaceable. Presentation material around a screenshot, such as a backdrop, padding, frame or drop shadow, is not part of the design.',
+    '',
+    ...[...bySource].flatMap(([sourceRef, entries]) => {
+      const limits = joined(sources.get(sourceRef)?.limitations);
+      return [
+        `### \`${sourceRef}\``,
+        '',
+        ...(limits ? [`Limits: ${limits}.`, ''] : []),
+        ...entries.map((entry) => {
+          const entryLimits = joined(entry.limitations);
+          return `- \`${entry.id}\` ${sentence(entry.region)}: ${sentence(entry.visibleSummary)}${entryLimits ? ` Limits: ${entryLimits}.` : ''}`;
+        }),
+        '',
+      ];
+    }),
   ];
 }
 
@@ -60,12 +119,16 @@ function rulesSection(dna) {
     ...[...categories].flatMap(([category, rules]) => [
       `### ${category}`,
       '',
-      ...rules.flatMap((rule) => [
-        `- **${rule.name}** (${rule.strength}) ${statusTag(rule.claim.epistemicStatus)} ${sentence(rule.claim.statement)}`,
-        ...(rule.requirements ?? []).map(
-          (requirement) => `  - ${sentence(requirement)}`,
-        ),
-      ]),
+      ...rules.flatMap((rule) => {
+        const failures = joined(rule.failureModes);
+        return [
+          `- **${rule.name}** (${rule.strength}) ${statusTag(rule.claim.epistemicStatus)} ${sentence(rule.claim.statement)}${claimContext(rule.claim)}`,
+          ...(rule.requirements ?? []).map(
+            (requirement) => `  - ${sentence(requirement)}`,
+          ),
+          ...(failures ? [`  - Breaks when: ${failures}.`] : []),
+        ];
+      }),
       '',
     ]),
   ];
@@ -86,10 +149,12 @@ function componentLines(component) {
   );
   const list = (label, values) =>
     values.length ? [`- ${label}: ${values.join(' | ')}`] : [];
+  const purpose = sentence(component.purpose ?? component.claim.statement);
+  const statement = sentence(component.claim.statement);
   return [
     `### ${component.name} ${statusTag(component.claim.epistemicStatus)}`,
     '',
-    sentence(component.purpose ?? component.claim.statement),
+    `${purpose}${statement && statement !== purpose ? ` ${statement}` : ''}${claimContext(component.claim)}`.trim(),
     '',
     ...list('Anatomy', anatomy),
     ...list('Variants', variants),
@@ -167,6 +232,7 @@ function guardrailsSection() {
     '- **One screen skeleton.** Every screen keeps the band order and the primary-action position this brief records. A screen may omit an optional band; it never reorders bands or moves the primary action.',
     '- **Content stays in its container.** Text, chips, badges and marks never overflow the cell, card, row or control that holds them, and no bar or overlay covers content. Past the available width, first drop the optional part the slot rule names, then truncate with an ellipsis or collapse the excess into a "+N" count, never below the minimum visible characters the rule records.',
     '- **Proportions hold at every width.** Apply ratios and minimums at each viewport. When space shrinks, stack or wrap regions in their recorded order instead of squeezing components below their measured proportions, and never scroll the page sideways.',
+    '- **The typeface follows the observed character.** When the brief leaves the font family `unknown`, use a font stack of the recorded character, such as `ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif` for a sans-serif, and set it on the root so no text falls back to the browser default. Use a serif or monospace stack only where the brief records that character.',
     "- **Location is always visible.** Every screen marks its active navigation item, and its title repeats that item's term. A page below it, such as an object's detail, takes the object's name as its title and shows the way back with a breadcrumb or back control that uses the parent's term.",
     '- **One name per thing.** An object, action or destination keeps one term in navigation, titles, buttons, messages and empty states on every screen.',
     '- **Actions name their result.** A button or menu item says what it does, such as "Archive project", never only "OK", "Yes" or "Submit", and a confirmation repeats the verb of the action that opened it. Every icon-only control has an accessible name and a tooltip.',
@@ -195,10 +261,19 @@ function referenceSection(matrix) {
     if (!groups.has(directory)) groups.set(directory, []);
     groups.get(directory).push(entry);
   }
+  const identity = identityTopicPaths.filter((path) =>
+    matrix.documentationProjection.some((entry) => entry.path === path),
+  );
   return [
     '## Reference files',
     '',
-    'Open a file only when you need the evidence, confidence, coverage or validation behind an entry above.',
+    ...(identity.length
+      ? [
+          `Before generating the first screen, also read ${identity.map((path) => `[${path}](./${path})`).join(', ')} completely: they hold the surfaces, type, spacing and anatomy behind the entries above. Open the other files when you need the evidence, confidence, coverage or validation behind an entry.`,
+        ]
+      : [
+          'Open a file only when you need the evidence, confidence, coverage or validation behind an entry above.',
+        ]),
     '',
     ...[...groups].flatMap(([directory, entries]) => [
       `### ${directory[0].toUpperCase()}${directory.slice(1)}`,
@@ -217,12 +292,13 @@ export function renderDesignBrief(dna, matrix, { fidelityStatus }) {
     '',
     `Design DNA \`${dna.documentId}\`, revision ${dna.revision.number}, status \`${dna.status}\`. Documentation layout \`${matrix.documentationLayoutVersion}\`. Fidelity readiness \`${fidelityStatus}\`; this projection does not establish visual fidelity.`,
     '',
-    'Read this file completely before generating UI. It lists every token, rule, component and reproduction bound of the Design DNA in compact form. Each entry carries one epistemic status: `observed` and `inferred` come from the supplied screenshots; `proposed` is a recommendation not visible in them; `unknown` must not be invented.',
+    'Read this file completely before generating UI. It lists every token, rule, component and reproduction bound of the Design DNA with the screenshot regions they come from. Each entry carries one epistemic status: `observed` and `inferred` come from the supplied screenshots; `proposed` is a recommendation not visible in them; `unknown` must not be invented.',
     '',
     'These files are checksum-managed by Designome. Put manual additions in repository-owned documentation or Designome override files.',
     '',
     ...guardrailsSection(),
     ...qualitiesSection(dna),
+    ...evidenceSection(dna),
     ...tokensSection(dna),
     ...rulesSection(dna),
     ...componentsSection(dna),
