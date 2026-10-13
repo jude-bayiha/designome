@@ -254,6 +254,7 @@ test('the dossier README is a compact brief that names every accepted artifact',
     'A measured ratio is never capped away.',
     'Faint cues are built, not dropped.',
     'Sibling panels are filled.',
+    'Finish pass before delivery.',
   ])
     assert.ok(brief.includes(guardrail), guardrail);
   // The identity topic files are read in full before the first screen.
