@@ -1,6 +1,6 @@
 # Analyze component morphology and composition
 
-Read `_shared-contract.md`, the `axis.component-morphology` matrix slice, and routed UI-domain slices.
+Read `_shared-contract.md`, the `axis.component-morphology` matrix slice, and routed UI-domain slices. Cover section D of `_finish-checklist.md` for every routed subject.
 
 ## Inputs
 

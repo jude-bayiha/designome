@@ -1,6 +1,6 @@
 # Analyze typography and content hierarchy
 
-Read `_shared-contract.md`, the `axis.typography-content-hierarchy` matrix slice, and routed UI-domain slices.
+Read `_shared-contract.md`, the `axis.typography-content-hierarchy` matrix slice, and routed UI-domain slices. Cover sections B and H of `_finish-checklist.md` for every routed subject.
 
 ## Inputs
 

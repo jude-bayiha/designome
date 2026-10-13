@@ -1,6 +1,6 @@
 # Analyze data display, statistics, and visualization
 
-Read `_shared-contract.md`, the `axis.data-display-visualization` matrix slice, and routed UI-domain slices.
+Read `_shared-contract.md`, the `axis.data-display-visualization` matrix slice, and routed UI-domain slices. Cover section F of `_finish-checklist.md` for every routed subject.
 
 ## Inputs
 

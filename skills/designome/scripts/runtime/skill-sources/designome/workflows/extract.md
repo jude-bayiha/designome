@@ -15,7 +15,7 @@ In full mode, read completely before analysis:
 5. `../../schemas/request-contract.schema.json`
 6. `../../docs/conversational-request-contract.md`
 
-Read each axis prompt only when the orchestrator routes that axis. Read `../../prompts/15-synthesis.md` before synthesis and `../../schemas/design-dna.schema.json` before writing Design DNA.
+Read `../../prompts/_finish-checklist.md` completely before the first axis prompt and again before synthesis. Read each axis prompt only when the orchestrator routes that axis. Read `../../prompts/15-synthesis.md` before synthesis and `../../schemas/design-dna.schema.json` before writing Design DNA.
 
 ## Workflow
 

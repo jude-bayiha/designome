@@ -301,7 +301,8 @@
           "inspect": [
             "icon family, optical size, stroke, corner, cap, bounding box, and alignment",
             "photo, avatar, illustration, logo, thumbnail, and decorative asset treatment",
-            "crop, ratio, mask, fallback, and placeholder implications"
+            "crop, ratio, mask, fallback, and placeholder implications",
+            "functional glyph style (sort, disclosure, external link, overflow): filled or outlined, tone, size relative to text"
           ],
           "screenshotLimits": [
             "the exact icon or asset library cannot be identified reliably",
@@ -687,7 +688,8 @@
             "column roles, row anatomy, alignment, density, sticky cues, and action placement",
             "readable column labels and order, grouping depth, visible row counts, occupied space, and crop uncertainty without inventing total data volume",
             "sorting, filtering, grouping, pagination, expansion, selection, and batch-action cues",
-            "empty, partial, loading, error, long-content, and extreme-value behavior"
+            "empty, partial, loading, error, long-content, and extreme-value behavior",
+            "header tint, header text tone and size relative to cells, divider pattern, zebra, action column label and row height relative to the body text"
           ],
           "screenshotLimits": [
             "visible controls do not prove sorting, filtering, pagination, or virtualization",
@@ -701,7 +703,8 @@
           "inspect": [
             "bar, line, area, point, distribution, part-to-whole, flow, hierarchy, and spatial encodings",
             "position, length, area, angle, color, shape, size, texture, and ordering channels",
-            "axes, scales, domains, baselines, legends, labels, gridlines, annotations, and reference lines"
+            "axes, scales, domains, baselines, legends, labels, gridlines, annotations, and reference lines",
+            "mark thickness relative to pitch, mark corner radius, gridline pattern, axis label tone and units format, plot padding relative to card padding"
           ],
           "screenshotLimits": [
             "data values and scale transforms cannot be reconstructed reliably from pixels",

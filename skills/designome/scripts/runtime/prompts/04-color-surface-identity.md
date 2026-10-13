@@ -1,6 +1,6 @@
 # Analyze color, surfaces, assets, and visual identity
 
-Read `_shared-contract.md`, the `axis.color-surface-identity` matrix slice, and routed UI-domain slices.
+Read `_shared-contract.md`, the `axis.color-surface-identity` matrix slice, and routed UI-domain slices. Cover sections A and E of `_finish-checklist.md` for every routed subject.
 
 ## Inputs
 

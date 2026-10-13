@@ -1,6 +1,6 @@
 # Analyze spatial composition and layout
 
-Read `_shared-contract.md`, the `axis.spatial-composition` matrix slice, and only the UI-domain slices routed to this stage.
+Read `_shared-contract.md`, the `axis.spatial-composition` matrix slice, and only the UI-domain slices routed to this stage. Cover section C of `_finish-checklist.md` for every routed subject.
 
 ## Inputs
 
