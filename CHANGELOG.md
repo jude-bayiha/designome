@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.2.0](https://github.com/jude-bayiha/designome/compare/v2.1.0...v2.2.0) (2026-10-13)
+
+
+### Features
+
+* **benchmarks:** flag lost location, two names, vague actions and hidden tasks ([49609d8](https://github.com/jude-bayiha/designome/commit/49609d8c80caf6816a3df401055d2cee468df099))
+* **prompts:** add a finish checklist of micro-details for extraction and audit ([002f706](https://github.com/jude-bayiha/designome/commit/002f706a3d465a9b8861fd904d1e5e387fa9e2ac))
+* **runtime:** add interaction guardrails and budget defaults to the dossier brief ([8d762fd](https://github.com/jude-bayiha/designome/commit/8d762fdc46f0221ac42ae9c636ea9bc427ce2343))
+* **runtime:** ship the finish checklist in context packs and add a finish pass to the brief ([cc0bc18](https://github.com/jude-bayiha/designome/commit/cc0bc18a444be49b8b291b702bc1c545ecfa5da9))
+
+
+### Bug Fixes
+
+* carry screenshot evidence and micro-details in a self-sufficient design brief ([e49ddb2](https://github.com/jude-bayiha/designome/commit/e49ddb23b4f9ee61178de3257ab12cc794181922))
+* **prompts:** ignore presentation backdrops and record type classification ([35c519c](https://github.com/jude-bayiha/designome/commit/35c519ce7a1355b23d4dbc48725a205e45ae5765))
+* **prompts:** measure navigation, action, disclosure and label budgets ([cfe8d7b](https://github.com/jude-bayiha/designome/commit/cfe8d7b71716d270011f68481ade2a7b95d61da4))
+* **prompts:** record faint finish cues, border tiers, glyph styles and scale anchors ([26ed422](https://github.com/jude-bayiha/designome/commit/26ed422a0f97b1c2fed167f8a8bcc9649afa18a9))
+* **runtime:** carry screenshot evidence and identity files in the design brief ([ca230a3](https://github.com/jude-bayiha/designome/commit/ca230a3f30dd80ce157287c82e415543c3bf9fb3))
+* **runtime:** keep measured ratios, faint cues and filled panels in generated UI ([b23ae9f](https://github.com/jude-bayiha/designome/commit/b23ae9fd82b28c0d17800d70b50323048cc453f1))
+* **runtime:** make the design brief the only required read ([3fa55c9](https://github.com/jude-bayiha/designome/commit/3fa55c9bd490923c6aef91e226ba7df5becbc896))
+* **runtime:** render each dossier artifact once and link it elsewhere ([9aac4db](https://github.com/jude-bayiha/designome/commit/9aac4dbc52cd378c61d8fb85cfd56621f162cc4a))
+
 ## [2.1.0](https://github.com/jude-bayiha/designome/compare/v2.0.0...v2.1.0) (2026-10-09)
 
 
