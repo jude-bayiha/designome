@@ -250,6 +250,12 @@ test('the dossier README is a compact brief that names every accepted artifact',
     /backdrop, padding, frame or drop shadow, is not part of the design/u,
   );
   assert.ok(brief.includes('The typeface follows the observed character.'));
+  for (const guardrail of [
+    'A measured ratio is never capped away.',
+    'Faint cues are built, not dropped.',
+    'Sibling panels are filled.',
+  ])
+    assert.ok(brief.includes(guardrail), guardrail);
   // The identity topic files are read in full before the first screen.
   assert.match(
     brief,
