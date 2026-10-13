@@ -16,6 +16,7 @@ New audit plans use Audit Contract `2.0.0` as an additive capability. The host b
 - A target project may reveal technical integration facts only: framework, package manager, CSS entry points, aliases, installed libraries, and applicable agent instructions.
 - Never use an existing target-project UI, stylesheet, token, or component as evidence for the extracted design.
 - Do not infer exact pixel values, font families, icon packages, breakpoints, easing curves, or implementation libraries unless explicit evidence establishes them.
+- Faint is not absent. A cue that is subtle on the screenshot, such as a fill one or two lightness steps off the canvas, a 1px bottom edge or shadow, a second border tone or a weight one band heavier, is part of the finish; record it with its strength (for example "control fill about 3% darker than the canvas", "a 1px darker bottom edge") instead of rounding it to "none", "flat" or "no shadow". Use `unknown` only when resolution truly hides it.
 - Record the grammar, never the source product's assets. Product and brand names, logos, icon glyphs, illustrations, photos, people, copy and data values are replaceable. Write the rule they follow ("project marks are colored rounded-square tiles with a white glyph"; "record IDs are an uppercase prefix, a hyphen and a zero-padded four-digit number"), never the asset or value itself. Evidence references locate a value; claims and identifiers do not repeat it.
 
 ## Normalized request policy

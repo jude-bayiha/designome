@@ -191,7 +191,8 @@
           "inspect": [
             "strong, subtle, interactive, warning, success, disabled, and placeholder text",
             "capitalization, sentence case, title case, underlining, and emphasis patterns",
-            "heading continuity and label-value relationships"
+            "heading continuity and label-value relationships",
+            "gap and size ratio of stacked or inline text pairs, and weight bands no wider than about one step"
           ],
           "screenshotLimits": [
             "visual hierarchy does not establish semantic heading levels",
@@ -271,7 +272,8 @@
           "inspect": [
             "surface tiers and nested surface relationships",
             "border weight, radius families, shadow softness, and overlay treatment",
-            "flat, raised, inset, selected, disabled, and scrim relationships"
+            "flat, raised, inset, selected, disabled, and scrim relationships",
+            "border tiers per surface type (containers, controls, dividers) and the fill and edge cue of each control relative to the canvas, faint cues included"
           ],
           "screenshotLimits": [
             "exact blur, opacity, radius, and shadow values are not visually provable",
@@ -366,6 +368,7 @@
           "inspect": [
             "compact, default, comfortable, prominent, subtle, and destructive relationships",
             "height, padding, icon, label, and target-size relationships",
+            "control finish (fill, border tier, edge cue, radius) and functional glyph style (filled or outlined, tone, size)",
             "variant selection conditions and unsupported combinations"
           ],
           "screenshotLimits": [
