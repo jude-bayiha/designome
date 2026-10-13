@@ -27,7 +27,8 @@ for (const [ratio, width, height] of [
   assert.equal(video.width, width);
   assert.equal(video.height, height);
   assert.equal(video.codec_name, 'h264');
-  assert.equal(video.pix_fmt, 'yuv420p');
+  // FFprobe uses yuvj420p for full-range 8-bit 4:2:0 H.264 output.
+  assert.ok(['yuv420p', 'yuvj420p'].includes(video.pix_fmt));
   assert.equal(video.r_frame_rate, '30/1');
   assert.equal(Number(video.nb_frames), 1260);
   assert.equal(
@@ -50,6 +51,8 @@ for (const [ratio, width, height] of [
     fps: 30,
     duration: 42,
     audioStreams: 0,
+    pixelFormat: video.pix_fmt,
+    colorRange: video.color_range,
     bytes: (await stat(file)).size,
     fullDecode: 'passed',
   });
