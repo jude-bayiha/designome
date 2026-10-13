@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import test from 'node:test';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
@@ -116,6 +117,7 @@ test('documentation preserves relationships, dependent recipes and field provena
   const docs = await projectDocumentation(dna);
   const recipe = docs.get('patterns/stats-and-kpis.md');
   assert.ok(recipe, 'Domain recipe exists');
+  const dossier = [...docs.values()].join('\n');
   for (const text of [
     expression,
     spacing.claim.statement,
@@ -124,10 +126,13 @@ test('documentation preserves relationships, dependent recipes and field provena
     'Candidate metric-to-label size ratio',
     'programmaticState',
     'Validation status',
-    'Selection conditions',
-    'Visual differences',
+    'Conditions',
+    'Differences',
   ])
-    assert.ok(recipe.includes(text), text);
+    assert.ok(dossier.includes(text), text);
+  for (const item of [spacing, dna.rules[0], dna.componentPatterns[0]])
+    assert.match(recipe, new RegExp(`\`${item.id}\`.*Full contract: \\[`));
+  assert.match(recipe, /Candidate metric-to-label size ratio/);
   assert.equal(docs.size, 52);
   assert.match(docs.get('governance/calibration.md'), /Acceptance: `pending`/);
   assert.equal(fidelityReadiness(dna).status, 'ready-for-benchmark');
@@ -161,12 +166,32 @@ test('domain recipes include cross-domain token and component dependencies witho
   dna.componentPatterns.push(component);
   const docs = await projectDocumentation(dna);
   const recipe = docs.get('patterns/stats-and-kpis.md');
-  for (const heading of [
-    '#### Token: Direct dependency token',
-    '#### Token: Transitive dependency token',
-    '#### Component: Cross-domain support component',
-  ])
-    assert.equal(recipe.split(heading).length - 1, 1, heading);
+  for (const id of [directToken.id, transitiveToken.id, component.id])
+    assert.equal(recipe.split(`\`${id}\``).length - 1, 1, id);
+});
+
+test('the dossier renders every artifact in full once and links it elsewhere', async () => {
+  const dna = await reference();
+  const docs = await projectDocumentation(dna);
+  const count = (marker) =>
+    [...docs.values()].reduce(
+      (total, text) => total + text.split(marker).length - 1,
+      0,
+    );
+  for (const token of dna.tokens)
+    assert.equal(count(`Token ID: \`${token.id}\``), 1, token.id);
+  for (const rule of dna.rules)
+    assert.equal(count(`Rule ID: \`${rule.id}\``), 1, rule.id);
+  for (const quality of dna.fidelity.qualities)
+    assert.equal(count(`Quality ID: \`${quality.id}\``), 1, quality.id);
+  assert.ok(docs.get('governance/rules.md').includes(dna.rules[0].rationale));
+  for (const [file, text] of docs)
+    for (const [, target] of text.matchAll(/\]\(([^)#]+\.md)\)/g)) {
+      const resolved = path.posix.normalize(
+        path.posix.join(path.posix.dirname(file), target),
+      );
+      assert.ok(docs.has(resolved), `${file} links ${target}`);
+    }
 });
 
 test('calibration evaluates ratios and tolerance while preserving proposals and missing evidence', async () => {

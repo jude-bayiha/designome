@@ -3,7 +3,7 @@ import { designValue } from './documentation.mjs';
 // The brief is the dossier's entry point and the generator's only required read:
 // every accepted artifact's statement, status, measures, relationships, scope,
 // exceptions and screenshot evidence. Confidence, routing and validation details
-// stay in the topic files, which repeat artifacts across subjects.
+// stay in the topic files, where each artifact is rendered in full once.
 
 const statusTag = (status) => `\`${status ?? 'unknown'}\``;
 const sentence = (text) => String(text ?? '').trim();

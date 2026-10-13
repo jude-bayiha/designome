@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 // Human-readable contracts share one renderer across dossier and domain recipes.
 export function claimDetails(claim) {
   return [
@@ -189,7 +191,23 @@ export function renderComponentContract(component, heading = '###') {
   ].join('\n');
 }
 
-export function domainRecipe(dna, domainRef) {
+// Each artifact is rendered in full once, in its home file; every other file
+// names it in one line and links to that home.
+export function homeLink(from, to) {
+  const href = path.posix.relative(path.posix.dirname(from), to);
+  return `[${to}](${href.startsWith('.') ? href : `./${href}`})`;
+}
+
+export function renderArtifactReference(kind, item, link) {
+  const status = `Status: \`${item.claim.epistemicStatus}\``;
+  if (kind === 'token')
+    return `- Token \`${item.id}\` — ${item.name}: ${designValue(item.value)} — ${status}. Full contract: ${link}.`;
+  if (kind === 'rule')
+    return `- Rule \`${item.id}\` — ${item.name} (\`${item.strength}\`): ${item.claim.statement} — ${status}. Full contract: ${link}.`;
+  return `- Component \`${item.id}\` — ${item.name}: ${item.purpose ?? item.claim.statement} — ${status}. Full contract: ${link}, with anatomy, variants, states and composition beside it.`;
+}
+
+export function domainRecipe(dna, domainRef, { homes, from } = {}) {
   const artifacts = new Map(
     [
       ...dna.tokens.map((item) => ({ item, kind: 'token' })),
@@ -231,21 +249,65 @@ export function domainRecipe(dna, domainRef) {
         queue.push(ref);
       }
   }
+  const render = (kind, item, full) =>
+    homes?.has(item.id) && homes.get(item.id) !== from
+      ? renderArtifactReference(kind, item, homeLink(from, homes.get(item.id)))
+      : full(item, '####');
+  const linked = Boolean(homes);
   return [
     '### Implementation recipe',
     '',
     'Apply the contracts below within their scope and exceptions. Proposed and unknown assertions retain their status; no implementation behavior is established by an appearance label.',
+    ...(linked
+      ? [
+          '',
+          'Each artifact is rendered in full once, in the file its line links to; the design brief carries every measure.',
+        ]
+      : []),
     '',
     ...dna.tokens
       .filter((item) => included.has(item.id))
-      .map((item) => renderTokenContract(item, '####')),
+      .map((item) => render('token', item, renderTokenContract)),
     ...dna.rules
       .filter((item) => included.has(item.id))
-      .map((item) => renderRuleContract(item, '####')),
+      .map((item) => render('rule', item, renderRuleContract)),
     ...(dna.componentPatterns ?? [])
       .filter((item) => included.has(item.id))
-      .map((item) => renderComponentContract(item, '####')),
-    renderFidelityContract(dna, included),
+      .map((item) => render('component', item, renderComponentContract)),
+    ...(linked ? [''] : []),
+    homes?.has('fidelity') && homes.get('fidelity') !== from
+      ? renderFidelityReferences(
+          dna,
+          included,
+          homeLink(from, homes.get('fidelity')),
+        )
+      : renderFidelityContract(dna, included),
+  ].join('\n');
+}
+
+function renderFidelityReferences(dna, artifactIds, link) {
+  if (!dna.fidelity) return renderFidelityContract(dna, artifactIds);
+  const relevant = (item) =>
+    item.artifactRefs.some((id) => artifactIds.has(id));
+  const qualities = dna.fidelity.qualities.filter(relevant);
+  const constraints = dna.fidelity.constraints.filter(relevant);
+  return [
+    '## Fidelity contract',
+    '',
+    `The qualities and constraints below are rendered in full in ${link}.`,
+    '',
+    ...qualities.map(
+      (quality) =>
+        `- Quality \`${quality.id}\` — ${quality.name} (\`${quality.priority}\`) — Status: \`${quality.claim.epistemicStatus}\``,
+    ),
+    ...constraints.map(
+      (constraint) =>
+        `- Constraint \`${constraint.id}\` — ${constraint.name}: ${designValue(constraint.measurement.expected)} — Acceptance: \`${constraint.acceptance.status}\``,
+    ),
+    ...(qualities.length || constraints.length
+      ? []
+      : ['- No quality or constraint names an artifact of this domain.']),
+    '',
   ].join('\n');
 }
 
