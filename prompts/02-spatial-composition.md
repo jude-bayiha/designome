@@ -1,6 +1,6 @@
 # Analyze spatial composition and layout
 
-Read `_shared-contract.md`, the `axis.spatial-composition` matrix slice, and only the UI-domain slices routed to this stage.
+Read `_shared-contract.md`, the `axis.spatial-composition` matrix slice, and only the UI-domain slices routed to this stage. Cover section C of `_finish-checklist.md` for every routed subject.
 
 ## Inputs
 
@@ -17,8 +17,9 @@ For every declared facet, distinguish repeated system relationships from one-off
 3. Build a spacing inventory by semantic distance: within a control, within a component, between peers, between groups, between sections, and at page boundaries. Identify repeated families, ratios, exceptions, and proposed readability bounds.
 4. Record geometric and optical alignment: edges, centers, baselines, decimals, icons, labels, values, repeated rows, and visual centers. Separate actual alignment evidence from capture distortion.
 5. Describe density, whitespace, salience, overlap, surface depth, and dominant-to-supporting proportions by region. Explain what creates hierarchy without claiming business priority. Express density as counts and ratios, such as rows or cards visible per viewport, inset relative to peer gap, and section gap relative to peer gap, so a new screen can match it. Express component and band heights, such as KPI tiles, rows, group headers, toolbars and chips, as multiples of the body-text size or the row pitch.
+   Anchor the scale: record the body-text size as a fraction of the UI's own width (for example "the content width holds about 100 body-text units") and the row pitch relative to the body text, so a generator can derive its base unit on a viewport of another size instead of guessing a pixel value. Record how sibling panels in one row share height and whether their content fills them; a source where every panel in a row is filled is a rule that a generator must not leave half-empty panels.
 6. Record the screen skeleton the admitted screens share: the order of their bands (for example page title row, filter or toolbar row, KPI strip, main content), which band holds the primary action and at which edge, and which bands are optional. A skeleton repeated on two or more screens is `observed` and becomes the template for every new screen; a single screen makes it `inferred`. Record how it reflows when width shrinks: bands keep their order and stack, and the primary action keeps its band.
-7. Make significant relationships executable: identify both sides of a proportion, the owner of each gap, the alignment anchor and the exception that changes the layout. When useful, propose bounded calibration for region width ratios, peer gaps or insets and specify what failure would break the source hierarchy. Preserve uncertainty caused by promotional framing, overlays, crop and perspective.
+7. Make significant relationships executable: identify both sides of a proportion, the owner of each gap, the alignment anchor and the exception that changes the layout. When useful, propose bounded calibration for region width ratios, peer gaps or insets and specify what failure would break the source hierarchy. Preserve uncertainty caused by promotional framing, overlays, crop and perspective. Measure page margins and the shell from the UI's own outer edge, never from a presentation backdrop or frame around the screenshot.
 
 For every routed UI domain, describe its spatial anatomy and transformations. A statistics region must distinguish KPI-grid rhythm from chart-region proportion; a marketing surface must distinguish narrative section rhythm from reusable application-shell geometry.
 

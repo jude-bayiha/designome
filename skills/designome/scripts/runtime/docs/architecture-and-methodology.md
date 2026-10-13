@@ -150,6 +150,7 @@ Generators fall back on their own defaults wherever a rule is vague, so extracti
 - **Chart family recipes:** one mark recipe (thickness relative to pitch, gap ratio, maximum thickness, corners, gridlines, tones) per family of charts.
 - **Recipes by need:** each component's purpose states the need it serves ("Use when…"), so a generator reuses it when a new product has the same need.
 - **Optical finish:** nested radius relative to the parent radius and inset, the separation cue of each surface tier, icon and divider stroke relative to text weight, and icon size relative to its label.
+- **Micro-details:** faint cues are recorded with their strength, never rounded to "none": border tiers per surface type (containers, controls, dividers), the fill and edge cue (shadow, 1px bottom edge, inner highlight) of each control relative to the canvas, the filled or outlined style of functional glyphs such as sort indicators, weight bands no wider than one step with their most likely value, the gap and size ratio of stacked text pairs, and the body-text size relative to the UI width so a generator can derive its base unit. `prompts/_finish-checklist.md` lists these micro-details in eight sections (canvas, surfaces and borders; typography; spacing and scale; controls; iconography; data display; shell; microcopy patterns). Each axis prompt covers its sections, synthesis walks the whole list so every applicable item becomes a measured claim or an explicit `unknown`, and the audit compares captures section by section. The brief adds four generator guardrails: a measured ratio is never capped away, faint cues are built rather than dropped, sibling panels are filled, and a finish pass precedes delivery.
 
 Every one is a ratio, minimum, order or priority, never a fixed width, so it holds at every viewport. The web benchmark captures each route at 390 px as well as 1440 px to check that the rules do not make narrow layouts worse.
 
@@ -225,7 +226,7 @@ Existing CSS, components, tokens, documentation, or rendered target UI cannot su
     └── findings.json
 ```
 
-An accepted installation projects 52 documentation files. `README.md` is a compact design brief that carries every artifact's statement and status; the other files hold the full evidence, coverage and validation detail:
+An accepted installation projects 52 documentation files. `README.md` is the design brief: it carries every artifact's statement, status, scope, exceptions and evidence references with the screenshot regions they were read from, together with token relationships, rule rationale and dependencies, part constraints and variant conditions, so a generator reads this one file completely and needs no other. Topic files hold the confidence, coverage and validation detail. Each artifact is rendered in full once, in its home file (rules in `governance/rules.md`, components under `components/`, the fidelity contract in `governance/calibration.md`, each token in the first foundation that owns its category); every other topic file names it in one line with its value or statement and links to that home. On a real three-region extraction this cut the dossier from 2.4 MB to 0.84 MB with every field still present:
 
 ```text
 docs/designome/

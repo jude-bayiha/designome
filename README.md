@@ -103,14 +103,14 @@ All three screens show Cabinet, a fictional museum registry unrelated to either 
 
 ## What you get in your project
 
-| Artifact                                             | Purpose                                                                                                  |
-| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `docs/designome/README.md`                           | The compact design brief: every signature quality, token, rule, component and unknown, read once in full |
-| `docs/designome/` topic files                        | Evidence, coverage, per-domain recipes and governance, opened only when the detail is needed             |
-| `.designome/design-dna.json`                         | The accepted Design DNA, the canonical machine-readable source                                           |
-| `designome.generated.css`, `designome.overrides.css` | Managed token bridge next to your CSS entry, and a file you own for your adjustments                     |
-| `AGENTS.md` and `CLAUDE.md` guidance block           | Tells Codex and Claude Code to read the brief before generating UI                                       |
-| `.agents/skills/` and `.claude/skills/` audit skill  | Lets either host audit generated screens against the grammar                                             |
+| Artifact                                             | Purpose                                                                                                                                |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/designome/README.md`                           | The design brief: every signature quality, token, rule, component and unknown with the screenshot regions behind it, read once in full |
+| `docs/designome/` topic files                        | Evidence, coverage, per-domain recipes and governance, opened only when the detail is needed                                           |
+| `.designome/design-dna.json`                         | The accepted Design DNA, the canonical machine-readable source                                                                         |
+| `designome.generated.css`, `designome.overrides.css` | Managed token bridge next to your CSS entry, and a file you own for your adjustments                                                   |
+| `AGENTS.md` and `CLAUDE.md` guidance block           | Tells Codex and Claude Code to read the brief before generating UI                                                                     |
+| `.agents/skills/` and `.claude/skills/` audit skill  | Lets either host audit generated screens against the grammar                                                                           |
 
 ## Quick start
 

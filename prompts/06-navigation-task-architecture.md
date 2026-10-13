@@ -1,6 +1,6 @@
 # Analyze navigation, information architecture, and task flow
 
-Read `_shared-contract.md`, the `axis.navigation-task-architecture` matrix slice, and routed UI-domain slices.
+Read `_shared-contract.md`, the `axis.navigation-task-architecture` matrix slice, and routed UI-domain slices. Cover section G of `_finish-checklist.md` for every routed subject.
 
 ## Inputs
 

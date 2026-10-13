@@ -42,7 +42,7 @@ The browser adapter records target capture content hashes and native image dimen
 
 ## Documentation projection
 
-Token relationships, applies-to scopes, rationale, failures, dependencies, exceptions and validation status survive projection. Domain documents contain full relevant token, rule and component contracts, including dependency closure, anatomy, selection conditions, concrete differences and independently labeled behavior. Related signature qualities and calibration bounds appear with the recipe and in governance documentation.
+Token relationships, applies-to scopes, rationale, failures, dependencies, exceptions and validation status survive projection. Domain documents list every relevant token, rule and component, including the dependency closure, each in one line with its value or statement and a link to the home file that renders its full contract (anatomy, selection conditions, concrete differences and independently labeled behavior). Related signature qualities and calibration bounds are listed with the recipe and rendered in full in governance documentation. The design brief carries every measure, so no generator needs to follow these links to build.
 
 `projectDocumentation(dna)` provides the same dossier without target inspection, installation or acceptance. The benchmark uses this pure projection. It strips source paths from generator packets and preserves source evidence identifiers, confidence and limitations.
 

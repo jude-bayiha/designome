@@ -1,6 +1,6 @@
 # Analyze typography and content hierarchy
 
-Read `_shared-contract.md`, the `axis.typography-content-hierarchy` matrix slice, and routed UI-domain slices.
+Read `_shared-contract.md`, the `axis.typography-content-hierarchy` matrix slice, and routed UI-domain slices. Cover sections B and H of `_finish-checklist.md` for every routed subject.
 
 ## Inputs
 
@@ -14,11 +14,13 @@ Create a role-based typographic grammar without naming an unevidenced font:
 
 1. Inventory display, page-title, section-title, component-title, body, label, input, metadata, caption, link, status, code, and data-value roles. Merge only roles with repeated relational evidence.
 2. Describe relative size, weight, line height, tracking, case, color, decoration, and spacing. Identify the role transitions that establish hierarchy and the exceptions that carry special emphasis.
-   Weight is a role property, not a mood. For every role, record an apparent weight band on the 100–900 scale, such as regular 400 ± 100 or semibold 600 ± 100, and say whether each hierarchy transition is carried by size, tone, weight or a combination. Record the weight of display numerals and primary values explicitly: a large regular numeral and a large bold numeral are different grammars. Count how many weight bands the source uses in total.
+   Weight is a role property, not a mood. For every role, record an apparent weight band on the 100–900 scale, such as regular 400 ± 100 or semibold 600 ± 100, and say whether each hierarchy transition is carried by size, tone, weight or a combination. Record the weight of display numerals and primary values explicitly: a large regular numeral and a large bold numeral are different grammars. Count how many weight bands the source uses in total. Give each band its most likely value and keep its tolerance at ±50 or ±100 at most, such as "bold 700 ± 50"; a band of "600-700" lets a generator pick the lighter end and lose the emphasis.
+   For stacked text pairs, such as a KPI label above its value, a title above its caption, or a value followed by an inline qualifier, record the gap between them relative to the body-text size and the size ratio of the secondary part to the primary one (for example "qualifier about 0.5 of the value size, set on the value's baseline"). Record the size and tone of table header text relative to cell text.
 3. Evaluate readability relationships: line measure, paragraph rhythm, dense-label treatment, multi-line alignment, minimum apparent size, and the proposed bounds needed to keep compact UI legible.
 4. Analyze numerals and structured values: unit placement, signs, decimals, percentages, currencies, dates, abbreviations, tabular alignment cues, primary value, comparison, target, timeframe, and freshness.
 5. For every repeated text slot, such as a chip, badge, table cell, card title or navigation label, record its content budget: the minimum visible characters of the main text, the maximum lines, the part that yields first and whether it wraps, truncates or drops a part. Record wrapping, clamping, ellipsis, growth zones, long-word risks, enlarged-text implications, alternate scripts, localization expansion, and RTL behavior as observed, inferred, proposed, or unknown.
 6. Describe visible type character where resolution supports it: apparent glyph width, geometric or humanist cues, x-height relative to capitals, stroke contrast and numeral shapes. These observations can guide a later font comparison without identifying a font family. Record ambiguity from scale, antialiasing and perspective.
+   Always record the type classification of each role as a token or rule, even when the family stays `unknown`: sans-serif, serif or monospace, and for a sans-serif whether it reads as grotesque, neo-grotesque, geometric or humanist, with its apparent width (condensed, normal or wide). A generator falls back to the browser's default serif when this is missing, which changes the identity more than any size error.
 7. For the most important role transitions, propose audit-only size, weight-band, line-height or spacing ranges/ratios with target roles, units, tolerance and a matched-region review. Numeric proposals must not masquerade as measurements of the original CSS.
 
 For `domain.stats-kpis`, separately model label, primary value, unit, qualifier, trend, comparison, target, timeframe, and freshness hierarchy. For forms, distinguish persistent labels from placeholders. For marketing/editorial content, distinguish expressive display roles from utility text roles.

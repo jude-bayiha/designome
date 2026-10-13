@@ -308,6 +308,7 @@ export async function compileContext(
   for (const stage of matrix.promptStages) await read(stage.file);
   for (const file of [
     'prompts/_shared-contract.md',
+    'prompts/_finish-checklist.md',
     'schemas/design-dna.schema.json',
     'schemas/request-contract.schema.json',
     'docs/conversational-request-contract.md',
@@ -417,6 +418,7 @@ export async function compileContext(
     });
   const file = (name, reason) => add(name, '', canonical[name], reason);
   file('prompts/_shared-contract.md', 'mandatory-guardrails');
+  file('prompts/_finish-checklist.md', 'mandatory-guardrails');
   const stageFiles = {
     request: ['prompts/00-orchestrator.md'],
     source: ['prompts/01-source-evidence.md'],

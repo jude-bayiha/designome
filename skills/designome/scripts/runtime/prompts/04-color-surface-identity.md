@@ -1,6 +1,6 @@
 # Analyze color, surfaces, assets, and visual identity
 
-Read `_shared-contract.md`, the `axis.color-surface-identity` matrix slice, and routed UI-domain slices.
+Read `_shared-contract.md`, the `axis.color-surface-identity` matrix slice, and routed UI-domain slices. Cover sections A and E of `_finish-checklist.md` for every routed subject.
 
 ## Inputs
 
@@ -13,7 +13,7 @@ Read `_shared-contract.md`, the `axis.color-surface-identity` matrix slice, and 
 
 Extract semantic relationships instead of raw sampled palettes:
 
-1. Inventory canvas, surface, elevated, inset, text, icon, border, action, focus, selection, destructive, warning, success, neutral, and data-series roles. Record pairings, hierarchy, repetition, and exceptions.
+1. Read the canvas from the UI's own outermost surface, never from a presentation backdrop or mockup frame around the screenshot that `01-source-evidence` recorded as a limitation. Inventory canvas, surface, elevated, inset, text, icon, border, action, focus, selection, destructive, warning, success, neutral, and data-series roles. Record pairings, hierarchy, repetition, and exceptions.
 2. Describe nested surface tiers, borders, radii, elevation, transparency, scrims, overlays, selected and disabled states, and the strength of each depth cue.
 3. Identify evidenced theme modes. For unshown dark, high-contrast, or branded modes, preserve semantic roles and propose verification without inventing palettes.
 4. Analyze icon family, stroke/fill balance, optical size, bounding box, cap and corner language, alignment, semantic role, directionality, labels, and state treatment. Analyze imagery, avatar, logo, illustration, crop, mask, ratio, fallback, and placeholder implications.
@@ -22,6 +22,9 @@ Extract semantic relationships instead of raw sampled palettes:
 7. Record the tone of every fill that is not an action or a selection: progress bars, segmented indicators, meters and chart marks. Say whether each uses the accent, the darkest fill, a neutral grey or a status color, so a generator does not promote them to the accent by default.
 8. Count the status colors. Record how many distinct saturated hues carry status, the order they follow (for example neutral, in progress, attention, done), the carrier of each (text, dot, tinted pill, icon) and whether statuses outside that set share a hue or stay neutral. A source with six status hues records six; do not reduce it to a preferred number.
 9. Record the optical finish, as ratios, bands or orders: the radius of a nested surface relative to its parent's radius and the inset between them (for example inner radius equal to the outer one minus the inset, or equal radii); the cue that separates each surface tier (hairline border, tone step, shadow or nothing) and its width band; the stroke weight of icons and dividers relative to the weight band of adjacent text; the icon size relative to the cap height or size of its label; and whether an icon and its label share an optical center or a baseline. Leave a property `unknown` when resolution hides it.
+
+10. Record border tiers per surface type, not one hairline for everything. For containers (cards, panels, tables), controls (buttons, inputs, segmented tracks, pills) and dividers (rows, sections, header cells), give the border tone as a lightness relative to the canvas or as an order (for example "card borders are lighter than control borders, which are lighter than input focus"), and say whether a tier has a border at all.
+11. Record the fill of every control and small surface relative to the canvas: secondary button, icon button, segmented track and active segment, status pill, icon tile, overflow button, input. Note the edge cue that makes each look raised, flat or inset: a soft shadow, a 1px darker bottom edge, an inner highlight, or none. Report the strength band of each cue, even when it is faint.
 
 For charts, separate categorical, sequential, diverging, status, selection, and annotation color roles. For theme-only sources, admit color and surface evidence but reject unrelated layout, component, or behavior claims.
 

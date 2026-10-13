@@ -112,7 +112,8 @@
           ],
           "screenshotLimits": [
             "optical alignment is an interpretation unless repeated evidence supports it",
-            "cropping can distort apparent proportion"
+            "cropping can distort apparent proportion",
+            "a presentation backdrop, frame or padding around the captured UI is not page margin or canvas"
           ]
         },
         {
@@ -161,7 +162,8 @@
             "display, page title, section title, component title, body, label, metadata, caption, code, and data roles",
             "relative size, weight, contrast, and spacing hierarchy",
             "role reuse and intentional exceptions",
-            "apparent glyph width, geometric or humanist character, x-height cues and numeral shape; exact font identity remains unknown"
+            "apparent glyph width, geometric or humanist character, x-height cues and numeral shape; exact font identity remains unknown",
+            "type classification per role (sans-serif, serif or monospace, and the sans-serif kind), recorded even when the family is unknown"
           ],
           "screenshotLimits": [
             "font family and exact metrics cannot be identified from resemblance",
@@ -189,7 +191,8 @@
           "inspect": [
             "strong, subtle, interactive, warning, success, disabled, and placeholder text",
             "capitalization, sentence case, title case, underlining, and emphasis patterns",
-            "heading continuity and label-value relationships"
+            "heading continuity and label-value relationships",
+            "gap and size ratio of stacked or inline text pairs, and weight bands no wider than about one step"
           ],
           "screenshotLimits": [
             "visual hierarchy does not establish semantic heading levels",
@@ -269,7 +272,8 @@
           "inspect": [
             "surface tiers and nested surface relationships",
             "border weight, radius families, shadow softness, and overlay treatment",
-            "flat, raised, inset, selected, disabled, and scrim relationships"
+            "flat, raised, inset, selected, disabled, and scrim relationships",
+            "border tiers per surface type (containers, controls, dividers) and the fill and edge cue of each control relative to the canvas, faint cues included"
           ],
           "screenshotLimits": [
             "exact blur, opacity, radius, and shadow values are not visually provable",
@@ -297,7 +301,8 @@
           "inspect": [
             "icon family, optical size, stroke, corner, cap, bounding box, and alignment",
             "photo, avatar, illustration, logo, thumbnail, and decorative asset treatment",
-            "crop, ratio, mask, fallback, and placeholder implications"
+            "crop, ratio, mask, fallback, and placeholder implications",
+            "functional glyph style (sort, disclosure, external link, overflow): filled or outlined, tone, size relative to text"
           ],
           "screenshotLimits": [
             "the exact icon or asset library cannot be identified reliably",
@@ -364,6 +369,7 @@
           "inspect": [
             "compact, default, comfortable, prominent, subtle, and destructive relationships",
             "height, padding, icon, label, and target-size relationships",
+            "control finish (fill, border tier, edge cue, radius) and functional glyph style (filled or outlined, tone, size)",
             "variant selection conditions and unsupported combinations"
           ],
           "screenshotLimits": [
@@ -682,7 +688,8 @@
             "column roles, row anatomy, alignment, density, sticky cues, and action placement",
             "readable column labels and order, grouping depth, visible row counts, occupied space, and crop uncertainty without inventing total data volume",
             "sorting, filtering, grouping, pagination, expansion, selection, and batch-action cues",
-            "empty, partial, loading, error, long-content, and extreme-value behavior"
+            "empty, partial, loading, error, long-content, and extreme-value behavior",
+            "header tint, header text tone and size relative to cells, divider pattern, zebra, action column label and row height relative to the body text"
           ],
           "screenshotLimits": [
             "visible controls do not prove sorting, filtering, pagination, or virtualization",
@@ -696,7 +703,8 @@
           "inspect": [
             "bar, line, area, point, distribution, part-to-whole, flow, hierarchy, and spatial encodings",
             "position, length, area, angle, color, shape, size, texture, and ordering channels",
-            "axes, scales, domains, baselines, legends, labels, gridlines, annotations, and reference lines"
+            "axes, scales, domains, baselines, legends, labels, gridlines, annotations, and reference lines",
+            "mark thickness relative to pitch, mark corner radius, gridline pattern, axis label tone and units format, plot padding relative to card padding"
           ],
           "screenshotLimits": [
             "data values and scale transforms cannot be reconstructed reliably from pixels",

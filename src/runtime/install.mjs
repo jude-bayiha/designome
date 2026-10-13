@@ -12,6 +12,8 @@ import {
   renderAssertions,
   domainRecipe,
   renderFidelityContract,
+  homeLink,
+  renderArtifactReference,
 } from './documentation.mjs';
 import { fidelityReadiness } from './fidelity.mjs';
 import { renderDesignBrief } from './design-brief.mjs';
@@ -235,21 +237,13 @@ function renderGuidanceBlock({
     guidanceStartMarker,
     '## Designome-generated UI',
     '',
-    `Read \`${documentationDirectory}/README.md\`, the compact design brief, completely before generating UI. Open its linked topic files or \`.designome/design-dna.json\` only for the evidence or detail behind an entry.`,
+    `Before generating UI, read \`${documentationDirectory}/README.md\`, the design brief, completely: it carries every measure, relationship and recipe. Open its linked topic files or \`.designome/design-dna.json\` only for the confidence, routing or validation behind an entry.`,
     `Repository rule precedence is \`${integrationPolicy.rulePrecedence}\`; declared existing UI rules: ${existingRules}.`,
     `The detected styling adapter is \`${styling.strategy}\`. ${stylingInstruction}${uiKitInstruction}`,
     'Preserve claim status, cover applicable business states and stress cases, and audit before delivery with the project-local `designome-audit` skill (`$designome-audit` in Codex, `/designome-audit` in Claude Code) or, when it is installed instead, the audit operation of the `designome` skill. New audit plans use Audit Contract 2.0: bind established obligations to exact contexts, record real capture hashes and measurements, and leave unresolved or perceptual unknowns incomplete.',
     guidanceEndMarker,
     '',
   ].join('\n');
-}
-
-function markdownValue(value) {
-  if (value?.kind === 'exact') return `Exact: \`${String(value.value)}\``;
-  if (value?.kind === 'range')
-    return `Range: ${value.minimum}–${value.maximum} ${value.unit}${Number.isFinite(value.preferred) ? `; preferred ${value.preferred} ${value.unit}; strategy \`${value.strategy}\`` : ''}`;
-  if (value?.kind === 'relationship') return value.expression;
-  return value?.reason ?? 'Unknown';
 }
 
 function renderRulesDocument(dna) {
@@ -428,13 +422,56 @@ function renderStressTests(concepts) {
   ].join('\n');
 }
 
-function renderGenericDocument(dna, matrix, entry) {
-  const tokens = dna.tokens.filter(
-    (token) =>
-      entry.tokenCategories.includes(token.category) ||
-      sharesValue(token.claim.conceptRefs, entry.conceptRefs) ||
-      sharesValue(token.claim.uiDomainRefs, entry.uiDomainRefs),
+function tokenRoutedTo(token, entry) {
+  return (
+    entry.tokenCategories.includes(token.category) ||
+    sharesValue(token.claim.conceptRefs, entry.conceptRefs) ||
+    sharesValue(token.claim.uiDomainRefs, entry.uiDomainRefs)
   );
+}
+
+// One home file per artifact: rules in the rules document, components in the
+// catalogue, the fidelity contract in calibration, and each token in the first
+// foundation that owns its category. Other files link to the home.
+export function artifactHomes(dna, matrix) {
+  const projection = matrix.documentationProjection;
+  const pathOf = (renderer) =>
+    projection.find((entry) => entry.renderer === renderer)?.path;
+  const generic = projection.filter((entry) => entry.renderer === 'generic');
+  const homes = new Map();
+  const set = (id, home) => home && homes.set(id, home);
+  for (const rule of dna.rules) set(rule.id, pathOf('rules'));
+  for (const component of dna.componentPatterns ?? [])
+    set(component.id, pathOf('component-catalogue'));
+  for (const token of dna.tokens)
+    set(
+      token.id,
+      generic.find((entry) => entry.tokenCategories.includes(token.category))
+        ?.path ??
+        generic.find((entry) => tokenRoutedTo(token, entry))?.path ??
+        pathOf('calibration'),
+    );
+  set('fidelity', pathOf('calibration'));
+  return homes;
+}
+
+function renderHomedArtifacts(kind, items, homes, from, renderFull) {
+  const full = items.filter(
+    (item) => !homes?.has(item.id) || homes.get(item.id) === from,
+  );
+  const linked = items.filter(
+    (item) => homes?.has(item.id) && homes.get(item.id) !== from,
+  );
+  return {
+    full: full.map((item) => renderFull(item)),
+    linked: linked.map((item) =>
+      renderArtifactReference(kind, item, homeLink(from, homes.get(item.id))),
+    ),
+  };
+}
+
+function renderGenericDocument(dna, matrix, entry, homes) {
+  const tokens = dna.tokens.filter((token) => tokenRoutedTo(token, entry));
   const rules = dna.rules.filter(
     (rule) =>
       entry.ruleCategories.includes(rule.category) ||
@@ -446,8 +483,22 @@ function renderGenericDocument(dna, matrix, entry) {
       sharesValue(item.conceptRefs, entry.conceptRefs) ||
       sharesValue(item.uiDomainRefs, entry.uiDomainRefs),
   );
-  const tokenSections = tokens.map((token) => renderTokenContract(token));
-  const ruleSections = rules.map((rule) => renderRuleContract(rule));
+  const tokenSections = renderHomedArtifacts(
+    'token',
+    tokens,
+    homes,
+    entry.path,
+    (token) => renderTokenContract(token),
+  );
+  const ruleSections = renderHomedArtifacts(
+    'rule',
+    rules,
+    homes,
+    entry.path,
+    (rule) => renderRuleContract(rule),
+  );
+  const full = [...tokenSections.full, ...ruleSections.full];
+  const linked = [...tokenSections.linked, ...ruleSections.linked];
   return [
     `# ${entry.title}`,
     '',
@@ -455,8 +506,20 @@ function renderGenericDocument(dna, matrix, entry) {
     '',
     '## Routed Design DNA guidance',
     '',
-    ...(tokenSections.length || ruleSections.length
-      ? [...tokenSections, ...ruleSections]
+    ...(full.length || linked.length
+      ? [
+          ...full,
+          ...(linked.length
+            ? [
+                '### Also routed here',
+                '',
+                'These artifacts are rendered in full once, in the file each line links to.',
+                '',
+                ...linked,
+                '',
+              ]
+            : []),
+        ]
       : [
           '- Status: `unknown`',
           '- No accepted token or rule currently covers this subject. Use the proposed stress tests below; do not treat them as screenshot evidence.',
@@ -528,6 +591,7 @@ function renderComponentAnatomy(dna) {
               : [
                   `### ${item.name}`,
                   '',
+                  `- Part ID: \`${item.id}\``,
                   `- Requirement: \`${item.requirement}\``,
                   `- Purpose: ${item.purpose}`,
                   ...renderAssertions(
@@ -699,7 +763,7 @@ function artifactRowsForDomain(dna, domainRef) {
       ];
 }
 
-function renderUiDomainDocument(dna, matrix, entry) {
+function renderUiDomainDocument(dna, matrix, entry, homes) {
   const domains = entry.uiDomainRefs
     .map((domainRef) =>
       matrix.uiDomains.find((domain) => domain.id === domainRef),
@@ -746,7 +810,7 @@ function renderUiDomainDocument(dna, matrix, entry) {
             '',
             ...artifactRowsForDomain(dna, domain.id),
             '',
-            domainRecipe(dna, domain.id),
+            domainRecipe(dna, domain.id, { homes, from: entry.path }),
             '',
             '### Visible evidence',
             '',
@@ -1073,12 +1137,19 @@ function renderSourceRoutingDocument(dna, matrix) {
   ].join('\n');
 }
 
-function renderCalibrationDocument(dna, matrix, entry) {
+function renderCalibrationDocument(dna, matrix, entry, homes) {
   const tokens = dna.tokens.filter((token) =>
     entry.tokenCategories.includes(token.category),
   );
   const rules = dna.rules.filter((rule) =>
     entry.ruleCategories.includes(rule.category),
+  );
+  const tokenSections = renderHomedArtifacts(
+    'token',
+    tokens,
+    homes,
+    entry.path,
+    (token) => renderTokenContract(token),
   );
   return [
     '# Calibration',
@@ -1090,13 +1161,7 @@ function renderCalibrationDocument(dna, matrix, entry) {
     '## Current calibration inputs',
     '',
     ...(tokens.length
-      ? tokens.flatMap((token) => [
-          `### ${token.name}`,
-          '',
-          `- Value: ${markdownValue(token.value)}`,
-          claimDetails(token.claim),
-          '',
-        ])
+      ? [...tokenSections.full, ...tokenSections.linked, '']
       : [
           '- Status: `unknown`',
           '- No bounded typography, spacing, or size calibration is currently accepted.',
@@ -1123,6 +1188,7 @@ export function renderDocumentation({
   documentationDirectory = defaultDocumentationDirectory,
   matrix,
 }) {
+  const homes = artifactHomes(dna, matrix);
   const documents = new Map([
     [
       'README.md',
@@ -1146,7 +1212,7 @@ export function renderDocumentation({
                 : entry.renderer === 'component-mapping'
                   ? renderComponentMappingDocument(dna, styling)
                   : entry.renderer === 'ui-domain'
-                    ? renderUiDomainDocument(dna, matrix, entry)
+                    ? renderUiDomainDocument(dna, matrix, entry, homes)
                     : entry.renderer === 'coverage'
                       ? renderCoverageDocument(dna, matrix)
                       : entry.renderer === 'rules'
@@ -1156,7 +1222,12 @@ export function renderDocumentation({
                           : entry.renderer === 'unknowns'
                             ? renderUnknownsDocument(dna)
                             : entry.renderer === 'calibration'
-                              ? renderCalibrationDocument(dna, matrix, entry)
+                              ? renderCalibrationDocument(
+                                  dna,
+                                  matrix,
+                                  entry,
+                                  homes,
+                                )
                               : entry.renderer === 'source-routing'
                                 ? renderSourceRoutingDocument(dna, matrix)
                                 : entry.renderer === 'integration'
@@ -1166,7 +1237,12 @@ export function renderDocumentation({
                                       integrationPolicy,
                                       documentationDirectory,
                                     })
-                                  : renderGenericDocument(dna, matrix, entry);
+                                  : renderGenericDocument(
+                                      dna,
+                                      matrix,
+                                      entry,
+                                      homes,
+                                    );
     documents.set(entry.path, content);
   }
   return documents;
