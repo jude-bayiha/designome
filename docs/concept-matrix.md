@@ -97,7 +97,7 @@ In direct mode, a target-specific accuracy claim still requires matching source 
 
 ## Coverage contract
 
-Matrix metadata `fidelityContractVersion: 1.0.0` makes the [fidelity contract](fidelity-contract.md) mandatory for new extraction run plans, while `auditContractVersion: 2.0.0` advertises the plan-bound audit registry. Layout `2.1.0` preserves all projection paths while retaining relational tokens, independent field assertions and autonomous domain recipes.
+Matrix metadata `fidelityContractVersion: 1.0.0` makes the [fidelity contract](fidelity-contract.md) mandatory for new extraction run plans, while `auditContractVersion: 2.0.0` advertises the plan-bound audit registry. Layout `2.1.0` preserves all projection paths while retaining relational tokens, independent field assertions and complete domain recipes whose artifacts link to the one file that renders each in full.
 
 Design DNA v0.3 contains two complete ledgers:
 
