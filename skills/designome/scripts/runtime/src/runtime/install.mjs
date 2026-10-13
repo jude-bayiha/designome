@@ -235,7 +235,7 @@ function renderGuidanceBlock({
     guidanceStartMarker,
     '## Designome-generated UI',
     '',
-    `Before generating UI, read \`${documentationDirectory}/README.md\`, the design brief, completely, then read the surface, color, typography, spacing, identity and component files it names under Reference files completely. Open the other topic files or \`.designome/design-dna.json\` for any further evidence or detail behind an entry.`,
+    `Before generating UI, read \`${documentationDirectory}/README.md\`, the design brief, completely: it carries every measure, relationship and recipe. Open its linked topic files or \`.designome/design-dna.json\` only for the confidence, routing or validation behind an entry.`,
     `Repository rule precedence is \`${integrationPolicy.rulePrecedence}\`; declared existing UI rules: ${existingRules}.`,
     `The detected styling adapter is \`${styling.strategy}\`. ${stylingInstruction}${uiKitInstruction}`,
     'Preserve claim status, cover applicable business states and stress cases, and audit before delivery with the project-local `designome-audit` skill (`$designome-audit` in Codex, `/designome-audit` in Claude Code) or, when it is installed instead, the audit operation of the `designome` skill. New audit plans use Audit Contract 2.0: bind established obligations to exact contexts, record real capture hashes and measurements, and leave unresolved or perceptual unknowns incomplete.',

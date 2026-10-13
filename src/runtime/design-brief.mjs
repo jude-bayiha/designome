@@ -1,25 +1,14 @@
 import { designValue } from './documentation.mjs';
 
-// The brief is the dossier's entry point: one read that carries every accepted
-// artifact's statement, status, scope, exceptions and the screenshot evidence
-// behind it. Confidence, routing and validation details stay in the topic files.
+// The brief is the dossier's entry point and the generator's only required read:
+// every accepted artifact's statement, status, measures, relationships, scope,
+// exceptions and screenshot evidence. Confidence, routing and validation details
+// stay in the topic files, which repeat artifacts across subjects.
 
 const statusTag = (status) => `\`${status ?? 'unknown'}\``;
 const sentence = (text) => String(text ?? '').trim();
 const joined = (values = [], separator = '; ') =>
   values.map(sentence).filter(Boolean).join(separator);
-
-// The identity files a generator reads in full with the brief: they carry the
-// surfaces, type, spacing and anatomy that make screens look like the sources.
-export const identityTopicPaths = [
-  'foundations/color-and-themes.md',
-  'foundations/surfaces-and-depth.md',
-  'foundations/typography.md',
-  'foundations/spatial-composition.md',
-  'foundations/visual-identity.md',
-  'components/anatomy.md',
-  'components/variants-and-density.md',
-];
 
 // Scope, exceptions and evidence keep a statement tied to what was seen.
 function claimContext(claim) {
@@ -97,9 +86,20 @@ function tokensSection(dna) {
     ...[...categories].flatMap(([category, tokens]) => [
       `### ${category}`,
       '',
-      ...tokens.map((token) => {
-        const exceptions = joined(token.claim.exceptions);
-        return `- \`${token.id}\` ${statusTag(token.claim.epistemicStatus)} ${sentence(designValue(token.value))}${token.role ? ` Role: ${sentence(token.role)}` : ''}${exceptions ? ` Except: ${exceptions}.` : ''}`;
+      ...tokens.flatMap((token) => {
+        const value = sentence(designValue(token.value));
+        const statement = sentence(token.claim.statement);
+        const extra =
+          statement && !statement.includes(value) && !value.includes(statement)
+            ? ` ${statement}`
+            : '';
+        return [
+          `- \`${token.id}\` ${statusTag(token.claim.epistemicStatus)} ${value}${extra}${token.role ? ` Role: ${sentence(token.role)}.` : ''}${claimContext(token.claim)}`,
+          ...(token.relationships ?? []).map(
+            (relation) =>
+              `  - ${relation.kind}${relation.targetRef ? ` \`${relation.targetRef}\`` : ''}: ${sentence(relation.expression)}`,
+          ),
+        ];
       }),
       '',
     ]),
@@ -127,6 +127,15 @@ function rulesSection(dna) {
             (requirement) => `  - ${sentence(requirement)}`,
           ),
           ...(failures ? [`  - Breaks when: ${failures}.`] : []),
+          ...(rule.rationale &&
+          sentence(rule.rationale) !== sentence(rule.claim.statement)
+            ? [`  - Why: ${sentence(rule.rationale)}`]
+            : []),
+          ...((rule.dependsOn ?? []).length
+            ? [
+                `  - Depends on: ${rule.dependsOn.map((id) => `\`${id}\``).join(', ')}.`,
+              ]
+            : []),
         ];
       }),
       '',
@@ -135,14 +144,18 @@ function rulesSection(dna) {
 }
 
 function componentLines(component) {
-  const anatomy = (component.anatomy ?? []).map(
-    (part) =>
-      `${part.name} (${part.requirement})${part.purpose ? `: ${sentence(part.purpose)}` : ''}`,
-  );
-  const variants = (component.variants ?? []).map(
-    (variant) =>
-      `${variant.name} ${statusTag(variant.epistemicStatus)}${variant.differences?.length ? `: ${joined(variant.differences)}` : ''}`,
-  );
+  const refs = (values = []) =>
+    values.length ? ` [${values.map((id) => `\`${id}\``).join(', ')}]` : '';
+  const anatomy = (component.anatomy ?? []).map((part) => {
+    if (typeof part === 'string') return sentence(part);
+    const constraints = joined(part.contentConstraints);
+    return `${part.name} (${part.requirement})${part.purpose ? `: ${sentence(part.purpose)}` : ''}${constraints ? `; ${constraints}` : ''}${refs(part.tokenRefs)}`;
+  });
+  const variants = (component.variants ?? []).map((variant) => {
+    if (typeof variant === 'string') return sentence(variant);
+    const conditions = joined(variant.conditions);
+    return `${variant.name} ${statusTag(variant.epistemicStatus)}${conditions ? ` when ${conditions}` : ''}${variant.differences?.length ? `: ${joined(variant.differences)}` : ''}`;
+  });
   const states = (component.states ?? []).map(
     (state) =>
       `${state.name} ${statusTag(state.epistemicStatus)}${state.feedback ? `: ${sentence(state.feedback)}` : ''}`,
@@ -156,6 +169,10 @@ function componentLines(component) {
     '',
     `${purpose}${statement && statement !== purpose ? ` ${statement}` : ''}${claimContext(component.claim)}`.trim(),
     '',
+    ...list(
+      'Tokens',
+      (component.tokenRefs ?? []).map((id) => `\`${id}\``),
+    ),
     ...list('Anatomy', anatomy),
     ...list('Variants', variants),
     ...list('States', states),
@@ -265,19 +282,10 @@ function referenceSection(matrix) {
     if (!groups.has(directory)) groups.set(directory, []);
     groups.get(directory).push(entry);
   }
-  const identity = identityTopicPaths.filter((path) =>
-    matrix.documentationProjection.some((entry) => entry.path === path),
-  );
   return [
     '## Reference files',
     '',
-    ...(identity.length
-      ? [
-          `Before generating the first screen, also read ${identity.map((path) => `[${path}](./${path})`).join(', ')} completely: they hold the surfaces, type, spacing and anatomy behind the entries above. Open the other files when you need the evidence, confidence, coverage or validation behind an entry.`,
-        ]
-      : [
-          'Open a file only when you need the evidence, confidence, coverage or validation behind an entry above.',
-        ]),
+    'This brief carries every measure, ratio, relationship and recipe of the Design DNA. Open a topic file only when you need the confidence, routing, coverage or validation behind an entry.',
     '',
     ...[...groups].flatMap(([directory, entries]) => [
       `### ${directory[0].toUpperCase()}${directory.slice(1)}`,

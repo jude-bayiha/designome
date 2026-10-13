@@ -257,12 +257,11 @@ test('the dossier README is a compact brief that names every accepted artifact',
     'Finish pass before delivery.',
   ])
     assert.ok(brief.includes(guardrail), guardrail);
-  // The identity topic files are read in full before the first screen.
-  assert.match(
-    brief,
-    /Before generating the first screen, also read \[foundations\/color-and-themes\.md\]/u,
-  );
-  // The person's request outranks measured rules, which outrank product defaults.
+  // The brief is self-sufficient: token relationships travel with it.
+  for (const token of dna.tokens)
+    for (const relation of token.relationships ?? [])
+      assert.ok(brief.includes(relation.expression.trim()), token.id);
+  assert.match(brief, /This brief carries every measure/u); // The person's request outranks measured rules, which outrank product defaults.
   const precedence = brief.indexOf('## Precedence, guardrails and budgets');
   assert.ok(precedence > 0 && precedence < brief.indexOf('## Tokens'));
   assert.match(brief, /1\. The person's explicit request/u);
