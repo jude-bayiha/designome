@@ -150,6 +150,7 @@ Generators fall back on their own defaults wherever a rule is vague, so extracti
 - **Chart family recipes:** one mark recipe (thickness relative to pitch, gap ratio, maximum thickness, corners, gridlines, tones) per family of charts.
 - **Recipes by need:** each component's purpose states the need it serves ("Use when…"), so a generator reuses it when a new product has the same need.
 - **Optical finish:** nested radius relative to the parent radius and inset, the separation cue of each surface tier, icon and divider stroke relative to text weight, and icon size relative to its label.
+- **Micro-details:** faint cues are recorded with their strength, never rounded to "none": border tiers per surface type (containers, controls, dividers), the fill and edge cue (shadow, 1px bottom edge, inner highlight) of each control relative to the canvas, the filled or outlined style of functional glyphs such as sort indicators, weight bands no wider than one step with their most likely value, the gap and size ratio of stacked text pairs, and the body-text size relative to the UI width so a generator can derive its base unit. The brief adds three generator guardrails: a measured ratio is never capped away, faint cues are built rather than dropped, and sibling panels are filled.
 
 Every one is a ratio, minimum, order or priority, never a fixed width, so it holds at every viewport. The web benchmark captures each route at 390 px as well as 1440 px to check that the rules do not make narrow layouts worse.
 
