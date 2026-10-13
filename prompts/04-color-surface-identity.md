@@ -13,7 +13,7 @@ Read `_shared-contract.md`, the `axis.color-surface-identity` matrix slice, and 
 
 Extract semantic relationships instead of raw sampled palettes:
 
-1. Inventory canvas, surface, elevated, inset, text, icon, border, action, focus, selection, destructive, warning, success, neutral, and data-series roles. Record pairings, hierarchy, repetition, and exceptions.
+1. Read the canvas from the UI's own outermost surface, never from a presentation backdrop or mockup frame around the screenshot that `01-source-evidence` recorded as a limitation. Inventory canvas, surface, elevated, inset, text, icon, border, action, focus, selection, destructive, warning, success, neutral, and data-series roles. Record pairings, hierarchy, repetition, and exceptions.
 2. Describe nested surface tiers, borders, radii, elevation, transparency, scrims, overlays, selected and disabled states, and the strength of each depth cue.
 3. Identify evidenced theme modes. For unshown dark, high-contrast, or branded modes, preserve semantic roles and propose verification without inventing palettes.
 4. Analyze icon family, stroke/fill balance, optical size, bounding box, cap and corner language, alignment, semantic role, directionality, labels, and state treatment. Analyze imagery, avatar, logo, illustration, crop, mask, ratio, fallback, and placeholder implications.

@@ -112,7 +112,8 @@
           ],
           "screenshotLimits": [
             "optical alignment is an interpretation unless repeated evidence supports it",
-            "cropping can distort apparent proportion"
+            "cropping can distort apparent proportion",
+            "a presentation backdrop, frame or padding around the captured UI is not page margin or canvas"
           ]
         },
         {
@@ -161,7 +162,8 @@
             "display, page title, section title, component title, body, label, metadata, caption, code, and data roles",
             "relative size, weight, contrast, and spacing hierarchy",
             "role reuse and intentional exceptions",
-            "apparent glyph width, geometric or humanist character, x-height cues and numeral shape; exact font identity remains unknown"
+            "apparent glyph width, geometric or humanist character, x-height cues and numeral shape; exact font identity remains unknown",
+            "type classification per role (sans-serif, serif or monospace, and the sans-serif kind), recorded even when the family is unknown"
           ],
           "screenshotLimits": [
             "font family and exact metrics cannot be identified from resemblance",
