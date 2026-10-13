@@ -226,7 +226,7 @@ Existing CSS, components, tokens, documentation, or rendered target UI cannot su
     └── findings.json
 ```
 
-An accepted installation projects 52 documentation files. `README.md` is the design brief: it carries every artifact's statement, status, scope, exceptions and evidence references with the screenshot regions they were read from, and names the identity topic files a generator reads completely before the first screen; the other files hold the full confidence, coverage and validation detail:
+An accepted installation projects 52 documentation files. `README.md` is the design brief: it carries every artifact's statement, status, scope, exceptions and evidence references with the screenshot regions they were read from, together with token relationships, rule rationale and dependencies, part constraints and variant conditions, so a generator reads this one file completely and needs no other. Topic files repeat artifacts across subjects (one token can appear in six of them) and hold the confidence, coverage and validation detail:
 
 ```text
 docs/designome/
