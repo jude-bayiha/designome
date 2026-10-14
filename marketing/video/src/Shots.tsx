@@ -13,10 +13,14 @@ export type Asset =
   | 'glane-composer'
   | 'glane-chart'
   | 'glane-cards'
+  | 'glane-card'
+  | 'glane-workspace'
+  | 'glane-history-card'
   | 'glane-history-cards'
   | 'glane-before-dashboard'
   | 'glane-before-cards'
-  | 'glane-library';
+  | 'glane-library'
+  | 'glane-library-detail';
 
 export function Shot({
   asset,
@@ -92,6 +96,48 @@ export function Shot({
           }}
         />
       )}
+    </div>
+  );
+}
+
+// A deliberate, brief camera move into the same native desktop screenshot.
+// After the move, the complete composer stays at a fixed, legible scale.
+export function DesktopFocus({
+  asset = 'glane-dashboard',
+  width = 920,
+  delay = 20,
+}: {
+  asset?: 'glane-dashboard' | 'glane-before-dashboard';
+  width?: number;
+  delay?: number;
+}) {
+  const f = useCurrentFrame();
+  const progress = tween(f, delay, delay + 30);
+  const cropWidth = 1920 + (531 - 1920) * progress;
+  const cropHeight = 725 + (346 - 725) * progress;
+  const scale = width / cropWidth;
+  return (
+    <div
+      style={{
+        width,
+        height: Math.round(cropHeight * scale),
+        overflow: 'hidden',
+        position: 'relative',
+        borderRadius: 12,
+        outline: '1px solid #d9e3ef',
+        boxShadow: '0 18px 45px -24px #102a4c33',
+      }}
+    >
+      <Img
+        src={staticFile(`${asset}.png`)}
+        style={{
+          position: 'absolute',
+          maxWidth: 'none',
+          width: 1920 * scale,
+          left: -Math.round(288 * progress * scale),
+          top: -Math.round(363 * progress * scale),
+        }}
+      />
     </div>
   );
 }

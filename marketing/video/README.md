@@ -25,17 +25,19 @@ The supplied reference is the creator's 2048 × 1714 Fincai PNG, saved from [Rak
 
 For an existing browser, set `VIDEO_BROWSER=/absolute/path/to/chrome` for capture and render commands. Omit it to use Playwright's installed browser for capture and Remotion's managed browser for rendering.
 
-The capture script only navigates to Glane's dashboard and history. It blocks API mutations and applies temporary browser styles. It applies a 5 CSS-pixel blur only to title/channel text, filename text and the latest-added title. Thumbnails, row geometry, metadata and controls remain visible, as requested by the creator. It checks the expected English table headers and every private text slot before saving. The blur must also be reviewed in the actual encoded exports. The labelled library excerpt retains exactly five complete data rows and omits date-group headings; its total count remains the application's actual count. Application source and stored content are not modified. Review the saved images before rendering; a future Glane layout change may need updated selectors.
+The capture script only navigates to Glane's dashboard and history. It blocks API mutations and applies temporary browser styles. It applies a 5 CSS-pixel blur only to title/channel text, filename text and the latest-added title. Thumbnails, row geometry, metadata and controls remain visible, as requested by the creator. It checks the expected English table headers and every private text slot before saving. The blur must also be reviewed in the actual encoded exports. The labelled library excerpt ends at the fifth complete data row; date-group headings, column widths, all underlying rows and the application's actual count remain unchanged. The portrait detail includes three complete columns. Capture compares element geometry before and after privacy styling and refuses any layout change. Application source and stored content are not modified. Review the saved images before rendering; a future Glane layout change may need updated selectors.
 
 `public/`, `review/`, `bundle/` and `output/` are ignored. Never commit reference screenshots, app captures or rendered videos. Publication rights for the third-party reference remain `unknown`: a public post and attribution do not establish permission for promotional reuse.
 
 ## Image quality and motion
 
-Glane is captured at a 1440 × 1500 CSS-pixel viewport with device scale factor 3. The six current lossless PNGs include an overview ending below both complete analysis panels, a complete composer, a complete chart, two dashboard summary cards, two history summary cards, and a five-row library excerpt. Two additional palette-preview captures show the current English dashboard and cards with the earlier color tokens applied temporarily in the browser. This localizes the comparison; these are not historical screenshots. Capture records their pixel dimensions, framing, privacy checks, and SHA-256 hashes. Rendering verifies every capture and the reference hash first.
+Glane is captured at a **1920 × 1080 CSS-pixel viewport**, matching the creator's display resolution observed with `xrandr`. Device scale factor 3 adds samples without changing browser zoom, typography, breakpoints or CSS geometry. The previous 1440-pixel viewport produced narrower cards and a taller composer; this is why replacing only the image file resolution would not preserve the screen's proportions.
 
-Shots retain their natural aspect ratio. There are no fixed-height browser windows, continuously scaled screenshots, or rotated screenshot stacks. The portrait result uses the complete composer as a close-up; the landscape result places the complete composer and activity panel side by side at a larger reading size. Earlier overview shots establish their place in the actual app. Comparison shots show complete cards, with an explicit detail label.
+Ten current lossless PNGs include an overview ending below both analysis panels, one contiguous dashboard area containing all four cards and both panels, complete composer and chart panels, complete single cards and card pairs from dashboard/history, and two library details. The portrait library view crops at complete column and row boundaries rather than rearranging the table. Two additional palette previews apply the earlier color tokens temporarily to the same English app; they are not historical screenshots. Capture records dimensions, framing, privacy checks, layout preservation and SHA-256 hashes. Render checks those hashes and the PNG dimensions.
 
-The motion treatment is `proposed`: staggered text reveals, damped entrances, drawn connectors and checks, sequential grammar diagrams, a brief entering the project folder, a result reveal, a before/after palette wipe, color swatches filling in sequence, shared-rule connections between two real screens, and travelling paper transitions. All motion is derived from Remotion frames. Screenshot positions settle on whole pixels; the UI remains still during reading holds. Exports use PNG frames, H.264 CRF 14 and BT.709 color, with no audio stream.
+Landscape overview shots span 1,760 pixels instead of sharing half the canvas with large captions. Headings and brief prompts sit above the app. The result shows a contiguous portion of the real dashboard, retaining its native relationships. Portrait shots establish the full desktop layout, then make one short camera move into its complete composer. They settle before the reading hold. The camera's source bounds are checked against the capture report; a future layout change requires reviewing them. Detail shots use complete panels, single cards or complete table columns, never stretched screenshots.
+
+The motion treatment is `proposed`: staggered text reveals, damped entrances, drawn connectors and checks, sequential grammar diagrams, a brief entering the project folder, a result reveal, a before/after palette wipe, color swatches filling in sequence, shared-rule connections between two real screens, and travelling paper transitions. All motion is derived from Remotion frames. Camera and entrance positions settle on whole pixels; the UI remains still during reading holds. Exports use PNG frames, H.264 CRF 12 and BT.709 color, with no audio stream.
 
 ## Preview and render
 
@@ -55,21 +57,22 @@ The compositions use frame-based animation and locally bundled fonts. No externa
 
 ## Story and evidence
 
-| Time    | On-screen story                                   | Visual                                                                           |
-| ------- | ------------------------------------------------- | -------------------------------------------------------------------------------- |
-| 0–4 s   | I wanted my own YouTube downloader.               | Actual Glane dashboard                                                           |
-| 4–9 s   | I found an interface I really liked.              | Credited Fincai reference                                                        |
-| 9–14 s  | I asked Designome to extract its rules.           | Illustrated request and reusable grammar                                         |
-| 14–18 s | I reviewed the rules. Then installed them.        | Brief entering the project                                                       |
-| 18–23 s | Then I asked my agent to build my tool.           | Illustrated request and earlier-palette preview                                  |
-| 23–29 s | Then I made it feel like Glane.                   | Request to change the theme, swatches and localized before/after palette preview |
-| 29–35 s | And this is what I actually use.                  | Complete composer, activity panel and library with blurred titles                |
-| 35–41 s | Different screens. One set of rules.              | Dashboard and history cards with the same product palette and recipe             |
-| 41–46 s | A starting point I liked. A design I made my own. | Designome identity and repository link                                           |
+| Time    | On-screen story                                          | Visual                                                                                        |
+| ------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| 0–4 s   | I wanted my own YouTube downloader.                      | Actual Glane dashboard                                                                        |
+| 4–9 s   | I found an interface I really liked.                     | Credited Fincai reference                                                                     |
+| 9–14 s  | I asked Designome to extract its rules.                  | Illustrated request and reusable grammar                                                      |
+| 14–18 s | I reviewed the rules. Then installed them.               | Brief entering the project                                                                    |
+| 18–23 s | Then I asked my agent to build my tool.                  | Illustrated request and earlier-palette preview                                               |
+| 23–29 s | Then I made it feel like Glane.                          | Request to change the theme, swatches and localized before/after palette preview              |
+| 29–35 s | And this is what I actually use.                         | Contiguous dashboard area, complete composer and original library details with blurred titles |
+| 35–41 s | Designome turned a UI I liked into rules for my own app. | Complete dashboard and history cards; rules I could adapt and reuse across every screen       |
+| 41–46 s | Inspired by what I liked. Built for what I needed.       | Screenshot → reusable rules → my own app, Designome identity and repository link              |
 
 Evidence status, confidence and limits:
 
 - `observed`, high confidence: the creator described this personal use case and supplied the reference, application URL and previous films. The narrative follows that account; no exact original prompt wording is claimed.
+- `observed`, high confidence: the creator's connected display is 1920 × 1080. The current capture viewport matches those dimensions; high-density PNGs preserve the CSS layout and only private text is blurred. The film enlarges selected regions for reading rather than claiming every detail fits at native size in portrait.
 - `observed`, high confidence: the running app has a dashboard and a history screen. Its local Designome brief identifies revision 2 as accepted; the canonical DNA and installation manifest are present. This is installation evidence, not a claim that every design rule passed an audit.
 - `observed`, high confidence: the reference has four summary cards, quiet surfaces with fine borders, and one dark bar within a pale series. These qualities are also recorded in the installed brief. The film shortens their wording; it does not introduce exact pixel measurements or font identifications.
 - `observed`, high confidence: the owner selected ink blue and light surfaces for Glane. The demonstration updates project-owned CSS overrides and product instructions, and the capture report measures the shared accent and card recipe on both routes. It is a new customization performed for this film, not a claim about the original generation session.

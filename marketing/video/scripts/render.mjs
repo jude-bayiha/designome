@@ -41,11 +41,15 @@ if (
 for (const capture of [...report.captures, ...baseline.captures]) {
   if (!capture.privacy.textSlotsBlurred || capture.privacy.blurCssPixels !== 5)
     throw new Error('Missing privacy verification.');
-  const hash = createHash('sha256')
-    .update(await readFile(path.join(root, 'public', capture.file)))
-    .digest('hex');
+  const bytes = await readFile(path.join(root, 'public', capture.file));
+  const hash = createHash('sha256').update(bytes).digest('hex');
   if (hash !== capture.sha256)
     throw new Error('Capture changed after privacy verification.');
+  if (
+    bytes.readUInt32BE(16) !== capture.pixels.width ||
+    bytes.readUInt32BE(20) !== capture.pixels.height
+  )
+    throw new Error('PNG dimensions differ from the capture report.');
 }
 const required = [
   'glane-dashboard.png',
@@ -54,6 +58,10 @@ const required = [
   'glane-cards.png',
   'glane-library.png',
   'glane-history-cards.png',
+  'glane-workspace.png',
+  'glane-card.png',
+  'glane-history-card.png',
+  'glane-library-detail.png',
 ];
 if (
   report.deviceScaleFactor !== 3 ||
@@ -61,7 +69,28 @@ if (
     (file) => !report.captures.some((capture) => capture.file === file),
   )
 )
-  throw new Error('All six verified high-density app captures are required.');
+  throw new Error('All ten verified high-density app captures are required.');
+for (const captureSet of [report, baseline]) {
+  if (
+    captureSet.viewport.width !== 1920 ||
+    captureSet.viewport.height !== 1080 ||
+    !captureSet.layoutPreserved
+  )
+    throw new Error(
+      'Native 1920 × 1080 captures with unchanged layout are required.',
+    );
+}
+// The portrait camera must end exactly on the complete native composer.
+for (const [file, expected] of [
+  ['glane-dashboard.png', { x: 0, y: 0, width: 1920, height: 725 }],
+  ['glane-composer.png', { x: 288, y: 363, width: 531, height: 346 }],
+]) {
+  const actual = report.captures.find((capture) => capture.file === file)?.clip;
+  if (JSON.stringify(actual) !== JSON.stringify(expected))
+    throw new Error(
+      'Live panel geometry changed. Review the portrait camera bounds.',
+    );
+}
 if (
   ['glane-before-dashboard.png', 'glane-before-cards.png'].some(
     (file) => !baseline.captures.some((capture) => capture.file === file),
@@ -120,7 +149,7 @@ for (const ratio of ['16x9', '9x16']) {
     args.push(
       '--codec=h264',
       '--pixel-format=yuv420p',
-      '--crf=14',
+      '--crf=12',
       '--image-format=png',
       '--color-space=bt709',
     );

@@ -25,7 +25,7 @@ import {
   serif,
   tween,
 } from './Motion';
-import { BrandMark, ReferenceCredit, Shot } from './Shots';
+import { BrandMark, DesktopFocus, ReferenceCredit, Shot } from './Shots';
 
 const durations = [120, 150, 150, 120, 150, 180, 180, 180, 150];
 const chapters = [
@@ -36,7 +36,7 @@ const chapters = [
   'Build with the brief',
   'Make the rules my own',
   'The real result',
-  'Consistency across screens',
+  'From inspiration to reusable rules',
   'Your next idea',
 ];
 export const TOTAL_FRAMES = durations.reduce((sum, value) => sum + value, 0);
@@ -594,26 +594,54 @@ function Install({ p }: { p: boolean }) {
 function Customize({ p }: { p: boolean }) {
   const f = useCurrentFrame();
   const reveal = tween(f, 68, 108);
-  const width = p ? 920 : 1034;
+  const width = p ? 920 : 1760;
+  const screen = (asset: 'glane-dashboard' | 'glane-before-dashboard') =>
+    p ? (
+      <DesktopFocus asset={asset} width={width} delay={112} />
+    ) : (
+      <Shot asset={asset} width={width} />
+    );
   return (
     <>
       <Heading
         p={p}
-        size={p ? 79 : 74}
-        lines={[
-          'Then I made it',
-          <>
-            feel <span style={serif}>like Glane.</span>
-          </>,
-        ]}
+        centered={!p}
+        size={p ? 79 : 66}
+        top={p ? 238 : 166}
+        lines={
+          p
+            ? [
+                'Then I made it',
+                <>
+                  feel <span style={serif}>like Glane.</span>
+                </>,
+              ]
+            : [
+                <>
+                  Then I made it feel <span style={serif}>like Glane.</span>
+                </>,
+              ]
+        }
       />
-      <Enter delay={4} style={at(p ? 80 : 94, p ? 540 : 492)}>
-        <Prompt p={p} width={p ? 884 : 650} customize />
-      </Enter>
+      {p ? (
+        <Enter delay={4} style={at(80, 535)}>
+          <Prompt p width={884} customize />
+        </Enter>
+      ) : (
+        <Enter
+          delay={4}
+          style={{ ...at(88, 263, 1270), fontSize: 27, color: C.ink }}
+        >
+          <span style={{ color: C.muted, marginRight: 20, fontSize: 19 }}>
+            MY REQUEST
+          </span>
+          Make the theme ink blue. Keep the layout and spacing.
+        </Enter>
+      )}
       <Enter
         delay={35}
         style={{
-          ...at(p ? 88 : 100, p ? 930 : 826),
+          ...at(p ? 88 : 1450, p ? 916 : 257),
           display: 'flex',
           alignItems: 'center',
           gap: 18,
@@ -624,8 +652,8 @@ function Customize({ p }: { p: boolean }) {
             <div
               key={color}
               style={{
-                width: 54,
-                height: 54,
+                width: p ? 54 : 38,
+                height: p ? 54 : 38,
                 borderRadius: 99,
                 background: '#eeeeeb',
                 border: '1px solid #d0d8e2',
@@ -644,21 +672,21 @@ function Customize({ p }: { p: boolean }) {
           ))}
         </div>
         <span
-          style={{ fontSize: p ? 30 : 24, color: '#234f83', fontWeight: 600 }}
+          style={{ fontSize: p ? 30 : 22, color: '#234f83', fontWeight: 600 }}
         >
-          Ink blue. Light surfaces.
+          {p ? 'Ink blue. Light surfaces.' : 'Ink blue'}
         </span>
       </Enter>
-      <div style={at(p ? 80 : 796, p ? 1130 : 275, width)}>
+      <div style={at(80, p ? 1045 : 327, width)}>
         <div style={{ position: 'relative' }}>
-          <Shot asset="glane-before-dashboard" width={width} />
+          {screen('glane-before-dashboard')}
           <div
             style={{
               ...at(0, 0, width),
               clipPath: `inset(0 ${100 - reveal * 100}% 0 0)`,
             }}
           >
-            <Shot asset="glane-dashboard" width={width} />
+            {screen('glane-dashboard')}
           </div>
           {reveal > 0 && reveal < 1 ? (
             <div
@@ -670,20 +698,22 @@ function Customize({ p }: { p: boolean }) {
             />
           ) : null}
         </div>
-        <div
-          style={{
-            marginTop: 25,
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: p ? 25 : 22,
-            color: C.muted,
-          }}
-        >
-          <span>
-            {f < 85 ? 'Original palette preview' : 'My product palette'}
-          </span>
-          <span>Actual app captures</span>
-        </div>
+        {p ? (
+          <div
+            style={{
+              marginTop: 24,
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: 23,
+              color: C.muted,
+            }}
+          >
+            <span>
+              {f < 85 ? 'Original palette preview' : 'My product palette'}
+            </span>
+            <span>Illustrated request · actual app</span>
+          </div>
+        ) : null}
       </div>
     </>
   );
@@ -695,76 +725,65 @@ function Consistency({ p }: { p: boolean }) {
       <Heading
         p={p}
         centered={!p}
-        size={p ? 79 : 76}
-        top={p ? 238 : 175}
-        lines={[
-          'Different screens.',
-          <>
-            One <span style={serif}>set of rules.</span>
-          </>,
-        ]}
+        size={p ? 71 : 68}
+        top={p ? 225 : 171}
+        lines={
+          p
+            ? [
+                'Designome turned',
+                'a UI I liked into',
+                <>
+                  rules for <span style={serif}>my own app.</span>
+                </>,
+              ]
+            : [
+                'Designome turned a UI I liked',
+                <>
+                  into rules for <span style={serif}>my own app.</span>
+                </>,
+              ]
+        }
       />
       <Enter
-        delay={12}
+        delay={14}
         style={{
-          ...at(p ? 84 : 94, p ? 456 : 380, p ? 910 : 1730),
+          ...at(p ? 82 : 94, p ? 525 : 366, p ? 905 : 1730),
           textAlign: p ? 'left' : 'center',
-          fontSize: p ? 32 : 29,
+          fontSize: p ? 31 : 30,
+          lineHeight: 1.45,
           color: C.muted,
         }}
       >
-        A shared brief for Codex or Claude Code.
+        Rules I could adapt and reuse across every screen.
       </Enter>
-      <Enter
-        delay={20}
-        style={{
-          ...at(p ? 80 : 94, p ? 581 : 445, p ? 920 : 1730),
-          display: 'flex',
-          justifyContent: p ? 'flex-start' : 'center',
-          gap: p ? 14 : 22,
-        }}
-      >
-        {['My palette', 'Shared spacing', 'Same components'].map((text, i) => (
-          <Pill
-            key={text}
-            style={{
-              fontSize: p ? 22 : 22,
-              padding: '15px 20px',
-              background: i === 0 ? '#234f83' : '#fff',
-              color: i === 0 ? '#fff' : C.ink,
-            }}
-          >
-            <Check size={20} />
-            {text}
-          </Pill>
-        ))}
-      </Enter>
-      <Enter delay={15} style={at(p ? 80 : 93, p ? 755 : 575)}>
+      <Enter delay={22} style={at(p ? 80 : 144, p ? 628 : 490)}>
         <Label style={{ marginBottom: 20 }}>Glane / dashboard</Label>
-        <Shot asset="glane-cards" width={p ? 920 : 788} />
+        <Shot asset="glane-card" width={p ? 920 : 740} />
       </Enter>
-      <div style={at(p ? 506 : 906, p ? 1150 : 660)}>
-        <DrawnArrow vertical={p} delay={35} />
+      <div style={at(p ? 506 : 905, p ? 1130 : 680)}>
+        <DrawnArrow vertical={p} delay={43} />
       </div>
       <Enter
-        delay={44}
+        delay={48}
         axis={p ? 'y' : 'x'}
-        style={at(p ? 80 : 1039, p ? 1300 : 575)}
+        style={at(p ? 80 : 1036, p ? 1238 : 490)}
       >
         <Label style={{ marginBottom: 20 }}>Glane / history</Label>
-        <Shot asset="glane-history-cards" width={p ? 920 : 788} />
+        <Shot asset="glane-history-card" width={p ? 920 : 740} />
       </Enter>
-      <Enter
-        delay={64}
-        style={{
-          ...at(p ? 82 : 95, p ? 1680 : 934, p ? 908 : 1730),
-          textAlign: p ? 'left' : 'center',
-          fontSize: p ? 28 : 29,
-          color: C.muted,
-        }}
-      >
-        My agent has the same reference for every screen.
-      </Enter>
+      {!p ? (
+        <Enter
+          delay={64}
+          style={{
+            ...at(94, 958, 1730),
+            textAlign: 'center',
+            fontSize: 25,
+            color: C.muted,
+          }}
+        >
+          A shared reference for Codex or Claude Code.
+        </Enter>
+      ) : null}
     </>
   );
 }
@@ -787,9 +806,9 @@ function Outro({ p }: { p: boolean }) {
         size={p ? 80 : 78}
         top={p ? 552 : 388}
         lines={[
-          'A starting point I liked.',
+          'Inspired by what I liked.',
           <>
-            A design <span style={serif}>I made my own.</span>
+            Built for <span style={serif}>what I needed.</span>
           </>,
         ]}
       />
@@ -869,7 +888,7 @@ function Outro({ p }: { p: boolean }) {
               fontWeight: 500,
             }}
           >
-            {['A screenshot', 'Design DNA', 'My own app'][i]}
+            {['A screenshot', 'Reusable rules', 'My own app'][i]}
           </div>
         </Enter>
       ))}
@@ -882,7 +901,7 @@ function Outro({ p }: { p: boolean }) {
           fontWeight: 600,
         }}
       >
-        Try it with your next idea.
+        Start with a UI you like.
       </Enter>
       <Enter
         delay={80}
@@ -907,36 +926,44 @@ function Scene({ index, p }: { index: number; p: boolean }) {
       <>
         <Heading
           p={p}
+          centered={!p}
           immediate
-          lines={[
-            'I wanted my own',
-            <span style={serif}>YouTube</span>,
-            'downloader.',
-          ]}
+          size={p ? 81 : 64}
+          top={p ? 238 : 167}
+          lines={
+            p
+              ? [
+                  'I wanted my own',
+                  <span style={serif}>YouTube</span>,
+                  'downloader.',
+                ]
+              : [
+                  <>
+                    I wanted my own{' '}
+                    <span style={serif}>YouTube downloader.</span>
+                  </>,
+                ]
+          }
         />
-        <div
+        <Enter
+          delay={8}
           style={{
-            ...at(p ? 80 : 784, p ? 677 : 235),
-            transform: `translateX(${Math.round(tween(f, 0, 38, 40, 0))}px)`,
+            ...at(p ? 82 : 94, p ? 1375 : 260, p ? 860 : 1732),
+            textAlign: p ? 'left' : 'center',
+            fontSize: p ? 34 : 30,
           }}
         >
-          <Shot asset="glane-dashboard" width={p ? 920 : 1050} />
+          So I built Glane.
+        </Enter>
+        <div style={at(80, p ? 680 : 327)}>
+          {p ? <DesktopFocus /> : <Shot asset="glane-dashboard" width={1760} />}
         </div>
-        <Enter delay={15} style={at(p ? 82 : 94, p ? 1274 : 565)}>
-          <Pill dark>
-            <DownloadMark size={31} />
-            So I built Glane.
-          </Pill>
-        </Enter>
-        <Body p={p} top={p ? 1395 : 687}>
-          A personal project.
-          <br />A design I wanted to make my own.
-        </Body>
-        <Enter delay={24} style={at(p ? 85 : 799, p ? 1208 : 834)}>
-          <Label style={{ fontSize: p ? 21 : 18 }}>
-            My tool · actual app capture
-          </Label>
-        </Enter>
+        {p ? (
+          <Body p top={1460}>
+            A personal project.
+            <br />A design I wanted to make my own.
+          </Body>
+        ) : null}
       </>
     );
   if (index === 1)
@@ -1029,47 +1056,55 @@ function Scene({ index, p }: { index: number; p: boolean }) {
       <>
         <Heading
           p={p}
-          size={p ? 75 : 65}
-          lines={[
-            'Then I asked my agent',
-            <>
-              to <span style={serif}>build my tool.</span>
-            </>,
-          ]}
+          centered={!p}
+          size={p ? 75 : 62}
+          top={p ? 238 : 167}
+          lines={
+            p
+              ? [
+                  'Then I asked my agent',
+                  <>
+                    to <span style={serif}>build my tool.</span>
+                  </>,
+                ]
+              : [
+                  <>
+                    Then I asked my agent to{' '}
+                    <span style={serif}>build my tool.</span>
+                  </>,
+                ]
+          }
         />
-        <Enter delay={4} style={at(p ? 80 : 94, p ? 540 : 492)}>
-          <Prompt p={p} width={p ? 884 : 650} build />
-        </Enter>
-        <div style={at(p ? 80 : 796, p ? 1035 : 285)}>
-          <div
+        {p ? (
+          <Enter delay={4} style={at(80, 540)}>
+            <Prompt p width={884} build />
+          </Enter>
+        ) : (
+          <Enter
+            delay={4}
             style={{
-              clipPath: `inset(0 ${100 - tween(f, 44, 90) * 100}% 0 0)`,
+              ...at(94, 267, 1732),
+              textAlign: 'center',
+              fontSize: 26,
+              color: C.muted,
             }}
           >
-            <Shot
-              asset="glane-before-dashboard"
-              width={p ? 920 : 1034}
-              accent
-            />
-          </div>
-          <div style={{ marginTop: 28, display: 'flex', gap: p ? 15 : 20 }}>
-            {['The brief', 'My idea', 'My tool'].map((text, i) => (
-              <Enter key={text} delay={37 + i * 18} distance={14}>
-                <Pill
-                  style={{
-                    fontSize: p ? 22 : 20,
-                    padding: '12px 18px',
-                    background: i === 2 ? C.ink : C.tint,
-                    color: i === 2 ? '#fff' : C.violet,
-                  }}
-                >
-                  <Check size={18} />
-                  {text}
-                </Pill>
-              </Enter>
-            ))}
-          </div>
-        </div>
+            “Build a YouTube downloader using the installed design brief.”{' '}
+            <span style={{ fontSize: 17 }}>· Illustrated request</span>
+          </Enter>
+        )}
+        <Enter delay={30} distance={25} style={at(80, p ? 1035 : 327)}>
+          {p ? (
+            <DesktopFocus asset="glane-before-dashboard" delay={62} />
+          ) : (
+            <Shot asset="glane-before-dashboard" width={1760} />
+          )}
+          {p ? (
+            <div style={{ marginTop: 28, color: C.muted, fontSize: 24 }}>
+              The brief. My idea. My tool.
+            </div>
+          ) : null}
+        </Enter>
       </>
     );
   if (index === 5) return <Customize p={p} />;
@@ -1081,7 +1116,7 @@ function Scene({ index, p }: { index: number; p: boolean }) {
           p={p}
           centered={!p}
           size={p ? 79 : 65}
-          top={p ? 238 : 185}
+          top={p ? 238 : 167}
           lines={
             p
               ? [
@@ -1099,62 +1134,47 @@ function Scene({ index, p }: { index: number; p: boolean }) {
         />
         {!library ? (
           <>
-            <Enter delay={3} style={at(p ? 136 : 110, p ? 587 : 340)}>
-              <Shot asset="glane-composer" width={p ? 806 : 558} />
-            </Enter>
-            {!p ? (
-              <Enter delay={15} axis="x" style={at(708, 340)}>
-                <Shot asset="glane-chart" width={1103} />
-              </Enter>
-            ) : null}
-            <Label style={at(p ? 138 : 112, p ? 535 : 295)} violet>
+            <Label style={at(p ? 82 : 88, p ? 560 : 280)} violet>
               Glane / a new video
             </Label>
-            <Enter delay={20} style={at(p ? 140 : 710, p ? 1492 : 295)}>
-              <span style={{ fontSize: p ? 26 : 19, color: C.muted }}>
-                Actual app capture
-              </span>
+            <Enter delay={3} style={at(80, p ? 620 : 335)}>
+              <Shot
+                asset={p ? 'glane-composer' : 'glane-workspace'}
+                width={p ? 920 : 1760}
+              />
+            </Enter>
+            <Enter
+              delay={20}
+              style={{
+                ...at(p ? 82 : 88, p ? 1285 : 979),
+                fontSize: p ? 27 : 22,
+                color: C.muted,
+              }}
+            >
+              One link. One format. My file.
             </Enter>
           </>
         ) : (
           <Sequence from={90}>
-            <Enter
-              delay={0}
-              distance={50}
-              style={at(p ? 80 : 317, p ? 575 : 335)}
-            >
-              {p ? <Shot asset="glane-cards" width={920} /> : null}
+            <Enter delay={0} distance={35} style={at(80, p ? 570 : 280)}>
               <div
                 style={{
-                  marginTop: p ? 43 : 0,
-                  marginBottom: 25,
-                  fontSize: p ? 40 : 29,
+                  marginBottom: p ? 35 : 22,
+                  fontSize: p ? 39 : 29,
                   fontWeight: 500,
                   letterSpacing: '-1px',
                 }}
               >
                 My videos, in one place.
               </div>
-              <Shot asset="glane-library" width={p ? 920 : 1286} />
+              <Shot
+                asset={p ? 'glane-library-detail' : 'glane-library'}
+                width={p ? 920 : 1760}
+              />
               <div
-                style={{
-                  marginTop: 25,
-                  display: 'flex',
-                  gap: 12,
-                  alignItems: 'center',
-                  color: C.muted,
-                  fontSize: p ? 22 : 21,
-                }}
+                style={{ marginTop: 25, color: C.muted, fontSize: p ? 23 : 21 }}
               >
-                <span
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: 99,
-                    background: C.green,
-                  }}
-                />
-                Library excerpt · private titles blurred
+                Library detail · private titles blurred
               </div>
             </Enter>
           </Sequence>

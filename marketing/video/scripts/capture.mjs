@@ -22,6 +22,9 @@ const baselineCss = baselineCssPath
   ? await readFile(baselineCssPath, 'utf8')
   : null;
 const publicDir = path.join(root, 'public');
+// Matches the creator's display, verified with xrandr. DPR only adds samples;
+// it never changes the CSS-pixel layout or browser zoom.
+const viewport = { width: 1920, height: 1080 };
 const referenceBytes = await readFile(reference);
 if (
   referenceBytes.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a' ||
@@ -51,7 +54,7 @@ const browser = await chromium.launch({
     : {}),
 });
 const context = await browser.newContext({
-  viewport: { width: 1440, height: 1500 },
+  viewport,
   deviceScaleFactor: 3,
 });
 const page = await context.newPage();
@@ -68,7 +71,8 @@ const report = {
   paletteCssSha256: baselineCss
     ? createHash('sha256').update(baselineCss).digest('hex')
     : null,
-  viewport: { width: 1440, height: 1500 },
+  viewport,
+  layoutPreserved: true,
   deviceScaleFactor: 3,
   reference: {
     file: 'reference.png',
@@ -113,6 +117,12 @@ try {
       waitUntil: 'networkidle',
     });
     await page.locator('table tbody tr').first().waitFor();
+    await page.evaluate(() => document.fonts.ready);
+    const layoutBefore = await page
+      .locator('article.dn-card, #nouveau, .activity-panel, table tr')
+      .evaluateAll((elements) =>
+        elements.map((element) => element.getBoundingClientRect().toJSON()),
+      );
     if (baselineCss) await page.addStyleTag({ content: baselineCss });
     if (pathname === '/historique') {
       await page.addStyleTag({
@@ -196,6 +206,13 @@ try {
         latestAddedTitleBlurred: isLibrary,
       };
     }, pathname === '/historique');
+    const layoutAfter = await page
+      .locator('article.dn-card, #nouveau, .activity-panel, table tr')
+      .evaluateAll((elements) =>
+        elements.map((element) => element.getBoundingClientRect().toJSON()),
+      );
+    if (JSON.stringify(layoutBefore) !== JSON.stringify(layoutAfter))
+      throw new Error('Capture styling changed the live page geometry.');
     const productTheme = await page.evaluate(() => {
       const root = getComputedStyle(document.documentElement);
       const card = document.querySelector('article.dn-card');
@@ -226,9 +243,26 @@ try {
       );
       await saveCapture(
         `${name}.png`,
-        { x: 0, y: 0, width: 1440, height: bottom + 16 },
+        { x: 0, y: 0, width: viewport.width, height: bottom + 16 },
         privacy,
         'Dashboard overview ending after both complete analysis panels.',
+      );
+      await saveCapture(
+        'glane-workspace.png',
+        {
+          x: first.x,
+          y: first.y,
+          width: chart.x + chart.width - first.x,
+          height: bottom - first.y,
+        },
+        privacy,
+        'Contiguous dashboard area: all four cards and both complete panels in their original positions.',
+      );
+      await saveCapture(
+        'glane-card.png',
+        first,
+        privacy,
+        'Complete first dashboard card at the native desktop layout.',
       );
       await saveCapture(
         'glane-composer.png',
@@ -257,39 +291,35 @@ try {
       if (!first || !second)
         throw new Error('History summary cards are missing.');
       await saveCapture(
+        'glane-history-card.png',
+        first,
+        privacy,
+        'Complete first history card at the native desktop layout.',
+      );
+      await saveCapture(
         'glane-history-cards.png',
         { ...first, width: second.x + second.width - first.x },
         privacy,
         'Two complete adjacent history summary cards, using the product palette.',
       );
-      // A clearly labelled excerpt: keep five whole rows and the real table border.
-      // The total remains unchanged; only this temporary capture context is affected.
-      const excerptCss = await page.evaluate(() => {
-        let kept = 0;
-        const hidden = [];
-        for (const [bodyIndex, body] of [
-          ...document.querySelectorAll('table tbody'),
-        ].entries()) {
-          for (const [rowIndex, row] of [
-            ...body.querySelectorAll('tr'),
-          ].entries()) {
-            const dataRow = row.querySelectorAll('td').length === 7;
-            if (dataRow && kept++ < 5) continue;
-            hidden.push(
-              `table tbody:nth-of-type(${bodyIndex + 1}) tr:nth-child(${rowIndex + 1})`,
-            );
-          }
-        }
-        if (kept < 5)
-          throw new Error('The library excerpt needs five data rows.');
-        return `${hidden.join(', ')} { display: none !important; }`;
-      });
-      await page.addStyleTag({ content: excerptCss });
-      const visibleRows = await page.locator('table tbody tr:visible').count();
-      if (visibleRows !== 5)
-        throw new Error(
-          'The library excerpt must contain exactly five complete data rows.',
+      // Crop at row and column boundaries; preserve every row, date heading,
+      // column width and surrounding element in the live page.
+      const excerpt = await page.locator('table').evaluate((table) => {
+        const rows = [...table.querySelectorAll('tbody tr')].filter(
+          (row) => row.querySelectorAll('td').length === 7,
         );
+        if (rows.length < 5)
+          throw new Error('The library excerpt needs five data rows.');
+        const bottom = rows[4].getBoundingClientRect().bottom;
+        const columns = [...table.querySelectorAll('thead th')];
+        const third = columns[2].getBoundingClientRect();
+        return {
+          bottom,
+          top: table.getBoundingClientRect().top,
+          portraitRight: third.right,
+          rowCount: rows.length,
+        };
+      });
       const panel = page
         .locator('section')
         .filter({ has: page.locator('table') });
@@ -297,9 +327,20 @@ try {
       if (!box) throw new Error('Library panel is missing.');
       await saveCapture(
         `${name}.png`,
-        box,
+        { ...box, height: excerpt.bottom - box.y },
         privacy,
-        'Library excerpt with the first five complete rows.',
+        'Contiguous library excerpt through the fifth data row, with date headings retained.',
+      );
+      await saveCapture(
+        'glane-library-detail.png',
+        {
+          x: box.x,
+          y: excerpt.top,
+          width: excerpt.portraitRight - box.x,
+          height: excerpt.bottom - excerpt.top,
+        },
+        privacy,
+        'Portrait detail: the first three complete columns and five data rows, at their original sizes and spacing.',
       );
     }
   }
