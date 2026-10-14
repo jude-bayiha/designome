@@ -15,6 +15,17 @@ const out = path.resolve(
 const report = JSON.parse(
   await readFile(path.join(root, 'public/capture-report.json'), 'utf8'),
 );
+const referenceHash = createHash('sha256')
+  .update(await readFile(path.join(root, 'public/reference.png')))
+  .digest('hex');
+if (
+  report.reference?.sha256 !== referenceHash ||
+  report.reference.width !== 2048 ||
+  report.reference.height !== 1714
+)
+  throw new Error(
+    'The verified reference is missing or changed. Recapture before rendering.',
+  );
 for (const capture of report.captures) {
   if (!capture.privacy.privateCellsMasked)
     throw new Error('Missing privacy verification.');
@@ -24,8 +35,20 @@ for (const capture of report.captures) {
   if (hash !== capture.sha256)
     throw new Error('Capture changed after privacy verification.');
 }
-if (report.captures.length !== 2)
-  throw new Error('Both verified app captures are required.');
+const required = [
+  'glane-dashboard.png',
+  'glane-composer.png',
+  'glane-chart.png',
+  'glane-cards.png',
+  'glane-library.png',
+];
+if (
+  report.deviceScaleFactor !== 3 ||
+  required.some(
+    (file) => !report.captures.some((capture) => capture.file === file),
+  )
+)
+  throw new Error('All five verified high-density app captures are required.');
 await mkdir(out, { recursive: true });
 for (const ratio of ['16x9', '9x16']) {
   if (format && ratio !== format) continue;
@@ -49,14 +72,15 @@ for (const ratio of ['16x9', '9x16']) {
     args.push(
       '--sequence',
       '--image-format=png',
-      '--frames=0,60,195,390,550,690,840,925,1065,1180,1259',
+      '--frames=0,60,195,310,390,490,550,660,690,800,840,880,925,1065,1180,1259',
     );
   else
     args.push(
       '--codec=h264',
       '--pixel-format=yuv420p',
-      '--crf=18',
-      '--jpeg-quality=95',
+      '--crf=14',
+      '--image-format=png',
+      '--color-space=bt709',
     );
   const result = spawnSync('pnpm', args, { cwd: root, stdio: 'inherit' });
   if (result.status !== 0) process.exit(result.status ?? 1);
