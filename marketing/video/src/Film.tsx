@@ -1,9 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import {
   AbsoluteFill,
-  Easing,
   Img,
-  interpolate,
   Sequence,
   staticFile,
   useCurrentFrame,
@@ -15,17 +13,20 @@ import '@fontsource/manrope/latin-600.css';
 import '@fontsource/manrope/latin-700.css';
 import '@fontsource/manrope/latin-800.css';
 import '@fontsource/instrument-serif/latin-400-italic.css';
+import {
+  at,
+  C,
+  Check,
+  DrawnArrow,
+  Enter,
+  Label,
+  Line,
+  PaperCut,
+  serif,
+  tween,
+} from './Motion';
+import { BrandMark, ReferenceCredit, Shot } from './Shots';
 
-const C = {
-  paper: '#f5f3ee',
-  ink: '#22251f',
-  muted: '#71736b',
-  line: '#dedfd6',
-  violet: '#6750c9',
-  tint: '#eeebf8',
-  white: '#ffffff',
-  green: '#427759',
-};
 const durations = [120, 150, 180, 150, 150, 210, 150, 150];
 const chapters = [
   'A personal project',
@@ -38,518 +39,407 @@ const chapters = [
   'Your next idea',
 ];
 export const TOTAL_FRAMES = durations.reduce((sum, value) => sum + value, 0);
-const ease = Easing.bezier(0.22, 1, 0.36, 1);
-const tween = (f: number, from: number, to: number, a = 0, b = 1) =>
-  interpolate(f, [from, to], [a, b], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-    easing: ease,
-  });
-const at = (x: number, y: number, w?: number, h?: number): CSSProperties => ({
-  position: 'absolute',
-  left: x,
-  top: y,
-  width: w,
-  height: h,
-});
-const serif: CSSProperties = {
-  fontFamily: 'Instrument Serif',
-  fontWeight: 400,
-  fontStyle: 'italic',
-  letterSpacing: '-0.5px',
-  color: C.violet,
+const sceneStarts = durations.map((_, i) =>
+  durations.slice(0, i).reduce((a, b) => a + b, 0),
+);
+const card: CSSProperties = {
+  background: '#fff',
+  border: `1px solid ${C.line}`,
+  borderRadius: 24,
+  boxShadow: '0 28px 70px -44px #252b244f',
 };
 
-function Reveal({
+function Heading({
+  p,
+  lines,
+  immediate = false,
+  centered = false,
+  size,
+  top,
+}: {
+  p: boolean;
+  lines: ReactNode[];
+  immediate?: boolean;
+  centered?: boolean;
+  size?: number;
+  top?: number;
+}) {
+  return (
+    <div
+      style={{
+        ...at(
+          p ? 78 : 88,
+          top ?? (p ? 238 : 200),
+          p ? 902 : centered ? 1744 : 665,
+        ),
+        fontSize: size ?? (p ? 81 : 76),
+        fontWeight: 600,
+        letterSpacing: '-3.4px',
+        lineHeight: 1.12,
+        textAlign: centered ? 'center' : 'left',
+      }}
+    >
+      {lines.map((line, i) => (
+        <Line key={i} delay={i * 4} immediate={immediate}>
+          {line}
+        </Line>
+      ))}
+    </div>
+  );
+}
+
+function Body({
   children,
-  delay = 0,
+  p,
+  top,
   style,
 }: {
   children: ReactNode;
-  delay?: number;
+  p: boolean;
+  top: number;
   style?: CSSProperties;
+}) {
+  return (
+    <Enter
+      delay={16}
+      style={{
+        ...at(p ? 82 : 94, top, p ? 860 : 620),
+        fontSize: p ? 33 : 29,
+        color: C.muted,
+        lineHeight: 1.55,
+        letterSpacing: '-0.6px',
+        ...style,
+      }}
+    >
+      {children}
+    </Enter>
+  );
+}
+
+function Pill({
+  children,
+  dark = false,
+  style,
+}: {
+  children: ReactNode;
+  dark?: boolean;
+  style?: CSSProperties;
+}) {
+  return (
+    <div
+      style={{
+        display: 'inline-flex',
+        gap: 12,
+        alignItems: 'center',
+        padding: '16px 24px',
+        borderRadius: 99,
+        background: dark ? C.ink : C.tint,
+        color: dark ? '#fff' : C.violet,
+        fontSize: 24,
+        fontWeight: 600,
+        letterSpacing: '-0.5px',
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function DownloadMark({ size = 54 }: { size?: number }) {
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        background: C.ink,
+        color: '#fff',
+        borderRadius: size * 0.25,
+        display: 'grid',
+        placeItems: 'center',
+      }}
+    >
+      <svg
+        width={size * 0.62}
+        height={size * 0.62}
+        viewBox="0 0 32 32"
+        fill="none"
+      >
+        <path
+          d="M16 5v16m-7-7 7 7 7-7M8 27h16"
+          stroke="currentColor"
+          strokeWidth={2.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+  );
+}
+
+function GrammarIcon({
+  index,
+  size = 88,
+  delay = 0,
+}: {
+  index: number;
+  size?: number;
+  delay?: number;
 }) {
   const f = useCurrentFrame();
   return (
     <div
       style={{
-        ...style,
-        opacity: delay < 0 ? 1 : tween(f, delay, delay + 15, 0.12, 1),
-        transform: `translateY(${delay < 0 ? 0 : tween(f, delay, delay + 25, 24, 0)}px)`,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-function Title({
-  children,
-  portrait,
-  centered = false,
-  size,
-  immediate = false,
-}: {
-  children: ReactNode;
-  portrait: boolean;
-  centered?: boolean;
-  size?: number;
-  immediate?: boolean;
-}) {
-  return (
-    <Reveal
-      delay={immediate ? -1 : 0}
-      style={{
-        ...at(
-          portrait ? 76 : 92,
-          portrait ? 236 : 205,
-          portrait ? 864 : centered ? 1736 : 670,
-        ),
-        color: C.ink,
-        fontSize: size ?? (portrait ? 76 : 78),
-        fontWeight: 600,
-        lineHeight: 1.13,
-        letterSpacing: '-3.4px',
-        textAlign: centered ? 'center' : 'left',
-      }}
-    >
-      {children}
-    </Reveal>
-  );
-}
-
-function Note({
-  children,
-  portrait,
-  y,
-  width,
-}: {
-  children: ReactNode;
-  portrait: boolean;
-  y?: number;
-  width?: number;
-}) {
-  return (
-    <Reveal
-      delay={13}
-      style={{
-        ...at(
-          portrait ? 80 : 98,
-          y ?? (portrait ? 1468 : 540),
-          width ?? (portrait ? 820 : 585),
-        ),
-        fontSize: portrait ? 31 : 29,
-        lineHeight: 1.55,
-        color: C.muted,
-        letterSpacing: '-0.5px',
-      }}
-    >
-      {children}
-    </Reveal>
-  );
-}
-
-function Reference({ width }: { width: number }) {
-  return (
-    <div
-      style={{
-        width,
-        height: (width * 1063) / 1493,
-        position: 'relative',
-        overflow: 'hidden',
-        background: '#fff',
-      }}
-    >
-      <Img
-        src={staticFile('reference.png')}
-        style={{
-          position: 'absolute',
-          width: (width * 1720) / 1493,
-          maxWidth: 'none',
-          left: (-width * 114) / 1493,
-          top: (-width * 188) / 1493,
-        }}
-      />
-    </div>
-  );
-}
-
-function BrowserCard({
-  asset,
-  width,
-  height,
-  zoom = 1,
-  pan = 0,
-  style,
-}: {
-  asset: 'reference' | 'glane-dashboard' | 'glane-library';
-  width: number;
-  height?: number;
-  zoom?: number;
-  pan?: number;
-  style?: CSSProperties;
-}) {
-  const reference = asset === 'reference';
-  return (
-    <div
-      style={{
-        width,
-        border: `1px solid ${C.line}`,
+        width: size,
+        height: size,
+        flexShrink: 0,
         borderRadius: 18,
-        overflow: 'hidden',
-        background: '#fff',
-        boxShadow:
-          '0 28px 70px -30px rgba(35,35,25,0.20), 0 3px 8px rgba(35,35,25,0.025)',
-        ...style,
+        background: '#f6f5f1',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 5,
       }}
     >
-      <div
-        style={{
-          height: 43,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 7,
-          padding: '0 17px',
-          borderBottom: `1px solid ${C.line}`,
-          background: '#fafaf7',
-        }}
-      >
-        {[0, 1, 2].map((x) => (
-          <span
-            key={x}
+      {index === 0 ? (
+        [0, 1, 2, 3].map((i) => (
+          <div
+            key={i}
             style={{
-              width: 7,
-              height: 7,
-              borderRadius: '50%',
-              background: '#d4d5ce',
+              width: size * 0.14,
+              height: size * 0.4,
+              background: i === 1 ? C.tint : '#fff',
+              border: `1px solid ${i === 1 ? C.violet : '#bfc4b8'}`,
+              borderRadius: 3,
+              transform: `translateY(${Math.round(tween(f, delay + i * 4, delay + i * 4 + 20, 15, 0))}px)`,
+              opacity: tween(f, delay + i * 4, delay + i * 4 + 10),
             }}
           />
-        ))}
-        <span
-          style={{
-            marginLeft: 14,
-            fontSize: 14,
-            color: '#77796f',
-            letterSpacing: 0.1,
-          }}
-        >
-          {reference ? 'The interface I saved' : 'Glane · my workspace'}
-        </span>
-      </div>
-      <div
-        style={{
-          height: height ?? width * (reference ? 1063 / 1493 : 1260 / 1440),
-          overflow: 'hidden',
-        }}
-      >
+        ))
+      ) : index === 1 ? (
         <div
           style={{
-            transform: `translateY(${pan}px) scale(${zoom})`,
-            transformOrigin: '50% 0%',
+            position: 'relative',
+            width: size * 0.58,
+            height: size * 0.46,
           }}
         >
-          {reference ? (
-            <Reference width={width} />
-          ) : (
-            <Img
-              src={staticFile(`${asset}.png`)}
-              style={{ width: '100%', display: 'block' }}
+          {[0, 1].map((i) => (
+            <div
+              key={i}
+              style={{
+                position: 'absolute',
+                width: size * 0.49,
+                height: size * 0.36,
+                left: i * 8,
+                top: i * 8,
+                background: '#fff',
+                border: `1px solid ${i ? '#a9aea1' : '#d2d6cb'}`,
+                borderRadius: 5,
+              }}
             />
-          )}
+          ))}
         </div>
-      </div>
+      ) : (
+        <div
+          style={{
+            height: size * 0.55,
+            display: 'flex',
+            gap: 5,
+            alignItems: 'flex-end',
+          }}
+        >
+          {[0.42, 0.7, 0.55, 1, 0.44].map((h, i) => (
+            <div
+              key={i}
+              style={{
+                width: size * 0.08,
+                height:
+                  h * size * 0.5 * tween(f, delay + i * 4, delay + 25 + i * 4),
+                background: i === 3 ? C.ink : '#d4d8cd',
+                borderRadius: '3px 3px 0 0',
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
-  );
-}
-
-function SmallLabel({
-  children,
-  style,
-  color = C.muted,
-}: {
-  children: ReactNode;
-  style?: CSSProperties;
-  color?: string;
-}) {
-  return (
-    <div
-      style={{
-        fontSize: 19,
-        fontWeight: 600,
-        letterSpacing: '1.8px',
-        textTransform: 'uppercase',
-        color,
-        ...style,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-function Check({ size = 22 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <path
-        d="m5 12 4.5 4.5L19 7"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function Arrow({ vertical = false }: { vertical?: boolean }) {
-  return (
-    <svg
-      width={vertical ? 38 : 70}
-      height={vertical ? 70 : 38}
-      viewBox={vertical ? '0 0 38 70' : '0 0 70 38'}
-      fill="none"
-    >
-      <path
-        d={vertical ? 'M19 2v60m-9-10 9 10 9-10' : 'M2 19h60m-10-9 10 9-10 9'}
-        stroke={C.violet}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }
 
 function Prompt({
-  text,
+  p,
   width,
-  caption,
+  build = false,
 }: {
-  text: ReactNode;
+  p: boolean;
   width: number;
-  caption: string;
+  build?: boolean;
 }) {
   const f = useCurrentFrame();
-  const { height, width: canvasWidth } = useVideoConfig();
-  const portrait = height > canvasWidth;
+  const sentence = build
+    ? 'Build a YouTube downloader using the installed design brief.'
+    : 'Extract the design grammar from this screenshot.';
+  const words = sentence.split(' ');
   return (
-    <div
-      style={{
-        width,
-        background: C.white,
-        border: `1px solid ${C.line}`,
-        borderRadius: 22,
-        padding: 34,
-        boxShadow: '0 12px 40px -25px #2f332a44',
-      }}
-    >
+    <div style={{ ...card, width, padding: p ? 34 : 36 }}>
       <div
         style={{
           display: 'flex',
+          justifyContent: 'space-between',
           alignItems: 'center',
-          gap: 11,
-          marginBottom: 24,
+          marginBottom: 28,
         }}
       >
-        <div
+        <Label style={{ fontSize: p ? 20 : 17 }}>
+          {build ? 'My next request' : 'My request'}
+        </Label>
+        <span
           style={{
-            width: 30,
-            height: 30,
-            borderRadius: '50%',
+            width: 32,
+            height: 32,
+            borderRadius: 99,
             background: C.tint,
             color: C.violet,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 15,
+            display: 'grid',
+            placeItems: 'center',
+            fontSize: 16,
             fontWeight: 700,
           }}
         >
           J
+        </span>
+      </div>
+      {!build ? (
+        <div
+          style={{ color: C.violet, fontSize: p ? 38 : 30, marginBottom: 14 }}
+        >
+          /designome
         </div>
-        <span style={{ fontSize: 18, color: C.muted }}>{caption}</span>
-      </div>
+      ) : null}
       <div
         style={{
-          fontSize: portrait ? 41 : 32,
-          fontWeight: 500,
+          fontSize: p ? 40 : 33,
           lineHeight: 1.5,
-          letterSpacing: '-0.6px',
+          letterSpacing: '-0.8px',
+          fontWeight: 500,
         }}
       >
-        {text}
+        {words.map((word, i) => (
+          <span
+            key={i}
+            style={{ opacity: tween(f, 14 + i * 2, 21 + i * 2, 0.15, 1) }}
+          >
+            {word}{' '}
+          </span>
+        ))}
       </div>
       <div
         style={{
-          marginTop: 27,
           display: 'flex',
-          justifyContent: 'space-between',
           alignItems: 'center',
+          justifyContent: 'space-between',
+          marginTop: 26,
         }}
       >
-        <span style={{ fontSize: 17, color: C.muted }}>
+        <span style={{ color: C.muted, fontSize: p ? 20 : 17 }}>
           Illustrated workflow
         </span>
-        <div
+        <span
           style={{
+            background: C.ink,
+            color: '#fff',
+            borderRadius: 10,
             width: 36,
             height: 36,
-            borderRadius: 10,
-            background: C.ink,
-            color: 'white',
             display: 'grid',
             placeItems: 'center',
-            opacity: tween(f, 20, 45, 0.45, 1),
+            transform: `translateY(${Math.round(tween(f, 36, 46, 5, 0))}px)`,
           }}
         >
           ↑
-        </div>
+        </span>
       </div>
     </div>
   );
 }
 
-function RuleSheet({
-  width,
-  compact = false,
-}: {
-  width: number;
-  compact?: boolean;
-}) {
+const rules = [
+  ['Four summary cards', 'An overview before the details.'],
+  ['Quiet surfaces', 'Fine borders between panels.'],
+  ['One chart highlight', 'A dark mark in a pale series.'],
+];
+
+function DNA({ p, width }: { p: boolean; width: number }) {
   const f = useCurrentFrame();
-  const { height, width: canvasWidth } = useVideoConfig();
-  const portrait = height > canvasWidth;
-  const rows = [
-    ['Four summary cards', 'A clear overview before the details.'],
-    ['Quiet surfaces', 'Fine borders keep the panels distinct.'],
-    ['One chart highlight', 'A dark mark within a pale series.'],
-  ];
   return (
-    <div
-      style={{
-        width,
-        padding: compact ? 30 : 38,
-        background: '#fff',
-        border: `1px solid ${C.line}`,
-        borderRadius: 18,
-        boxShadow: '0 22px 65px -35px #20251f40',
-      }}
-    >
+    <div style={{ ...card, width, padding: 34 }}>
       <div
         style={{
           display: 'flex',
-          gap: 13,
+          gap: 20,
           alignItems: 'center',
-          marginBottom: 30,
+          paddingBottom: 27,
         }}
       >
-        <Img
-          src={staticFile('designome-mark-on-light.svg')}
-          style={{ width: 35, height: 40 }}
-        />
+        <BrandMark height={53} />
         <div>
-          <div style={{ fontSize: 28, fontWeight: 650, letterSpacing: '-1px' }}>
+          <div
+            style={{
+              fontSize: p ? 40 : 35,
+              fontWeight: 600,
+              letterSpacing: '-1.3px',
+            }}
+          >
             Design DNA
           </div>
-          <div style={{ fontSize: 16, color: C.muted, marginTop: 3 }}>
-            Rules from the reference
+          <div style={{ fontSize: p ? 21 : 18, color: C.muted, marginTop: 5 }}>
+            A brief my agent can follow
           </div>
         </div>
       </div>
-      {rows.map(([title, subtitle], i) => (
-        <div
+      {rules.map(([title, note], i) => (
+        <Enter
           key={title}
+          delay={44 + i * 24}
+          distance={30}
+          axis="x"
           style={{
-            opacity: tween(f, 38 + i * 16, 54 + i * 16),
-            padding: '22px 0',
             borderTop: `1px solid ${C.line}`,
+            padding: '22px 0',
             display: 'flex',
-            gap: 20,
+            gap: 22,
             alignItems: 'center',
           }}
         >
-          <div
-            style={{
-              width: 64,
-              height: 51,
-              flexShrink: 0,
-              background: '#f6f6f3',
-              borderRadius: 9,
-              display: 'flex',
-              gap: 5,
-              alignItems: 'flex-end',
-              justifyContent: 'center',
-              padding: 11,
-            }}
-          >
-            {i === 0 ? (
-              [0, 1, 2, 3].map((n) => (
-                <div
-                  key={n}
-                  style={{
-                    width: 8,
-                    height: 23,
-                    background: '#dddcd6',
-                    border: '1px solid #c7c7bf',
-                    borderRadius: 2,
-                  }}
-                />
-              ))
-            ) : i === 1 ? (
-              <div
-                style={{
-                  width: 41,
-                  height: 27,
-                  background: '#fff',
-                  border: '1px solid #c7c7bf',
-                  borderRadius: 5,
-                }}
-              />
-            ) : (
-              [13, 23, 16, 29, 12].map((h, j) => (
-                <div
-                  key={j}
-                  style={{
-                    width: 6,
-                    height: h,
-                    background: j === 3 ? C.ink : '#dbdcd4',
-                    borderRadius: '2px 2px 0 0',
-                  }}
-                />
-              ))
-            )}
-          </div>
+          <GrammarIcon index={i} size={p ? 80 : 82} delay={44 + i * 24} />
           <div>
             <div
               style={{
-                fontSize: portrait ? 40 : compact ? 23 : 26,
+                fontSize: p ? 35 : 31,
                 fontWeight: 600,
-                letterSpacing: '-0.4px',
+                letterSpacing: '-0.8px',
               }}
             >
               {title}
             </div>
-            {!portrait ? (
-              <div
-                style={{
-                  fontSize: compact ? 17 : 18,
-                  color: C.muted,
-                  marginTop: 7,
-                  lineHeight: 1.5,
-                }}
-              >
-                {subtitle}
-              </div>
-            ) : null}
+            <div
+              style={{ color: C.muted, fontSize: p ? 22 : 20, marginTop: 9 }}
+            >
+              {note}
+            </div>
           </div>
-        </div>
+          <span style={{ marginLeft: 'auto', color: C.violet }}>
+            <Check progress={tween(f, 62 + i * 24, 76 + i * 24)} />
+          </span>
+        </Enter>
       ))}
       <div
         style={{
-          paddingTop: 18,
           borderTop: `1px solid ${C.line}`,
-          fontSize: 14,
+          paddingTop: 22,
           color: C.muted,
+          fontSize: p ? 18 : 16,
         }}
       >
         Observed qualities · wording shortened for the film
@@ -558,396 +448,588 @@ function RuleSheet({
   );
 }
 
-function Scene({ index, portrait }: { index: number; portrait: boolean }) {
+function Install({ p }: { p: boolean }) {
   const f = useCurrentFrame();
-  const p = portrait;
-  const drift = tween(f, 0, durations[index], 1, 1.025);
+  const w = p ? 862 : 865;
+  return (
+    <div style={{ width: w, height: 670, position: 'relative' }}>
+      <Enter
+        delay={5}
+        distance={60}
+        style={{
+          ...at(50, 0, w - 100, 122),
+          ...card,
+          padding: '25px 30px',
+          borderColor: '#c9bdec',
+          background: '#fcfbff',
+        }}
+      >
+        <Label violet style={{ fontSize: 18 }}>
+          Accepted design DNA
+        </Label>
+        <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
+          {[0, 1, 2, 3].map((i) => (
+            <div
+              key={i}
+              style={{
+                height: 8,
+                flex: i === 0 ? 2 : 1,
+                background: i === 0 ? '#8b77cb' : '#ded8ed',
+                borderRadius: 5,
+              }}
+            />
+          ))}
+        </div>
+      </Enter>
+      <div
+        style={{
+          ...at(50, 0, w - 100, 140),
+          transform: `translateY(${Math.round(tween(f, 35, 75, 10, 185))}px)`,
+          opacity: 1 - tween(f, 72, 92),
+          ...card,
+          padding: '24px 30px',
+          borderColor: '#c9bdec',
+          background: '#fcfbff',
+        }}
+      >
+        <Label violet style={{ fontSize: 18 }}>
+          Accepted design DNA
+        </Label>
+        <div style={{ marginTop: 18, fontSize: 25 }}>
+          Layout · Typography · Components
+        </div>
+      </div>
+      <div
+        style={{
+          ...at(0, 145, w, 470),
+          ...card,
+          padding: 36,
+          borderRadius: '0 24px 24px 24px',
+        }}
+      >
+        <div
+          style={{
+            ...at(-1, -42, 280, 44),
+            borderRadius: '16px 18px 0 0',
+            background: '#fff',
+            border: `1px solid ${C.line}`,
+            borderBottom: 0,
+            padding: '12px 28px',
+            fontSize: 20,
+            fontWeight: 600,
+          }}
+        >
+          Glane / project
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 20,
+            marginBottom: 30,
+          }}
+        >
+          <DownloadMark size={58} />
+          <div>
+            <div
+              style={{ fontSize: 33, letterSpacing: '-0.8px', fontWeight: 600 }}
+            >
+              Design guidance, installed.
+            </div>
+            <div style={{ color: C.muted, fontSize: 19, marginTop: 8 }}>
+              docs / designome / README.md
+            </div>
+          </div>
+        </div>
+        {['Layout & spacing', 'Type & surfaces', 'Components & data'].map(
+          (text, i) => (
+            <Enter
+              delay={64 + i * 13}
+              key={text}
+              distance={24}
+              axis="x"
+              style={{
+                padding: '19px 0',
+                borderTop: `1px solid ${C.line}`,
+                display: 'flex',
+                gap: 18,
+                alignItems: 'center',
+                fontSize: p ? 31 : 28,
+              }}
+            >
+              <span style={{ color: C.violet }}>
+                <Check progress={tween(f, 68 + i * 13, 82 + i * 13)} />
+              </span>
+              {text}
+            </Enter>
+          ),
+        )}
+        <Enter
+          delay={108}
+          distance={10}
+          style={{
+            marginTop: 12,
+            fontSize: 21,
+            color: C.green,
+            display: 'flex',
+            gap: 10,
+            alignItems: 'center',
+          }}
+        >
+          <Check /> Ready for my agent
+        </Enter>
+      </div>
+      <Label style={{ ...at(4, 647), fontSize: p ? 20 : 17 }}>
+        Illustrated workflow
+      </Label>
+    </div>
+  );
+}
+
+function Outro({ p }: { p: boolean }) {
+  const f = useCurrentFrame();
+  const nodeX = p ? [140, 460, 780] : [470, 910, 1350];
+  const nodeY = p ? 960 : 615;
+  return (
+    <>
+      <Enter style={at(p ? 248 : 675, p ? 300 : 220)}>
+        <Img
+          src={staticFile('designome-lockup-on-light.svg')}
+          style={{ width: p ? 585 : 570 }}
+        />
+      </Enter>
+      <Heading
+        p={p}
+        centered
+        size={p ? 80 : 78}
+        top={p ? 552 : 388}
+        lines={[
+          'From an interface I liked',
+          <>
+            to a tool <span style={serif}>of my own.</span>
+          </>,
+        ]}
+      />
+      <svg style={{ ...at(0, nodeY + 48, p ? 1080 : 1920, 4) }}>
+        <path
+          d={`M${nodeX[0] + 100} 2H${nodeX[2]}`}
+          pathLength={1}
+          stroke={C.violet}
+          strokeWidth={2}
+          strokeDasharray={1}
+          strokeDashoffset={1 - tween(f, 20, 77)}
+        />
+      </svg>
+      {nodeX.map((x, i) => (
+        <Enter
+          key={x}
+          delay={16 + i * 18}
+          style={at(x, nodeY, 100)}
+          distance={25}
+        >
+          <div
+            style={{
+              width: 100,
+              height: 100,
+              borderRadius: 26,
+              background: i === 1 ? C.tint : '#fff',
+              border: `1px solid ${i === 1 ? '#d2c6ed' : C.line}`,
+              display: 'grid',
+              placeItems: 'center',
+            }}
+          >
+            {i === 0 ? (
+              <svg width="53" height="46" viewBox="0 0 53 46" fill="none">
+                <rect
+                  x="1"
+                  y="1"
+                  width="51"
+                  height="44"
+                  rx="6"
+                  stroke={C.ink}
+                  strokeWidth="1.5"
+                />
+                <path d="M2 11h49M14 12v32" stroke={C.ink} strokeWidth="1.5" />
+                {[20, 30, 40].map((x) => (
+                  <rect
+                    key={x}
+                    x={x}
+                    y="17"
+                    width="7"
+                    height="8"
+                    rx="1"
+                    fill="#cecec5"
+                  />
+                ))}
+                <rect
+                  x="20"
+                  y="29"
+                  width="27"
+                  height="9"
+                  rx="2"
+                  fill={C.tint}
+                />
+              </svg>
+            ) : i === 1 ? (
+              <BrandMark height={54} />
+            ) : (
+              <DownloadMark size={56} />
+            )}
+          </div>
+          <div
+            style={{
+              marginTop: 24,
+              fontSize: p ? 25 : 23,
+              textAlign: 'center',
+              width: 230,
+              marginLeft: -65,
+              fontWeight: 500,
+            }}
+          >
+            {['A screenshot', 'Design DNA', 'My own app'][i]}
+          </div>
+        </Enter>
+      ))}
+      <Enter
+        delay={75}
+        style={{
+          ...at(p ? 82 : 90, p ? 1425 : 870, p ? 916 : 1740),
+          textAlign: 'center',
+          fontSize: p ? 37 : 30,
+          fontWeight: 600,
+        }}
+      >
+        Try it with your next idea.
+      </Enter>
+      <Enter
+        delay={80}
+        style={{
+          ...at(p ? 82 : 90, p ? 1505 : 930, p ? 916 : 1740),
+          textAlign: 'center',
+          fontSize: p ? 29 : 27,
+          color: C.violet,
+          fontWeight: 600,
+        }}
+      >
+        github.com/jude-bayiha/designome
+      </Enter>
+    </>
+  );
+}
+
+function Scene({ index, p }: { index: number; p: boolean }) {
+  const f = useCurrentFrame();
   if (index === 0)
     return (
       <>
-        <Title portrait={p} immediate>
-          I wanted my own
-          <br />
-          <span style={serif}>YouTube</span>
-          <br />
-          downloader.
-        </Title>
-        <Note portrait={p} y={p ? 1510 : 575}>
-          So I built Glane.
-        </Note>
-        <Reveal delay={-1} style={at(p ? 78 : 795, p ? 665 : 160)}>
-          <BrowserCard
-            asset="glane-dashboard"
-            width={p ? 892 : 1035}
-            height={p ? 760 : 790}
-            zoom={drift}
-          />
-        </Reveal>
-        <SmallLabel style={at(p ? 80 : 805, p ? 1470 : 1006)} color={C.muted}>
-          My tool · real app capture
-        </SmallLabel>
+        <Heading
+          p={p}
+          immediate
+          lines={[
+            'I wanted my own',
+            <span style={serif}>YouTube</span>,
+            'downloader.',
+          ]}
+        />
+        <div
+          style={{
+            ...at(p ? 80 : 784, p ? 677 : 235),
+            transform: `translateX(${Math.round(tween(f, 0, 38, 40, 0))}px)`,
+          }}
+        >
+          <Shot asset="glane-dashboard" width={p ? 920 : 1050} />
+        </div>
+        <Enter delay={15} style={at(p ? 82 : 94, p ? 1274 : 565)}>
+          <Pill dark>
+            <DownloadMark size={31} />
+            So I built Glane.
+          </Pill>
+        </Enter>
+        <Body p={p} top={p ? 1395 : 687}>
+          A personal project.
+          <br />A design I wanted to make my own.
+        </Body>
+        <Enter delay={24} style={at(p ? 85 : 799, p ? 1208 : 834)}>
+          <Label style={{ fontSize: p ? 21 : 18 }}>
+            My tool · actual app capture
+          </Label>
+        </Enter>
       </>
     );
   if (index === 1)
     return (
       <>
-        <Title portrait={p}>
-          I found an interface
-          <br />I <span style={serif}>really liked.</span>
-        </Title>
-        <Note portrait={p} y={p ? 1370 : 485}>
+        <Heading
+          p={p}
+          size={p ? 78 : 76}
+          lines={[
+            'I found an interface',
+            <>
+              I <span style={serif}>really liked.</span>
+            </>,
+          ]}
+        />
+        <Enter
+          delay={4}
+          axis="x"
+          distance={65}
+          style={at(p ? 80 : 785, p ? 562 : 188)}
+        >
+          <Shot asset="reference" width={p ? 920 : 1052} />
+          <ReferenceCredit
+            style={{ marginTop: 23, marginLeft: 6, fontSize: p ? 22 : 20 }}
+          />
+        </Enter>
+        <Body p={p} top={p ? 1365 : 489}>
           The calm layout.
           <br />
           The cards. The way it all lined up.
-        </Note>
-        <Reveal delay={4} style={at(p ? 78 : 795, p ? 635 : 202)}>
-          <BrowserCard asset="reference" width={p ? 892 : 1035} zoom={drift} />
-        </Reveal>
-        <SmallLabel style={at(p ? 82 : 805, p ? 1325 : 1004)}>
-          The screenshot I started from
-        </SmallLabel>
+        </Body>
+        <Enter delay={46} style={at(p ? 84 : 94, p ? 1530 : 655)}>
+          <Pill>The screenshot I started from</Pill>
+        </Enter>
       </>
     );
   if (index === 2)
     return (
       <>
-        <Title portrait={p} size={p ? 70 : 74}>
-          I asked Designome
-          <br />
-          to <span style={serif}>extract its design.</span>
-        </Title>
-        <Reveal delay={4} style={at(p ? 80 : 98, p ? 520 : 470)}>
-          <Prompt
-            width={p ? 850 : 630}
-            caption="My request"
-            text={
-              <>
-                <span style={{ color: C.violet }}>/designome</span>
-                <br />
-                Extract the design grammar
-                <br />
-                from this screenshot.
-              </>
-            }
-          />
-        </Reveal>
-        <Reveal delay={20} style={at(p ? 485 : 756, p ? 925 : 585)}>
-          <Arrow vertical={p} />
-        </Reveal>
-        <Reveal delay={28} style={at(p ? 80 : 868, p ? 1020 : 235)}>
-          <RuleSheet width={p ? 850 : 885} />
-        </Reveal>
-        <SmallLabel style={at(p ? 85 : 882, p ? 1558 : 826)} color={C.violet}>
-          A design brief my agent can follow
-        </SmallLabel>
+        <Heading
+          p={p}
+          size={p ? 76 : 72}
+          lines={[
+            'I asked Designome',
+            <>
+              to <span style={serif}>extract its design.</span>
+            </>,
+          ]}
+        />
+        <Enter delay={3} style={at(p ? 80 : 94, p ? 538 : 474)}>
+          <Prompt p={p} width={p ? 884 : 650} />
+        </Enter>
+        <div style={at(p ? 506 : 783, p ? 940 : 600)}>
+          <DrawnArrow vertical={p} delay={27} />
+        </div>
+        <Enter
+          delay={27}
+          axis={p ? 'y' : 'x'}
+          style={at(p ? 80 : 924, p ? 1060 : 250)}
+        >
+          <DNA p={p} width={p ? 884 : 896} />
+        </Enter>
       </>
     );
   if (index === 3)
     return (
       <>
-        <Title portrait={p}>
-          I reviewed the rules.
-          <br />
-          Then <span style={serif}>installed them.</span>
-        </Title>
-        <Note portrait={p} y={p ? 1466 : 505}>
+        <Heading
+          p={p}
+          size={p ? 78 : 74}
+          lines={[
+            'I reviewed the rules.',
+            <>
+              Then <span style={serif}>installed them.</span>
+            </>,
+          ]}
+        />
+        <Enter delay={5} style={at(p ? 88 : 913, p ? 630 : 264)}>
+          <Install p={p} />
+        </Enter>
+        <Body p={p} top={p ? 1460 : 523}>
           Now the design guidance
           <br />
           lived inside my project.
-        </Note>
-        <Reveal
-          delay={4}
-          style={{
-            ...at(p ? 100 : 872, p ? 625 : 225, p ? 810 : 835),
-            padding: 40,
-            border: `1px solid ${C.line}`,
-            background: '#fff',
-            borderRadius: 20,
-            boxShadow: '0 24px 60px -35px #29332055',
-          }}
-        >
-          <SmallLabel>Glane / project</SmallLabel>
-          <div style={{ height: 1, background: C.line, margin: '29px 0' }} />
-          <div style={{ color: C.muted, fontSize: 21, marginBottom: 20 }}>
-            docs / designome / README.md
-          </div>
-          <div
-            style={{
-              fontSize: 44,
-              fontWeight: 600,
-              letterSpacing: '-1.6px',
-              marginBottom: 30,
-            }}
-          >
-            Design brief
-          </div>
-          {['Layout & spacing', 'Type & surfaces', 'Components & data'].map(
-            (label, i) => (
-              <div
-                key={label}
-                style={{
-                  display: 'flex',
-                  gap: 16,
-                  alignItems: 'center',
-                  borderTop: `1px solid ${C.line}`,
-                  padding: '25px 0',
-                  opacity: tween(f, 16 + i * 15, 32 + i * 15),
-                  fontSize: 27,
-                }}
-              >
-                <span style={{ color: C.violet }}>
-                  <Check />
-                </span>
-                {label}
-              </div>
-            ),
-          )}
-          <div
-            style={{
-              borderTop: `1px solid ${C.line}`,
-              paddingTop: 26,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              opacity: tween(f, 68, 86),
-            }}
-          >
-            <span
-              style={{
-                display: 'flex',
-                gap: 9,
-                color: C.green,
-                fontSize: 23,
-                fontWeight: 600,
-                alignItems: 'center',
-              }}
-            >
-              <Check /> Accepted & installed
-            </span>
-            <span style={{ fontSize: 15, color: C.muted }}>
-              Illustrated workflow
-            </span>
-          </div>
-        </Reveal>
+        </Body>
       </>
     );
   if (index === 4)
     return (
       <>
-        <Title portrait={p}>
-          Then I asked my agent
-          <br />
-          to <span style={serif}>build my tool.</span>
-        </Title>
-        <Reveal delay={3} style={at(p ? 80 : 98, p ? 532 : 480)}>
-          <Prompt
-            width={p ? 850 : 640}
-            caption="My next request"
-            text={
-              <>
-                Build a YouTube downloader
-                <br />
-                using the installed design brief.
-              </>
-            }
-          />
-        </Reveal>
-        <Reveal delay={25} style={at(p ? 80 : 898, p ? 954 : 264)}>
+        <Heading
+          p={p}
+          size={p ? 75 : 65}
+          lines={[
+            'Then I asked my agent',
+            <>
+              to <span style={serif}>build my tool.</span>
+            </>,
+          ]}
+        />
+        <Enter delay={4} style={at(p ? 80 : 94, p ? 540 : 492)}>
+          <Prompt p={p} width={p ? 884 : 650} build />
+        </Enter>
+        <div style={at(p ? 80 : 796, p ? 1035 : 285)}>
           <div
             style={{
-              ...at(-10, -10, p ? 870 : 812, p ? 462 : 542),
-              border: `1px solid ${C.violet}44`,
-              borderRadius: 25,
-              transform: 'rotate(2.5deg)',
-              background: C.tint,
+              clipPath: `inset(0 ${100 - tween(f, 44, 90) * 100}% 0 0)`,
             }}
-          />
-          <BrowserCard
-            asset="glane-dashboard"
-            width={p ? 850 : 792}
-            height={p ? 440 : 520}
-            style={{ position: 'relative' }}
-          />
-        </Reveal>
-        <Note portrait={p} y={p ? 1464 : 815}>
-          The agent had a design
-          <br />
-          brief to work from.
-        </Note>
+          >
+            <Shot asset="glane-dashboard" width={p ? 920 : 1034} accent />
+          </div>
+          <div style={{ marginTop: 28, display: 'flex', gap: p ? 15 : 20 }}>
+            {['The brief', 'My idea', 'My tool'].map((text, i) => (
+              <Enter key={text} delay={37 + i * 18} distance={14}>
+                <Pill
+                  style={{
+                    fontSize: p ? 22 : 20,
+                    padding: '12px 18px',
+                    background: i === 2 ? C.ink : C.tint,
+                    color: i === 2 ? '#fff' : C.violet,
+                  }}
+                >
+                  <Check size={18} />
+                  {text}
+                </Pill>
+              </Enter>
+            ))}
+          </div>
+        </div>
       </>
     );
   if (index === 5) {
-    const showLibrary = f >= 122;
+    const library = f >= 112;
     return (
       <>
-        <Title portrait={p} size={p ? 76 : 80}>
-          And this is what
-          <br />I <span style={serif}>actually use.</span>
-        </Title>
-        <Note portrait={p} y={p ? 1520 : 525}>
-          {showLibrary ? (
-            <>My videos, in one place.</>
-          ) : (
-            <>
-              My own space for
-              <br />
-              downloading and keeping videos.
-            </>
-          )}
-        </Note>
-        <Reveal style={at(p ? 78 : 795, p ? 582 : 156)}>
-          <BrowserCard
-            asset={showLibrary ? 'glane-library' : 'glane-dashboard'}
-            width={p ? 892 : 1035}
-            height={p ? 825 : 795}
-            zoom={showLibrary ? 1 : tween(f, 0, 120, 1, 1.04)}
-          />
-        </Reveal>
-        <div
-          style={{
-            ...at(p ? 82 : 805, p ? 1460 : 1004),
-            display: 'flex',
-            alignItems: 'center',
-            gap: 14,
-            fontSize: 19,
-            color: C.muted,
-          }}
-        >
-          <span
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              background: C.green,
-            }}
-          />
-          {showLibrary ? 'Glane · library' : 'Glane · dashboard'}
-          <span style={{ color: '#abadA3' }}> / </span>Personal library hidden
-        </div>
+        <Heading
+          p={p}
+          centered={!p}
+          size={p ? 79 : 65}
+          top={p ? 238 : 185}
+          lines={
+            p
+              ? [
+                  'And this is what',
+                  <>
+                    I <span style={serif}>actually use.</span>
+                  </>,
+                ]
+              : [
+                  <>
+                    And this is what I <span style={serif}>actually use.</span>
+                  </>,
+                ]
+          }
+        />
+        {!library ? (
+          <>
+            <Enter delay={3} style={at(p ? 136 : 304, p ? 587 : 309)}>
+              <Shot
+                asset={p ? 'glane-composer' : 'glane-dashboard'}
+                width={p ? 806 : 1312}
+              />
+            </Enter>
+            <Label style={at(p ? 138 : 310, p ? 535 : 266)} violet>
+              Glane / {p ? 'a new video' : 'my workspace'}
+            </Label>
+            <Enter delay={20} style={at(p ? 140 : 1423, p ? 1492 : 265)}>
+              <span style={{ fontSize: p ? 26 : 19, color: C.muted }}>
+                Actual app capture
+              </span>
+            </Enter>
+          </>
+        ) : (
+          <Sequence from={112}>
+            <Enter
+              delay={0}
+              distance={50}
+              style={at(p ? 80 : 317, p ? 575 : 335)}
+            >
+              {p ? <Shot asset="glane-cards" width={920} /> : null}
+              <div
+                style={{
+                  marginTop: p ? 43 : 0,
+                  marginBottom: 25,
+                  fontSize: p ? 40 : 29,
+                  fontWeight: 500,
+                  letterSpacing: '-1px',
+                }}
+              >
+                My videos, in one place.
+              </div>
+              <Shot asset="glane-library" width={p ? 920 : 1286} />
+              <div
+                style={{
+                  marginTop: 25,
+                  display: 'flex',
+                  gap: 12,
+                  alignItems: 'center',
+                  color: C.muted,
+                  fontSize: p ? 22 : 21,
+                }}
+              >
+                <span
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 99,
+                    background: C.green,
+                  }}
+                />
+                Library excerpt · personal titles & thumbnails hidden
+              </div>
+            </Enter>
+          </Sequence>
+        )}
+        <PaperCut boundaries={[112]} />
       </>
     );
   }
   if (index === 6)
     return (
       <>
-        <Title portrait={p} centered={!p} size={p ? 73 : 78}>
-          A different app.
-          <br />
-          The same <span style={serif}>design language.</span>
-        </Title>
-        <Reveal delay={4} style={at(p ? 80 : 95, p ? 550 : 446)}>
-          <SmallLabel style={{ marginBottom: 17 }}>The reference</SmallLabel>
-          <BrowserCard
-            asset="reference"
-            width={p ? 850 : 817}
-            height={p ? 378 : 453}
-          />
-        </Reveal>
-        <Reveal delay={12} style={at(p ? 480 : 929, p ? 1019 : 660)}>
-          <Arrow vertical={p} />
-        </Reveal>
-        <Reveal delay={16} style={at(p ? 80 : 1007, p ? 1130 : 446)}>
-          <SmallLabel style={{ marginBottom: 17 }}>
-            My YouTube downloader
-          </SmallLabel>
-          <BrowserCard
-            asset="glane-dashboard"
-            width={p ? 850 : 817}
-            height={p ? 378 : 453}
-          />
-        </Reveal>
-        <div
+        <Heading
+          p={p}
+          centered={!p}
+          size={p ? 76 : 76}
+          lines={[
+            'A different app.',
+            <>
+              The same <span style={serif}>design language.</span>
+            </>,
+          ]}
+        />
+        <Enter delay={8} style={at(p ? 80 : 93, p ? 634 : 512)}>
+          <Label style={{ marginBottom: 20 }}>Reference / summary cards</Label>
+          <Shot asset="reference-cards" width={p ? 920 : 788} />
+          <ReferenceCredit style={{ marginTop: 20, fontSize: p ? 22 : 19 }} />
+        </Enter>
+        <div style={at(p ? 506 : 906, p ? 1007 : 620)}>
+          <DrawnArrow vertical={p} delay={25} />
+        </div>
+        <Enter
+          delay={42}
+          axis={p ? 'y' : 'x'}
+          style={at(p ? 80 : 1039, p ? 1163 : 512)}
+        >
+          <Label style={{ marginBottom: 20 }}>Glane / summary cards</Label>
+          <Shot asset="glane-cards" width={p ? 920 : 788} />
+        </Enter>
+        <Enter
+          delay={64}
           style={{
-            ...at(p ? 84 : 95, p ? 1640 : 1020, p ? 840 : 1730),
+            ...at(p ? 82 : 95, p ? 1570 : 900, p ? 908 : 1730),
             textAlign: p ? 'left' : 'center',
-            fontSize: p ? 24 : 21,
+            fontSize: p ? 31 : 30,
+            lineHeight: 1.5,
+            letterSpacing: '-0.6px',
             color: C.muted,
           }}
         >
-          Calm surfaces. A clear overview. Room for the details.
-        </div>
+          The structure carried over. The product is my own.
+        </Enter>
       </>
     );
-  return (
-    <>
-      <Reveal style={at(p ? 82 : 103, p ? 285 : 225)}>
-        <Img
-          src={staticFile('designome-lockup-on-light.svg')}
-          style={{ width: p ? 575 : 535 }}
-        />
-      </Reveal>
-      <Reveal
-        delay={7}
-        style={{
-          ...at(p ? 82 : 113, p ? 585 : 447, p ? 865 : 1060),
-          fontSize: p ? 79 : 84,
-          lineHeight: 1.15,
-          letterSpacing: '-3px',
-          fontWeight: 500,
-        }}
-      >
-        From an interface I liked
-        <br />
-        to a tool <span style={serif}>of my own.</span>
-      </Reveal>
-      <Reveal delay={14} style={at(p ? 82 : 1260, p ? 949 : 325)}>
-        <BrowserCard
-          asset="reference"
-          width={p ? 500 : 460}
-          height={p ? 210 : 230}
-          style={{ transform: 'rotate(-4deg)' }}
-        />
-        <BrowserCard
-          asset="glane-dashboard"
-          width={p ? 560 : 485}
-          height={p ? 280 : 265}
-          style={{
-            marginLeft: p ? 255 : 25,
-            marginTop: -75,
-            transform: 'rotate(3deg)',
-          }}
-        />
-      </Reveal>
-      <Reveal
-        delay={26}
-        style={{
-          ...at(p ? 84 : 116, p ? 1470 : 820),
-          fontSize: p ? 34 : 33,
-          fontWeight: 600,
-          color: C.ink,
-        }}
-      >
-        Try it with your next idea.
-      </Reveal>
-      <Reveal
-        delay={30}
-        style={{
-          ...at(p ? 84 : 116, p ? 1542 : 883),
-          fontSize: p ? 27 : 28,
-          color: C.violet,
-          fontWeight: 600,
-          letterSpacing: '-0.4px',
-        }}
-      >
-        github.com/jude-bayiha/designome
-      </Reveal>
-    </>
-  );
+  return <Outro p={p} />;
 }
 
 export function Film() {
   const f = useCurrentFrame();
   const { width, height } = useVideoConfig();
   const p = height > width;
-  let offset = 0;
-  const scenes = durations.map((duration, index) => {
-    const from = offset;
-    offset += duration;
-    return { duration, index, from };
-  });
-  const current =
-    scenes.find((scene) => f < scene.from + scene.duration)?.index ??
-    scenes.length - 1;
+  const current = sceneStarts.reduce(
+    (active, start, i) => (f >= start ? i : active),
+    0,
+  );
+  const progress = (f - sceneStarts[current]) / durations[current];
   return (
     <AbsoluteFill
       style={{
@@ -961,61 +1043,57 @@ export function Film() {
       <AbsoluteFill
         style={{
           backgroundImage:
-            'radial-gradient(#34392a0a 0.7px, transparent 0.7px)',
-          backgroundSize: '12px 12px',
-          opacity: 0.65,
+            'radial-gradient(#464a3510 0.65px, transparent 0.65px)',
+          backgroundSize: '13px 13px',
         }}
       />
       <div
         style={{
-          ...at(p ? 80 : 98, p ? 123 : 66),
+          ...at(p ? 82 : 94, p ? 123 : 66),
           display: 'flex',
-          gap: 14,
+          gap: 15,
           alignItems: 'center',
         }}
       >
-        <Img
-          src={staticFile('designome-mark-on-light.svg')}
-          style={{ width: 24, height: 33 }}
-        />
-        <span
-          style={{
-            fontSize: p ? 21 : 20,
-            letterSpacing: '0.3px',
-            color: C.muted,
-          }}
-        >
+        <BrandMark height={33} />
+        <span style={{ color: C.muted, fontSize: p ? 22 : 20 }}>
           A real project, with Designome
         </span>
       </div>
-      <SmallLabel
+      <Label
         style={{
           position: 'absolute',
-          right: p ? 148 : 97,
-          top: p ? 130 : 75,
+          right: p ? 80 : 94,
+          top: p ? 134 : 76,
           fontSize: p ? 18 : 17,
         }}
       >
         {String(current + 1).padStart(2, '0')} / 08
-      </SmallLabel>
+      </Label>
       <div
         style={{
-          ...at(p ? 80 : 98, p ? 183 : 128, p ? 854 : 1725, 1),
+          ...at(p ? 80 : 94, p ? 183 : 129, p ? 920 : 1732, 1),
           background: C.line,
         }}
-      />
-      {scenes.map(({ index, from, duration }) => (
-        <Sequence key={index} from={from} durationInFrames={duration}>
-          <Scene index={index} portrait={p} />
+      >
+        <div
+          style={{
+            height: 2,
+            width: `${(f / (TOTAL_FRAMES - 1)) * 100}%`,
+            background: C.violet,
+          }}
+        />
+      </div>
+      {durations.map((duration, i) => (
+        <Sequence key={i} from={sceneStarts[i]} durationInFrames={duration}>
+          <Scene index={i} p={p} />
         </Sequence>
       ))}
       <div
         style={{
-          position: 'absolute',
-          left: p ? 80 : 98,
-          bottom: p ? 136 : 29,
+          ...at(p ? 82 : 94, p ? 1746 : 1031),
           display: 'flex',
-          gap: 8,
+          gap: 7,
           alignItems: 'center',
         }}
       >
@@ -1023,17 +1101,29 @@ export function Film() {
           <div
             key={i}
             style={{
-              width: i === current ? 29 : 6,
+              width: i === current ? 44 : 7,
               height: 5,
-              borderRadius: 4,
-              background: i === current ? C.violet : '#cfD0c6',
+              borderRadius: 9,
+              background: '#d0d2c9',
+              overflow: 'hidden',
             }}
-          />
+          >
+            {i === current ? (
+              <div
+                style={{
+                  height: 5,
+                  width: `${progress * 100}%`,
+                  background: C.violet,
+                }}
+              />
+            ) : null}
+          </div>
         ))}
-        <span style={{ marginLeft: 15, color: C.muted, fontSize: p ? 17 : 15 }}>
+        <span style={{ marginLeft: 15, fontSize: p ? 18 : 15, color: C.muted }}>
           {chapters[current]}
         </span>
       </div>
+      <PaperCut boundaries={sceneStarts.slice(1)} />
     </AbsoluteFill>
   );
 }

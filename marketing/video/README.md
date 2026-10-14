@@ -18,13 +18,21 @@ pnpm exec playwright install chromium
 pnpm capture --reference /absolute/path/to/reference.png --app-url http://localhost:3000
 ```
 
-The supplied reference is the creator's 1720 × 1440 Fincai screenshot. `Reference` in `src/Film.tsx` crops its presentation backdrop using the visible UI bounds. A different reference requires checking those bounds and updating the story's evidence.
+The supplied reference is the creator's 2048 × 1714 Fincai PNG, saved from [Rakibul Ism's post on X](https://x.com/rakibulism/status/2095169274444964079/photo/1). The matching design is credited to Rakibul Ism on [Dribbble](https://dribbble.com/shots/27102507-Fincai-AI-Powered-Personal-Finance-Dashboard-SaaS-UI-UX-Design). `src/Shots.tsx` defines explicit source-pixel bounds for the full interface and two complete summary cards. The author is credited whenever the reference appears. The image keeps its existing detail; the film does not claim to restore information missing from the source. Capture rejects a reference with different dimensions; changing it requires reviewing the bounds and evidence.
 
 For an existing browser, set `VIDEO_BROWSER=/absolute/path/to/chrome` for capture and render commands. Omit it to use Playwright's installed browser for capture and Remotion's managed browser for rendering.
 
-The capture script only navigates to Glane's dashboard and history. It blocks API mutations and applies temporary browser styles. It masks video title cells, filename cells, the latest-added title, and every thumbnail. It checks the expected table structure and privacy styles before saving. Application source and stored content are not modified. Review both saved images before rendering; a future Glane layout change may need updated selectors.
+The capture script only navigates to Glane's dashboard and history. It blocks API mutations and applies temporary browser styles. It masks video title cells, filename cells, the latest-added title, and every thumbnail. Hidden private content is removed from cell layout. It checks the expected table structure and privacy styles before saving. The labelled library excerpt retains exactly five complete data rows and omits date-group headings; its total count remains the application's actual count. Application source and stored content are not modified. Review the saved images before rendering; a future Glane layout change may need updated selectors.
 
-`public/`, `review/`, `bundle/` and `output/` are ignored. Never commit reference screenshots, app captures or rendered videos. The reference is supplied by the creator; third-party authorship and publication rights have not been independently established.
+`public/`, `review/`, `bundle/` and `output/` are ignored. Never commit reference screenshots, app captures or rendered videos. Publication rights for the third-party reference remain `unknown`: a public post and attribution do not establish permission for promotional reuse.
+
+## Image quality and motion
+
+Glane is captured at a 1440 × 1500 CSS-pixel viewport with device scale factor 3. The five lossless PNGs include an overview ending below both complete analysis panels, a complete composer, a complete chart, two summary cards, and a five-row library excerpt. Capture records their pixel dimensions, framing, privacy checks, and SHA-256 hashes. Rendering verifies every capture and the reference hash first.
+
+Shots retain their natural aspect ratio. There are no fixed-height browser windows, continuously scaled screenshots, or rotated screenshot stacks. The portrait result uses the complete composer as a close-up; the landscape result uses a larger dashboard overview. Comparison shots show complete cards, with an explicit detail label.
+
+The motion treatment is `proposed`: staggered text reveals, damped entrances, drawn connectors and checks, sequential grammar diagrams, a brief entering the project folder, a result reveal, and travelling paper transitions. All motion is derived from Remotion frames. Screenshot positions settle on whole pixels; the UI remains still during reading holds. Exports use PNG frames, H.264 CRF 14 and BT.709 color, with no audio stream.
 
 ## Preview and render
 
@@ -62,6 +70,7 @@ Evidence status, confidence and limits:
 - `observed`, high confidence: the reference has four summary cards, quiet surfaces with fine borders, and one dark bar within a pale series. These qualities are also recorded in the installed brief. The film shortens their wording; it does not introduce exact pixel measurements or font identifications.
 - `proposed`, high confidence as editorial intent: timing, first-person captions, illustrative chat messages, visual transitions and the shortened design sheet are new film treatments. They are not historical recordings of extraction, acceptance or generation. The workflow scenes carry an on-screen illustration label.
 - `inferred`, medium confidence: opening on the creator's app and telling the story in first person makes this case more concrete than the previous general product explanation. Audience response remains untested.
-- `unknown`: the exact historical prompts, original generation duration, third-party reference authorship, cause of TikTok's prior mute, and future reach. The film makes no claims about those points.
+- `observed`, high confidence: the supplied source post is published by `@rakibulism`; the matching Fincai design is credited to Rakibul Ism on Dribbble. Credit identifies the source and does not assert endorsement or a reuse license.
+- `unknown`: the exact historical prompts, original generation duration, third-party publication permission, cause of TikTok's prior mute, and future reach. The film makes no claims about those points.
 
 The current repository's README examples establish Designome's screenshot → grammar → accepted installation → agent generation workflow. The film shows this particular person's use of that workflow and does not generalize its visual result to every screenshot, model or product.
