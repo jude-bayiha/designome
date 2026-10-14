@@ -6,7 +6,7 @@
     "MD036": false,
   },
   "ignores": [
-    "node_modules/**",
+    "**/node_modules/**",
     "skills/*/scripts/runtime/**",
     "CHANGELOG.md",
     ".designome/runs/**",
