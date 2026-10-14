@@ -14,6 +14,13 @@ const reference = option('--reference');
 if (!reference)
   throw new Error('Pass --reference /absolute/path/to/reference.png');
 const appUrl = option('--app-url', 'http://localhost:3000');
+const saveBaseline = args.includes('--save-baseline');
+const baselineCssPath = option('--baseline-css');
+if (baselineCssPath && !saveBaseline)
+  throw new Error('--baseline-css requires --save-baseline.');
+const baselineCss = baselineCssPath
+  ? await readFile(baselineCssPath, 'utf8')
+  : null;
 const publicDir = path.join(root, 'public');
 const referenceBytes = await readFile(reference);
 if (
@@ -56,6 +63,11 @@ await page.route('**/api/**', (route) =>
 );
 const report = {
   status: 'observed',
+  capturedAt: new Date().toISOString(),
+  palettePreview: baselineCss ? 'earlier-palette-on-current-english-app' : null,
+  paletteCssSha256: baselineCss
+    ? createHash('sha256').update(baselineCss).digest('hex')
+    : null,
   viewport: { width: 1440, height: 1500 },
   deviceScaleFactor: 3,
   reference: {
@@ -65,6 +77,7 @@ const report = {
     sha256: createHash('sha256').update(referenceBytes).digest('hex'),
   },
   captures: [],
+  productTheme: [],
 };
 async function saveCapture(file, clip, privacy, framing) {
   // Pixel-aligned clips preserve whole cards, panels, and table rows.
@@ -100,41 +113,23 @@ try {
       waitUntil: 'networkidle',
     });
     await page.locator('table tbody tr').first().waitFor();
+    if (baselineCss) await page.addStyleTag({ content: baselineCss });
     if (pathname === '/historique') {
-      // The latest-added summary repeats a private title outside the table.
       await page.addStyleTag({
         content: `
-        article.dn-card:nth-child(3) > :last-child {
-          color: transparent !important; position: relative !important;
-        }
-        article.dn-card:nth-child(3) > :last-child * { visibility: hidden !important; }
-        article.dn-card:nth-child(3) > :last-child::after {
-          content: '' !important; position: absolute !important;
-          left: 0 !important; top: 9px !important; width: 72% !important;
-          height: 9px !important; background: #dededc !important; border-radius: 4px !important;
-        }
+        article.dn-card:nth-child(3) > :last-child { filter: blur(5px) !important; }
       `,
       });
     }
     await page.addStyleTag({
       content: `
-      /* Keep privacy independent of transient React content or polling. */
-      table tbody td:first-child, table tbody td:nth-child(5) {
-        position: relative !important; color: transparent !important;
+      /* Blur private text only; preserve thumbnails, cell layout and metadata. */
+      table tbody td:first-child > div > div:last-child,
+      table tbody td:nth-child(5) > p {
+        filter: blur(5px) !important;
+        user-select: none !important;
       }
-      table tbody td:first-child *, table tbody td:nth-child(5) * {
-        visibility: hidden !important;
-      }
-      table tbody td:first-child > *, table tbody td:nth-child(5) > * {
-        display: none !important;
-      }
-      table tbody td:first-child::after, table tbody td:nth-child(5)::after {
-        content: '' !important; position: absolute !important;
-        left: 16px !important; top: 44% !important;
-        width: 66% !important; height: 9px !important;
-        border-radius: 4px !important; background: #dededc !important;
-      }
-      img, video, [role="tooltip"], nextjs-portal { visibility: hidden !important; }
+      [role="tooltip"], nextjs-portal { visibility: hidden !important; }
       * { caret-color: transparent !important; animation: none !important; transition: none !important; }
     `,
     });
@@ -143,55 +138,82 @@ try {
       const headers = [...table.querySelectorAll('thead th')].map((cell) =>
         cell.textContent.trim(),
       );
-      if (headers[0] !== 'Vidéo' || headers[4] !== 'Fichier') {
+      if (headers[0] !== 'Video' || headers[4] !== 'File')
         throw new Error(
-          'Table structure changed. Review the privacy selectors before capture.',
+          'Table structure changed. Review the text privacy selectors.',
         );
-      }
-      const cells = [
-        ...table.querySelectorAll(
-          'tbody td:first-child, tbody td:nth-child(5)',
-        ),
-      ];
-      if (!cells.length)
+      const rows = [...table.querySelectorAll('tbody tr')].filter(
+        (row) => row.querySelectorAll('td').length === 7,
+      );
+      if (!rows.length)
         throw new Error(
-          'No private cells found; refusing an unverified capture.',
+          'No private rows found; refusing an unverified capture.',
         );
-      for (const cell of cells) {
-        if (getComputedStyle(cell).color !== 'rgba(0, 0, 0, 0)')
-          throw new Error('Privacy style missing.');
+      let textSlotsBlurred = 0;
+      for (const row of rows) {
+        const title = row.querySelector(
+          'td:first-child > div > div:last-child',
+        );
+        const filename = row.querySelector('td:nth-child(5) > p');
         if (
-          getComputedStyle(cell, '::after').backgroundColor !==
-          'rgb(222, 222, 220)'
+          !title?.querySelector('p[title]') ||
+          !filename?.hasAttribute('title')
         )
-          throw new Error('Privacy mask missing.');
-        for (const child of cell.querySelectorAll('*')) {
-          if (getComputedStyle(child).visibility !== 'hidden')
-            throw new Error('Private content is visible.');
+          throw new Error('A private text slot changed structure.');
+        for (const slot of [title, filename]) {
+          const style = getComputedStyle(slot);
+          if (
+            style.filter !== 'blur(5px)' ||
+            style.visibility !== 'visible' ||
+            style.display === 'none'
+          )
+            throw new Error(
+              'A private text slot must stay in place with its verified blur.',
+            );
+          textSlotsBlurred++;
         }
       }
+      const images = [...document.images];
       if (
-        [...document.images].some(
-          (img) => getComputedStyle(img).visibility !== 'hidden',
+        images.some(
+          (img) =>
+            getComputedStyle(img).visibility !== 'visible' ||
+            getComputedStyle(img).display === 'none',
         )
-      ) {
-        throw new Error('A thumbnail is visible.');
-      }
+      )
+        throw new Error('Thumbnails must remain visible.');
       if (isLibrary) {
         const card = document.querySelector('article.dn-card:nth-child(3)');
-        if (card?.querySelector('h2')?.textContent !== 'Dernier ajout')
+        if (card?.querySelector('h2')?.textContent !== 'Latest addition')
           throw new Error('Latest-added summary structure changed.');
-        if (
-          getComputedStyle(card.lastElementChild).color !== 'rgba(0, 0, 0, 0)'
-        )
-          throw new Error('Latest-added title is visible.');
+        if (getComputedStyle(card.lastElementChild).filter !== 'blur(5px)')
+          throw new Error('Latest-added title needs its privacy blur.');
       }
       return {
-        privateCellsMasked: cells.length,
-        thumbnailsHidden: document.images.length,
-        latestAddedTitleMasked: isLibrary,
+        textSlotsBlurred,
+        blurCssPixels: 5,
+        thumbnailsVisible: images.length,
+        latestAddedTitleBlurred: isLibrary,
       };
     }, pathname === '/historique');
+    const productTheme = await page.evaluate(() => {
+      const root = getComputedStyle(document.documentElement);
+      const card = document.querySelector('article.dn-card');
+      const active = document.querySelector(
+        '.dn-nav-link[aria-current="page"]',
+      );
+      return {
+        emphasis: root.getPropertyValue('--designome-data-emphasis').trim(),
+        chrome: root.getPropertyValue('--designome-surface-chrome').trim(),
+        activeBackground: getComputedStyle(active).backgroundColor,
+        activeColor: getComputedStyle(active).color,
+        cardRadius: getComputedStyle(card).borderRadius,
+        cardPadding: getComputedStyle(card).padding,
+        bodySize: root.fontSize,
+        language: document.documentElement.lang,
+      };
+    });
+    report.productTheme.push({ pathname, ...productTheme });
     if (pathname === '/') {
       const composer = await page.locator('#nouveau').boundingBox();
       const chart = await page.locator('.activity-panel').boundingBox();
@@ -230,6 +252,16 @@ try {
         'Two complete adjacent summary cards.',
       );
     } else {
+      const first = await page.locator('article.dn-card').nth(0).boundingBox();
+      const second = await page.locator('article.dn-card').nth(1).boundingBox();
+      if (!first || !second)
+        throw new Error('History summary cards are missing.');
+      await saveCapture(
+        'glane-history-cards.png',
+        { ...first, width: second.x + second.width - first.x },
+        privacy,
+        'Two complete adjacent history summary cards, using the product palette.',
+      );
       // A clearly labelled excerpt: keep five whole rows and the real table border.
       // The total remains unchanged; only this temporary capture context is affected.
       const excerptCss = await page.evaluate(() => {
@@ -275,6 +307,30 @@ try {
     path.join(publicDir, 'capture-report.json'),
     JSON.stringify(report, null, 2) + '\n',
   );
+  if (saveBaseline) {
+    const baseline = {
+      ...report,
+      capturedBeforeProductPalette: !baselineCss,
+      palettePreview: baselineCss
+        ? 'earlier-palette-on-current-english-app'
+        : null,
+      captures: [],
+    };
+    for (const capture of report.captures.filter((entry) =>
+      ['glane-dashboard.png', 'glane-cards.png'].includes(entry.file),
+    )) {
+      const file = capture.file.replace('glane-', 'glane-before-');
+      await copyFile(
+        path.join(publicDir, capture.file),
+        path.join(publicDir, file),
+      );
+      baseline.captures.push({ ...capture, file });
+    }
+    await writeFile(
+      path.join(publicDir, 'baseline-capture-report.json'),
+      JSON.stringify(baseline, null, 2) + '\n',
+    );
+  }
   console.log(JSON.stringify(report, null, 2));
 } finally {
   await browser.close();

@@ -30,12 +30,12 @@ for (const [ratio, width, height] of [
   // FFprobe uses yuvj420p for full-range 8-bit 4:2:0 H.264 output.
   assert.ok(['yuv420p', 'yuvj420p'].includes(video.pix_fmt));
   assert.equal(video.r_frame_rate, '30/1');
-  assert.equal(Number(video.nb_frames), 1260);
+  assert.equal(Number(video.nb_frames), 1380);
   assert.equal(
     metadata.streams.filter((stream) => stream.codec_type === 'audio').length,
     0,
   );
-  assert.ok(Math.abs(Number(metadata.format.duration) - 42) < 0.05);
+  assert.ok(Math.abs(Number(metadata.format.duration) - 46) < 0.05);
   const decode = spawnSync(
     'ffmpeg',
     ['-v', 'error', '-i', file, '-f', 'null', '-'],
@@ -47,9 +47,9 @@ for (const [ratio, width, height] of [
     file: path.basename(file),
     width,
     height,
-    frames: 1260,
+    frames: 1380,
     fps: 30,
-    duration: 42,
+    duration: 46,
     audioStreams: 0,
     pixelFormat: video.pix_fmt,
     colorRange: video.color_range,

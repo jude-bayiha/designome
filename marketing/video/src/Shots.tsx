@@ -13,6 +13,9 @@ export type Asset =
   | 'glane-composer'
   | 'glane-chart'
   | 'glane-cards'
+  | 'glane-history-cards'
+  | 'glane-before-dashboard'
+  | 'glane-before-cards'
   | 'glane-library';
 
 export function Shot({

@@ -27,15 +27,16 @@ import {
 } from './Motion';
 import { BrandMark, ReferenceCredit, Shot } from './Shots';
 
-const durations = [120, 150, 180, 150, 150, 210, 150, 150];
+const durations = [120, 150, 150, 120, 150, 180, 180, 180, 150];
 const chapters = [
   'A personal project',
   'The inspiration',
   'Extract the design',
   'Make it reusable',
   'Build with the brief',
+  'Make the rules my own',
   'The real result',
-  'What carried over',
+  'Consistency across screens',
   'Your next idea',
 ];
 export const TOTAL_FRAMES = durations.reduce((sum, value) => sum + value, 0);
@@ -271,15 +272,19 @@ function Prompt({
   p,
   width,
   build = false,
+  customize = false,
 }: {
   p: boolean;
   width: number;
   build?: boolean;
+  customize?: boolean;
 }) {
   const f = useCurrentFrame();
-  const sentence = build
-    ? 'Build a YouTube downloader using the installed design brief.'
-    : 'Extract the design grammar from this screenshot.';
+  const sentence = customize
+    ? 'Make the theme ink blue. Keep the layout and spacing.'
+    : build
+      ? 'Build a YouTube downloader using the installed design brief.'
+      : 'Extract the design grammar from this screenshot.';
   const words = sentence.split(' ');
   return (
     <div style={{ ...card, width, padding: p ? 34 : 36 }}>
@@ -292,7 +297,7 @@ function Prompt({
         }}
       >
         <Label style={{ fontSize: p ? 20 : 17 }}>
-          {build ? 'My next request' : 'My request'}
+          {build || customize ? 'My next request' : 'My request'}
         </Label>
         <span
           style={{
@@ -310,7 +315,7 @@ function Prompt({
           J
         </span>
       </div>
-      {!build ? (
+      {!build && !customize ? (
         <div
           style={{ color: C.violet, fontSize: p ? 38 : 30, marginBottom: 14 }}
         >
@@ -544,7 +549,7 @@ function Install({ p }: { p: boolean }) {
         {['Layout & spacing', 'Type & surfaces', 'Components & data'].map(
           (text, i) => (
             <Enter
-              delay={64 + i * 13}
+              delay={44 + i * 10}
               key={text}
               distance={24}
               axis="x"
@@ -558,14 +563,14 @@ function Install({ p }: { p: boolean }) {
               }}
             >
               <span style={{ color: C.violet }}>
-                <Check progress={tween(f, 68 + i * 13, 82 + i * 13)} />
+                <Check progress={tween(f, 48 + i * 10, 62 + i * 10)} />
               </span>
               {text}
             </Enter>
           ),
         )}
         <Enter
-          delay={108}
+          delay={84}
           distance={10}
           style={{
             marginTop: 12,
@@ -583,6 +588,184 @@ function Install({ p }: { p: boolean }) {
         Illustrated workflow
       </Label>
     </div>
+  );
+}
+
+function Customize({ p }: { p: boolean }) {
+  const f = useCurrentFrame();
+  const reveal = tween(f, 68, 108);
+  const width = p ? 920 : 1034;
+  return (
+    <>
+      <Heading
+        p={p}
+        size={p ? 79 : 74}
+        lines={[
+          'Then I made it',
+          <>
+            feel <span style={serif}>like Glane.</span>
+          </>,
+        ]}
+      />
+      <Enter delay={4} style={at(p ? 80 : 94, p ? 540 : 492)}>
+        <Prompt p={p} width={p ? 884 : 650} customize />
+      </Enter>
+      <Enter
+        delay={35}
+        style={{
+          ...at(p ? 88 : 100, p ? 930 : 826),
+          display: 'flex',
+          alignItems: 'center',
+          gap: 18,
+        }}
+      >
+        <div style={{ display: 'flex', gap: 12 }}>
+          {['#234f83', '#e2edf9', '#f5f8fc'].map((color, i) => (
+            <div
+              key={color}
+              style={{
+                width: 54,
+                height: 54,
+                borderRadius: 99,
+                background: '#eeeeeb',
+                border: '1px solid #d0d8e2',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  background: color,
+                  clipPath: `inset(${100 - tween(f, 44 + i * 7, 62 + i * 7) * 100}% 0 0 0)`,
+                }}
+              />
+            </div>
+          ))}
+        </div>
+        <span
+          style={{ fontSize: p ? 30 : 24, color: '#234f83', fontWeight: 600 }}
+        >
+          Ink blue. Light surfaces.
+        </span>
+      </Enter>
+      <div style={at(p ? 80 : 796, p ? 1130 : 275, width)}>
+        <div style={{ position: 'relative' }}>
+          <Shot asset="glane-before-dashboard" width={width} />
+          <div
+            style={{
+              ...at(0, 0, width),
+              clipPath: `inset(0 ${100 - reveal * 100}% 0 0)`,
+            }}
+          >
+            <Shot asset="glane-dashboard" width={width} />
+          </div>
+          {reveal > 0 && reveal < 1 ? (
+            <div
+              style={{
+                ...at(Math.round(width * reveal), 8, 3),
+                bottom: 8,
+                background: '#234f83',
+              }}
+            />
+          ) : null}
+        </div>
+        <div
+          style={{
+            marginTop: 25,
+            display: 'flex',
+            justifyContent: 'space-between',
+            fontSize: p ? 25 : 22,
+            color: C.muted,
+          }}
+        >
+          <span>
+            {f < 85 ? 'Original palette preview' : 'My product palette'}
+          </span>
+          <span>Actual app captures</span>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function Consistency({ p }: { p: boolean }) {
+  return (
+    <>
+      <Heading
+        p={p}
+        centered={!p}
+        size={p ? 79 : 76}
+        top={p ? 238 : 175}
+        lines={[
+          'Different screens.',
+          <>
+            One <span style={serif}>set of rules.</span>
+          </>,
+        ]}
+      />
+      <Enter
+        delay={12}
+        style={{
+          ...at(p ? 84 : 94, p ? 456 : 380, p ? 910 : 1730),
+          textAlign: p ? 'left' : 'center',
+          fontSize: p ? 32 : 29,
+          color: C.muted,
+        }}
+      >
+        A shared brief for Codex or Claude Code.
+      </Enter>
+      <Enter
+        delay={20}
+        style={{
+          ...at(p ? 80 : 94, p ? 581 : 445, p ? 920 : 1730),
+          display: 'flex',
+          justifyContent: p ? 'flex-start' : 'center',
+          gap: p ? 14 : 22,
+        }}
+      >
+        {['My palette', 'Shared spacing', 'Same components'].map((text, i) => (
+          <Pill
+            key={text}
+            style={{
+              fontSize: p ? 22 : 22,
+              padding: '15px 20px',
+              background: i === 0 ? '#234f83' : '#fff',
+              color: i === 0 ? '#fff' : C.ink,
+            }}
+          >
+            <Check size={20} />
+            {text}
+          </Pill>
+        ))}
+      </Enter>
+      <Enter delay={15} style={at(p ? 80 : 93, p ? 755 : 575)}>
+        <Label style={{ marginBottom: 20 }}>Glane / dashboard</Label>
+        <Shot asset="glane-cards" width={p ? 920 : 788} />
+      </Enter>
+      <div style={at(p ? 506 : 906, p ? 1150 : 660)}>
+        <DrawnArrow vertical={p} delay={35} />
+      </div>
+      <Enter
+        delay={44}
+        axis={p ? 'y' : 'x'}
+        style={at(p ? 80 : 1039, p ? 1300 : 575)}
+      >
+        <Label style={{ marginBottom: 20 }}>Glane / history</Label>
+        <Shot asset="glane-history-cards" width={p ? 920 : 788} />
+      </Enter>
+      <Enter
+        delay={64}
+        style={{
+          ...at(p ? 82 : 95, p ? 1680 : 934, p ? 908 : 1730),
+          textAlign: p ? 'left' : 'center',
+          fontSize: p ? 28 : 29,
+          color: C.muted,
+        }}
+      >
+        My agent has the same reference for every screen.
+      </Enter>
+    </>
   );
 }
 
@@ -604,9 +787,9 @@ function Outro({ p }: { p: boolean }) {
         size={p ? 80 : 78}
         top={p ? 552 : 388}
         lines={[
-          'From an interface I liked',
+          'A starting point I liked.',
           <>
-            to a tool <span style={serif}>of my own.</span>
+            A design <span style={serif}>I made my own.</span>
           </>,
         ]}
       />
@@ -799,7 +982,7 @@ function Scene({ index, p }: { index: number; p: boolean }) {
           lines={[
             'I asked Designome',
             <>
-              to <span style={serif}>extract its design.</span>
+              to <span style={serif}>extract its rules.</span>
             </>,
           ]}
         />
@@ -863,7 +1046,11 @@ function Scene({ index, p }: { index: number; p: boolean }) {
               clipPath: `inset(0 ${100 - tween(f, 44, 90) * 100}% 0 0)`,
             }}
           >
-            <Shot asset="glane-dashboard" width={p ? 920 : 1034} accent />
+            <Shot
+              asset="glane-before-dashboard"
+              width={p ? 920 : 1034}
+              accent
+            />
           </div>
           <div style={{ marginTop: 28, display: 'flex', gap: p ? 15 : 20 }}>
             {['The brief', 'My idea', 'My tool'].map((text, i) => (
@@ -885,8 +1072,9 @@ function Scene({ index, p }: { index: number; p: boolean }) {
         </div>
       </>
     );
-  if (index === 5) {
-    const library = f >= 112;
+  if (index === 5) return <Customize p={p} />;
+  if (index === 6) {
+    const library = f >= 90;
     return (
       <>
         <Heading
@@ -929,7 +1117,7 @@ function Scene({ index, p }: { index: number; p: boolean }) {
             </Enter>
           </>
         ) : (
-          <Sequence from={112}>
+          <Sequence from={90}>
             <Enter
               delay={0}
               distance={50}
@@ -966,60 +1154,16 @@ function Scene({ index, p }: { index: number; p: boolean }) {
                     background: C.green,
                   }}
                 />
-                Library excerpt · personal titles & thumbnails hidden
+                Library excerpt · private titles blurred
               </div>
             </Enter>
           </Sequence>
         )}
-        <PaperCut boundaries={[112]} />
+        <PaperCut boundaries={[90]} />
       </>
     );
   }
-  if (index === 6)
-    return (
-      <>
-        <Heading
-          p={p}
-          centered={!p}
-          size={p ? 76 : 76}
-          lines={[
-            'A different app.',
-            <>
-              The same <span style={serif}>design language.</span>
-            </>,
-          ]}
-        />
-        <Enter delay={8} style={at(p ? 80 : 93, p ? 634 : 512)}>
-          <Label style={{ marginBottom: 20 }}>Reference / summary cards</Label>
-          <Shot asset="reference-cards" width={p ? 920 : 788} />
-          <ReferenceCredit style={{ marginTop: 20, fontSize: p ? 22 : 19 }} />
-        </Enter>
-        <div style={at(p ? 506 : 906, p ? 1007 : 620)}>
-          <DrawnArrow vertical={p} delay={25} />
-        </div>
-        <Enter
-          delay={42}
-          axis={p ? 'y' : 'x'}
-          style={at(p ? 80 : 1039, p ? 1163 : 512)}
-        >
-          <Label style={{ marginBottom: 20 }}>Glane / summary cards</Label>
-          <Shot asset="glane-cards" width={p ? 920 : 788} />
-        </Enter>
-        <Enter
-          delay={64}
-          style={{
-            ...at(p ? 82 : 95, p ? 1570 : 900, p ? 908 : 1730),
-            textAlign: p ? 'left' : 'center',
-            fontSize: p ? 31 : 30,
-            lineHeight: 1.5,
-            letterSpacing: '-0.6px',
-            color: C.muted,
-          }}
-        >
-          The structure carried over. The product is my own.
-        </Enter>
-      </>
-    );
+  if (index === 7) return <Consistency p={p} />;
   return <Outro p={p} />;
 }
 
@@ -1070,7 +1214,8 @@ export function Film() {
           fontSize: p ? 18 : 17,
         }}
       >
-        {String(current + 1).padStart(2, '0')} / 08
+        {String(current + 1).padStart(2, '0')} /{' '}
+        {String(durations.length).padStart(2, '0')}
       </Label>
       <div
         style={{
