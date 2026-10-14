@@ -30,7 +30,7 @@ The capture script only navigates to Glane's dashboard and history. It blocks AP
 
 Glane is captured at a 1440 × 1500 CSS-pixel viewport with device scale factor 3. The five lossless PNGs include an overview ending below both complete analysis panels, a complete composer, a complete chart, two summary cards, and a five-row library excerpt. Capture records their pixel dimensions, framing, privacy checks, and SHA-256 hashes. Rendering verifies every capture and the reference hash first.
 
-Shots retain their natural aspect ratio. There are no fixed-height browser windows, continuously scaled screenshots, or rotated screenshot stacks. The portrait result uses the complete composer as a close-up; the landscape result uses a larger dashboard overview. Comparison shots show complete cards, with an explicit detail label.
+Shots retain their natural aspect ratio. There are no fixed-height browser windows, continuously scaled screenshots, or rotated screenshot stacks. The portrait result uses the complete composer as a close-up; the landscape result places the complete composer and activity panel side by side at a larger reading size. Earlier overview shots establish their place in the actual app. Comparison shots show complete cards, with an explicit detail label.
 
 The motion treatment is `proposed`: staggered text reveals, damped entrances, drawn connectors and checks, sequential grammar diagrams, a brief entering the project folder, a result reveal, and travelling paper transitions. All motion is derived from Remotion frames. Screenshot positions settle on whole pixels; the UI remains still during reading holds. Exports use PNG frames, H.264 CRF 14 and BT.709 color, with no audio stream.
 

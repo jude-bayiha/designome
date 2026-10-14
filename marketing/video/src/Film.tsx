@@ -911,16 +911,18 @@ function Scene({ index, p }: { index: number; p: boolean }) {
         />
         {!library ? (
           <>
-            <Enter delay={3} style={at(p ? 136 : 304, p ? 587 : 309)}>
-              <Shot
-                asset={p ? 'glane-composer' : 'glane-dashboard'}
-                width={p ? 806 : 1312}
-              />
+            <Enter delay={3} style={at(p ? 136 : 110, p ? 587 : 340)}>
+              <Shot asset="glane-composer" width={p ? 806 : 558} />
             </Enter>
-            <Label style={at(p ? 138 : 310, p ? 535 : 266)} violet>
-              Glane / {p ? 'a new video' : 'my workspace'}
+            {!p ? (
+              <Enter delay={15} axis="x" style={at(708, 340)}>
+                <Shot asset="glane-chart" width={1103} />
+              </Enter>
+            ) : null}
+            <Label style={at(p ? 138 : 112, p ? 535 : 295)} violet>
+              Glane / a new video
             </Label>
-            <Enter delay={20} style={at(p ? 140 : 1423, p ? 1492 : 265)}>
+            <Enter delay={20} style={at(p ? 140 : 710, p ? 1492 : 295)}>
               <span style={{ fontSize: p ? 26 : 19, color: C.muted }}>
                 Actual app capture
               </span>
