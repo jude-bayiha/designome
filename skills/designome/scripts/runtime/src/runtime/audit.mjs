@@ -14,6 +14,11 @@ import {
 } from './capture-session.mjs';
 import { DesignomeError } from './errors.mjs';
 import {
+  discoverProject,
+  requireFrontend,
+  inspectPlaywright,
+} from './project-context.mjs';
+import {
   atomicWrite,
   jsonText,
   pathExists,
@@ -132,38 +137,10 @@ function validateConfig(config) {
   return errors;
 }
 
-async function detectExistingPlaywright(projectRoot, packageJson) {
-  const dependencies = {
-    ...(packageJson.dependencies ?? {}),
-    ...(packageJson.devDependencies ?? {}),
-  };
-  const configCandidates = [
-    'playwright.config.js',
-    'playwright.config.mjs',
-    'playwright.config.cjs',
-    'playwright.config.ts',
-  ];
-  const configs = [];
-  for (const candidate of configCandidates) {
-    if (await pathExists(path.join(projectRoot, candidate)))
-      configs.push(candidate);
-  }
-  const dependency = dependencies['@playwright/test']
-    ? '@playwright/test'
-    : dependencies.playwright
-      ? 'playwright'
-      : null;
-  return {
-    available: Boolean(dependency || configs.length),
-    dependency,
-    configs,
-  };
-}
-
 async function resolveProvider(
   projectRoot,
   requestedProvider,
-  packageJson,
+  projectContext,
   browserInstallAuthorized,
 ) {
   if (!providerNames.has(requestedProvider)) {
@@ -171,18 +148,24 @@ async function resolveProvider(
       code: 'INVALID_AUDIT_PROVIDER',
     });
   }
-  const playwright = await detectExistingPlaywright(projectRoot, packageJson);
+  const playwright = await inspectPlaywright(projectContext);
   const selected =
     requestedProvider === 'auto'
-      ? playwright.available
+      ? playwright.available || playwright.configured || playwright.declared
         ? 'existing-playwright'
         : 'static'
       : requestedProvider;
   if (selected === 'existing-playwright' && !playwright.available) {
-    throw new DesignomeError(
-      'The target project does not expose an existing Playwright installation',
-      { code: 'AUDIT_PROVIDER_UNAVAILABLE' },
-    );
+    return {
+      requested: requestedProvider,
+      selected,
+      status: 'provider-unavailable',
+      executionOwner: 'target-project',
+      reason:
+        'Playwright package or Chromium executable is unavailable; no capture was executed.',
+      playwright,
+      transitions: [],
+    };
   }
   if (selected === 'managed-playwright') {
     return {
@@ -224,7 +207,7 @@ async function resolveProvider(
       selected === 'existing-playwright' ? 'target-project' : 'designome',
     reason:
       selected === 'existing-playwright'
-        ? 'The target project already exposes Playwright configuration or dependencies.'
+        ? 'Playwright resolves from the selected frontend and its Chromium executable exists; launch, server readiness and capture remain unproven.'
         : 'No rendered-browser provider was selected; the audit is static-only.',
     playwright,
     transitions: [],
@@ -991,11 +974,19 @@ export async function planAudit({
       details: installation.errors,
     });
   }
-  const packageJson = await readJson(path.join(projectRoot, 'package.json'));
+  const manifest = await readJson(
+    path.join(projectRoot, '.designome/manifest.json'),
+  );
+  const projectContext = await discoverProject({
+    projectPath: projectRoot,
+    frontend: config.frontend ?? null,
+    cssEntry: config.frontend ? null : manifest.adapter?.cssEntry,
+  });
+  requireFrontend(projectContext);
   const providerPlan = await resolveProvider(
     projectRoot,
     provider,
-    packageJson,
+    projectContext,
     browserInstallAuthorized,
   );
   const configuredOutput = outputDirectory ?? config.outputDirectory ?? 'audit';
@@ -1026,6 +1017,7 @@ export async function planAudit({
         : null,
     createdAt,
     projectRoot,
+    projectContext,
     configPath: toPosixPath(path.relative(projectRoot, resolvedConfig)),
     outputDirectory: outputRelative,
     baseUrl: config.baseUrl,

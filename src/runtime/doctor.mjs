@@ -12,6 +12,7 @@ import {
   sha256,
   sha256File,
 } from './files.mjs';
+import { discoverProject, inspectPlaywright } from './project-context.mjs';
 import { inspectManagedBlock } from './markers.mjs';
 
 export const runtimeContractVersion = '1.0.0';
@@ -225,25 +226,35 @@ async function inspectManifest(projectRoot) {
 
 async function inspectAuditReadiness(projectRoot, packageJson) {
   const configPath = path.join(projectRoot, '.designome', 'audit.config.json');
-  const dependencies = {
-    ...(packageJson?.dependencies ?? {}),
-    ...(packageJson?.devDependencies ?? {}),
-  };
+  if (!packageJson)
+    return {
+      configured: false,
+      readable: true,
+      providers: {},
+      limitation: 'Package metadata is unavailable; no provider was probed.',
+    };
+  const config = await readJson(configPath).catch(() => ({}));
+  const manifest = await readJson(
+    path.join(projectRoot, '.designome/manifest.json'),
+  ).catch(() => ({}));
+  const context = await discoverProject({
+    projectPath: projectRoot,
+    frontend: config.frontend ?? null,
+    cssEntry: config.frontend ? null : manifest.adapter?.cssEntry,
+  });
   const providers = {
     'in-app-browser': {
-      available: true,
+      available: 'host-dependent',
       executionOwner: 'host-agent',
     },
     'existing-playwright': {
-      available: Boolean(
-        dependencies['@playwright/test'] || dependencies.playwright,
-      ),
+      ...(await inspectPlaywright(context)),
       executionOwner: 'target-project',
     },
     static: { available: true, executionOwner: 'designome' },
   };
   if (!(await pathExists(configPath))) {
-    return { configured: false, readable: true, providers };
+    return { configured: false, readable: true, providers, context };
   }
   try {
     const config = await readJson(configPath);
@@ -253,6 +264,7 @@ async function inspectAuditReadiness(projectRoot, packageJson) {
       schemaVersion: config.schemaVersion ?? null,
       routeCount: Array.isArray(config.routes) ? config.routes.length : 0,
       providers,
+      context,
     };
   } catch (error) {
     return {
@@ -260,6 +272,7 @@ async function inspectAuditReadiness(projectRoot, packageJson) {
       readable: false,
       error: error.message,
       providers,
+      context,
     };
   }
 }
@@ -485,7 +498,7 @@ export async function doctorProject({
       'audit-providers',
       audit.readable ? 'passed' : 'failed',
       audit.readable
-        ? 'Configured audit providers can be resolved without installing dependencies'
+        ? 'Audit capability inventory recorded; availability is separate from successful execution'
         : 'Audit configuration is unreadable',
       audit,
     ),

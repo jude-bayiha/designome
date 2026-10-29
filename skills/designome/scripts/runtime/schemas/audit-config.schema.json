@@ -9,6 +9,11 @@
     "schemaVersion": { "const": "1.0.0" },
     "auditContractVersion": { "enum": ["1.0.0", "2.0.0"] },
     "baseUrl": { "type": "string", "format": "uri" },
+    "frontend": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Explicit declared frontend package path relative to the DNA installation root."
+    },
     "startCommand": { "type": "string", "minLength": 1 },
     "outputDirectory": {
       "type": "string",

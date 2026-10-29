@@ -18,6 +18,7 @@ import {
 import { fidelityReadiness } from './fidelity.mjs';
 import { renderDesignBrief } from './design-brief.mjs';
 import { DesignomeError } from './errors.mjs';
+import { discoverProject, requireFrontend } from './project-context.mjs';
 import {
   auditContractVersion,
   designDnaFingerprint,
@@ -241,6 +242,11 @@ function renderGuidanceBlock({
     `Repository rule precedence is \`${integrationPolicy.rulePrecedence}\`; declared existing UI rules: ${existingRules}.`,
     `The detected styling adapter is \`${styling.strategy}\`. ${stylingInstruction}${uiKitInstruction}`,
     'Preserve claim status, cover applicable business states and stress cases, and audit before delivery with the project-local `designome-audit` skill (`$designome-audit` in Codex, `/designome-audit` in Claude Code) or, when it is installed instead, the audit operation of the `designome` skill. New audit plans use Audit Contract 2.0: bind established obligations to exact contexts, record real capture hashes and measurements, and leave unresolved or perceptual unknowns incomplete.',
+    ...(styling.projectContext
+      ? [
+          `Frontend: \`${styling.projectContext.frontend.path}\`. Read \`${documentationDirectory}/governance/integration.md\` for resolved shared UI sources, aliases and reuse paths before choosing components.`,
+        ]
+      : []),
     guidanceEndMarker,
     '',
   ].join('\n');
@@ -276,6 +282,30 @@ function renderIntegrationDocument({
     '',
     '- Technical context status: `observed` in the target repository; it is not screenshot evidence.',
     '',
+    ...(styling.projectContext
+      ? [
+          '## Resolved technical paths',
+          '',
+          `- Workspace: \`${styling.projectContext.workspaceRoot}\``,
+          `- Frontend and test cwd: \`${styling.projectContext.frontend.path}\``,
+          `- DNA: \`${styling.projectContext.dnaPath}\``,
+          ...styling.projectContext.sharedPackages.map(
+            (item) => `- Shared package (${item.usage}): \`${item.path}\``,
+          ),
+          ...[
+            ...styling.projectContext.components,
+            ...styling.projectContext.reuseCandidates,
+          ].map(
+            (item) =>
+              `- Reuse \`${item.name}\`: \`${item.path}\`, import \`${item.importPath}\` (${item.usedBy.length} resolved imports).`,
+          ),
+          ...styling.projectContext.instructions.map(
+            (file) => `- Read applicable instructions: \`${file}\``,
+          ),
+          'Default library appearance must be adapted to the DNA. Never reset, reinitialize or replace existing components silently.',
+          '',
+        ]
+      : []),
     '## Styling context',
     '',
     `- Detected system: \`${styling.system}\``,
@@ -1278,8 +1308,10 @@ async function detectStylingContext(
   cssEntryPath,
   requestedStrategy,
   uiKitPreference,
+  projectContext,
 ) {
-  const packagePath = path.join(projectRoot, 'package.json');
+  const frontendRoot = requireFrontend(projectContext);
+  const packagePath = path.join(frontendRoot, 'package.json');
   const packageJson = (await pathExists(packagePath))
     ? await readJson(packagePath)
     : {};
@@ -1288,10 +1320,7 @@ async function detectStylingContext(
     ...(packageJson.devDependencies ?? {}),
   };
   const css = (await readTextIfExists(cssEntryPath)) ?? '';
-  const shadcnPath = path.join(projectRoot, 'components.json');
-  const shadcnConfig = (await pathExists(shadcnPath))
-    ? await readJson(shadcnPath)
-    : null;
+  const shadcnConfig = projectContext.shadcn;
   const tailwindVersion = dependencies.tailwindcss ?? null;
   const tailwindEvidence = [];
   if (tailwindVersion)
@@ -1341,37 +1370,11 @@ async function detectStylingContext(
       { code: 'STYLE_STRATEGY_UNAVAILABLE' },
     );
   }
-  const componentDirectories = [];
-  if (shadcnConfig) {
-    const alias = shadcnConfig.aliases?.ui;
-    if (typeof alias === 'string') {
-      if (alias.startsWith('@/'))
-        componentDirectories.push(
-          path.join(projectRoot, 'src', alias.slice(2)),
-        );
-      else if (!alias.startsWith('@'))
-        componentDirectories.push(path.resolve(projectRoot, alias));
-    }
-    componentDirectories.push(
-      path.join(projectRoot, 'src', 'components', 'ui'),
-      path.join(projectRoot, 'components', 'ui'),
-    );
-  }
-  const installedComponents = new Set();
-  for (const directory of componentDirectories) {
-    relativeInside(projectRoot, directory, 'shadcn component directory');
-    const entries = await fs
-      .readdir(directory, { withFileTypes: true })
-      .catch((error) => {
-        if (error.code === 'ENOENT') return [];
-        throw error;
-      });
-    for (const entry of entries) {
-      if (entry.isFile() && /\.[cm]?[jt]sx?$/u.test(entry.name))
-        installedComponents.add(entry.name.replace(/\.[^.]+$/u, ''));
-    }
-  }
+  const installedComponents = new Set(
+    projectContext.components.map((component) => component.name),
+  );
   return {
+    projectContext,
     system: detectedSystem,
     strategy,
     version: tailwindVersion,
@@ -2051,7 +2054,27 @@ export async function planInstallation({
     path.join(pluginRoot, 'concepts', 'concept-matrix.v0.3.json'),
   );
 
-  const resolvedCssEntry = await resolveCssEntry(projectRoot, cssEntry);
+  const projectContext = await discoverProject({
+    projectPath: projectRoot,
+    cssEntry,
+  });
+  const frontendRoot = requireFrontend(projectContext);
+  const discoveredCssEntry =
+    !cssEntry && projectContext.frontend.cssEntries.length === 1
+      ? path.relative(projectRoot, projectContext.frontend.cssEntries[0])
+      : cssEntry;
+  if (!cssEntry && frontendRoot !== projectRoot && !discoveredCssEntry)
+    throw new DesignomeError(
+      'Selected frontend has multiple or missing CSS entries; pass --css-entry',
+      {
+        code: 'CSS_ENTRY_AMBIGUOUS',
+        details: projectContext.frontend.cssEntries,
+      },
+    );
+  const resolvedCssEntry = await resolveCssEntry(
+    projectRoot,
+    discoveredCssEntry,
+  );
   const cssEntryRelative = toPosixPath(
     relativeInside(projectRoot, resolvedCssEntry, 'CSS entry'),
   );
@@ -2106,7 +2129,15 @@ export async function planInstallation({
     resolvedCssEntry,
     stylingStrategy,
     uiKitPreference,
+    projectContext,
   );
+  projectContext.instructions = [
+    ...new Set([
+      ...projectContext.instructions,
+      path.join(projectRoot, 'AGENTS.md'),
+      path.join(projectRoot, 'CLAUDE.md'),
+    ]),
+  ].sort();
   const integrationPolicy = {
     documentationLayout: 'complete-v1',
     rulePrecedence,

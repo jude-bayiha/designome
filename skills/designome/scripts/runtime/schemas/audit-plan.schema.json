@@ -28,6 +28,7 @@
       "pattern": "^[a-f0-9]{64}$"
     },
     "createdAt": { "type": "string", "format": "date-time" },
+    "projectContext": { "type": "object" },
     "projectRoot": { "type": "string", "minLength": 1 },
     "configPath": { "type": "string", "minLength": 1 },
     "outputDirectory": { "type": "string", "minLength": 1 },

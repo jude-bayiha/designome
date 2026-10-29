@@ -26,6 +26,7 @@ import {
   prepareBenchmark,
   evaluateBenchmark,
 } from '../src/runtime/benchmark.mjs';
+import { discoverProject } from '../src/runtime/project-context.mjs';
 import { doctorProject } from '../src/runtime/doctor.mjs';
 import { DesignomeError } from '../src/runtime/errors.mjs';
 import { readJson } from '../src/runtime/files.mjs';
@@ -195,6 +196,9 @@ function printHelp() {
     `  install --dna <file> --project <dir> [options] --instructions-reviewed\n`,
   );
   process.stdout.write(`  verify-install --project <dir>\n`);
+  process.stdout.write(
+    `  discover --project <dir> [--frontend <workspace-relative-dir>] [--css-entry <file>]\n`,
+  );
   process.stdout.write(
     `  doctor --project <dir> [--dna <accepted-design-dna.json>]\n`,
   );
@@ -541,6 +545,13 @@ async function main() {
       projectPath: option(parsed, 'project', { required: true }),
     });
     if (!result.valid) process.exitCode = 1;
+  } else if (command === 'discover') {
+    assertArguments(parsed, ['project', 'frontend', 'css-entry', 'help']);
+    result = await discoverProject({
+      projectPath: option(parsed, 'project', { required: true }),
+      frontend: option(parsed, 'frontend', { fallback: null }),
+      cssEntry: option(parsed, 'css-entry', { fallback: null }),
+    });
   } else if (command === 'doctor') {
     assertArguments(parsed, ['project', 'dna', 'help']);
     result = await doctorProject({

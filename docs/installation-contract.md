@@ -190,3 +190,13 @@ New screenshots create a new candidate Design DNA; they do not mutate an accepte
 - rerun project validation and the second-run no-diff test.
 
 Removing Designome should be equally bounded: delete only manifest-owned generated files and managed marker blocks, then report any preserved overrides or conflicts.
+
+## Workspace-aware integration
+
+Use [target discovery](project-discovery.md) before selecting styling or component
+implementations. The supplied project path owns DNA and instructions; it need not
+be the frontend package. An explicit CSS entry selects its owning declared
+workspace package. Multiple frontend candidates require selection. Reuse paths
+and import evidence appear in the integration dossier and managed agent guidance.
+Package declarations and library configurations establish technical facts only;
+they neither prove usage nor establish visual fidelity.

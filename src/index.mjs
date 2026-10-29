@@ -46,3 +46,9 @@ export {
   benchmarkAspects,
   hashBenchmarkDirectory,
 } from './runtime/benchmark.mjs';
+
+export {
+  discoverProject,
+  inspectPlaywright,
+  launchProjectPlaywright,
+} from './runtime/project-context.mjs';
