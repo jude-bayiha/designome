@@ -126,11 +126,13 @@ export function auditPlanFingerprint({
   dna,
   config,
   verification = null,
+  targetIdentity = null,
 }) {
   return semanticFingerprint({
     auditContractVersion: auditContract,
     designDnaFingerprint: dnaDnaOrFingerprint(dna),
     config: identityConfig(config),
+    ...(targetIdentity ? { targetIdentity } : {}),
     verification,
   });
 }
@@ -148,6 +150,7 @@ export function fingerprintFromPlan(plan) {
       verification: plan.verification ?? null,
     },
     verification: plan.verification ?? null,
+    targetIdentity: plan.targetIdentity ?? null,
   });
 }
 

@@ -408,5 +408,72 @@ test('distributed skill installs twice, discovers nested Playwright and captures
       2,
     ),
   );
+  // A different frontend at the same URL must not inherit this app's evidence.
+  await write('apps/other/package.json', {
+    name: 'other',
+    dependencies: { 'react-dom': '*' },
+  });
+  await write('apps/other/src/app/globals.css', 'body { margin: 0; }');
+  for (const contract of ['2.0.0', '1.0.0']) {
+    config.auditContractVersion = contract;
+    config.frontend = 'apps/web';
+    await fs.writeFile(configPath, JSON.stringify(config));
+    const originalPlan = await run(
+      'audit',
+      '--project',
+      project,
+      '--provider',
+      'existing-playwright',
+      '--dry-run',
+    );
+    let originalEvidence = 'evidence/browser.json';
+    if (contract === '1.0.0') {
+      const legacy = createCaptureSession(originalPlan, {
+        provider: 'existing-playwright',
+      });
+      await legacy.recordCapture({ ...capture, id: 'legacy-ready' });
+      originalEvidence = 'evidence/legacy.json';
+      await legacy.finalize({
+        allowIncomplete: true,
+        outputPath: path.join(project, originalEvidence),
+      });
+      await run(
+        'audit',
+        '--project',
+        project,
+        '--provider',
+        'existing-playwright',
+        '--evidence',
+        originalEvidence,
+        '--output',
+        'evidence/legacy-audit',
+      );
+    } else assert.equal(originalPlan.fingerprint, plan.fingerprint);
+    config.frontend = 'apps/other';
+    await fs.writeFile(configPath, JSON.stringify(config));
+    const otherPlan = await run(
+      'audit',
+      '--project',
+      project,
+      '--provider',
+      'existing-playwright',
+      '--dry-run',
+    );
+    assert.notEqual(originalPlan.fingerprint, otherPlan.fingerprint, contract);
+    await assert.rejects(
+      run(
+        'audit',
+        '--project',
+        project,
+        '--provider',
+        'existing-playwright',
+        '--evidence',
+        originalEvidence,
+        '--output',
+        `evidence/wrong-app-${contract}`,
+      ),
+      /AUDIT_EVIDENCE_PLAN_MISMATCH/,
+    );
+  }
   console.log(`Browser distribution evidence: ${root}`);
 });

@@ -5220,6 +5220,7 @@
   ],
   "fidelityContractVersion": "1.0.0",
   "visualReviewContractVersion": "1.0.0",
+  "auditTargetIdentityVersion": "1.0.0",
   "renderCalibration": {
     "version": "1.0.0",
     "promptRef": "prompts/18-render-calibration.md",

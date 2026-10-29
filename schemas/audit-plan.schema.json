@@ -28,6 +28,7 @@
       "pattern": "^[a-f0-9]{64}$"
     },
     "createdAt": { "type": "string", "format": "date-time" },
+    "targetIdentity": { "$ref": "#/$defs/targetIdentity" },
     "projectContext": { "type": "object" },
     "projectRoot": { "type": "string", "minLength": 1 },
     "configPath": { "type": "string", "minLength": 1 },
@@ -60,6 +61,26 @@
     }
   ],
   "$defs": {
+    "targetIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "installationRoot",
+        "workspaceRoot",
+        "frontendRoot",
+        "frontendName",
+        "platform"
+      ],
+      "properties": {
+        "version": { "const": "1.0.0" },
+        "installationRoot": { "type": "string", "minLength": 1 },
+        "workspaceRoot": { "type": "string", "minLength": 1 },
+        "frontendRoot": { "type": "string", "minLength": 1 },
+        "frontendName": { "type": ["string", "null"] },
+        "platform": { "enum": ["web", "native"] }
+      }
+    },
     "route": {
       "type": "object",
       "required": [

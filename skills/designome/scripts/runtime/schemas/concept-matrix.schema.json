@@ -24,6 +24,7 @@
     "fidelityContractVersion": { "const": "1.0.0" },
     "auditContractVersion": { "const": "2.0.0" },
     "visualReviewContractVersion": { "const": "1.0.0" },
+    "auditTargetIdentityVersion": { "const": "1.0.0" },
     "renderCalibration": {
       "type": "object",
       "additionalProperties": false,

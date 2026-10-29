@@ -1048,6 +1048,14 @@ export async function planAudit({
     createdAt,
     projectRoot,
     projectContext,
+    targetIdentity: {
+      version: '1.0.0',
+      installationRoot: projectRoot,
+      workspaceRoot: projectContext.workspaceRoot,
+      frontendRoot: projectContext.frontend.path,
+      frontendName: projectContext.frontend.name,
+      platform: projectContext.frontend.platform,
+    },
     configPath: toPosixPath(path.relative(projectRoot, resolvedConfig)),
     outputDirectory: outputRelative,
     baseUrl: config.baseUrl,
@@ -1133,17 +1141,7 @@ export async function planAudit({
       manualEvidenceAssemblyRequired: false,
     },
   };
-  plan.fingerprint =
-    plan.auditContractVersion === auditContractVersion
-      ? fingerprintFromPlan(plan)
-      : sha256(
-          jsonText({
-            schemaVersion: plan.schemaVersion,
-            baseUrl: plan.baseUrl,
-            routes: plan.routes,
-            ...(plan.focus ? { focus: plan.focus } : {}),
-          }),
-        );
+  plan.fingerprint = fingerprintFromPlan(plan);
   return { projectRoot, outputPath: resolvedOutput, dna, plan };
 }
 
@@ -1248,17 +1246,7 @@ export async function runAudit(options) {
         },
       );
     }
-    const expectedFingerprint =
-      prepared.plan.auditContractVersion === auditContractVersion
-        ? fingerprintFromPlan(prepared.plan)
-        : sha256(
-            jsonText({
-              schemaVersion: prepared.plan.schemaVersion,
-              baseUrl: prepared.plan.baseUrl,
-              routes: prepared.plan.routes,
-              ...(prepared.plan.focus ? { focus: prepared.plan.focus } : {}),
-            }),
-          );
+    const expectedFingerprint = fingerprintFromPlan(prepared.plan);
     if (evidence.plan.fingerprint !== expectedFingerprint) {
       throw new DesignomeError(
         'Audit evidence was captured for a different plan',

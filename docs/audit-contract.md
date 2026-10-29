@@ -127,3 +127,10 @@ wrapping, weight synthesis, hierarchy and optical density.
 See [browser execution](browser-evidence.md) for the executable adapter and
 [target discovery](project-discovery.md) for capability states. These augment the
 existing four layers; they do not create a second audit pipeline or a visual score.
+
+New plans bind `targetIdentity.version: 1.0.0` into their semantic fingerprint:
+canonical installation/workspace/frontend roots, frontend package name and
+platform. This applies to newly prepared v1 and v2 plans. Changing the frontend
+at an unchanged URL invalidates previous evidence. Historical unbound plans remain
+readable through the adapter; the runtime never assigns a new target to old
+captures. Regenerate the plan and recapture when updating the skill.

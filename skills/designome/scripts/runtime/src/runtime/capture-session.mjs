@@ -394,6 +394,9 @@ function normalizePlan(plan) {
     routes: plan.routes.map(normalizedRoute),
     perceptual: plan.perceptual ?? null,
     verification: plan.verification ?? null,
+    ...(plan.targetIdentity
+      ? { targetIdentity: structuredClone(plan.targetIdentity) }
+      : {}),
     ...(plan.focus ? { focus: structuredClone(plan.focus) } : {}),
   };
 }
@@ -905,16 +908,17 @@ export class CaptureSession {
       });
     }
     const receivedAt = new Date().toISOString();
-    const planFingerprint = this.verificationAware
-      ? fingerprintFromPlan(this.plan)
-      : sha256(
-          jsonText({
-            schemaVersion: this.plan.schemaVersion,
-            baseUrl: this.plan.baseUrl,
-            routes: this.plan.routes,
-            ...(this.plan.focus ? { focus: this.plan.focus } : {}),
-          }),
-        );
+    const planFingerprint =
+      this.verificationAware || this.plan.targetIdentity
+        ? fingerprintFromPlan(this.plan)
+        : sha256(
+            jsonText({
+              schemaVersion: this.plan.schemaVersion,
+              baseUrl: this.plan.baseUrl,
+              routes: this.plan.routes,
+              ...(this.plan.focus ? { focus: this.plan.focus } : {}),
+            }),
+          );
     const evidence = {
       schemaVersion: '1.0.0',
       ...(this.verificationAware

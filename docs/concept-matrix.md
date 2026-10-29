@@ -134,3 +134,7 @@ rendering prompt through existing benchmark packets. Neither capability changes
 the 13 axes, 65 facets, 20 domains, source statuses, source authorization or human
 acceptance. The context compiler includes calibration in synthesis and executable
 capture guidance in audit; target discovery remains installation context only.
+
+`auditTargetIdentityVersion: 1.0.0` advertises target-bound audit fingerprints.
+It identifies the resolved technical destination without making target code a
+visual source or changing claim acceptance.
