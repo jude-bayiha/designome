@@ -142,7 +142,7 @@ async function sourceFiles(root) {
     }
   }
   // Explicit source roots only; no arbitrary repository-wide crawl.
-  for (const dir of ['src', 'app', 'components', 'ui', 'lib'])
+  for (const dir of ['src', 'app', 'pages', 'components', 'ui', 'lib'])
     if (await pathExists(path.join(root, dir))) {
       const real = await fs.realpath(path.join(root, dir));
       if (inside(root, real)) await visit(real);
@@ -214,8 +214,7 @@ function aliasCandidates(specifier, aliases, root, packages) {
     )
       for (const target of targets)
         results.push(
-          target.replace(
-            '*',
+          target.replaceAll('*', () =>
             specifier.slice(prefix.length, suffix ? -suffix.length : undefined),
           ),
         );
@@ -246,16 +245,20 @@ function aliasCandidates(specifier, aliases, root, packages) {
             results.push(
               path.resolve(
                 pkg.root,
-                target.replace(
-                  '*',
+                target.replaceAll('*', () =>
                   key.slice(prefix.length, suffix ? -suffix.length : undefined),
                 ),
               ),
             );
         }
       }
-      if (subpath) results.push(path.join(pkg.root, subpath));
-      else if (pkg.pkg.source || pkg.pkg.module || pkg.pkg.main)
+      if (subpath && exports === undefined)
+        results.push(path.join(pkg.root, subpath));
+      else if (
+        !subpath &&
+        exports === undefined &&
+        (pkg.pkg.source || pkg.pkg.module || pkg.pkg.main)
+      )
         results.push(
           path.join(pkg.root, pkg.pkg.source ?? pkg.pkg.module ?? pkg.pkg.main),
         );
@@ -287,6 +290,99 @@ async function resolveSource(candidates, workspaceRoot, directory = false) {
         return real;
     }
   return null;
+}
+
+// Reverse only unambiguous source mappings; every resulting specifier is then
+// resolved again using the frontend's own aliases and declared public packages.
+function sourceSpecifier(key, target, file) {
+  const variants = [file.replace(/\.[cm]?[jt]sx?$/u, ''), file];
+  if (/[/\\]index\.[cm]?[jt]sx?$/u.test(file))
+    variants.push(path.dirname(file));
+  const parts = target.split('*');
+  for (const variant of variants) {
+    if (parts.length === 1 && variant === target) return key;
+    if (
+      parts.length === 2 &&
+      variant.startsWith(parts[0]) &&
+      variant.endsWith(parts[1])
+    ) {
+      const match = variant.slice(
+        parts[0].length,
+        parts[1] ? -parts[1].length : undefined,
+      );
+      return key.replaceAll('*', () => match);
+    }
+  }
+  return null;
+}
+
+async function frontendReuse(
+  file,
+  selected,
+  aliases,
+  packages,
+  imports,
+  workspaceRoot,
+) {
+  const examples = imports.filter((entry) => entry.resolved === file);
+  const specifiers = new Set(
+    examples
+      .filter(
+        (entry) =>
+          inside(selected.root, entry.file) && !entry.specifier.startsWith('.'),
+      )
+      .map((entry) => entry.specifier),
+  );
+  for (const [key, targets] of Object.entries(aliases))
+    for (const target of targets) {
+      const specifier = sourceSpecifier(key, target, file);
+      if (specifier) specifiers.add(specifier);
+    }
+  const publicPackages = packages.filter(
+    (pkg) =>
+      pkg.root === selected.root || Object.hasOwn(deps(selected.pkg), pkg.name),
+  );
+  for (const pkg of publicPackages) {
+    if (!pkg.name) continue;
+    const exports =
+      typeof pkg.pkg.exports === 'string'
+        ? { '.': pkg.pkg.exports }
+        : (pkg.pkg.exports ?? {});
+    for (const [key, value] of Object.entries(exports)) {
+      const target =
+        typeof value === 'string'
+          ? value
+          : (value?.import ?? value?.default ?? value?.types);
+      if (typeof target !== 'string' || !key.startsWith('.')) continue;
+      const subpath = sourceSpecifier(
+        key,
+        path.resolve(pkg.root, target),
+        file,
+      );
+      if (subpath)
+        specifiers.add(
+          pkg.name + (subpath === '.' ? '' : '/' + subpath.slice(2)),
+        );
+    }
+  }
+  let importPath = null;
+  for (const specifier of specifiers) {
+    const resolved = await resolveSource(
+      aliasCandidates(specifier, aliases, selected.root, publicPackages),
+      workspaceRoot,
+    );
+    if (resolved === file) {
+      importPath = specifier;
+      break;
+    }
+  }
+  return {
+    importPath,
+    importExamples: examples.map(({ file: from, specifier }) => ({
+      from,
+      specifier,
+    })),
+  };
 }
 
 export async function discoverProject({
@@ -364,15 +460,33 @@ export async function discoverProject({
         cssEntries.push(entry);
     }
     const dependencies = deps(pkg);
-    const web = [
+    const framework = [
       'next',
       'vite',
       '@angular/core',
       'nuxt',
       '@sveltejs/kit',
       'astro',
-      'react-dom',
     ].some((name) => dependencies[name]);
+    const webEntry = (
+      await Promise.all(
+        ['index.html', 'src/app', 'app', 'src/pages', 'pages'].map((entry) =>
+          pathExists(path.join(root, entry)),
+        ),
+      )
+    ).some(Boolean);
+    const webScript = Object.values(pkg.scripts ?? {}).some((script) =>
+      /\b(?:next|vite|nuxt|astro|react-scripts|webpack\s+serve|expo[^;&]*--web)\b/u.test(
+        script,
+      ),
+    );
+    const web =
+      framework ||
+      Boolean(
+        dependencies['react-dom'] &&
+        (webScript ||
+          (webEntry && !dependencies['react-native'] && !dependencies.expo)),
+      );
     packages.push({
       root,
       name: pkg.name ?? null,
@@ -506,6 +620,16 @@ export async function discoverProject({
       if (shared) reachable.add(shared);
     }
   }
+  const frontendAliases = await aliasPaths(selected.root, workspaceRoot);
+  const reuse = (file) =>
+    frontendReuse(
+      file,
+      selected,
+      frontendAliases,
+      packages,
+      imports,
+      workspaceRoot,
+    );
   result.sourceImports = imports;
   result.instructions = [...new Set(result.instructions)].sort();
   const configOwner = selected.shadcn
@@ -539,14 +663,7 @@ export async function discoverProject({
         result.components.push({
           name: path.basename(file).replace(/\.[^.]+$/u, ''),
           path: file,
-          importPath:
-            ui +
-            '/' +
-            path
-              .relative(directory, file)
-              .replace(/\.[^.]+$/u, '')
-              .split(path.sep)
-              .join('/'),
+          ...(await reuse(file)),
           usedBy: imports.filter((i) => i.resolved === file).map((i) => i.file),
         });
       }
@@ -565,12 +682,20 @@ export async function discoverProject({
       result.reuseCandidates.push({
         name: path.basename(entry.resolved).replace(/\.[^.]+$/u, ''),
         path: entry.resolved,
-        importPath: entry.specifier,
+        ...(await reuse(entry.resolved)),
         usedBy: imports
           .filter((item) => item.resolved === entry.resolved)
           .map((item) => item.file),
       });
     }
+  if (
+    [...result.components, ...result.reuseCandidates].some(
+      (component) => !component.importPath,
+    )
+  )
+    result.limitations.push(
+      'Some frontend imports are unresolved; importer-scoped examples do not define a reusable alias. Resolve imports for the destination file rather than copying a package-local alias.',
+    );
   for (const pkg of reachable)
     if (pkg !== selected)
       result.sharedPackages.push({

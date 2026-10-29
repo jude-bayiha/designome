@@ -246,3 +246,115 @@ test('workspace export paths and inherited aliases resolve without scanning buil
     false,
   );
 });
+
+test('a shared UI peer dependency does not create an extra frontend candidate', async (t) => {
+  const files = structuredClone(monorepo);
+  files['packages/ui/package.json'].peerDependencies = { 'react-dom': '*' };
+  const root = await fixture(t, files);
+  const context = await discoverProject({ projectPath: root });
+  assert.equal(context.status, 'resolved');
+  assert.equal(context.frontend.name, 'console');
+  assert.equal(context.candidates.length, 1);
+});
+
+test('shared component reuse imports resolve from the frontend rather than the UI package aliases', async (t) => {
+  const files = structuredClone(monorepo);
+  files['apps/console/tsconfig.json'].compilerOptions.paths['#kit/*'] = [
+    '../../packages/ui/src/components/ui/*',
+  ];
+  files['packages/ui/tsconfig.json'] = {
+    compilerOptions: { baseUrl: '.', paths: { '@/*': ['./src/*'] } },
+  };
+  files['packages/ui/components.json'].aliases.ui = '@/components/ui';
+  delete files['packages/ui/src/button.tsx'];
+  files['packages/ui/src/components/ui/button.tsx'] =
+    'export const Button = () => "Button";';
+  files['packages/ui/src/components/ui/input.tsx'] =
+    'export const Input = () => "Input";';
+  const root = await fixture(t, files);
+  const context = await discoverProject({ projectPath: root });
+  assert.deepEqual(
+    context.components.map((item) => item.importPath),
+    ['#kit/button', '#kit/input'],
+  );
+  assert.equal(
+    context.components[0].importExamples[0].specifier,
+    '#kit/button',
+  );
+});
+
+test('Next Pages Router imports establish usage and expose shared UI sources', async (t) => {
+  const files = structuredClone(monorepo);
+  delete files['apps/console/src/app/page.tsx'];
+  files['apps/console/package.json'].dependencies['@mui/material'] = '*';
+  files['apps/console/pages/index.tsx'] =
+    'import { Card } from "@mui/material";\nimport { Button } from "#kit/button";';
+  const root = await fixture(t, files);
+  const context = await discoverProject({ projectPath: root });
+  assert.equal(
+    context.libraries.find((item) => item.name === '@mui/material').imports
+      .length,
+    1,
+  );
+  assert.equal(context.sharedPackages[0].usage, 'imported');
+  assert.equal(context.components[0].usedBy.length, 1);
+});
+
+test('all wildcard occurrences in workspace export targets resolve to the same match', async (t) => {
+  const files = structuredClone(monorepo);
+  files['packages/ui/package.json'].exports = { './*': './src/*/*.tsx' };
+  files['apps/console/src/app/page.tsx'] =
+    'import { Button } from "@workspace/ui/button";';
+  delete files['packages/ui/src/button.tsx'];
+  files['packages/ui/src/button/button.tsx'] =
+    'export const Button = () => "Button";';
+  const root = await fixture(t, files);
+  const context = await discoverProject({ projectPath: root });
+  assert.ok(
+    context.sourceImports.some(
+      (item) =>
+        item.resolved === path.join(root, 'packages/ui/src/button/button.tsx'),
+    ),
+  );
+  assert.equal(context.sharedPackages[0].usage, 'imported');
+});
+
+test('an unexported shared component keeps its frontend import unknown', async (t) => {
+  const files = structuredClone(monorepo);
+  files['apps/console/tsconfig.json'].compilerOptions.paths = {
+    '#button': ['../../packages/ui/src/button.tsx'],
+  };
+  files['apps/console/src/app/page.tsx'] = 'import { Button } from "#button";';
+  files['packages/ui/src/input.tsx'] = 'export const Input = () => "Input";';
+  const root = await fixture(t, files);
+  const context = await discoverProject({ projectPath: root });
+  assert.equal(
+    context.components.find((item) => item.name === 'button').importPath,
+    '#button',
+  );
+  assert.equal(
+    context.components.find((item) => item.name === 'input').importPath,
+    null,
+  );
+  assert.ok(
+    context.limitations.some((item) =>
+      /frontend imports are unresolved/u.test(item),
+    ),
+  );
+});
+
+test('workspace export wildcard substitutions preserve literal replacement characters', async (t) => {
+  const files = structuredClone(monorepo);
+  files['packages/ui/package.json'].exports = { './*': './src/*/*.tsx' };
+  files['apps/console/src/app/page.tsx'] =
+    'import { Button } from "@workspace/ui/$&";';
+  delete files['packages/ui/src/button.tsx'];
+  files['packages/ui/src/$&/$&.tsx'] = 'export const Button = () => "Button";';
+  const root = await fixture(t, files);
+  const context = await discoverProject({ projectPath: root });
+  assert.ok(
+    context.sourceImports.some(
+      (item) => item.resolved === path.join(root, 'packages/ui/src/$&/$&.tsx'),
+    ),
+  );
+});

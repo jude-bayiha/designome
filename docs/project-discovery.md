@@ -48,3 +48,17 @@ unavailable default Chromium does not prohibit an authorized host browser.
 `in-app-browser` depends on host tools; its presence is never asserted by the CLI.
 `managed-playwright` remains an explicit, unavailable setup proposal. No consumer
 dependency or browser installation runs silently.
+
+A React DOM declaration, including a peer dependency in a shared library, is not
+an application entry point. React-only packages need a web entry or executable
+web script; framework packages remain candidates and explicit selection still
+resolves genuine multi-application ambiguity. Bounded source discovery includes
+Next.js `pages/` as well as `src/` and `app/`.
+
+Reuse imports are resolved again from the frontend's aliases and declared public
+workspace exports. Package-local aliases are not copied into frontend guidance.
+Examples retain the original importer path; relative examples are only valid from
+that importer. If no frontend specifier can be resolved, the component keeps a
+concrete source path with an unknown import rather than inventing an alias or
+initializing another library. Export wildcard substitutions apply to every target
+occurrence and preserve literal characters in the matched subpath.

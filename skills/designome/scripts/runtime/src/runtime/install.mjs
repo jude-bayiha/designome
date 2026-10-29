@@ -297,7 +297,10 @@ function renderIntegrationDocument({
             ...styling.projectContext.reuseCandidates,
           ].map(
             (item) =>
-              `- Reuse \`${item.name}\`: \`${item.path}\`, import \`${item.importPath}\` (${item.usedBy.length} resolved imports).`,
+              `- Reuse \`${item.name}\`: \`${item.path}\`; ${item.importPath ? `frontend import \`${item.importPath}\`` : 'frontend import unknown; resolve from the destination file'} (${item.usedBy.length} resolved imports).` +
+              (item.importExamples?.length
+                ? ` Existing import examples: ${item.importExamples.map((example) => `\`${example.specifier}\` from \`${example.from}\``).join(', ')}.`
+                : ''),
           ),
           ...styling.projectContext.instructions.map(
             (file) => `- Read applicable instructions: \`${file}\``,
