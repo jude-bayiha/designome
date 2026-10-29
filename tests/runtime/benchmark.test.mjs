@@ -317,3 +317,35 @@ test('hash checks reject changed DNA, packets and a resealed plan with omitted r
   await fs.writeFile(h.prepared.planPath, jsonText(h.plan));
   await assert.rejects(h.evaluate(), /every review aspect/);
 });
+
+test('extraction calibration reuses immutable benchmark packets without accepting a draft or forcing a native web renderer', async (t) => {
+  const { dir, dnaPath } = await fixture(t);
+  const { prepareCalibration } =
+    await import('../../src/runtime/benchmark.mjs');
+  const original = await fs.readFile(dnaPath);
+  const prepared = await prepareCalibration({
+    dnaPath,
+    outputDirectory: path.join(dir, 'calibration'),
+    platform: 'native',
+  });
+  assert.equal(prepared.expectedRuns, 2);
+  assert.equal(prepared.acceptance, 'requires-human-review');
+  assert.deepEqual(await fs.readFile(dnaPath), original);
+  const plan = JSON.parse(await fs.readFile(prepared.planPath));
+  assert.equal(plan.dnaStatus, 'draft');
+  assert.equal(plan.cases[0].kind, 'grammar-transfer');
+  assert.match(plan.cases[0].task, /authorized native renderer/);
+  assert.equal(plan.cases[0].implementationContext, undefined);
+  const brief = JSON.parse(
+    await fs.readFile(path.join(prepared.packets[0].directory, 'brief.json')),
+  );
+  assert.equal(brief.sourceAccess, 'forbidden');
+  assert.equal((await fs.readdir(prepared.packets[0].directory)).length, 2);
+  await assert.rejects(
+    prepareCalibration({
+      dnaPath,
+      outputDirectory: path.join(dir, 'calibration'),
+    }),
+    /immutable/,
+  );
+});

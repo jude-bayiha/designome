@@ -46,3 +46,7 @@ Produce a preflight report, staged installation plan, dry-run result, applied ma
 - Keep generated and user-owned files distinguishable.
 - Refuse silent overwrite, silent deletion, partial manifest commit, or unverified apply.
 - A successful install does not prove generated UI quality.
+
+## Resolved frontend and reuse context
+
+Run `discover` before choosing component implementations. Separate installation root, workspace, frontend, shared UI package, DNA paths and test cwd. An ambiguous frontend requires an explicit selection, never the first match. Resolve component aliases and actual imports; a package declaration alone does not prove use. Reuse existing sources and themes without initialization or silent replacement. Library default styling must satisfy the DNA. Attribute the user request separately from model-selected values: a request to narrow navigation does not establish an exact approved width. Record effects of font or width choices on dependent relationships.

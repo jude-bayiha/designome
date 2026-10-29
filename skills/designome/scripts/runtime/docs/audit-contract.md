@@ -95,3 +95,42 @@ Repair requires `--mode repair --implementation-authorized`. The generated `repa
 Managed Playwright remains a separate setup decision. `--browser-install-authorized` records an authorized proposal for `@playwright/test` and Chromium, but the audit command itself never edits dependencies or downloads a browser.
 
 See [Browser evidence adapter](browser-evidence-adapter.md) for the stable host integration surface and schema migration behavior.
+
+## Regional visual evidence and ready captures
+
+New plans advertise additive `visualReviewContractVersion: 1.0.0` in their
+verification registry. DNA, request and Audit Contract versions remain unchanged.
+Old evidence does not establish this stronger completeness gate: regenerate the
+plan and recapture. A missing regional review leaves the perceptual layer
+`incomplete`, including when interactions and geometric checks pass.
+
+Each verdict's `comparison` records the host's assertion that source and target
+images were opened, reviewer identity, review mode (`same-context`,
+`independent-context`, or `human`), and regional comparisons. Each region binds a
+source reference, target capture, source/target region descriptions, rule basis,
+perceptual observation, optional measurements and explicit limitations. All target
+references in the observation need a region. These records describe review work;
+they cannot prove that the host looked carefully or make a model independent of
+itself. A same-context judgment remains identified as such. A failed host finding
+retains its certainty and limitations rather than receiving runtime certainty 1.
+
+Open the original source and the freshly captured regions. Compare navigation,
+cards, controls, tables and charts where applicable, including useful plotting
+area, row occupancy, insets, rhythm, actual fonts and available weights, surface
+contrast, borders, shadow tiers and radii. Record threshold-minus-one, threshold
+and threshold-plus-one captures for changed media queries; also inspect a larger
+viewport. An override requires the actual user request, the model's implementation
+choice and its dependent effects. A request to reduce a sidebar does not approve
+a particular numeric width. An approved font substitution still needs checks of
+wrapping, weight synthesis, hierarchy and optical density.
+
+See [browser execution](browser-evidence.md) for the executable adapter and
+[target discovery](project-discovery.md) for capability states. These augment the
+existing four layers; they do not create a second audit pipeline or a visual score.
+
+New plans bind `targetIdentity.version: 1.0.0` into their semantic fingerprint:
+canonical installation/workspace/frontend roots, frontend package name and
+platform. This applies to newly prepared v1 and v2 plans. Changing the frontend
+at an unchanged URL invalidates previous evidence. Historical unbound plans remain
+readable through the adapter; the runtime never assigns a new target to old
+captures. Regenerate the plan and recapture when updating the skill.

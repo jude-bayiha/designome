@@ -265,3 +265,16 @@ The dependency-light Node runtime performs only deterministic work:
 - audit planning, evidence normalization, DNA-bound verification, contextual measurements, and result evaluation.
 
 The host agent performs screenshot reasoning, writes evidence and Design DNA, implements the target UI, drives an available browser, and records perceptual observations. The human accepts the draft Design DNA. These ownership boundaries are never collapsed.
+
+## Workspace integration and rendered calibration
+
+[Target discovery](project-discovery.md) resolves installation/workspace/frontend
+roots and reusable UI sources independently. It never supplies visual evidence to
+extraction. The existing capture adapter now has an executable
+[Playwright page bridge](browser-evidence.md), while four audit layers and
+[regional model-review provenance](audit-contract.md) remain independent.
+
+A draft can undergo [small-board calibration](fidelity-benchmark.md) using the
+existing immutable docs-only packets, separate generator contexts and independent
+review. The native path uses native rendering tools. No generated target becomes
+a source, and no renderer result accepts DNA or pending numeric bounds.

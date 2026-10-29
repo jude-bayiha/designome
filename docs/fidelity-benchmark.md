@@ -68,3 +68,20 @@ The CLI returns a report for valid evidence, including failed or incomplete eval
 ## Evidence and limits
 
 See [executed fidelity evaluation](fidelity-evaluation.md) for corpus, library versions, repetitions and findings. Repository tests use synthetic artifacts for contract and integrity checks; they do not prove visual fidelity. Rendered results apply only to the recorded sources, scope, host, model contexts, libraries and scales. They cannot establish universal quality, unseen page families, native mobile or motion.
+
+## Proportionate extraction calibration
+
+`calibration-prepare --dna <draft.json> --output <new-directory> --platform web`
+prepares a small grammar-transfer component-board case using the existing packet
+and evaluator machinery. It requires a structurally valid draft, selects up to
+four evidenced component recipes, and requests different content plus a longer
+state. Two generator contexts and an independent reviewer remain required. Use
+`--platform native` for an authorized native renderer/capture workflow; no web
+framework is imposed. See [the calibration prompt](../prompts/18-render-calibration.md).
+
+Assess this probe when proposed bounds or ambiguous signature rules would make
+implementation uncertain. A complete screen reconstruction is optional diagnostic
+work, never the default cost of every extraction. Preparation is not execution.
+If rendering is unavailable, state the missing prerequisite and leave calibration
+incomplete. A failed probe can identify missing rules or generator judgment errors;
+neither is repaired through automatic draft promotion or copied target styles.

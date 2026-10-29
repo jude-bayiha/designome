@@ -1,3 +1,7 @@
+import {
+  visualReviewContractVersion,
+  visualReviewComplete,
+} from './visual-review.mjs';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -13,6 +17,11 @@ import {
   validateAuditEvidence,
 } from './capture-session.mjs';
 import { DesignomeError } from './errors.mjs';
+import {
+  discoverProject,
+  requireFrontend,
+  inspectPlaywright,
+} from './project-context.mjs';
 import {
   atomicWrite,
   jsonText,
@@ -132,38 +141,10 @@ function validateConfig(config) {
   return errors;
 }
 
-async function detectExistingPlaywright(projectRoot, packageJson) {
-  const dependencies = {
-    ...(packageJson.dependencies ?? {}),
-    ...(packageJson.devDependencies ?? {}),
-  };
-  const configCandidates = [
-    'playwright.config.js',
-    'playwright.config.mjs',
-    'playwright.config.cjs',
-    'playwright.config.ts',
-  ];
-  const configs = [];
-  for (const candidate of configCandidates) {
-    if (await pathExists(path.join(projectRoot, candidate)))
-      configs.push(candidate);
-  }
-  const dependency = dependencies['@playwright/test']
-    ? '@playwright/test'
-    : dependencies.playwright
-      ? 'playwright'
-      : null;
-  return {
-    available: Boolean(dependency || configs.length),
-    dependency,
-    configs,
-  };
-}
-
 async function resolveProvider(
   projectRoot,
   requestedProvider,
-  packageJson,
+  projectContext,
   browserInstallAuthorized,
 ) {
   if (!providerNames.has(requestedProvider)) {
@@ -171,18 +152,24 @@ async function resolveProvider(
       code: 'INVALID_AUDIT_PROVIDER',
     });
   }
-  const playwright = await detectExistingPlaywright(projectRoot, packageJson);
+  const playwright = await inspectPlaywright(projectContext);
   const selected =
     requestedProvider === 'auto'
-      ? playwright.available
+      ? playwright.available || playwright.configured || playwright.declared
         ? 'existing-playwright'
         : 'static'
       : requestedProvider;
   if (selected === 'existing-playwright' && !playwright.available) {
-    throw new DesignomeError(
-      'The target project does not expose an existing Playwright installation',
-      { code: 'AUDIT_PROVIDER_UNAVAILABLE' },
-    );
+    return {
+      requested: requestedProvider,
+      selected,
+      status: 'provider-unavailable',
+      executionOwner: 'target-project',
+      reason:
+        'Playwright package or Chromium executable is unavailable; no capture was executed.',
+      playwright,
+      transitions: [],
+    };
   }
   if (selected === 'managed-playwright') {
     return {
@@ -224,7 +211,7 @@ async function resolveProvider(
       selected === 'existing-playwright' ? 'target-project' : 'designome',
     reason:
       selected === 'existing-playwright'
-        ? 'The target project already exposes Playwright configuration or dependencies.'
+        ? 'Playwright resolves from the selected frontend and its Chromium executable exists; launch, server readiness and capture remain unproven.'
         : 'No rendered-browser provider was selected; the audit is static-only.',
     playwright,
     transitions: [],
@@ -340,7 +327,11 @@ function tokenExpectation(dna, tokenRef) {
   return null;
 }
 
-export function evaluateAuditEvidence({ dna, evidence }) {
+export function evaluateAuditEvidence({
+  dna,
+  evidence,
+  requireRegionalReview = false,
+}) {
   validateAuditEvidence(evidence);
   const factory = findingFactory();
   const findings = [];
@@ -582,6 +573,7 @@ export function evaluateAuditEvidence({ dna, evidence }) {
   for (const observation of evidence.perceptualObservations) {
     if (
       observation.result === 'failed' &&
+      (!requireRegionalReview || visualReviewComplete(observation)) &&
       !observation.checkRef &&
       ['observed', 'inferred'].includes(observation.epistemicStatus)
     ) {
@@ -699,6 +691,7 @@ function evaluatedLayerStates({
   evidence,
   findings,
   verificationEvaluation = null,
+  requireRegionalReview = false,
 }) {
   const failures = new Set(findings.map((finding) => finding.layer));
   const states = {
@@ -756,7 +749,9 @@ function evaluatedLayerStates({
         ? 'failed'
         : missingAspects.length > 0 ||
             evidence.perceptualObservations.some(
-              (observation) => observation.result === 'incomplete',
+              (observation) =>
+                observation.result === 'incomplete' ||
+                !visualReviewComplete(observation),
             )
           ? 'incomplete'
           : 'passed';
@@ -776,6 +771,21 @@ function evaluatedLayerStates({
       )
         states[layer] = 'incomplete';
     }
+  }
+  if (requireRegionalReview && states.perceptual === 'passed') {
+    const reviewed =
+      evidence.perceptualObservations.filter(visualReviewComplete);
+    if (
+      !reviewed.length ||
+      evidence.coverage.missing.captures.length ||
+      evidence.captures.some(
+        (capture) =>
+          !reviewed.some((observation) =>
+            observation.targetCaptureRefs.includes(capture.id),
+          ),
+      )
+    )
+      states.perceptual = 'incomplete';
   }
   assertLayerStatuses(states);
   return states;
@@ -833,6 +843,7 @@ function buildCanonicalReport({
         evidence,
         findings: findings.findings,
         verificationEvaluation,
+        requireRegionalReview: Boolean(plan.perceptual.reviewContractVersion),
       })
     : initialLayerStates(plan.config, provider);
   const overallStatus = overallLayerStatus(statuses);
@@ -991,11 +1002,19 @@ export async function planAudit({
       details: installation.errors,
     });
   }
-  const packageJson = await readJson(path.join(projectRoot, 'package.json'));
+  const manifest = await readJson(
+    path.join(projectRoot, '.designome/manifest.json'),
+  );
+  const projectContext = await discoverProject({
+    projectPath: projectRoot,
+    frontend: config.frontend ?? null,
+    cssEntry: config.frontend ? null : manifest.adapter?.cssEntry,
+  });
+  requireFrontend(projectContext);
   const providerPlan = await resolveProvider(
     projectRoot,
     provider,
-    packageJson,
+    projectContext,
     browserInstallAuthorized,
   );
   const configuredOutput = outputDirectory ?? config.outputDirectory ?? 'audit';
@@ -1016,6 +1035,8 @@ export async function planAudit({
           aspects: perceptualAspects,
         })
       : null;
+  if (verification)
+    verification.visualReviewContractVersion = visualReviewContractVersion;
   const createdAt = new Date().toISOString();
   const plan = {
     schemaVersion: '1.0.0',
@@ -1026,6 +1047,15 @@ export async function planAudit({
         : null,
     createdAt,
     projectRoot,
+    projectContext,
+    targetIdentity: {
+      version: '1.0.0',
+      installationRoot: projectRoot,
+      workspaceRoot: projectContext.workspaceRoot,
+      frontendRoot: projectContext.frontend.path,
+      frontendName: projectContext.frontend.name,
+      platform: projectContext.frontend.platform,
+    },
     configPath: toPosixPath(path.relative(projectRoot, resolvedConfig)),
     outputDirectory: outputRelative,
     baseUrl: config.baseUrl,
@@ -1045,6 +1075,9 @@ export async function planAudit({
     ...(focus ? { focus } : {}),
     perceptual: {
       executionOwner: 'host-agent',
+      reviewContractVersion: visualReviewContractVersion,
+      verdictBasis:
+        'host-judgment; evidence completeness is deterministic, visual judgment is not certification',
       deterministic: false,
       aspects: perceptualAspects,
       sourceCaptures: dna.sources.map((source) => ({
@@ -1108,17 +1141,7 @@ export async function planAudit({
       manualEvidenceAssemblyRequired: false,
     },
   };
-  plan.fingerprint =
-    plan.auditContractVersion === auditContractVersion
-      ? fingerprintFromPlan(plan)
-      : sha256(
-          jsonText({
-            schemaVersion: plan.schemaVersion,
-            baseUrl: plan.baseUrl,
-            routes: plan.routes,
-            ...(plan.focus ? { focus: plan.focus } : {}),
-          }),
-        );
+  plan.fingerprint = fingerprintFromPlan(plan);
   return { projectRoot, outputPath: resolvedOutput, dna, plan };
 }
 
@@ -1182,6 +1205,10 @@ export async function runAudit(options) {
     validateAuditEvidence(evidence, { plan: prepared.plan });
     await validateAuditCaptureFiles(evidence, {
       projectRoot: prepared.projectRoot,
+      sourceCaptures:
+        prepared.plan.auditContractVersion === auditContractVersion
+          ? prepared.plan.perceptual.sourceCaptures
+          : null,
     });
     if (prepared.plan.auditContractVersion === auditContractVersion) {
       validateAuditVerificationEvidence({
@@ -1219,17 +1246,7 @@ export async function runAudit(options) {
         },
       );
     }
-    const expectedFingerprint =
-      prepared.plan.auditContractVersion === auditContractVersion
-        ? fingerprintFromPlan(prepared.plan)
-        : sha256(
-            jsonText({
-              schemaVersion: prepared.plan.schemaVersion,
-              baseUrl: prepared.plan.baseUrl,
-              routes: prepared.plan.routes,
-              ...(prepared.plan.focus ? { focus: prepared.plan.focus } : {}),
-            }),
-          );
+    const expectedFingerprint = fingerprintFromPlan(prepared.plan);
     if (evidence.plan.fingerprint !== expectedFingerprint) {
       throw new DesignomeError(
         'Audit evidence was captured for a different plan',
@@ -1254,7 +1271,11 @@ export async function runAudit(options) {
     providerState = transitionProvider(providerState, 'running');
   }
   const evaluated = evidence
-    ? evaluateAuditEvidence({ dna: prepared.dna, evidence })
+    ? evaluateAuditEvidence({
+        dna: prepared.dna,
+        evidence,
+        requireRegionalReview: true,
+      })
     : { findings: [], calibrationCandidates: [] };
   const verificationEvaluation =
     evidence && prepared.plan.auditContractVersion === auditContractVersion
@@ -1283,16 +1304,39 @@ export async function runAudit(options) {
           .join(', '),
         ruleRef: check.obligationRef,
         evidence: check.reason,
-        epistemicStatus: 'observed',
-        certainty: 1,
+        epistemicStatus:
+          check.layer === 'perceptual'
+            ? (evidence.perceptualObservations.find(
+                (item) => item.checkRef === check.checkRef,
+              )?.epistemicStatus ?? 'inferred')
+            : 'observed',
+        certainty:
+          check.layer === 'perceptual'
+            ? Math.min(
+                ...evidence.perceptualObservations
+                  .filter((item) => item.checkRef === check.checkRef)
+                  .map((item) => item.certainty),
+              )
+            : 1,
         suggestedCorrection:
           'Review the linked evidence and apply the smallest scoped implementation correction.',
         verificationMethod: 'Repeat the same check in the same target context.',
         provenance: {
-          evaluator: 'designome-verification-runtime',
+          evaluator:
+            check.layer === 'perceptual'
+              ? 'host-agent'
+              : 'designome-verification-runtime',
           method: check.method,
         },
-        limitations: [],
+        limitations:
+          check.layer === 'perceptual'
+            ? [
+                'Host visual judgment is not objective certification.',
+                ...evidence.perceptualObservations
+                  .filter((item) => item.checkRef === check.checkRef)
+                  .flatMap((item) => item.limitations),
+              ]
+            : [],
       });
     }
   }

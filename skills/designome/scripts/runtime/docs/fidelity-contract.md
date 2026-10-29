@@ -55,3 +55,16 @@ Token relationships, applies-to scopes, rationale, failures, dependencies, excep
 | P2       | Repeat with independent generators, different source families and component libraries                        | Hash-bound artifacts and separate fidelity/finish observations |
 
 The [example](../examples/design-dna.fidelity.reference.json) illustrates the contract; it is not a fresh source extraction or a benchmark result. See the [benchmark workflow](fidelity-benchmark.md) for executed evidence and remaining limits.
+
+## Draft rendering and review provenance
+
+Matrix capability `renderCalibration.version: 1.0.0` routes the specialized
+[render-calibration prompt](../prompts/18-render-calibration.md). The helper reuses
+the existing docs-only benchmark with separate contexts and immutable evidence.
+Generated pixels are implementation hypotheses and never source evidence. A failed
+or unavailable experiment leaves proposed calibrations pending. Explicit human
+acceptance remains independent of structural checks and browser execution.
+
+New audit plans additionally advertise regional visual-review completeness. See
+[the audit contract](audit-contract.md); recorded model observations retain their
+certainty, scope and limitations and never become objective certification.
