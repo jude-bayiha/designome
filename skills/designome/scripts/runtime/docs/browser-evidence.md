@@ -54,3 +54,18 @@ Repository browser tests use an explicit development-only Playwright dependency.
 Install its browser with `pnpm exec playwright install chromium`, then run
 `pnpm test:browser` or `pnpm check`. CI installs browser/system prerequisites
 explicitly. No consumer installation is triggered by discovery or audit.
+
+Motion is settled before readiness and measurement: finite browser animations
+are finished, and ongoing/infinite effects are paused during capture and resumed
+in cleanup. The execution record identifies this motion policy. The screenshot
+uses that existing state rather than advancing animations after sampling. Sampled
+geometry, styles, font probes, visible image state and readiness regions must
+match on both sides of the screenshot; drift raises `CAPTURE_RENDER_CHANGED`
+without publishing pixels or measurements. Pixels are saved exclusively after
+that check, so an existing evidence file cannot be replaced even by a concurrent
+writer. These checks do not prove async canvas/data readiness: the host must still
+supply meaningful completion signals.
+
+Image readiness follows the viewport-only screenshot scope. Offscreen lazy images
+do not block it; visible pending or broken images do. Full-page, scrolled or
+additional content states require their own planned captures and readiness checks.

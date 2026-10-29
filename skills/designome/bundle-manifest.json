@@ -1,7 +1,7 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome",
-  "contentFingerprint": "sha256:408826c6e8f3af5fb805c04d4d03a5f401e4f4c7c828dac3570adaed89193ec3",
+  "contentFingerprint": "sha256:b5456f9ec08dc54de94c3c8ec231f4d55375ebccd1193c57bfcbcfd2c1db7490",
   "files": {
     "agents/openai.yaml": "aeee0b3a3921828612f09507247c69041d02809a0ba0adb07fce4e3cb695d907",
     "contract.json": "65b2ba2b7324149f40628e6bcb3f8c56e7ef9c750f6632234c367d12999b2690",
@@ -11,7 +11,7 @@
     "scripts/runtime/docs/architecture-and-methodology.md": "43e57a3caa1b1ad93e8bb0763375c5a4e93c7d8555da50b1120ad47eb9081f6c",
     "scripts/runtime/docs/audit-contract.md": "4604426583418186089a146f6a525139a72e90b377368b4aa6075e0295787514",
     "scripts/runtime/docs/browser-evidence-adapter.md": "f3423d6ee280dad4b2a037b44b7673e8a0d9ee5477d0a2083f71144c0495e6db",
-    "scripts/runtime/docs/browser-evidence.md": "d9f476e87740eb3b6320fdbe39e0f8223b3205d631410ac6f48fbc15ba879b67",
+    "scripts/runtime/docs/browser-evidence.md": "09df9685c4570ab5b6644d41d5d7b9c7f1798aa53a1e88644371e22510c87443",
     "scripts/runtime/docs/concept-matrix.md": "fc32bf85e378643340e204d8e1673a1b6d2b93cde033aa80afc33fc5dda623e9",
     "scripts/runtime/docs/context-non-regression.md": "0922ac5cc92439ceaa1ae96eee73f4ae3fea9e7c242fc2ffa704aebd82eeb43f",
     "scripts/runtime/docs/conversational-request-contract.md": "dbcd09aed4016fecf79f51ab797952d408b234ebd7ea69956b349a555fc226a4",
@@ -98,7 +98,7 @@
     "scripts/runtime/src/runtime/audit-verification.mjs": "c6e8c41ecc0da9bf5580fb5a0f52941c52e5e96770923b47a107d5aa72d8f4db",
     "scripts/runtime/src/runtime/audit.mjs": "59919acc6eac4a407fc5a479d7838b452fd0ce2352b29e6148aa67eb689aa74c",
     "scripts/runtime/src/runtime/benchmark.mjs": "a6fe4badba7cc5751bf524336b80c6d52e10cc35a8b1d5b62c026df484b4f3ea",
-    "scripts/runtime/src/runtime/capture-session.mjs": "739abc449ac7be36f83d95435b5b5061aa5eab1eac83c2da442616859732082c",
+    "scripts/runtime/src/runtime/capture-session.mjs": "40ed33e1236896155a3344379346fc17ea4e3052609a8e0987678d531f2365a8",
     "scripts/runtime/src/runtime/context-stage.mjs": "813d87e2ed1768befd9dbc2076b14ee15096adce67f8ede0cc4e3e64fb6f921c",
     "scripts/runtime/src/runtime/context.mjs": "1392ffd0eaba968465503d6a10a494064a5b55a96e910a6879e2f3dc01160f2c",
     "scripts/runtime/src/runtime/design-brief.mjs": "066ff8af19464ca6fc89bc89ac7bee7d8ddfda3ff32811623d41f0e6bccbe8c5",

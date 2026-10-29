@@ -1361,6 +1361,7 @@ export async function capturePlaywrightPage(
   page.on('console', consoleListener);
   page.on('pageerror', errorListener);
   const startedAt = new Date().toISOString();
+  let motion = null;
   try {
     await page.setViewportSize(viewport);
     if (navigate) {
@@ -1377,17 +1378,67 @@ export async function capturePlaywrightPage(
     await page.evaluate((dir) => {
       document.documentElement.dir = dir;
     }, direction);
+    // Set the capture's motion state before waiting or sampling. Screenshot
+    // must not advance animations after its measurements have been collected.
+    motion = await page.evaluateHandle(() => ({
+      paused: [],
+      completed: 0,
+      visibleImages() {
+        return [...document.images].filter((image) => {
+          const rect = image.getBoundingClientRect(),
+            style = getComputedStyle(image);
+          return (
+            rect.width > 0 &&
+            rect.height > 0 &&
+            rect.bottom > 0 &&
+            rect.right > 0 &&
+            rect.top < innerHeight &&
+            rect.left < innerWidth &&
+            style.visibility !== 'hidden' &&
+            style.display !== 'none'
+          );
+        });
+      },
+      settle() {
+        for (const animation of document.getAnimations()) {
+          if (
+            this.paused.includes(animation) ||
+            animation.playState === 'finished' ||
+            animation.playState === 'idle'
+          )
+            continue;
+          if (animation.playState !== 'running' && !animation.pending) continue;
+          const end = animation.effect?.getComputedTiming().endTime;
+          if (Number.isFinite(end) && animation.playbackRate !== 0) {
+            try {
+              animation.finish();
+              this.completed++;
+              continue;
+            } catch {
+              /* Pause effects that cannot be finished. */
+            }
+          }
+          animation.pause();
+          this.paused.push(animation);
+        }
+      },
+    }));
+    await page.evaluate((state) => state.settle(), motion);
     for (const selector of ready.selectors)
       await page.locator(selector).waitFor({ state: 'visible', timeout });
     await page.waitForFunction(
-      (fonts) =>
-        document.readyState !== 'loading' &&
-        document.fonts.status === 'loaded' &&
-        fonts.every((font) => document.fonts.check(font)) &&
-        [...document.images].every(
-          (image) => image.complete && image.naturalWidth > 0,
-        ),
-      ready.fonts,
+      ({ fonts, motion }) => {
+        motion.settle();
+        return (
+          document.readyState !== 'loading' &&
+          document.fonts.status === 'loaded' &&
+          fonts.every((font) => document.fonts.check(font)) &&
+          motion
+            .visibleImages()
+            .every((image) => image.complete && image.naturalWidth > 0)
+        );
+      },
+      { fonts: ready.fonts, motion },
       { timeout },
     );
     // Require stable geometry across frames after fonts, data, charts and images.
@@ -1395,7 +1446,8 @@ export async function capturePlaywrightPage(
       delete window.__designomeCaptureStability;
     });
     await page.waitForFunction(
-      () => {
+      (motion) => {
+        motion.settle();
         const nodes = [
           document.documentElement,
           ...document.querySelectorAll('[data-designome-region]'),
@@ -1413,114 +1465,150 @@ export async function capturePlaywrightPage(
         };
         return window.__designomeCaptureStability.count >= 3;
       },
-      null,
+      motion,
       { timeout, polling: 'raf' },
     );
-    const snapshot = await page.evaluate(
-      ({ elements, measurements }) => {
-        const doc = document.documentElement;
-        const properties = [
-          'fontFamily',
-          'fontSize',
-          'fontWeight',
-          'lineHeight',
-          'letterSpacing',
-          'color',
-          'backgroundColor',
-          'borderColor',
-          'borderWidth',
-          'borderRadius',
-          'boxShadow',
-          'paddingTop',
-          'paddingRight',
-          'paddingBottom',
-          'paddingLeft',
-          'rowGap',
-          'columnGap',
-        ];
-        const rectFor = (node) => {
-          const r = node.getBoundingClientRect();
-          return { x: r.x, y: r.y, width: r.width, height: r.height };
-        };
-        const records = elements.map((entry) => {
-          const node = document.querySelector(entry.selector);
-          if (!node)
-            throw new Error('Missing capture element: ' + entry.selector);
-          const style = getComputedStyle(node),
-            rect = rectFor(node);
-          return {
-            id: entry.id,
-            role: entry.role,
-            rect,
-            visible:
-              rect.width > 0 &&
-              rect.height > 0 &&
-              style.visibility !== 'hidden' &&
-              style.display !== 'none',
-            clipped:
-              node.scrollWidth > node.clientWidth + 1 ||
-              node.scrollHeight > node.clientHeight + 1,
-            renderedStyle: Object.fromEntries(
-              properties.map((name) => [name, style[name]]),
-            ),
-            fontSize: parseFloat(style.fontSize),
-            ...(Number.isFinite(parseFloat(style.lineHeight))
-              ? { lineHeight: parseFloat(style.lineHeight) }
-              : {}),
-          };
-        });
-        const values = measurements.map((entry) => {
-          const node = document.querySelector(entry.selector);
-          if (!node)
-            throw new Error('Missing measurement element: ' + entry.selector);
-          const rect = rectFor(node),
-            style = getComputedStyle(node);
-          let value;
-          if (entry.metric === 'width' || entry.metric === 'height')
-            value = rect[entry.metric];
-          else if (
-            [
-              'fontSize',
-              'lineHeight',
-              'paddingTop',
-              'paddingRight',
-              'paddingBottom',
-              'paddingLeft',
-              'rowGap',
-              'columnGap',
-              'borderTopWidth',
-              'borderRadius',
-            ].includes(entry.metric)
-          )
-            value = parseFloat(style[entry.metric]);
-          else
-            throw new Error(
-              'Unsupported rendered measurement: ' + entry.metric,
-            );
-          if (!Number.isFinite(value))
-            throw new Error('Unresolved rendered measurement: ' + entry.metric);
-          return { ...entry, value };
-        });
+    const readSnapshot = ({ elements, measurements, readiness, motion }) => {
+      const doc = document.documentElement;
+      const properties = [
+        'opacity',
+        'transform',
+        'fontFamily',
+        'fontSize',
+        'fontWeight',
+        'lineHeight',
+        'letterSpacing',
+        'color',
+        'backgroundColor',
+        'borderColor',
+        'borderWidth',
+        'borderRadius',
+        'boxShadow',
+        'paddingTop',
+        'paddingRight',
+        'paddingBottom',
+        'paddingLeft',
+        'rowGap',
+        'columnGap',
+      ];
+      const rectFor = (node) => {
+        const r = node.getBoundingClientRect();
+        return { x: r.x, y: r.y, width: r.width, height: r.height };
+      };
+      const records = elements.map((entry) => {
+        const node = document.querySelector(entry.selector);
+        if (!node)
+          throw new Error('Missing capture element: ' + entry.selector);
+        const style = getComputedStyle(node),
+          rect = rectFor(node);
         return {
-          document: {
-            scrollWidth: doc.scrollWidth,
-            clientWidth: doc.clientWidth,
-            scrollHeight: doc.scrollHeight,
-            clientHeight: doc.clientHeight,
-          },
-          elements: records,
-          measurements: values,
-          deviceScaleFactor: devicePixelRatio,
-          fonts: [...document.fonts].map((font) => ({
-            family: font.family,
-            weight: font.weight,
-            status: font.status,
-          })),
-          viewport: { width: innerWidth, height: innerHeight },
+          id: entry.id,
+          role: entry.role,
+          rect,
+          visible:
+            rect.width > 0 &&
+            rect.height > 0 &&
+            style.visibility !== 'hidden' &&
+            style.display !== 'none',
+          clipped:
+            node.scrollWidth > node.clientWidth + 1 ||
+            node.scrollHeight > node.clientHeight + 1,
+          renderedStyle: Object.fromEntries(
+            properties.map((name) => [name, style[name]]),
+          ),
+          fontSize: parseFloat(style.fontSize),
+          ...(Number.isFinite(parseFloat(style.lineHeight))
+            ? { lineHeight: parseFloat(style.lineHeight) }
+            : {}),
         };
-      },
-      { elements, measurements },
-    );
+      });
+      const values = measurements.map((entry) => {
+        const node = document.querySelector(entry.selector);
+        if (!node)
+          throw new Error('Missing measurement element: ' + entry.selector);
+        const rect = rectFor(node),
+          style = getComputedStyle(node);
+        let value;
+        if (entry.metric === 'width' || entry.metric === 'height')
+          value = rect[entry.metric];
+        else if (
+          [
+            'fontSize',
+            'lineHeight',
+            'paddingTop',
+            'paddingRight',
+            'paddingBottom',
+            'paddingLeft',
+            'rowGap',
+            'columnGap',
+            'borderTopWidth',
+            'borderRadius',
+          ].includes(entry.metric)
+        )
+          value = parseFloat(style[entry.metric]);
+        else
+          throw new Error('Unsupported rendered measurement: ' + entry.metric);
+        if (!Number.isFinite(value))
+          throw new Error('Unresolved rendered measurement: ' + entry.metric);
+        return { ...entry, value };
+      });
+      return {
+        document: {
+          scrollWidth: doc.scrollWidth,
+          clientWidth: doc.clientWidth,
+          scrollHeight: doc.scrollHeight,
+          clientHeight: doc.clientHeight,
+        },
+        elements: records,
+        measurements: values,
+        deviceScaleFactor: devicePixelRatio,
+        fonts: [...document.fonts].map((font) => ({
+          family: font.family,
+          weight: font.weight,
+          status: font.status,
+        })),
+        viewport: { width: innerWidth, height: innerHeight },
+        readiness: {
+          state: document.readyState,
+          fonts: document.fonts.status,
+          probes: readiness.fonts.map((font) => document.fonts.check(font)),
+          images: motion
+            .visibleImages()
+            .map((image) => ({
+              source: image.currentSrc,
+              complete: image.complete,
+              width: image.naturalWidth,
+              height: image.naturalHeight,
+              rect: rectFor(image),
+            })),
+          regions: readiness.selectors.map((selector) =>
+            [...document.querySelectorAll(selector)].map((node) =>
+              rectFor(node),
+            ),
+          ),
+        },
+        regions: [...document.querySelectorAll('[data-designome-region]')].map(
+          (node) => rectFor(node),
+        ),
+      };
+    };
+    const snapshot = await page.evaluate(readSnapshot, {
+      elements,
+      measurements,
+      readiness: ready,
+      motion,
+    });
+    if (
+      snapshot.readiness.fonts !== 'loaded' ||
+      snapshot.readiness.probes.some((ready) => !ready) ||
+      snapshot.readiness.images.some(
+        (image) => !image.complete || image.width === 0,
+      )
+    )
+      throw new DesignomeError(
+        'Readiness changed before sampling; no capture was recorded',
+        { code: 'CAPTURE_RENDER_CHANGED' },
+      );
     if (
       snapshot.viewport.width !== viewport.width ||
       snapshot.viewport.height !== viewport.height
@@ -1563,12 +1651,41 @@ export async function capturePlaywrightPage(
         { code: 'CAPTURE_OUTPUT_EXISTS' },
       );
     await fs.mkdir(path.dirname(screenshotPath), { recursive: true });
-    await page.screenshot({
-      path: screenshotPath,
+    const pixels = await page.screenshot({
+      type: /\.jpe?g$/iu.test(screenshotPath) ? 'jpeg' : 'png',
       fullPage: false,
-      animations: 'disabled',
+      animations: 'allow',
       timeout,
     });
+    const after = await page.evaluate(readSnapshot, {
+      elements,
+      measurements,
+      readiness: ready,
+      motion,
+    });
+    if (JSON.stringify(snapshot) !== JSON.stringify(after))
+      throw new DesignomeError(
+        'Rendered state changed during screenshot; no capture was recorded',
+        { code: 'CAPTURE_RENDER_CHANGED' },
+      );
+    const motionEvidence = await page.evaluate(
+      (state) => ({
+        policy: 'finish-finite-pause-ongoing',
+        completed: state.completed,
+        paused: state.paused.length,
+      }),
+      motion,
+    );
+    try {
+      await fs.writeFile(screenshotPath, pixels, { flag: 'wx' });
+    } catch (error) {
+      if (error.code === 'EEXIST')
+        throw new DesignomeError(
+          'Capture path already exists; use a new run path',
+          { code: 'CAPTURE_OUTPUT_EXISTS' },
+        );
+      throw error;
+    }
     const capture = await session.recordCapture({
       id,
       routeId,
@@ -1581,6 +1698,7 @@ export async function capturePlaywrightPage(
       elements: snapshot.elements,
       execution: {
         engine: 'playwright',
+        motion: motionEvidence,
         startedAt,
         capturedAt: new Date().toISOString(),
         serverReachable: /^https?:/u.test(page.url()) ? true : 'not-applicable',
@@ -1621,6 +1739,15 @@ export async function capturePlaywrightPage(
       });
     return capture;
   } finally {
+    if (motion) {
+      await page
+        .evaluate((state) => {
+          for (const animation of state.paused)
+            if (animation.playState === 'paused') animation.play();
+        }, motion)
+        .catch(() => {});
+      await motion.dispose().catch(() => {});
+    }
     page.off('console', consoleListener);
     page.off('pageerror', errorListener);
   }
