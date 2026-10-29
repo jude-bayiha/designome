@@ -5219,5 +5219,11 @@
     }
   ],
   "fidelityContractVersion": "1.0.0",
-  "visualReviewContractVersion": "1.0.0"
+  "visualReviewContractVersion": "1.0.0",
+  "renderCalibration": {
+    "version": "1.0.0",
+    "promptRef": "prompts/18-render-calibration.md",
+    "execution": "benchmark-packets",
+    "acceptance": "explicit-human"
+  }
 }

@@ -126,8 +126,11 @@ Changing a projected path, renderer, axis, facet, domain, or routing rule requir
 
 A monolithic prompt encourages shallow coverage, claim duplication, and status inflation. The v0.3 pipeline has intake, 13 specialist axes, synthesis, integration, and audit stages. Each specialist reads only its matrix slice and admitted evidence. Synthesis resolves conflicts into one canonical grammar; integration renders it without mining the target project; audit tests accepted rules against real implementation evidence.
 
-## Additive visual-review capability
+## Additive execution capabilities
 
 `visualReviewContractVersion: 1.0.0` advertises regional comparison completeness
-for new audit plans. It leaves the axes, facets, domains, source authorization
-and human acceptance unchanged. Missing visual review remains incomplete.
+for new audit plans. `renderCalibration` routes a separate, proportionate draft
+rendering prompt through existing benchmark packets. Neither capability changes
+the 13 axes, 65 facets, 20 domains, source statuses, source authorization or human
+acceptance. The context compiler includes calibration in synthesis and executable
+capture guidance in audit; target discovery remains installation context only.

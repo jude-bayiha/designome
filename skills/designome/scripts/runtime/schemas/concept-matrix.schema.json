@@ -24,6 +24,25 @@
     "fidelityContractVersion": { "const": "1.0.0" },
     "auditContractVersion": { "const": "2.0.0" },
     "visualReviewContractVersion": { "const": "1.0.0" },
+    "renderCalibration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "promptRef", "execution", "acceptance"],
+      "properties": {
+        "version": {
+          "const": "1.0.0"
+        },
+        "promptRef": {
+          "const": "prompts/18-render-calibration.md"
+        },
+        "execution": {
+          "const": "benchmark-packets"
+        },
+        "acceptance": {
+          "const": "explicit-human"
+        }
+      }
+    },
     "matrixVersion": { "const": "0.3.0" },
     "requestContractVersion": { "const": "1.1.0" },
     "designDnaSchemaVersion": { "const": "0.3.0" },

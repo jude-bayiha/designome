@@ -23,6 +23,7 @@ import { expandDesignDna } from '../src/runtime/dna-authoring.mjs';
 import { renderMatrixBrief } from '../src/runtime/matrix-brief.mjs';
 import { fidelityReadiness } from '../src/runtime/fidelity.mjs';
 import {
+  prepareCalibration,
   prepareBenchmark,
   evaluateBenchmark,
 } from '../src/runtime/benchmark.mjs';
@@ -160,6 +161,9 @@ function assertSameStringList(actual, expected, label) {
 
 function printHelp() {
   process.stdout.write(`Designome deterministic helper\n\nCommands:\n`);
+  process.stdout.write(
+    '  calibration-prepare --dna <draft.json> --output <new-directory> [--platform <web|native>]\n',
+  );
   process.stdout.write(
     '  benchmark-prepare --dna <draft-or-accepted.json> --corpus <corpus.json> --output <new-directory>\n  benchmark-evaluate --plan <plan.json> --evidence <evidence.json> --output <report.json>\n',
   );
@@ -380,6 +384,13 @@ async function main() {
       operation: request.contract.operation,
       interpretationStatus: request.contract.interpretation.status,
     };
+  } else if (command === 'calibration-prepare') {
+    assertArguments(parsed, ['dna', 'output', 'platform', 'help']);
+    result = await prepareCalibration({
+      dnaPath: option(parsed, 'dna', { required: true }),
+      outputDirectory: option(parsed, 'output', { required: true }),
+      platform: option(parsed, 'platform', { fallback: 'web' }),
+    });
   } else if (command === 'benchmark-prepare') {
     assertArguments(parsed, ['dna', 'corpus', 'output', 'help']);
     result = await prepareBenchmark({

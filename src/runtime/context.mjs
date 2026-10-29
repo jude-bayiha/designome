@@ -315,6 +315,7 @@ export async function compileContext(
     'docs/installation-contract.md',
     'docs/project-discovery.md',
     'docs/browser-evidence.md',
+    'prompts/18-render-calibration.md',
     'schemas/integration-policy.schema.json',
   ])
     await read(file);
@@ -437,6 +438,8 @@ export async function compileContext(
   }
   if (['governance', 'synthesis', 'install', 'audit'].includes(phase))
     file('schemas/design-dna.schema.json', 'complete-authoring-semantics');
+  if (phase === 'synthesis')
+    file('prompts/18-render-calibration.md', 'draft-render-calibration');
   if (phase === 'audit') file('docs/browser-evidence.md', 'capture-execution');
   if (phase === 'install') {
     file('docs/project-discovery.md', 'target-discovery');

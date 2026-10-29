@@ -42,6 +42,7 @@ export {
 } from './runtime/audit-verification.mjs';
 export { projectDocumentation } from './runtime/install.mjs';
 export {
+  prepareCalibration,
   prepareBenchmark,
   evaluateBenchmark,
   benchmarkAspects,
