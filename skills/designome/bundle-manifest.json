@@ -1,7 +1,7 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome",
-  "contentFingerprint": "sha256:b5456f9ec08dc54de94c3c8ec231f4d55375ebccd1193c57bfcbcfd2c1db7490",
+  "contentFingerprint": "sha256:08e37e4628b0c839a64641c8c38fc816235d7beafaff9f26b86362c90d8e700b",
   "files": {
     "agents/openai.yaml": "aeee0b3a3921828612f09507247c69041d02809a0ba0adb07fce4e3cb695d907",
     "contract.json": "65b2ba2b7324149f40628e6bcb3f8c56e7ef9c750f6632234c367d12999b2690",
@@ -15,7 +15,7 @@
     "scripts/runtime/docs/concept-matrix.md": "fc32bf85e378643340e204d8e1673a1b6d2b93cde033aa80afc33fc5dda623e9",
     "scripts/runtime/docs/context-non-regression.md": "0922ac5cc92439ceaa1ae96eee73f4ae3fea9e7c242fc2ffa704aebd82eeb43f",
     "scripts/runtime/docs/conversational-request-contract.md": "dbcd09aed4016fecf79f51ab797952d408b234ebd7ea69956b349a555fc226a4",
-    "scripts/runtime/docs/discovery-visual-evidence-evaluation.md": "cf404e20909ac78ec61e2550c7908ee3e638b7c6ed9bfa117bfa7e66c2634da0",
+    "scripts/runtime/docs/discovery-visual-evidence-evaluation.md": "80c7fc2d75c0bb4ed6348a4d7a6b54e16cbd233833986dcc5cc99339b3994ccf",
     "scripts/runtime/docs/fidelity-benchmark.md": "5a678666a6a281d1c93cbc6d1bd048af80457796a0363a876dd738144503cb6c",
     "scripts/runtime/docs/fidelity-contract.md": "fca0e1effb7985a12ec2c17ff58d3fc7f6b31620362ab4d7ac140e9997bbfebf",
     "scripts/runtime/docs/fidelity-evaluation.md": "985bbf2332524253004569902ad9bd771f05df90121bfdbfcd05a86c3ba64a78",
@@ -98,7 +98,7 @@
     "scripts/runtime/src/runtime/audit-verification.mjs": "c6e8c41ecc0da9bf5580fb5a0f52941c52e5e96770923b47a107d5aa72d8f4db",
     "scripts/runtime/src/runtime/audit.mjs": "59919acc6eac4a407fc5a479d7838b452fd0ce2352b29e6148aa67eb689aa74c",
     "scripts/runtime/src/runtime/benchmark.mjs": "a6fe4badba7cc5751bf524336b80c6d52e10cc35a8b1d5b62c026df484b4f3ea",
-    "scripts/runtime/src/runtime/capture-session.mjs": "40ed33e1236896155a3344379346fc17ea4e3052609a8e0987678d531f2365a8",
+    "scripts/runtime/src/runtime/capture-session.mjs": "3d16d7785d53f4fa87039f77a7d8e821a226bad33f56d7546af9810bff10a09d",
     "scripts/runtime/src/runtime/context-stage.mjs": "813d87e2ed1768befd9dbc2076b14ee15096adce67f8ede0cc4e3e64fb6f921c",
     "scripts/runtime/src/runtime/context.mjs": "1392ffd0eaba968465503d6a10a494064a5b55a96e910a6879e2f3dc01160f2c",
     "scripts/runtime/src/runtime/design-brief.mjs": "066ff8af19464ca6fc89bc89ac7bee7d8ddfda3ff32811623d41f0e6bccbe8c5",

@@ -147,7 +147,40 @@ prerequisites are explicit in [browser execution](browser-evidence.md). Hosted C
 and consumer/deployed runtime verification are separate evidence; no consumer
 build, UI test rerun or deployed visual pass is claimed here.
 
-Local final gate: `pnpm check` passed all 88 tests with no skips, including
+Initial delivery gate: `pnpm check` passed all 88 tests with no skips, including
 formatting, Markdown/schema validation, bundle consistency, permission-bound
 installation tests and the real browser regression. This technical pass does not
 change the separate failed transfer-benchmark verdict or pending calibrations.
+
+## Corrections after PR review
+
+Status: `observed` in synthetic regression fixtures. Review reproduced six gaps
+that were not covered by the initial 88-test suite. They are now covered by the
+following corrections; none changes source claims, pending calibrations or the
+failed independent transfer experiment above.
+
+| Review case                                | Corrected behavior and verification                                                                                                                                                                                                                              |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Frontend changed at the same URL           | The plan fingerprints canonical target identity. The installed-skill regression rejects app A's evidence for app B with `AUDIT_EVIDENCE_PLAN_MISMATCH`, for newly prepared v1 and v2 plans. It also checks that a repeat plan for app A retains its fingerprint. |
+| Animation changed pixels after measurement | Finite motion settles before measurement; ongoing motion pauses during capture and resumes afterward. The synthetic animated element's recorded geometry matches its final state, and the saved PNG matches a direct capture of that state.                      |
+| Shared UI alias unavailable in the app     | Reuse imports resolve from frontend aliases or declared public workspace exports. The shared package's private alias is not projected as a frontend import. Unresolved imports remain unknown with importer-scoped examples.                                     |
+| UI package with a React DOM peer           | A shared peer declaration alone no longer creates an extra frontend candidate. A single Next app with a shared React UI library resolves without false ambiguity.                                                                                                |
+| Lazy image outside the viewport            | Offscreen pending images do not block a viewport capture. A visible pending image still blocks it, and image readiness is sampled across the screenshot.                                                                                                         |
+| Next Pages Router imports                  | The bounded discovery roots include `pages/`, so imports there establish usage and identify shared UI source paths.                                                                                                                                              |
+
+An additional fault-injection regression changes geometry during a real browser
+screenshot. The adapter refuses the evidence with `CAPTURE_RENDER_CHANGED`, leaves
+no screenshot or capture record, and preserves an already existing output file.
+This checks sampled rendered state; it is not a visual certification or a proof
+that every asynchronous canvas renderer has completed.
+
+The four initial CodeQL annotations were two first-occurrence wildcard replacements
+plus their generated bundle copies. Substitution now handles all target occurrences
+and literal replacement characters. Both behaviors have regressions, without query
+suppression or relaxed checks. Hosted CodeQL confirmation is separate from local
+contract/browser results and is reported on the PR.
+
+Post-review local gate: `pnpm check` passed 97 tests with no failures or skips,
+including real browser capture-state tests and both target-bound audit formats in
+the installed bundle. This technical result does not promote the separate failed
+visual benchmark or accept any calibration.

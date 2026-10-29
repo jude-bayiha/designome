@@ -1572,15 +1572,13 @@ export async function capturePlaywrightPage(
           state: document.readyState,
           fonts: document.fonts.status,
           probes: readiness.fonts.map((font) => document.fonts.check(font)),
-          images: motion
-            .visibleImages()
-            .map((image) => ({
-              source: image.currentSrc,
-              complete: image.complete,
-              width: image.naturalWidth,
-              height: image.naturalHeight,
-              rect: rectFor(image),
-            })),
+          images: motion.visibleImages().map((image) => ({
+            source: image.currentSrc,
+            complete: image.complete,
+            width: image.naturalWidth,
+            height: image.naturalHeight,
+            rect: rectFor(image),
+          })),
           regions: readiness.selectors.map((selector) =>
             [...document.querySelectorAll(selector)].map((node) =>
               rectFor(node),
