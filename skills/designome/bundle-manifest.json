@@ -1,7 +1,7 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome",
-  "contentFingerprint": "sha256:42881a7a46faa4223549c703fd84b8e15209e0c9f4af0e20e11a97c11e5735dc",
+  "contentFingerprint": "sha256:a07b137b10441aed2643ac29e90eb2adb04b2d156bfae064914ff2a14e6cbec3",
   "files": {
     "agents/openai.yaml": "aeee0b3a3921828612f09507247c69041d02809a0ba0adb07fce4e3cb695d907",
     "contract.json": "65b2ba2b7324149f40628e6bcb3f8c56e7ef9c750f6632234c367d12999b2690",
@@ -15,6 +15,7 @@
     "scripts/runtime/docs/concept-matrix.md": "6db7269669218ef0a46a48830c596466e48ddb73a9f040ac769a470c476e9bc2",
     "scripts/runtime/docs/context-non-regression.md": "0922ac5cc92439ceaa1ae96eee73f4ae3fea9e7c242fc2ffa704aebd82eeb43f",
     "scripts/runtime/docs/conversational-request-contract.md": "dbcd09aed4016fecf79f51ab797952d408b234ebd7ea69956b349a555fc226a4",
+    "scripts/runtime/docs/discovery-visual-evidence-evaluation.md": "cf404e20909ac78ec61e2550c7908ee3e638b7c6ed9bfa117bfa7e66c2634da0",
     "scripts/runtime/docs/fidelity-benchmark.md": "5a678666a6a281d1c93cbc6d1bd048af80457796a0363a876dd738144503cb6c",
     "scripts/runtime/docs/fidelity-contract.md": "fca0e1effb7985a12ec2c17ff58d3fc7f6b31620362ab4d7ac140e9997bbfebf",
     "scripts/runtime/docs/fidelity-evaluation.md": "985bbf2332524253004569902ad9bd771f05df90121bfdbfcd05a86c3ba64a78",
