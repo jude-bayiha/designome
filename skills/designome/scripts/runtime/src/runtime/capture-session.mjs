@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { DesignomeError } from './errors.mjs';
+import { visualReviewComplete } from './visual-review.mjs';
 import { inspectImageBuffer } from './images.mjs';
 import {
   atomicWrite,
@@ -272,7 +273,7 @@ function coverageSignature(coverage) {
 
 export async function validateAuditCaptureFiles(
   evidence,
-  { projectRoot = null } = {},
+  { projectRoot = null, sourceCaptures = null } = {},
 ) {
   const errors = [];
   for (const [index, capture] of (evidence?.captures ?? []).entries()) {
@@ -306,6 +307,27 @@ export async function validateAuditCaptureFiles(
         errors.push(
           `captures[${index}] image metadata is unavailable: ${error.message}`,
         );
+      }
+    }
+  }
+  if (sourceCaptures) {
+    const sourceRefs = new Set(
+      (evidence.perceptualObservations ?? [])
+        .filter(visualReviewComplete)
+        .flatMap((item) => item.sourceCaptureRefs),
+    );
+    for (const ref of sourceRefs) {
+      const source = sourceCaptures.find((item) => item.id === ref);
+      if (!source?.path || !source.contentHash) {
+        errors.push(`Source ${ref} lacks immutable provenance`);
+        continue;
+      }
+      try {
+        const bytes = await fs.readFile(source.path);
+        if (`sha256:${sha256(bytes)}` !== source.contentHash)
+          errors.push(`Source ${ref} changed after extraction`);
+      } catch (error) {
+        errors.push(`Source ${ref} is unreadable: ${error.message}`);
       }
     }
   }
@@ -558,6 +580,9 @@ export class CaptureSession {
       responsiveChecks: observation.responsiveChecks ?? [],
       contentHash,
       ...(nativeDimensions ? { nativeDimensions } : {}),
+      ...(observation.execution
+        ? { execution: structuredClone(observation.execution) }
+        : {}),
       recordedAt: observation.recordedAt ?? new Date().toISOString(),
     };
     this.captures.push(normalized);
@@ -786,6 +811,9 @@ export class CaptureSession {
         method: 'multimodal-comparison',
         ...(observation.provenance ?? {}),
       },
+      ...(observation.comparison
+        ? { comparison: structuredClone(observation.comparison) }
+        : {}),
       sourceCaptureRefs: [...new Set(observation.sourceCaptureRefs ?? [])],
       targetCaptureRefs: [...new Set(observation.targetCaptureRefs ?? [])],
       ...(observation.checkRef ? { checkRef: observation.checkRef } : {}),
@@ -922,6 +950,10 @@ export class CaptureSession {
     validateAuditEvidence(evidence, { plan: this.plan });
     await validateAuditCaptureFiles(evidence, {
       projectRoot: this.plan.projectRoot,
+      sourceCaptures:
+        this.verificationAware && this.plan.perceptual?.reviewContractVersion
+          ? this.plan.perceptual.sourceCaptures
+          : null,
     });
     if (this.verificationAware) {
       validateAuditVerificationEvidence({
@@ -1256,4 +1288,336 @@ export function createCaptureSession(plan, options = {}) {
 export async function loadCaptureEvidence(filePath) {
   const evidence = JSON.parse(await fs.readFile(filePath, 'utf8'));
   return validateAuditEvidence(evidence);
+}
+
+// Use the host-authorized page (including the target's own Playwright fixtures).
+// This extends the evidence adapter; it does not start servers or install tools.
+export async function capturePlaywrightPage(
+  session,
+  page,
+  {
+    id,
+    routeId,
+    viewport,
+    screenshotPath,
+    scenario = 'default',
+    direction = 'ltr',
+    readiness = null,
+    elements = [],
+    measurements = [],
+    timeout = 15000,
+    navigate = false,
+  },
+) {
+  const route = session.route(routeId);
+  screenshotPath = path.resolve(
+    session.plan.projectRoot ?? process.cwd(),
+    screenshotPath,
+  );
+  for (const measurement of measurements) {
+    if (measurement.unit !== 'px')
+      throw new DesignomeError(
+        'Rendered length measurements require px units; record both roles for ratios',
+        { code: 'INVALID_FIDELITY_MEASUREMENT' },
+      );
+    validatePlannedCheckRefs(
+      session.plan,
+      [measurement.checkRef],
+      'measurement',
+      'capture.measurements',
+    );
+  }
+  const ready = readiness ?? route.readiness;
+  if (
+    !ready ||
+    !Array.isArray(ready.selectors) ||
+    ready.selectors.length === 0 ||
+    !Array.isArray(ready.fonts)
+  )
+    throw new DesignomeError(
+      'Define readiness selectors (including chart completion when applicable) and required font probes',
+      { code: 'CAPTURE_READINESS_REQUIRED' },
+    );
+  const consoleListener = (message) => {
+    if (['warning', 'error'].includes(message.type()))
+      session.recordConsoleMessage({
+        routeId,
+        level: message.type(),
+        message: message.text(),
+        source: 'playwright-console',
+      });
+  };
+  const errorListener = (error) =>
+    session.recordConsoleMessage({
+      routeId,
+      level: 'error',
+      message: error.message,
+      source: 'pageerror',
+    });
+  page.on('console', consoleListener);
+  page.on('pageerror', errorListener);
+  const startedAt = new Date().toISOString();
+  try {
+    await page.setViewportSize(viewport);
+    if (navigate) {
+      if (scenario !== 'default')
+        throw new DesignomeError(
+          'Non-default scenarios must be established by the host before capture',
+          { code: 'CAPTURE_SCENARIO_SETUP_REQUIRED' },
+        );
+      await page.goto(new URL(route.path, session.plan.baseUrl).href, {
+        waitUntil: 'domcontentloaded',
+        timeout,
+      });
+    }
+    await page.evaluate((dir) => {
+      document.documentElement.dir = dir;
+    }, direction);
+    for (const selector of ready.selectors)
+      await page.locator(selector).waitFor({ state: 'visible', timeout });
+    await page.waitForFunction(
+      (fonts) =>
+        document.readyState !== 'loading' &&
+        document.fonts.status === 'loaded' &&
+        fonts.every((font) => document.fonts.check(font)) &&
+        [...document.images].every(
+          (image) => image.complete && image.naturalWidth > 0,
+        ),
+      ready.fonts,
+      { timeout },
+    );
+    // Require stable geometry across frames after fonts, data, charts and images.
+    await page.evaluate(() => {
+      delete window.__designomeCaptureStability;
+    });
+    await page.waitForFunction(
+      () => {
+        const nodes = [
+          document.documentElement,
+          ...document.querySelectorAll('[data-designome-region]'),
+        ];
+        const signature = JSON.stringify(
+          nodes.map((node) => {
+            const r = node.getBoundingClientRect();
+            return [r.x, r.y, r.width, r.height];
+          }),
+        );
+        const previous = window.__designomeCaptureStability;
+        window.__designomeCaptureStability = {
+          signature,
+          count: previous?.signature === signature ? previous.count + 1 : 0,
+        };
+        return window.__designomeCaptureStability.count >= 3;
+      },
+      null,
+      { timeout, polling: 'raf' },
+    );
+    const snapshot = await page.evaluate(
+      ({ elements, measurements }) => {
+        const doc = document.documentElement;
+        const properties = [
+          'fontFamily',
+          'fontSize',
+          'fontWeight',
+          'lineHeight',
+          'letterSpacing',
+          'color',
+          'backgroundColor',
+          'borderColor',
+          'borderWidth',
+          'borderRadius',
+          'boxShadow',
+          'paddingTop',
+          'paddingRight',
+          'paddingBottom',
+          'paddingLeft',
+          'rowGap',
+          'columnGap',
+        ];
+        const rectFor = (node) => {
+          const r = node.getBoundingClientRect();
+          return { x: r.x, y: r.y, width: r.width, height: r.height };
+        };
+        const records = elements.map((entry) => {
+          const node = document.querySelector(entry.selector);
+          if (!node)
+            throw new Error('Missing capture element: ' + entry.selector);
+          const style = getComputedStyle(node),
+            rect = rectFor(node);
+          return {
+            id: entry.id,
+            role: entry.role,
+            rect,
+            visible:
+              rect.width > 0 &&
+              rect.height > 0 &&
+              style.visibility !== 'hidden' &&
+              style.display !== 'none',
+            clipped:
+              node.scrollWidth > node.clientWidth + 1 ||
+              node.scrollHeight > node.clientHeight + 1,
+            renderedStyle: Object.fromEntries(
+              properties.map((name) => [name, style[name]]),
+            ),
+            fontSize: parseFloat(style.fontSize),
+            ...(Number.isFinite(parseFloat(style.lineHeight))
+              ? { lineHeight: parseFloat(style.lineHeight) }
+              : {}),
+          };
+        });
+        const values = measurements.map((entry) => {
+          const node = document.querySelector(entry.selector);
+          if (!node)
+            throw new Error('Missing measurement element: ' + entry.selector);
+          const rect = rectFor(node),
+            style = getComputedStyle(node);
+          let value;
+          if (entry.metric === 'width' || entry.metric === 'height')
+            value = rect[entry.metric];
+          else if (
+            [
+              'fontSize',
+              'lineHeight',
+              'paddingTop',
+              'paddingRight',
+              'paddingBottom',
+              'paddingLeft',
+              'rowGap',
+              'columnGap',
+              'borderTopWidth',
+              'borderRadius',
+            ].includes(entry.metric)
+          )
+            value = parseFloat(style[entry.metric]);
+          else
+            throw new Error(
+              'Unsupported rendered measurement: ' + entry.metric,
+            );
+          if (!Number.isFinite(value))
+            throw new Error('Unresolved rendered measurement: ' + entry.metric);
+          return { ...entry, value };
+        });
+        return {
+          document: {
+            scrollWidth: doc.scrollWidth,
+            clientWidth: doc.clientWidth,
+            scrollHeight: doc.scrollHeight,
+            clientHeight: doc.clientHeight,
+          },
+          elements: records,
+          measurements: values,
+          deviceScaleFactor: devicePixelRatio,
+          fonts: [...document.fonts].map((font) => ({
+            family: font.family,
+            weight: font.weight,
+            status: font.status,
+          })),
+          viewport: { width: innerWidth, height: innerHeight },
+        };
+      },
+      { elements, measurements },
+    );
+    if (
+      snapshot.viewport.width !== viewport.width ||
+      snapshot.viewport.height !== viewport.height
+    )
+      throw new DesignomeError(
+        'Rendered viewport differs from the planned capture',
+        { code: 'CAPTURE_VIEWPORT_MISMATCH' },
+      );
+    const renderedFonts = [];
+    let fontInspection = 'unavailable';
+    // Chromium exposes actual used faces, unlike a computed font-family stack.
+    try {
+      const cdp = await page.context().newCDPSession(page);
+      try {
+        await cdp.send('DOM.enable');
+        await cdp.send('CSS.enable');
+        const { root } = await cdp.send('DOM.getDocument');
+        for (const entry of elements) {
+          const { nodeId } = await cdp.send('DOM.querySelector', {
+            nodeId: root.nodeId,
+            selector: entry.selector,
+          });
+          if (nodeId)
+            renderedFonts.push({
+              elementRef: entry.id,
+              ...(await cdp.send('CSS.getPlatformFontsForNode', { nodeId })),
+            });
+        }
+        fontInspection = 'executed';
+      } finally {
+        await cdp.detach();
+      }
+    } catch {
+      /* Other browser engines retain a visible limitation. */
+    }
+    // Never overwrite an earlier capture: evidence must remain immutable.
+    if (await pathExists(screenshotPath))
+      throw new DesignomeError(
+        'Capture path already exists; use a new run path',
+        { code: 'CAPTURE_OUTPUT_EXISTS' },
+      );
+    await fs.mkdir(path.dirname(screenshotPath), { recursive: true });
+    await page.screenshot({
+      path: screenshotPath,
+      fullPage: false,
+      animations: 'disabled',
+      timeout,
+    });
+    const capture = await session.recordCapture({
+      id,
+      routeId,
+      viewport,
+      scenario,
+      direction,
+      screenshotPath,
+      url: page.url(),
+      document: snapshot.document,
+      elements: snapshot.elements,
+      execution: {
+        engine: 'playwright',
+        startedAt,
+        capturedAt: new Date().toISOString(),
+        serverReachable: /^https?:/u.test(page.url()) ? true : 'not-applicable',
+        captureExecuted: true,
+        deviceScaleFactor: snapshot.deviceScaleFactor,
+        readiness: {
+          status: 'ready',
+          selectors: ready.selectors,
+          fonts: ready.fonts,
+        },
+        loadedFonts: snapshot.fonts,
+        renderedFonts,
+        fontInspection,
+        limitations: [
+          'Console observations cover this capture call only; earlier navigation and flows need host recording.',
+          'Readiness selectors are host-defined; stable geometry alone does not establish data or chart completeness.',
+          ...(fontInspection === 'unavailable'
+            ? ['Actual platform font inspection unavailable in this browser.']
+            : []),
+        ],
+      },
+    });
+    for (const [index, value] of snapshot.measurements.entries())
+      await session.recordFidelityMeasurement({
+        id: `${id}.measurement.${index + 1}`,
+        captureRef: capture.id,
+        checkRef: value.checkRef,
+        target: value.target,
+        property: value.property,
+        unit: value.unit,
+        value: value.value,
+        provenance: {
+          source: 'playwright-computed-style',
+          selector: value.selector,
+          metric: value.metric,
+        },
+        limitations: [],
+      });
+    return capture;
+  } finally {
+    page.off('console', consoleListener);
+    page.off('pageerror', errorListener);
+  }
 }

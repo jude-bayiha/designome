@@ -270,6 +270,24 @@ async function recordPassingEvidence(
       certainty: 0.85,
       result:
         aspect === 'density' && options.perceptualFailure ? 'failed' : 'passed',
+      comparison: {
+        sourceImagesOpened: true,
+        targetImagesOpened: true,
+        reviewerId: 'synthetic-host-fixture',
+        reviewMode: 'same-context',
+        regions: [
+          {
+            sourceRef: 'source.reference',
+            targetCaptureRef: 'capture.home.mobile',
+            sourceRegion: 'Synthetic source region',
+            targetRegion: 'Synthetic target region',
+            ruleBasis: aspect,
+            observation: 'Synthetic contract observation, not visual evidence.',
+            measurements: [],
+            limitations: ['Synthetic evidence for adapter regression only.'],
+          },
+        ],
+      },
       sourceCaptureRefs: ['source.reference'],
       targetCaptureRefs: ['capture.home.mobile'],
       limitations: ['Only configured captures were evaluated.'],

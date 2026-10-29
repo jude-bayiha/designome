@@ -1,3 +1,7 @@
+import {
+  visualReviewContractVersion,
+  visualReviewComplete,
+} from './visual-review.mjs';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -323,7 +327,11 @@ function tokenExpectation(dna, tokenRef) {
   return null;
 }
 
-export function evaluateAuditEvidence({ dna, evidence }) {
+export function evaluateAuditEvidence({
+  dna,
+  evidence,
+  requireRegionalReview = false,
+}) {
   validateAuditEvidence(evidence);
   const factory = findingFactory();
   const findings = [];
@@ -565,6 +573,7 @@ export function evaluateAuditEvidence({ dna, evidence }) {
   for (const observation of evidence.perceptualObservations) {
     if (
       observation.result === 'failed' &&
+      (!requireRegionalReview || visualReviewComplete(observation)) &&
       !observation.checkRef &&
       ['observed', 'inferred'].includes(observation.epistemicStatus)
     ) {
@@ -682,6 +691,7 @@ function evaluatedLayerStates({
   evidence,
   findings,
   verificationEvaluation = null,
+  requireRegionalReview = false,
 }) {
   const failures = new Set(findings.map((finding) => finding.layer));
   const states = {
@@ -739,7 +749,9 @@ function evaluatedLayerStates({
         ? 'failed'
         : missingAspects.length > 0 ||
             evidence.perceptualObservations.some(
-              (observation) => observation.result === 'incomplete',
+              (observation) =>
+                observation.result === 'incomplete' ||
+                !visualReviewComplete(observation),
             )
           ? 'incomplete'
           : 'passed';
@@ -759,6 +771,21 @@ function evaluatedLayerStates({
       )
         states[layer] = 'incomplete';
     }
+  }
+  if (requireRegionalReview && states.perceptual === 'passed') {
+    const reviewed =
+      evidence.perceptualObservations.filter(visualReviewComplete);
+    if (
+      !reviewed.length ||
+      evidence.coverage.missing.captures.length ||
+      evidence.captures.some(
+        (capture) =>
+          !reviewed.some((observation) =>
+            observation.targetCaptureRefs.includes(capture.id),
+          ),
+      )
+    )
+      states.perceptual = 'incomplete';
   }
   assertLayerStatuses(states);
   return states;
@@ -816,6 +843,7 @@ function buildCanonicalReport({
         evidence,
         findings: findings.findings,
         verificationEvaluation,
+        requireRegionalReview: Boolean(plan.perceptual.reviewContractVersion),
       })
     : initialLayerStates(plan.config, provider);
   const overallStatus = overallLayerStatus(statuses);
@@ -1007,6 +1035,8 @@ export async function planAudit({
           aspects: perceptualAspects,
         })
       : null;
+  if (verification)
+    verification.visualReviewContractVersion = visualReviewContractVersion;
   const createdAt = new Date().toISOString();
   const plan = {
     schemaVersion: '1.0.0',
@@ -1037,6 +1067,9 @@ export async function planAudit({
     ...(focus ? { focus } : {}),
     perceptual: {
       executionOwner: 'host-agent',
+      reviewContractVersion: visualReviewContractVersion,
+      verdictBasis:
+        'host-judgment; evidence completeness is deterministic, visual judgment is not certification',
       deterministic: false,
       aspects: perceptualAspects,
       sourceCaptures: dna.sources.map((source) => ({
@@ -1174,6 +1207,10 @@ export async function runAudit(options) {
     validateAuditEvidence(evidence, { plan: prepared.plan });
     await validateAuditCaptureFiles(evidence, {
       projectRoot: prepared.projectRoot,
+      sourceCaptures:
+        prepared.plan.auditContractVersion === auditContractVersion
+          ? prepared.plan.perceptual.sourceCaptures
+          : null,
     });
     if (prepared.plan.auditContractVersion === auditContractVersion) {
       validateAuditVerificationEvidence({
@@ -1246,7 +1283,11 @@ export async function runAudit(options) {
     providerState = transitionProvider(providerState, 'running');
   }
   const evaluated = evidence
-    ? evaluateAuditEvidence({ dna: prepared.dna, evidence })
+    ? evaluateAuditEvidence({
+        dna: prepared.dna,
+        evidence,
+        requireRegionalReview: true,
+      })
     : { findings: [], calibrationCandidates: [] };
   const verificationEvaluation =
     evidence && prepared.plan.auditContractVersion === auditContractVersion
@@ -1275,16 +1316,39 @@ export async function runAudit(options) {
           .join(', '),
         ruleRef: check.obligationRef,
         evidence: check.reason,
-        epistemicStatus: 'observed',
-        certainty: 1,
+        epistemicStatus:
+          check.layer === 'perceptual'
+            ? (evidence.perceptualObservations.find(
+                (item) => item.checkRef === check.checkRef,
+              )?.epistemicStatus ?? 'inferred')
+            : 'observed',
+        certainty:
+          check.layer === 'perceptual'
+            ? Math.min(
+                ...evidence.perceptualObservations
+                  .filter((item) => item.checkRef === check.checkRef)
+                  .map((item) => item.certainty),
+              )
+            : 1,
         suggestedCorrection:
           'Review the linked evidence and apply the smallest scoped implementation correction.',
         verificationMethod: 'Repeat the same check in the same target context.',
         provenance: {
-          evaluator: 'designome-verification-runtime',
+          evaluator:
+            check.layer === 'perceptual'
+              ? 'host-agent'
+              : 'designome-verification-runtime',
           method: check.method,
         },
-        limitations: [],
+        limitations:
+          check.layer === 'perceptual'
+            ? [
+                'Host visual judgment is not objective certification.',
+                ...evidence.perceptualObservations
+                  .filter((item) => item.checkRef === check.checkRef)
+                  .flatMap((item) => item.limitations),
+              ]
+            : [],
       });
     }
   }

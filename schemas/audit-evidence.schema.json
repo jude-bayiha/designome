@@ -197,6 +197,7 @@
         "viewport": { "$ref": "#/$defs/viewport" },
         "scenario": { "type": "string", "minLength": 1 },
         "direction": { "enum": ["ltr", "rtl"] },
+        "execution": { "type": "object" },
         "screenshotPath": { "type": "string", "minLength": 1 },
         "contentHash": {
           "type": "string",
@@ -330,6 +331,7 @@
         "recordedAt"
       ],
       "properties": {
+        "comparison": { "$ref": "#/$defs/regionComparison" },
         "id": { "type": "string", "minLength": 1 },
         "checkRef": { "type": "string", "minLength": 1 },
         "aspect": { "type": "string", "minLength": 1 },
@@ -358,6 +360,87 @@
         "limitations": { "type": "array", "items": { "type": "string" } },
         "suggestedCorrection": { "type": "string" },
         "recordedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "regionComparison": {
+      "type": "object",
+      "required": [
+        "sourceImagesOpened",
+        "targetImagesOpened",
+        "reviewerId",
+        "reviewMode",
+        "regions"
+      ],
+      "properties": {
+        "sourceImagesOpened": {
+          "type": "boolean"
+        },
+        "targetImagesOpened": {
+          "type": "boolean"
+        },
+        "reviewerId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewMode": {
+          "enum": ["independent-context", "same-context", "human"]
+        },
+        "regions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "sourceRef",
+              "targetCaptureRef",
+              "sourceRegion",
+              "targetRegion",
+              "ruleBasis",
+              "observation",
+              "measurements",
+              "limitations"
+            ],
+            "properties": {
+              "sourceRef": {
+                "type": "string",
+                "minLength": 1
+              },
+              "targetCaptureRef": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sourceRegion": {
+                "type": "string",
+                "minLength": 1
+              },
+              "targetRegion": {
+                "type": "string",
+                "minLength": 1
+              },
+              "ruleBasis": {
+                "type": "string",
+                "minLength": 1
+              },
+              "observation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "measurements": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "limitations": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
       }
     },
     "fidelityMeasurement": {

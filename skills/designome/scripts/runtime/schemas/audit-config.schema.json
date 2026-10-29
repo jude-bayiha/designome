@@ -50,6 +50,28 @@
     }
   ],
   "$defs": {
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selectors", "fonts"],
+      "properties": {
+        "selectors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "fonts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
     "viewport": {
       "type": "object",
       "additionalProperties": false,
@@ -72,6 +94,7 @@
         "directions"
       ],
       "properties": {
+        "readiness": { "$ref": "#/$defs/readiness" },
         "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
         "path": { "type": "string", "pattern": "^/" },
         "viewports": {

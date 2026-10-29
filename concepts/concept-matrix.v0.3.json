@@ -5218,5 +5218,6 @@
       ]
     }
   ],
-  "fidelityContractVersion": "1.0.0"
+  "fidelityContractVersion": "1.0.0",
+  "visualReviewContractVersion": "1.0.0"
 }

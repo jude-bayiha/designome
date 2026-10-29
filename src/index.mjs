@@ -1,4 +1,5 @@
 export {
+  capturePlaywrightPage,
   CaptureSession,
   captureAdapter,
   createCaptureSession,
