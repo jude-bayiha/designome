@@ -19,6 +19,7 @@ skills/designome/
   scripts/runtime/
     bin/designome.mjs
     src/
+    vendor/pngjs/
     concepts/
     schemas/
     prompts/
@@ -36,7 +37,7 @@ The skill resolves `scripts/runtime` relative to its own installed directory. Sh
 
 ## Generation and coherence
 
-`pnpm build:skills` builds the committed `skills/designome/` directory from `skill-sources/designome/` and an explicit list of shared resource directories. It rewrites repository-relative paths in every shipped Markdown file to the bundled runtime, and removes any other directory under `skills/`. Keeping generated artifacts in Git allows the ordinary GitHub `skills add` command to work without a post-install build hook. The build never follows symlinks or includes the repository's dependencies, tests, target projects, or run directories.
+`pnpm build:skills` builds the committed `skills/designome/` directory from `skill-sources/designome/` and an explicit list of shared resource directories. It rewrites repository-relative paths in every shipped Markdown file to the bundled runtime, and removes any other directory under `skills/`. Keeping generated artifacts in Git allows the ordinary GitHub `skills add` command to work without a post-install build hook. The build never follows symlinks or includes `node_modules`, tests, target projects, or run directories. It copies the pinned `pngjs` library and MIT license into `vendor/`, so source measurements run without an npm install or any system image tool. The installed runtime resolves the codec through its own package import map.
 
 `bundle-manifest.json` contains SHA-256 hashes of shipped files and a deterministic aggregate fingerprint. These bind instructions and resources to one snapshot; they are integrity metadata, not a signature or publisher-authentication mechanism. `pnpm check:skills` compares installed-in-repository artifacts against freshly derived expectations, including unexpected files. It also rejects any skill directory that is no longer built. It does not silently regenerate them.
 
@@ -58,4 +59,4 @@ The distribution tests invoke a pinned real `skills add` CLI twice per host, `co
 
 The tests cover helper startup, normalized request validation, screenshot metadata initialization, lossless context construction, DNA validation, two consecutive DNA installations, override preservation, installation verification, doctor, static audit planning, preservation of the standalone skill, and manual-change detection. They also check deterministic generation, missing and unexpected files and skill directories, stale source detection, workflow references, and absence of nested discoverable skills.
 
-The screenshot fixture is a synthetic PNG used only for deterministic metadata testing. These checks do not establish visual extraction quality, perceptual fidelity, real browser coverage, or automatic human acceptance. The pinned installer test uses a local source and does not prove GitHub authentication or network availability.
+The synthetic PNG fixture exercises both metadata and decoded pixel measurements. The installed measurement command runs with filesystem permissions restricted to the test workspace and no child-process permission. These checks do not establish visual extraction quality, perceptual fidelity, real browser coverage, or automatic human acceptance. The pinned installer test uses a local source and does not prove GitHub authentication or network availability.

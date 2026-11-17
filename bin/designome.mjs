@@ -37,6 +37,7 @@ import {
 } from '../src/runtime/install.mjs';
 import { initializeRun } from '../src/runtime/run.mjs';
 import { loadRequestContract } from '../src/runtime/request-contract.mjs';
+import { measureSource } from '../src/runtime/source-measurement.mjs';
 import {
   initializeWorkflow,
   resumeWorkflow,
@@ -184,6 +185,9 @@ function printHelp() {
   );
   process.stdout.write(
     `  init-run --output <dir> --image <file> [--image <file>] [--request <normalized-request.json>] [--motion <mode>] [--project <dir>]\n`,
+  );
+  process.stdout.write(
+    '  measure-source --image <png> [--region <x,y,width,height>] [--min-delta <1-255>] [--annotation <new.png>]\n',
   );
   process.stdout.write(
     `  validate-request --file <normalized-request.json> [--operation <extract|install|audit>]\n`,
@@ -367,6 +371,14 @@ async function main() {
       targetProjectPath: option(parsed, 'project', { fallback: null }),
       requestContractPath: option(parsed, 'request', { fallback: null }),
       contextMode: option(parsed, 'context-mode', { fallback: 'full' }),
+    });
+  } else if (command === 'measure-source') {
+    assertArguments(parsed, ['image', 'region', 'min-delta', 'annotation']);
+    result = await measureSource({
+      imagePath: option(parsed, 'image', { required: true }),
+      region: option(parsed, 'region'),
+      minimumDelta: option(parsed, 'min-delta'),
+      annotationPath: option(parsed, 'annotation'),
     });
   } else if (command === 'validate-request') {
     assertArguments(parsed, ['file', 'operation', 'help']);

@@ -79,6 +79,24 @@ The command validates input paths, deduplicates identical images, reads PNG/JPEG
 
 Repeating the same command returns `unchanged`. Reusing the directory with different inputs fails instead of silently replacing the run.
 
+### Measure screenshot regions
+
+Use the bundled command when a visually identified source region needs a check on geometry or surface color. Run it from the repository or the installed skill's runtime directory. The installed skill includes its PNG codec and runs locally with Node.js 24 or newer. It does not require a separate image tool or dependency installation.
+
+```bash
+node bin/designome.mjs measure-source \
+  --image /absolute/reference.png \
+  --region 120,400,1440,200 \
+  --annotation /private/run/kpi-edges.png \
+  > /private/run/kpi-measurement.json
+```
+
+- `--region` is `x,y,width,height` in the source PNG, with a zero-based origin. Omit it for a first pass over the whole image. Keep measurements inside an admitted product region once any presentation frame is identified.
+- `edges.x` and `edges.y` report axis-aligned candidate transitions in source coordinates. Each position is the first pixel after the transition. A candidate needs support from at least 60% of the sampled scanlines. `--min-delta` controls the minimum difference in any decoded RGB channel (default: `6`). A narrow separator may have candidates on both sides. Tighten the region or inspect the annotation if several candidates are plausible.
+- `colors.mostFrequent` reports decoded RGB samples with counts. Select a small, visually uniform patch to compare two surfaces. Transparent samples do not contribute. Samples are not color-managed across image profiles and do not recover a source CSS value or alpha setting.
+- The JSON identifies the original with its SHA-256 and reports image-pixel units. Use same-capture proportions or contrast relationships in the DNA. Original viewport, CSS scale, fonts, semantics, motion and responsive behavior require separate evidence.
+- The optional annotation is a native-size crop with cyan vertical and orange horizontal markers. It creates a new file in an existing directory. Keep it private together with the source and measurement JSON. The command supports static, non-interlaced PNGs up to 32 MiB, with sides up to 8192 px and at most 16,777,216 total pixels.
+
 ### Matrix brief and authoring expansion
 
 ```bash

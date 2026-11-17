@@ -209,7 +209,7 @@ for (const { agent, skillsDirectory } of hosts) {
       await fs.writeFile(
         image,
         Buffer.from(
-          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=',
+          'iVBORw0KGgoAAAANSUhEUgAAABgAAAAQCAAAAAApT+BJAAAAF0lEQVQY02OUYEAAHiQ2EwMOMCpBSwkAUhwARIk5GrQAAAAASUVORK5CYII=',
           'base64',
         ),
       );
@@ -240,8 +240,24 @@ for (const { agent, skillsDirectory } of hosts) {
       const context = await readJson(
         path.join(runDirectory, 'source-manifest.json'),
       );
-      assert.equal(context.sources[0].dimensions.width, 1);
-      assert.equal(context.sources[0].dimensions.height, 1);
+      assert.deepEqual(context.sources[0].dimensions, {
+        width: 24,
+        height: 16,
+      });
+      const annotation = path.join(runDirectory, 'annotated.png');
+      const measured = JSON.parse(
+        await run(
+          'measure-source',
+          '--image',
+          image,
+          '--annotation',
+          annotation,
+        ),
+      );
+      assert.equal(measured.source.contentHash, context.sources[0].contentHash);
+      assert.equal(measured.edges.x[0].position, 12);
+      assert.equal(measured.annotation, annotation);
+      assert.ok((await fs.stat(annotation)).size > 0);
       const dna = await readJson(
         path.join(runtime, 'examples/design-dna.reference-v0.3.json'),
       );
