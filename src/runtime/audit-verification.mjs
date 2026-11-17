@@ -1,3 +1,4 @@
+import { visualReviewComplete } from './visual-review.mjs';
 import { DesignomeError } from './errors.mjs';
 import {
   auditContextKey,
@@ -1093,7 +1094,14 @@ export function evaluateAuditVerification({
       const linked = [...observationsByCheck.entries()]
         .filter(([key]) => key.startsWith(`${check.id}:`))
         .map(([, observation]) => observation);
-      result = resultFromObservations(linked);
+      const reviewed = verification.visualReviewContractVersion
+        ? linked.map((observation) =>
+            visualReviewComplete(observation)
+              ? observation
+              : { ...observation, result: 'incomplete' },
+          )
+        : linked;
+      result = resultFromObservations(reviewed);
     } else if (check.method === 'measurement') {
       const constraint =
         dna?.fidelity?.constraints?.find(

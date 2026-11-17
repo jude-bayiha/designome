@@ -228,6 +228,8 @@ pnpm designome run --resume --workspace /abs/ws              # after the draft D
 pnpm designome run --resume --workspace /abs/ws --accept-dna # your acceptance
 ```
 
+Use [`discover`](docs/project-discovery.md) to resolve monorepo frontends and existing UI sources. [`capturePlaywrightPage`](docs/browser-evidence.md) executes ready captures through the existing adapter. Draft [`calibration-prepare`](docs/fidelity-benchmark.md) uses the benchmark to expose ambiguous rules before human acceptance. See the [discovery and visual-evidence investigation](docs/discovery-visual-evidence-evaluation.md) for executed checks and remaining limits.
+
 Other commands include `doctor` (a read-only diagnostic), `install`, `audit`, `matrix-brief`, `expand-dna` and `validate-dna`. See [Runtime and CLI](docs/runtime.md).
 
 ## Documentation

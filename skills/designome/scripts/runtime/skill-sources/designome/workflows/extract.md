@@ -52,7 +52,8 @@ Read `../../prompts/_finish-checklist.md` completely before the first axis promp
       --output <run-directory>/design-dna.json --require-fidelity
     ```
 
-11. Report request interpretation, per-source routing, source-to-destination compatibility, detected UI domains, facet and domain coverage, conflicts, unknowns, unperformed validation, and the exact files produced. Leave the Design DNA as `draft` until the user explicitly accepts it. After acceptance, continue with `workflows/install.md` only when the user asks for installation.
+11. Before acceptance, assess whether pending calibrations or ambiguous signature rules need a small rendered probe. Read `../../prompts/18-render-calibration.md` and use `calibration-prepare --dna <draft.json> --output <new-directory> --platform <web|native>`. Give only each packet to its generator context; capture ready states and obtain independent review with the existing benchmark evaluator. Record unexecuted calibration as incomplete and explain the concrete missing prerequisite. Keep the draft and every calibration status unchanged unless separately reviewed and explicitly accepted.
+12. Report request interpretation, per-source routing, source-to-destination compatibility, detected UI domains, facet and domain coverage, conflicts, unknowns, unperformed validation, and the exact files produced. Leave the Design DNA as `draft` until the user explicitly accepts it. After acceptance, continue with `workflows/install.md` only when the user asks for installation.
 
 When invoked from `designome run`, write the draft to the `expectedArtifact` path in the current host handoff, then call `designome run --resume`. The runtime detects and validates the artifact deterministically. It does not perform this workflow's visual reasoning.
 

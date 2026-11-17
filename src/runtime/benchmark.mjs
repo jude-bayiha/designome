@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import os from 'node:os';
 import { assertValidDesignDna } from './design-dna.mjs';
 import { projectDocumentation } from './install.mjs';
 import { evaluateFidelityConstraints } from './fidelity.mjs';
@@ -602,4 +603,67 @@ export async function evaluateBenchmark({
   };
   if (outputPath) await writeJsonIfChanged(outputPath, report);
   return report;
+}
+
+// A small extraction experiment reuses the benchmark's packets, hashing,
+// independent repetitions and evaluator. It never installs or accepts a draft.
+export async function prepareCalibration({
+  dnaPath,
+  outputDirectory,
+  platform = 'web',
+  viewport = { width: 1024, height: 768 },
+}) {
+  check(
+    ['web', 'native'].includes(platform),
+    'Calibration platform must be web or native',
+  );
+  const dna = await readJson(dnaPath);
+  await assertValidDesignDna(dna, { requireFidelity: true });
+  check(
+    dna.status === 'draft',
+    'Extraction calibration requires a draft; accepted DNA remains unchanged',
+  );
+  const recipes = dna.componentPatterns.slice(0, 4).map((item) => item.id);
+  const corpus = {
+    schemaVersion: '1.0.0',
+    id: 'benchmark.extraction-calibration',
+    repetitions: 2,
+    cases: [
+      {
+        id: 'case.calibration-transfer',
+        family: 'representative-components',
+        kind: 'grammar-transfer',
+        sourceRefs: dna.sources.map((source) => source.id),
+        viewport,
+        task: `Produce a small representative ${platform} component board from the dossier only, using different content and values. Exercise these evidenced recipes: ${recipes.join(', ')}. Include one longer-content state; do not reconstruct an entire source screen or add unsupported page families. ${platform === 'native' ? 'Use an authorized native renderer and host capture; React and Playwright are not required.' : 'Use the simplest authorized web renderer and a real browser capture.'} Treat missing numeric choices as proposed hypotheses and record them.`,
+        scope:
+          'Compare transferable hierarchy, density, spacing, surface tiers, elevation, typography and component anatomy by source region. Generated boards are hypotheses, never source evidence.',
+      },
+    ],
+    limitations: [
+      'Two host-isolated generations and an independent review are required; preparation alone is not a calibration result.',
+      'No automatic DNA mutation, acceptance, token export or production-readiness claim.',
+    ],
+  };
+  // prepareBenchmark owns output immutability and source binding.
+  const temporary = await fs.mkdtemp(
+    path.join(os.tmpdir(), 'designome-calibration-'),
+  );
+  try {
+    const corpusPath = path.join(temporary, 'corpus.json');
+    await fs.writeFile(corpusPath, jsonText(corpus));
+    const prepared = await prepareBenchmark({
+      dnaPath,
+      corpusPath,
+      outputDirectory,
+    });
+    return {
+      ...prepared,
+      purpose: 'extraction-calibration',
+      platform,
+      acceptance: 'requires-human-review',
+    };
+  } finally {
+    await fs.rm(temporary, { recursive: true, force: true });
+  }
 }

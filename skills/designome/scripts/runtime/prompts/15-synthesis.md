@@ -53,3 +53,7 @@ Validate new extraction with `expand-dna --file <authoring-draft> --output <draf
 - Name the Design DNA, its qualities, rules and components after the grammar they describe, never after the source product or brand. Express content formats as patterns, not as source values.
 - Do not silently merge typography roles, color roles, components, states, statistics, or charts with different semantics.
 - Synthesis does not install, accept, generate, browse, or audit.
+
+## Draft render calibration
+
+After structural validation, assess pending bounds and ambiguous signature relationships using `18-render-calibration.md`. Its isolated benchmark is a diagnostic of applicability, not acceptance. A generated target is never new source evidence. Report skipped or unavailable rendering honestly and present limits before human acceptance.

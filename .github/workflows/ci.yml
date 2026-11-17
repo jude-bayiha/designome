@@ -39,6 +39,9 @@ jobs:
           HUSKY: 0
         run: pnpm install --frozen-lockfile
 
+      - name: Install browser for adapter regressions
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: Run repository checks
         run: pnpm check
 

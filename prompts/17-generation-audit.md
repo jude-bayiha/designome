@@ -48,3 +48,11 @@ Produce `audit/plan.json`, adapter-generated evidence, canonical report JSON and
 - A missing or ambiguous obligation binding is `unresolved` and keeps the affected layer `incomplete`; a justified exclusion is visible and is never a pass.
 - Measurements are scoped by capture context. Ratios use numerator and denominator values from the same capture; missing or incompatible values are `incomplete`.
 - A legacy evidence file cannot be promoted to Audit Contract 2.0; recapture through the current adapter after regenerating the plan.
+
+## Regional evidence completeness
+
+New plans require the regional `comparison` record documented in `../docs/audit-contract.md`: opened original/target images, reviewer identity and review mode, source and target regions, rule basis, measured evidence where available, perceptual observation and limitations. Missing regional evidence stays incomplete even when all technical checks pass. Use `capturePlaywrightPage` with defined font/data/chart readiness when the authorized provider is a project Playwright page. Capture around changed breakpoint thresholds; record actual user requests separately from model-selected exact values. A request to reduce a sidebar does not establish approval of a specific width. Preserve approved font substitutions and evaluate their dependent typography and density relations.
+
+Bind capture evidence to the plan's resolved target identity. A different frontend
+or installation/workspace root requires a new plan and capture, even when the
+base URL is unchanged. Never relabel previous captures for the new target.

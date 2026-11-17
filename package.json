@@ -25,7 +25,8 @@
     "validate": "node scripts/validate-repository.mjs",
     "check": "pnpm check:skills && pnpm format:check && pnpm lint && pnpm test",
     "build:skills": "node scripts/build-skills.mjs",
-    "check:skills": "node scripts/build-skills.mjs --check"
+    "check:skills": "node scripts/build-skills.mjs --check",
+    "test:browser": "node --test tests/browser/*.test.mjs"
   },
   "lint-staged": {
     "*.{cjs,css,js,json,jsonc,md,mjs,yaml,yml}": [
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.2.0",
+    "@playwright/test": "1.64.1",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "husky": "^9.1.7",

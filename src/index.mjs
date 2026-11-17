@@ -1,4 +1,5 @@
 export {
+  capturePlaywrightPage,
   CaptureSession,
   captureAdapter,
   createCaptureSession,
@@ -41,8 +42,15 @@ export {
 } from './runtime/audit-verification.mjs';
 export { projectDocumentation } from './runtime/install.mjs';
 export {
+  prepareCalibration,
   prepareBenchmark,
   evaluateBenchmark,
   benchmarkAspects,
   hashBenchmarkDirectory,
 } from './runtime/benchmark.mjs';
+
+export {
+  discoverProject,
+  inspectPlaywright,
+  launchProjectPlaywright,
+} from './runtime/project-context.mjs';
