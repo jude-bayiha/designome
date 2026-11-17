@@ -226,13 +226,13 @@ function renderGuidanceBlock({
     : 'none declared';
   const stylingInstruction =
     styling.strategy === 'shadcn-components'
-      ? 'Prefer installed shadcn/ui components, semantic theme tokens, configured aliases, and the declared icon library. Do not reinitialize or overwrite components without explicit approval.'
+      ? 'Reuse installed shadcn/ui components, semantic theme tokens, and configured aliases. Search the official registry for missing primitives before creating custom components.'
       : styling.system === 'tailwind'
         ? "Prefer the project's existing Tailwind utilities and theme conventions before adding new component CSS."
         : "Prefer the project's existing styling primitives before adding a parallel component system.";
   const uiKitInstruction =
     styling.uiKit?.status === 'proposed'
-      ? ' A shadcn/ui greenfield preference is recorded as proposed; do not initialize or install it without separate explicit authorization.'
+      ? ' Use shadcn/ui as the component baseline once setup is authorized. The Design DNA installer does not initialize it.'
       : '';
   return [
     guidanceStartMarker,
@@ -241,6 +241,7 @@ function renderGuidanceBlock({
     `Before generating UI, read \`${documentationDirectory}/README.md\`, the design brief, completely: it carries every measure, relationship and recipe. Open its linked topic files or \`.designome/design-dna.json\` only for the confidence, routing or validation behind an entry.`,
     `Repository rule precedence is \`${integrationPolicy.rulePrecedence}\`; declared existing UI rules: ${existingRules}.`,
     `The detected styling adapter is \`${styling.strategy}\`. ${stylingInstruction}${uiKitInstruction}`,
+    `Before implementing functional icons, follow the library selection and render checks in \`${documentationDirectory}/components/component-mapping.md\`.`,
     'Preserve claim status, cover applicable business states and stress cases, and audit before delivery with the project-local `designome-audit` skill (`$designome-audit` in Codex, `/designome-audit` in Claude Code) or, when it is installed instead, the audit operation of the `designome` skill. New audit plans use Audit Contract 2.0: bind established obligations to exact contexts, record real capture hashes and measurements, and leave unresolved or perceptual unknowns incomplete.',
     ...(styling.projectContext
       ? [
@@ -305,6 +306,12 @@ function renderIntegrationDocument({
           ...styling.projectContext.instructions.map(
             (file) => `- Read applicable instructions: \`${file}\``,
           ),
+          ...styling.projectContext.libraries
+            .filter((library) => library.imports.length)
+            .map(
+              (library) =>
+                `- Imported dependency: \`${library.name}\` (${library.imports.length} source imports).`,
+            ),
           'Default library appearance must be adapted to the DNA. Never reset, reinitialize or replace existing components silently.',
           '',
         ]
@@ -346,10 +353,19 @@ function renderIntegrationDocument({
 function renderComponentMappingDocument(dna, styling) {
   const installed = styling.shadcn?.installedComponents ?? [];
   const patterns = dna.componentPatterns ?? [];
+  const iconGuidance = [
+    '## Functional icons',
+    '',
+    'Read [Iconography and assets](../foundations/iconography-and-assets.md) for the accepted visual rules. Compare outline and fill by role, stroke against adjacent text, caps and corners, glyph size, state variants, and the set of functional glyphs needed for the target UI.',
+    'Check the configured shadcn/ui icon library and actual project imports first. If the existing set is missing or a poor fit, look up representative icons in official catalogs such as [Lucide](https://lucide.dev/icons/), [Phosphor](https://phosphoricons.com/), or [Tabler](https://tabler.io/icons). Check the package and named exports for the target framework, required glyph coverage, and license.',
+    'Record the selected library, package and representative glyphs with the reason for the choice as a proposed implementation decision. A visual match does not identify the library used in the reference screenshot.',
+    'Reuse the best compatible set, or install only the selected package through the target workspace package manager when authorized. Keep one coherent family per surface and use named imports. Keep library-generated controls consistent with that family and check stroke, legibility, optical alignment, and active states at the actual rendered sizes.',
+    '',
+  ];
   if (styling.strategy !== 'shadcn-components') {
     const proposal =
       styling.uiKit?.status === 'proposed'
-        ? 'A greenfield shadcn/ui setup was requested. Initialization remains a proposed technical action and requires separate explicit authorization before Designome can map components.'
+        ? 'Use shadcn/ui as the component baseline once setup is authorized. Check the official registry for the smallest set of accessible primitives that implements the target states. Map the accepted Design DNA to the semantic theme and component variants before relying on the kit’s appearance.'
         : "No shadcn/ui adapter is active. Use the project's current component and styling primitives.";
     return [
       '# Component mapping',
@@ -359,6 +375,7 @@ function renderComponentMappingDocument(dna, styling) {
       '',
       proposal,
       '',
+      ...iconGuidance,
     ].join('\n');
   }
   const candidateNames = [
@@ -398,6 +415,7 @@ function renderComponentMappingDocument(dna, styling) {
     '',
     'Respect configured aliases, React Server Components mode, primitive base, icon library, semantic variables, and local source customizations. Never initialize, add, or overwrite a component without separate authorization.',
     '',
+    ...iconGuidance,
   ].join('\n');
 }
 
@@ -1376,6 +1394,17 @@ async function detectStylingContext(
   const installedComponents = new Set(
     projectContext.components.map((component) => component.name),
   );
+  const usesOtherComponentKit = projectContext.libraries.some(
+    ({ name, imports }) =>
+      imports.length > 0 &&
+      /^(?:@mui\/|@chakra-ui\/|@mantine\/|@heroui\/|antd$)/u.test(name),
+  );
+  const preferShadcnForReact =
+    uiKitPreference === 'auto' &&
+    requestedStrategy === 'auto' &&
+    projectContext.frontend.platform === 'web' &&
+    (dependencies.next || (dependencies.react && dependencies['react-dom'])) &&
+    !usesOtherComponentKit;
   return {
     projectContext,
     system: detectedSystem,
@@ -1387,7 +1416,7 @@ async function detectStylingContext(
           preference: uiKitPreference,
           status: strategy === 'shadcn-components' ? 'reuse' : 'disabled',
         }
-      : uiKitPreference === 'shadcn'
+      : uiKitPreference === 'shadcn' || preferShadcnForReact
         ? {
             preference: uiKitPreference,
             status: 'proposed',

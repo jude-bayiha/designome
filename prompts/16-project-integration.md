@@ -17,6 +17,10 @@ Run `designome doctor` as a read-only diagnostic. Inspect only technical integra
 
 Map accepted semantic colors, type roles, density, radius and component anatomy through the available library's theme and component APIs. Document unresolved default treatments rather than silently substituting the library's palette or geometry. Check the actual rendered font and preserve content semantics and visible collection density in a scoped reconstruction. A component-library mapping remains a technical proposal until its rendered output is reviewed against the source-derived guidance.
 
+Use shadcn/ui as the default for compatible React web targets without an established kit. Reuse configured components first. Consult the official registry for missing primitives and compose them around the target states. Respect existing project rules and explicit stack choices. When UI implementation and dependency changes are authorized, use the target workspace's package runner and scope setup to the needed components.
+
+Choose icon libraries during implementation. Compare official catalog glyphs against the accepted iconography rules, project imports and required variants at rendered size. Record the choice and representative glyphs in implementation context, with `proposed` status. A resemblance alone cannot establish the source library.
+
 Prepare a transactional installation: diagnose, stage, validate, dry-run, apply atomically, verify checksums, commit the manifest, and clean staging. Preserve user-owned overrides and reject manual changes to managed files rather than overwriting them.
 
 Compile all 51 `documentationProjection` entries plus the generated dossier index, producing 52 managed documentation files grouped under `foundations/`, `components/`, `patterns/`, `behavior/`, and `governance/`. Every projected document is mandatory even when its only honest content is an unknown boundary or proposed stress test.
