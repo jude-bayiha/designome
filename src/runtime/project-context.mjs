@@ -708,7 +708,9 @@ export async function discoverProject({
   for (const name of [
     ...new Set([...reachable].flatMap((p) => Object.keys(deps(p.pkg)))),
   ].filter((n) =>
-    /shadcn|radix|base-ui|@mui|chakra|antd|tailwind|lucide/u.test(n),
+    /shadcn|radix|base-ui|@mui|chakra|antd|tailwind|lucide|^@(?:mantine|heroui|phosphor-icons|tabler|heroicons|remixicon|hugeicons|iconify)\/|^(?:react-icons|remixicon|iconoir-react)$/u.test(
+      n,
+    ),
   ))
     result.libraries.push({
       name,

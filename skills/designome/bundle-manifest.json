@@ -1,7 +1,7 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome",
-  "contentFingerprint": "sha256:d4a0c4e28a894d8448d28c35bd395b1c56029aa2f722fd303698c588bb2dd25e",
+  "contentFingerprint": "sha256:9d0fecb094f932c1786770bd4ecda6f1d6b75c37a6fd2b11b978499dbdadddc1",
   "files": {
     "agents/openai.yaml": "aeee0b3a3921828612f09507247c69041d02809a0ba0adb07fce4e3cb695d907",
     "contract.json": "65b2ba2b7324149f40628e6bcb3f8c56e7ef9c750f6632234c367d12999b2690",
@@ -19,7 +19,7 @@
     "scripts/runtime/docs/fidelity-benchmark.md": "5a678666a6a281d1c93cbc6d1bd048af80457796a0363a876dd738144503cb6c",
     "scripts/runtime/docs/fidelity-contract.md": "2c64fffa6eb99edf8f53369c8d9851fa4fbe472058ee6a524e1a966af4877c54",
     "scripts/runtime/docs/fidelity-evaluation.md": "985bbf2332524253004569902ad9bd771f05df90121bfdbfcd05a86c3ba64a78",
-    "scripts/runtime/docs/installation-contract.md": "972c3ddb0603118cdc8167f32faaf598d3423479c6c7d9668c9d08c78ccfef3b",
+    "scripts/runtime/docs/installation-contract.md": "6fd3d7e7d3f65a114570017d4c9a2552e8e605c05e070420312925a8642c6eb5",
     "scripts/runtime/docs/integration-and-calibration-matrix.md": "554c9ff428315d23f724152b0c2361345ef4d14a4934428039ff26393e3bebe3",
     "scripts/runtime/docs/lossless-context.md": "08ca2e8ab6adfe0fcf5c799f8b1a341c64c3579425ba2b950de5627c93506462",
     "scripts/runtime/docs/next-shadcn-evaluation.md": "99f20e87b1cc092de6c73a99f53a5588d3ddb5e29a540bee833eb7a7313a5993",
@@ -67,7 +67,7 @@
     "scripts/runtime/prompts/13-performance-resilience.md": "12378477c6cede0de016ce8b204d846c69173379e0cba4900078cf98045d3899",
     "scripts/runtime/prompts/14-system-governance.md": "66a6a0a462441a505ca48f06c2bdd9ed9bf7a1e0cf8b7dad24bc53ad21fb9824",
     "scripts/runtime/prompts/15-synthesis.md": "324840979298f5a5514aaa3e3632041988c86aa1d29c4873b4057b8589f59993",
-    "scripts/runtime/prompts/16-project-integration.md": "7ad6cf262211bbc05b383c4f222c116a58d45b9beee258ab1d88da45d37dc716",
+    "scripts/runtime/prompts/16-project-integration.md": "e9abb944b9658803577ff41901fee1e9e0739ded7fe227b4d96d08f601596c34",
     "scripts/runtime/prompts/17-generation-audit.md": "25bb6fca233c5149a7d771cf7d6b1e3a3e3fb27a890b177ad1f3b1c6cc5afb28",
     "scripts/runtime/prompts/18-render-calibration.md": "7e3e66fc29bf9f5e84306eba3215891cbc866b03fe71d659c6cdd1918bba3f5a",
     "scripts/runtime/schemas/audit-config.schema.json": "7f2807ab2dee7bc681d2fb1eaac06635f7804db66110128ede36ce03ab2f2659",
@@ -88,7 +88,7 @@
     "scripts/runtime/skill-sources/designome/instructions.md": "4bea256e0e2dbd0274cd58a8d983794fb79477c5f4be6cb639d45cae690d989d",
     "scripts/runtime/skill-sources/designome/workflows/audit.md": "f831946e1915a87344bf5e036f955e08e539e7c37f6e834b795bdabd49a12fb7",
     "scripts/runtime/skill-sources/designome/workflows/extract.md": "4e9d2f23d2fd788f5f8ecd6f3c6d61262322cc46c6682d76cde3f594aed76391",
-    "scripts/runtime/skill-sources/designome/workflows/install.md": "31de1a14bf52b2a6045667f844fbd8246a89bd97d0c2e0b1f4e3511519a6d8ad",
+    "scripts/runtime/skill-sources/designome/workflows/install.md": "1a1180bd6fc96089dfaa54ea4f61a573cbe276e44e7f5644faa49f4d75042e0f",
     "scripts/runtime/skill-sources/project-audit/agents/openai.yaml": "e04d01b5fbdf80c26cefad0afeadff9d75a27a0f8bd6b6ebd9ba8a4a0696c36d",
     "scripts/runtime/skill-sources/project-audit/contract.json": "f5b552cb49ae9dd994439f803baa8f194b805ab1f203db40364828b98e5301b1",
     "scripts/runtime/skill-sources/project-audit/frontmatter.md": "69ca73af04757ff88bea149f31292105ad5938c64cc15545fbc576faa659929a",
@@ -110,12 +110,12 @@
     "scripts/runtime/src/runtime/fidelity.mjs": "9938e8cc8ceaf77aa2d3d91d74c615d6d12a71b8fbd2f0f20841d7825c0f371f",
     "scripts/runtime/src/runtime/files.mjs": "c6fbbc480e3c7cf24ea4c24a8c660e0e46915e78e174d0e8c4460ae7e1f38d66",
     "scripts/runtime/src/runtime/images.mjs": "c1887598f1f10d86926097d5402889bb66abaa980d975afae4f3c5c4bf9e80f1",
-    "scripts/runtime/src/runtime/install.mjs": "163b6d34dc00a3f851567778500b342c15f09ef5cb261c04518d000caf680f7c",
+    "scripts/runtime/src/runtime/install.mjs": "68e677837f52fee1e2056cd55254f831a268ebd174f9e19c11caac508b5a977c",
     "scripts/runtime/src/runtime/markers.mjs": "a149b86974d30b633e6f2ffbf212420491803c40c119ecfdf3ba08b2e099c28e",
     "scripts/runtime/src/runtime/matrix-brief.mjs": "fc9315348173ab744b08be1065075469b60bca9f5438c0b337d6cb79ce61d0f2",
     "scripts/runtime/src/runtime/migrations.mjs": "37f0b2fc66ca41e5b62a865e181c24c3ad49773da1e78a0865775e04e5efc13b",
     "scripts/runtime/src/runtime/orchestrator.mjs": "b5ed4056decaf35870d3447076a2c2f0d54501c6a749c3f614a62307677777b9",
-    "scripts/runtime/src/runtime/project-context.mjs": "119667755d9f27cb763509e611f73b1517349364e023f0646a0f95294e4b4885",
+    "scripts/runtime/src/runtime/project-context.mjs": "b5b5b2fdcd4303c9805e4c20db35f20e8ac36ca323481d469ade85478c0da79d",
     "scripts/runtime/src/runtime/request-contract.mjs": "6f194771366d3b69bf71f3b7f83dad04c00ce1fb5cc7bfd1c87b294800d3e210",
     "scripts/runtime/src/runtime/run.mjs": "24fffb357e752b237bf0aab5d6c17a90efe54fa5f64bee93bc1a9a2d68a14268",
     "scripts/runtime/src/runtime/source-measurement.mjs": "b59b7cc7f42e755799fce8bd22e03102737e4401d86bfca6d6a5a9b3796e80b8",
@@ -147,6 +147,6 @@
     "SKILL.md": "d70642e2341f1db463251389b5b3ea8b572ef57cc9eecb82546d4639fad95d48",
     "workflows/audit.md": "60ca4ab7895ba30c799b160f1ccf1871838cd99ac2f670d9ec51ea6578ddfc92",
     "workflows/extract.md": "9958b57bfd8cb3cfbd936316deb1ea17817f3c6a997ec726e3f3b0c69390dc20",
-    "workflows/install.md": "abf2e18abc6ca9bd068c2c8684d1ebcd3292213642ebb4228e4b1e9b0fbc4912"
+    "workflows/install.md": "695db31309b966032ac290e238f463c3018c191b7b7f3c7421592763ba815daa"
   }
 }

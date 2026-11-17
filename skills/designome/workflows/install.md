@@ -72,7 +72,8 @@ Read completely before installation:
 - Do not copy existing design documentation into the Design DNA. Record it as implementation context and apply the resolved precedence policy.
 - When Tailwind is detected, prefer utilities and theme conventions; generated CSS remains a semantic token bridge, not a parallel component system.
 - When `components.json` is detected, resolve shadcn/ui project context and prefer installed components, semantic variables, configured aliases, primitive base, and icon library. Never initialize or overwrite components without explicit authorization.
-- Use `--ui-kit shadcn` only to record an explicit greenfield preference. Without `components.json`, it remains a proposed initialization step and never runs `shadcn init` automatically.
+- For compatible React web projects without an established component kit, `--ui-kit auto` proposes shadcn/ui as the implementation baseline. Use `--ui-kit none` to opt out and `--ui-kit shadcn` to express an explicit preference. The Design DNA installer records setup as a proposal. During authorized UI implementation, use the target workspace's package runner and the official shadcn registry to add the needed primitives, then theme them with the accepted DNA.
+- Use the accepted iconography rules and the generated `components/component-mapping.md` when selecting icons. Compare real catalog glyphs with the recorded visual traits and check the rendered size before settling on a family.
 - Do not add a dependency merely because the target project already uses it.
 - Stop when repository instructions prohibit or materially alter the planned writes.
 - `doctor` and `--dry-run` are strictly read-only. A missing `package.json` must fail before `.designome`, documentation, CSS, guidance, or manifest files are created.

@@ -119,9 +119,11 @@ The installer creates `.designome/audit.config.json` once as a project-owned sta
 
 The `auto` styling strategy detects supported technical markers. A `components.json` file selects the `shadcn-components` adapter, Tailwind dependencies or directives select `tailwind-utilities`, and other projects receive `css-variables`. An explicit strategy may be passed when repository instructions require it.
 
-`--ui-kit auto` reuses detected shadcn/ui source components, `--ui-kit none` disables that adapter preference, and `--ui-kit shadcn` records a proposed greenfield setup when no `components.json` exists. None of these options initializes shadcn/ui or installs dependencies. Generated `components/component-mapping.md` remains proposed technical guidance and inventories only source components already present in the project.
+`--ui-kit auto` reuses detected shadcn/ui source components. With automatic styling, it also proposes shadcn/ui setup for a React web target when no existing kit is detected. An explicit styling strategy takes precedence over the automatic proposal. `--ui-kit none` disables the automatic shadcn/ui preference, and `--ui-kit shadcn` records an explicit setup preference when no `components.json` exists. The installer records proposals and leaves dependency changes to authorized UI implementation.
 
 The generated CSS is a semantic token bridge. In Tailwind projects, generation guidance requires existing utilities and theme conventions before new component CSS. In shadcn/ui projects, guidance also preserves installed source components, semantic variables, aliases, primitive base, and icon library. Detection changes the implementation adapter only and never turns target CSS or components into visual evidence.
+
+Generated `components/component-mapping.md` carries proposed technical guidance, including how to select a compatible icon family from official catalogs using the accepted Iconography document. Reuse an existing family if it fits. A new choice requires checking exports, coverage and license, then validating representative glyphs in the rendered UI.
 
 ## Portable CSS rules
 

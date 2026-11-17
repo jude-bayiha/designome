@@ -1201,7 +1201,7 @@ test('installation planning detects shadcn project context without mutating it',
   assert.match(componentMapping, /technical implementation guidance/u);
 });
 
-test('greenfield shadcn preference remains an explicit proposal', async (t) => {
+test('shadcn setup defaults to compatible web targets and stays read-only', async (t) => {
   const temporaryRoot = await temporaryDirectory(t, 'designome-uikit-test-');
   const projectRoot = path.join(temporaryRoot, 'target-project');
   await fs.mkdir(path.join(projectRoot, 'src', 'styles'), { recursive: true });
@@ -1218,14 +1218,53 @@ test('greenfield shadcn preference remains an explicit proposal', async (t) => {
   const dnaPath = path.join(temporaryRoot, 'accepted-design-dna.json');
   await fs.writeFile(dnaPath, `${JSON.stringify(dna, null, 2)}\n`);
 
-  const plan = await planInstallation({
+  const options = {
     dnaPath,
     projectPath: projectRoot,
     cssEntry: 'src/styles/globals.css',
+  };
+  const plain = await planInstallation(options);
+  assert.equal(plain.publicPlan.adapter.styling.uiKit.status, 'not-detected');
+
+  const plan = await planInstallation({
+    ...options,
     uiKitPreference: 'shadcn',
   });
   assert.equal(plan.publicPlan.adapter.styling.strategy, 'css-variables');
   assert.equal(plan.publicPlan.adapter.styling.uiKit.status, 'proposed');
+
+  const packagePath = path.join(projectRoot, 'package.json');
+  await fs.writeFile(
+    packagePath,
+    '{"name":"target-project","private":true,"dependencies":{"next":"^16.0.0","@mui/material":"^7.0.0"}}\n',
+  );
+  const next = await planInstallation(options);
+  assert.equal(next.publicPlan.adapter.styling.uiKit.status, 'proposed');
+
+  const optOut = await planInstallation({
+    ...options,
+    uiKitPreference: 'none',
+  });
+  assert.equal(optOut.publicPlan.adapter.styling.uiKit.status, 'not-detected');
+  const explicitCss = await planInstallation({
+    ...options,
+    stylingStrategy: 'css-variables',
+  });
+  assert.equal(
+    explicitCss.publicPlan.adapter.styling.uiKit.status,
+    'not-detected',
+  );
+
+  await fs.mkdir(path.join(projectRoot, 'src', 'app'));
+  await fs.writeFile(
+    path.join(projectRoot, 'src', 'app', 'page.tsx'),
+    "import Button from '@mui/material/Button';\nexport default Button;\n",
+  );
+  const establishedKit = await planInstallation(options);
+  assert.equal(
+    establishedKit.publicPlan.adapter.styling.uiKit.status,
+    'not-detected',
+  );
   assert.equal(
     await fs.stat(path.join(projectRoot, 'components.json')).catch(() => null),
     null,
