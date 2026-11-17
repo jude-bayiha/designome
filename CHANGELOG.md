@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.3.0](https://github.com/jude-bayiha/designome/compare/v2.2.0...v2.3.0) (2026-11-17)
+
+
+### Features
+
+* **installer:** prefer shadcn and guide icon selection ([5b6fd42](https://github.com/jude-bayiha/designome/commit/5b6fd42eacd4c2e57f76a572f339a6afdde6b32e))
+* **installer:** prefer shadcn and guide icon selection ([d9dc70b](https://github.com/jude-bayiha/designome/commit/d9dc70b15173e4068f3d8ba8cf11016acfd327ba))
+* **prompts:** calibrate draft grammar through isolated render benchmarks ([8ecfd7c](https://github.com/jude-bayiha/designome/commit/8ecfd7ce2cad5fa98a873366c33d65e68f85488c))
+* **repo:** add standalone screenshot measurement ([a5df495](https://github.com/jude-bayiha/designome/commit/a5df49503de0e8b66d30934101657dadba2ad3a9))
+* **repo:** add standalone screenshot measurement ([93223b9](https://github.com/jude-bayiha/designome/commit/93223b9d5813cd9d3e1b928d4b9cb724a624b1a1))
+
+
+### Bug Fixes
+
+* **audit:** bind captured evidence to the resolved frontend ([f8adfca](https://github.com/jude-bayiha/designome/commit/f8adfca8001bc6c41eff4ef36e071b1bea5f6783))
+* **audit:** capture ready browser evidence and require regional reviews ([ca24595](https://github.com/jude-bayiha/designome/commit/ca24595c3e7d458fa5f94a2b994b959ef6675b0f))
+* **audit:** sample pixels and geometry in the same capture state ([4b987b1](https://github.com/jude-bayiha/designome/commit/4b987b11be10396c07d05f1fe39144f3944e5a59))
+* discover workspace UI context and verify rendered grammar evidence ([744928d](https://github.com/jude-bayiha/designome/commit/744928dbd9e0237d0175d3c7d883c8b6a2bd4118))
+* **installer:** resolve shared UI imports in the frontend context ([8557da9](https://github.com/jude-bayiha/designome/commit/8557da90bc0f9b64e7f0cbe0415672dbfb33e2f3))
+* **installer:** resolve workspace frontends and reusable UI sources ([41f4766](https://github.com/jude-bayiha/designome/commit/41f4766f017d4bf89ef81ecb1cffdae1f0822954))
+
 ## [2.2.0](https://github.com/jude-bayiha/designome/compare/v2.1.0...v2.2.0) (2026-10-13)
 
 
