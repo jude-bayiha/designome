@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 export const repositoryRoot = path.resolve(
@@ -10,7 +11,9 @@ export const repositoryRoot = path.resolve(
 // One published skill; its SKILL.md routes extract, install and audit.
 export const skillNames = ['designome'];
 const runtimePrefix = 'scripts/runtime';
-// Explicit allowlist: never ship tests, dependencies, private runs or targets.
+const pngVendor = 'vendor/pngjs';
+const require = createRequire(import.meta.url);
+// Explicit allowlist: exclude tests, node_modules, private runs and targets.
 const runtimeDirectories = [
   'bin',
   'src',
@@ -62,6 +65,27 @@ export async function expectedSkills(root = repositoryRoot) {
     for (const [name, bytes] of await readTree(path.join(root, directory)))
       runtime.set(`${runtimePrefix}/${directory}/${name}`, bytes);
   const pkg = JSON.parse(await fs.readFile(path.join(root, 'package.json')));
+  const pngPackagePath = require.resolve('pngjs/package.json');
+  const pngPackage = JSON.parse(await fs.readFile(pngPackagePath));
+  if (pngPackage.version !== pkg.devDependencies.pngjs)
+    throw new Error('Install the pinned pngjs version before building skills');
+  const pngRoot = path.dirname(pngPackagePath);
+  const vendorPrefix = `${runtimePrefix}/${pngVendor}`;
+  for (const [name, bytes] of await readTree(path.join(pngRoot, 'lib'), 'lib'))
+    runtime.set(`${vendorPrefix}/${name}`, bytes);
+  runtime.set(
+    `${vendorPrefix}/LICENSE`,
+    await fs.readFile(path.join(pngRoot, 'LICENSE')),
+  );
+  runtime.set(
+    `${vendorPrefix}/package.json`,
+    json({
+      name: pngPackage.name,
+      version: pngPackage.version,
+      type: 'commonjs',
+      license: pngPackage.license,
+    }),
+  );
   runtime.set(
     `${runtimePrefix}/package.json`,
     json({
@@ -70,6 +94,7 @@ export async function expectedSkills(root = repositoryRoot) {
       private: true,
       type: 'module',
       engines: pkg.engines,
+      imports: { '#png-codec': `./${pngVendor}/lib/png-sync.js` },
     }),
   );
   const distributions = new Map();

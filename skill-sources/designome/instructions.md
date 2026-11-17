@@ -5,7 +5,7 @@ description: Turn UI screenshots into evidence-backed Design DNA, install accept
 
 # Designome
 
-Designome extracts a visual grammar from screenshots, not a copy. One skill covers the whole workflow: **extract** a draft Design DNA from screenshots, let the human accept it, **install** the accepted DNA into a target project, then **audit** generated UI against it. The host model does the visual reasoning; the bundled Node helper only performs deterministic metadata, validation, installation and audit operations.
+Designome extracts a visual grammar from screenshots, not a copy. One skill covers the whole workflow: **extract** a draft Design DNA from screenshots, let the human accept it, **install** the accepted DNA into a target project, then **audit** generated UI against it. The host model does the visual reasoning; the bundled Node helper supports source measurements, validation, installation and audit operations.
 
 Requires Node.js 24 or newer for deterministic commands.
 

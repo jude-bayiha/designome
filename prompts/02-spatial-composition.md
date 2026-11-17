@@ -36,7 +36,7 @@ Return the shared stage JSON for `prompt.spatial-composition` with:
 
 ## Guardrails
 
-- Do not measure exact pixels from scaled or cropped screenshots.
+- Raw capture-pixel measurements can support ratios within the same uniformly scaled view. Keep exact CSS dimensions and the original scale unknown unless independently established.
 - Do not interpret empty content as intentional whitespace without supporting repetition.
 - Do not claim sticky, fixed, scroll, overflow, or responsive behavior from one frame.
 - Do not force unrelated regions onto one grid or spacing scale.

@@ -11,6 +11,9 @@
     ".": "./src/index.mjs",
     "./audit": "./src/runtime/capture-session.mjs"
   },
+  "imports": {
+    "#png-codec": "pngjs/lib/png-sync.js"
+  },
   "packageManager": "pnpm@11.5.2",
   "engines": {
     "node": ">=24"
@@ -42,6 +45,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^17.2.0",
     "markdownlint-cli2": "^0.23.2",
+    "pngjs": "7.0.0",
     "prettier": "^3.9.6",
     "skills": "1.5.26",
     "yaml": "^2.9.0"

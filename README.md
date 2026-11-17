@@ -197,7 +197,7 @@ Ask your agent for new screens as usual; the installed guidance makes it read th
 ## What Designome is not
 
 - **Not screenshot-to-code.** It does not reproduce the source screen, its logo, icons, copy or data.
-- **Not a computer-vision pipeline.** There is no OCR, model training or pixel sampling; your agent's model does the visual reasoning.
+- **Host-owned visual reasoning.** An optional [measurement command](docs/runtime.md#measure-screenshot-regions) checks candidate edges and surface colors in supplied PNGs. Your agent interprets those observations and derives the design grammar.
 - **Not a page generator.** It does not invent page families, roles or flows the screenshots do not show.
 - **Not a browser.** The audit plans captures and evaluates evidence; your agent's browser or your project's Playwright records it.
 

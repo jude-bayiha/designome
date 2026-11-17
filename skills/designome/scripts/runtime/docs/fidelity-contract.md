@@ -32,7 +32,7 @@ Legacy DNA remains readable and installable under its existing acceptance rules.
 
 Each constraint has separate `acceptance.status` (`pending`, `accepted`, `rejected`) and `acceptance.basis`. Acceptance never changes epistemic status. A pending calibration is diagnostic; accepted constraints participate in benchmark requirements; rejected ones remain recorded but excluded. Constraints do not automatically rewrite CSS tokens. A reviewed implementation value must still be represented through the existing token value/export contract.
 
-`evaluateFidelityConstraints` evaluates host-supplied role/property measurements, compatible units, ranges, ratios and tolerance. Missing measurements, incompatible units and relationships needing perceptual review remain incomplete. The runtime does no OCR, pixel inference or font identification. Readiness always reports `visualFidelity: not-established`; it is eligibility for a benchmark, not a visual pass.
+`evaluateFidelityConstraints` evaluates host-supplied role/property measurements, compatible units, ranges, ratios and tolerance. Missing measurements, incompatible units and relationships needing perceptual review remain incomplete. The optional [source measurement command](runtime.md#measure-screenshot-regions) supplies candidate pixel observations for host review. It does not infer CSS values or promote calibration candidates. Readiness always reports `visualFidelity: not-established`; it is eligibility for a benchmark, not a visual pass.
 
 ## Audit Contract 2.0 boundary
 

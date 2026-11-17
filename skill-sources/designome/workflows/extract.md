@@ -1,6 +1,6 @@
 # Extract Design DNA
 
-Treat supplied screenshots as the only source of visual truth. Use the host model for visual reasoning and the bundled Node helper only for deterministic metadata and validation.
+Treat supplied screenshots as the only source of visual truth. Use the host model for visual reasoning and the bundled Node helper for deterministic operations.
 
 ## Read before analysis
 
@@ -40,6 +40,7 @@ Read `../../prompts/_finish-checklist.md` completely before the first axis promp
    ```
 
 5. Inspect every screenshot and write `evidence-index.json` with stable region IDs. Keep interpretations out of visible summaries. Classify each source surface (`website`, `web-app`, `mobile-app`, `desktop-app`, `other`, or `unknown`), infer an archetype only when visible structure supports it, record confidence and basis, and detect every applicable UI domain. A narrow capture may suggest mobile, but dimensions alone do not prove native mobile, responsive web, or WebView.
+   - When a significant proportion, repeated alignment or surface distinction needs checking, use the bundled [source measurement command](../../docs/runtime.md#measure-screenshot-regions) on the admitted PNG region. Keep JSON and optional annotations in the private run directory. Check the source hash against `source-manifest.json`, visually confirm candidates, and associate confirmed measurements with the existing region ID. Cite that region in specialist claims. Express useful same-capture relationships as ratios, orders or bounds; retain image-pixel measurements as provenance. Continue with visual inspection and state the limitation if measurement is unavailable or ambiguous.
 6. Write `compatibility-report.json` against the requested use case. In `direct` mode, do not claim destination accuracy when matching source families are missing. Say this concretely: a corporate website needs representative corporate/marketing website captures; a mobile app needs representative mobile-app captures. A dashboard capture may still contribute only its explicitly routed statistics, charts, colors, components, or other visible subjects. In explicit `adapt` mode, preserve source observations and keep cross-surface additions `proposed` with a forward-test requirement.
 7. Apply per-source routing before every claim. For example, "capture 1 and 2 only for stats, capture 3 only for the theme and colors" maps the first sources to `domain.stats-kpis` and relevant data-display selectors, and the third to the color/surface axis and requested token categories. A source may support several visible UI domains. `only` never leaks into unrelated facets; `exclude` can never be used to support the excluded subject.
 8. Execute the routed axis prompts independently. Run every axis required by admitted visual evidence or global focus, and always run system governance. Evaluate all five facets of each selected axis. Every unselected or unsupported facet must still appear in final coverage as `unknown` or `not-applicable`; do not silently omit it.
