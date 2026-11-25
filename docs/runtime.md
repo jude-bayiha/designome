@@ -235,3 +235,32 @@ Legacy schema `0.1.0` and Audit Contract `1.0.0` artifacts remain readable for h
 |    2 | Installation conflict; no write was performed                                |
 
 Commands emit machine-readable JSON. Errors are emitted as JSON on standard error with a stable code, message, and details array.
+
+## Measure composition
+
+Use Node 24 and the installed bundle. The PNG decoder ships inside the skill and loads on demand. Measurement works offline on existing PNGs. The browser provider used to produce an audit capture has its own setup.
+
+Run `node bin/designome.mjs measure-composition --plan plan.json --image source.png` and save stdout in the private extraction run. Add `--render captured.png` to replay on a corresponding audit capture. Each report includes the PNG hashes, actual probe rectangles, observed edge candidates or color samples, and relation results.
+
+A version 1 plan defines named probes and relations. Regions are normalized left, top, right, bottom coordinates. Visually confirm each region and its semantic role. An optional `renderRegion` identifies that same feature after reflow. Keep the source region, relation definition and tolerance fixed. Set the tolerance using the accepted bounds or label it as a proposed diagnostic tolerance.
+
+```json
+{
+  "version": 1,
+  "probes": {
+    "left": { "axis": "x", "boundary": "start" },
+    "right": { "axis": "x", "boundary": "end" },
+    "divider": { "axis": "x", "region": [0.12, 0.1, 0.32, 0.9] }
+  },
+  "relations": [
+    {
+      "id": "sidebar-share",
+      "kind": "ratio",
+      "probes": ["left", "divider", "left", "right"],
+      "tolerance": 0.005
+    }
+  ]
+}
+```
+
+Use measured frame edges for a screenshot with presentation margins. For ratios, the first pair supplies the span and the second pair the denominator on the same axis. Use a signed `offset` to compare alignment between two rows. For `contrast`, supply two `color` probes on flat opaque surfaces. The result is their relative luminance contrast ratio. A tolerance of 0.005 for a width share means half a percentage point. Multiple distinct edge candidates, absent edges and regions without a majority color yield incomplete measurements. Match the viewport and screen state before interpreting differences.

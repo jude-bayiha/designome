@@ -189,20 +189,8 @@ async function readSource(imagePath) {
   return { input, width, height };
 }
 
-export async function measureSource({
-  imagePath,
-  region: regionArg,
-  minimumDelta = '6',
-  annotationPath,
-}) {
-  const minDelta = Number(minimumDelta);
-  if (!/^\d+$/u.test(minimumDelta) || minDelta < 1 || minDelta > 255) {
-    throw new DesignomeError('--min-delta must be an integer from 1 to 255', {
-      code: 'INVALID_ARGUMENTS',
-    });
-  }
+export async function decodeMeasurementImage(imagePath) {
   const { input, width, height } = await readSource(imagePath);
-  const region = parseRegion(regionArg, width, height);
   validatePngChunks(input);
   const { default: png } = await import('#png-codec');
   let pixels;
@@ -216,11 +204,33 @@ export async function measureSource({
       code: 'SOURCE_MEASUREMENT_FAILED',
     });
   }
+  return {
+    pixels,
+    source: { width, height, contentHash: `sha256:${sha256(input)}` },
+  };
+}
+
+export async function measureSource({
+  imagePath,
+  region: regionArg,
+  minimumDelta = '6',
+  annotationPath,
+}) {
+  const minDelta = Number(minimumDelta);
+  if (!/^\d+$/u.test(minimumDelta) || minDelta < 1 || minDelta > 255) {
+    throw new DesignomeError('--min-delta must be an integer from 1 to 255', {
+      code: 'INVALID_ARGUMENTS',
+    });
+  }
+  const { pixels, source } = await decodeMeasurementImage(imagePath);
+  const { width, height } = source;
+  const region = parseRegion(regionArg, width, height);
   const { edges, colors } = scanSourceRegion(pixels, width, region, minDelta);
   let annotation = null;
   if (annotationPath !== undefined) {
     annotation = path.resolve(annotationPath);
     try {
+      const { default: png } = await import('#png-codec');
       await fs.writeFile(
         annotation,
         png.write(annotateRegion(pixels, width, region, edges)),
@@ -234,7 +244,7 @@ export async function measureSource({
     }
   }
   return {
-    source: { width, height, contentHash: `sha256:${sha256(input)}` },
+    source,
     region,
     units: 'image-px',
     method: {

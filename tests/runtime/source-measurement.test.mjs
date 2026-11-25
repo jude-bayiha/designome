@@ -140,3 +140,38 @@ test('rejects interlacing, duplicate headers and corrupted PNG data', async (t) 
     await assert.rejects(measureSource({ imagePath }), { code });
   }
 });
+
+test('replays normalized composition evidence and reports missing landmarks', async (t) => {
+  const { measureComposition } =
+    await import('../../src/runtime/composition.mjs');
+  const { imagePath } = await writeFixture(t);
+  const plan = {
+    version: 1,
+    probes: {
+      start: { axis: 'x', boundary: 'start' },
+      end: { axis: 'x', boundary: 'end' },
+      separator: { axis: 'x', region: [0, 0, 1, 1] },
+    },
+    relations: [
+      {
+        id: 'split',
+        kind: 'ratio',
+        probes: ['start', 'separator', 'start', 'end'],
+        tolerance: 0,
+      },
+    ],
+  };
+  const equal = await measureComposition(plan, imagePath, imagePath);
+  assert.equal(equal.relations[0].expected, 0.5);
+  assert.equal(equal.relations[0].status, 'within-tolerance');
+  assert.equal(equal.source.image.contentHash, equal.render.image.contentHash);
+  plan.probes.separator.renderRegion = [0, 0, 0.25, 1];
+  assert.equal(
+    (await measureComposition(plan, imagePath, imagePath)).relations[0].status,
+    'incomplete',
+  );
+  plan.relations[0].probes[1] = 'missing';
+  await assert.rejects(measureComposition(plan, imagePath), {
+    code: 'INVALID_COMPOSITION_PLAN',
+  });
+});
