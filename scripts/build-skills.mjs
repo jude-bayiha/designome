@@ -86,6 +86,54 @@ export async function expectedSkills(root = repositoryRoot) {
       license: pngPackage.license,
     }),
   );
+  const imports = { '#png-codec': `./${pngVendor}/lib/png-sync.js` };
+  const visionPackages = [
+    ['@techstark/opencv-js', ['dist/opencv.js', 'LICENSE']],
+    [
+      'tesseract.js-core',
+      ['tesseract-core-lstm.js', 'tesseract-core-lstm.wasm', 'LICENSE'],
+    ],
+    [
+      '@tesseract.js-data/eng',
+      ['4.0.0_best_int/eng.traineddata.gz', 'README.md'],
+    ],
+    ['jpeg-js', ['lib/decoder.js', 'LICENSE']],
+    ['omggif', ['omggif.js', 'README']],
+    [
+      '@jsquash/webp',
+      [
+        'codec/dec/webp_dec.js',
+        'codec/dec/webp_dec.wasm',
+        'LICENSE',
+        'codec/LICENSE.codec.md',
+      ],
+    ],
+  ];
+  for (const [name, files] of visionPackages) {
+    const packagePath = require.resolve(name + '/package.json');
+    const metadata = JSON.parse(await fs.readFile(packagePath));
+    if (pkg.devDependencies[name] !== metadata.version)
+      throw new Error('Unexpected vision package version for ' + name);
+    const dir = 'vendor/' + name;
+    runtime.set(
+      `${runtimePrefix}/${dir}/package.json`,
+      json({
+        name,
+        version: metadata.version,
+        type: metadata.type ?? 'commonjs',
+        license: metadata.license,
+      }),
+    );
+    for (const file of files) {
+      runtime.set(
+        `${runtimePrefix}/${dir}/${file}`,
+        await fs.readFile(path.join(path.dirname(packagePath), file)),
+      );
+    }
+    for (const [alias, target] of Object.entries(pkg.imports)) {
+      if (target.startsWith(name + '/')) imports[alias] = './vendor/' + target;
+    }
+  }
   runtime.set(
     `${runtimePrefix}/package.json`,
     json({
@@ -94,7 +142,7 @@ export async function expectedSkills(root = repositoryRoot) {
       private: true,
       type: 'module',
       engines: pkg.engines,
-      imports: { '#png-codec': `./${pngVendor}/lib/png-sync.js` },
+      imports,
     }),
   );
   const distributions = new Map();

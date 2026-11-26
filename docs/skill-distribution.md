@@ -19,7 +19,7 @@ skills/designome/
   scripts/runtime/
     bin/designome.mjs
     src/
-    vendor/pngjs/
+    vendor/
     concepts/
     schemas/
     prompts/
@@ -37,7 +37,7 @@ The skill resolves `scripts/runtime` relative to its own installed directory. Sh
 
 ## Generation and coherence
 
-`pnpm build:skills` builds the committed `skills/designome/` directory from `skill-sources/designome/` and an explicit list of shared resource directories. It rewrites repository-relative paths in every shipped Markdown file to the bundled runtime, and removes any other directory under `skills/`. Keeping generated artifacts in Git allows the ordinary GitHub `skills add` command to work without a post-install build hook. The build never follows symlinks or includes `node_modules`, tests, target projects, or run directories. It copies the pinned `pngjs` library and MIT license into `vendor/`, so source measurements run without an npm install or any system image tool. The installed runtime resolves the codec through its own package import map.
+`pnpm build:skills` builds the committed `skills/designome/` directory from `skill-sources/designome/` and an explicit list of shared resource directories. It rewrites repository-relative paths in every shipped Markdown file to the bundled runtime, and removes any other directory under `skills/`. Keeping generated artifacts in Git allows the ordinary GitHub `skills add` command to work without a post-install build hook. The build never follows symlinks or includes `node_modules`, tests, target projects, or run directories. It copies the pinned PNG, JPEG, GIF and WebP decoder files and their license notices into `vendor/`, so source measurements run without an npm install or any system image tool. The pinned omggif patch rejects incomplete LZW output and mismatched frame sizes before sampling pixels. The installed runtime resolves its codecs and vision engines through its own package import map. The OpenCV build contains its WebAssembly module. The OCR runtime reads the scalar Tesseract LSTM module and compressed English model from the installed skill on demand. The Apache 2.0 license text for the upstream English model is included in the distribution at `vendor/@techstark/opencv-js/LICENSE`. See the [model distributor’s license](https://github.com/naptha/tessdata/blob/806cd9adc8c6e8abc11c782db1818c990576bebc/LICENSE).
 
 `bundle-manifest.json` contains SHA-256 hashes of shipped files and a deterministic aggregate fingerprint. These bind instructions and resources to one snapshot; they are integrity metadata, not a signature or publisher-authentication mechanism. `pnpm check:skills` compares installed-in-repository artifacts against freshly derived expectations, including unexpected files. It also rejects any skill directory that is no longer built. It does not silently regenerate them.
 

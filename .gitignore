@@ -1,6 +1,7 @@
 node_modules/
 coverage/
 dist/
+!skills/designome/scripts/runtime/vendor/@techstark/opencv-js/dist/
 .designome/runs/
 .designome/active-run.json
 .env

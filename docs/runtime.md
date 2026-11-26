@@ -81,7 +81,7 @@ Repeating the same command returns `unchanged`. Reusing the directory with diffe
 
 ### Measure screenshot regions
 
-Use the bundled command when a visually identified source region needs a check on geometry or surface color. Run it from the repository or the installed skill's runtime directory. The installed skill includes its PNG codec and runs locally with Node.js 24 or newer. It does not require a separate image tool or dependency installation.
+Use the bundled command when a visually identified source region needs a check on geometry or surface color. Run it from the repository or the installed skill's runtime directory. The installed skill includes its image decoders and runs locally with Node.js 24 or newer. It does not require a separate image tool or dependency installation.
 
 ```bash
 node bin/designome.mjs measure-source \
@@ -91,11 +91,11 @@ node bin/designome.mjs measure-source \
   > /private/run/kpi-measurement.json
 ```
 
-- `--region` is `x,y,width,height` in the source PNG, with a zero-based origin. Omit it for a first pass over the whole image. Keep measurements inside an admitted product region once any presentation frame is identified.
+- `--region` is `x,y,width,height` in the source image, with a zero-based origin. Omit it for a first pass over the whole image. Keep measurements inside an admitted product region once any presentation frame is identified.
 - `edges.x` and `edges.y` report axis-aligned candidate transitions in source coordinates. Each position is the first pixel after the transition. A candidate needs support from at least 60% of the sampled scanlines. `--min-delta` controls the minimum difference in any decoded RGB channel (default: `6`). A narrow separator may have candidates on both sides. Tighten the region or inspect the annotation if several candidates are plausible.
 - `colors.mostFrequent` reports decoded RGB samples with counts. Select a small, visually uniform patch to compare two surfaces. Transparent samples do not contribute. Samples are not color-managed across image profiles and do not recover a source CSS value or alpha setting.
 - The JSON identifies the original with its SHA-256 and reports image-pixel units. Use same-capture proportions or contrast relationships in the DNA. Original viewport, CSS scale, fonts, semantics, motion and responsive behavior require separate evidence.
-- The optional annotation is a native-size crop with cyan vertical and orange horizontal markers. It creates a new file in an existing directory. Keep it private together with the source and measurement JSON. The command supports static, non-interlaced PNGs up to 32 MiB, with sides up to 8192 px and at most 16,777,216 total pixels.
+- The optional annotation is a native-size crop with cyan vertical and orange horizontal markers. It creates a new file in an existing directory. Keep it private together with the source and measurement JSON. The command supports static JPEG, GIF, WebP and non-interlaced PNG files up to 32 MiB, with sides up to 8192 px and at most 16,777,216 total pixels.
 
 ### Matrix brief and authoring expansion
 
@@ -235,3 +235,46 @@ Legacy schema `0.1.0` and Audit Contract `1.0.0` artifacts remain readable for h
 |    2 | Installation conflict; no write was performed                                |
 
 Commands emit machine-readable JSON. Errors are emitted as JSON on standard error with a stable code, message, and details array.
+
+## Inspect contours and text
+
+From the bundled runtime directory, run the engine needed for the current extraction question. Use `both` to inspect the same crop with both engines.
+
+```bash
+node bin/designome.mjs inspect-vision --image dashboard.webp --mode contours
+node bin/designome.mjs inspect-vision --image dashboard.webp --mode ocr --region 420,180,600,85
+```
+
+The command uses the same still-image decoder and limits as `measure-source`. Node.js 24+ loads the bundled OpenCV and English Tesseract LSTM engines directly from disk. First use works offline. Save the JSON in the private extraction run. Match the source hash before citing a result. All rectangles use original image coordinates in pixels, including results from a crop.
+
+- **Layout and component anatomy.** Contour mode finds grayscale edges, filters small contours and returns the 256 largest distinct bounding rectangles by area. The total candidate count is reported before truncation. Inspect a crop to focus on smaller components. Joined or nested edges may span multiple components. Visually confirm a boundary before measuring its relationship to neighboring regions.
+- **Typography and content hierarchy.** OCR returns English-model word hypotheses, confidence scores and ink bounds. It inverts predominantly dark regions. Inspect uncertain labels, icons and mixed light/dark panels in separate crops. Compare confirmed ink heights and alignments within a capture. CSS font size, typeface and device scale require separate evidence.
+
+## Measure composition
+
+Use Node 24 and the installed bundle. The skill loads its bundled decoder on demand. Node reads the local WebP WebAssembly module from disk. Measurements use the stored raster orientation and decoded pixel colors. JPEG and lossy WebP can shift colors or soften edges. Export animated images as individual frames before measurement. The browser provider used to produce an audit capture has its own setup.
+
+Run `node bin/designome.mjs measure-composition --plan plan.json --image source.png` and save stdout in the private extraction run. Add `--render captured.png` to replay on a corresponding audit capture. Each report includes the original file hashes, actual probe rectangles, observed edge candidates or color samples, and relation results.
+
+A version 1 plan defines named probes and relations. Regions are normalized left, top, right, bottom coordinates. Visually confirm each region and its semantic role. An optional `renderRegion` identifies that same feature after reflow. Keep the source region, relation definition and tolerance fixed. Set the tolerance using the accepted bounds or label it as a proposed diagnostic tolerance.
+
+```json
+{
+  "version": 1,
+  "probes": {
+    "left": { "axis": "x", "boundary": "start" },
+    "right": { "axis": "x", "boundary": "end" },
+    "divider": { "axis": "x", "region": [0.12, 0.1, 0.32, 0.9] }
+  },
+  "relations": [
+    {
+      "id": "sidebar-share",
+      "kind": "ratio",
+      "probes": ["left", "divider", "left", "right"],
+      "tolerance": 0.005
+    }
+  ]
+}
+```
+
+When presentation artwork surrounds the product, set `sourceFrame` to the visually confirmed product rectangle, for example `"118,87,1764,1326"`. Set `renderFrame` independently if the audit capture also has a surround. Each omitted frame uses the full corresponding image. Probe regions and start/end boundaries resolve within their respective frames. Reports retain the original file hashes and source-pixel coordinates. Pass the same rectangle (or an interior subregion) as `--region` to `inspect-vision` and `measure-source`. Keep surrounding artwork out of extraction and audit. For ratios, the first pair supplies the span and the second pair the denominator on the same axis. Use a signed `offset` to compare alignment between two rows. For `contrast`, supply two `color` probes on flat opaque surfaces. The result is their relative luminance contrast ratio. A tolerance of 0.005 for a width share means half a percentage point. Multiple distinct edge candidates, absent edges and regions without a majority color yield incomplete measurements. Match the viewport and screen state before interpreting differences.

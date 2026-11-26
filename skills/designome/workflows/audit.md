@@ -15,6 +15,10 @@ This skill works from either the Designome plugin or an installed target project
 
 Stop if neither context can be resolved. Never guess which Design DNA or project is in scope.
 
+## Replay composition measurements
+
+When an accepted rule cites a composition relation, replay the private extraction plan on the verified audit image with the standalone skill's `measure-composition --plan <plan.json> --image <source.png> --render <capture.png>`. Confirm both image hashes against the respective evidence records and inspect the selected regions. Report each relation ID, expected and actual value, signed difference, tolerance and status. If the source artifacts, helper or corresponding regions are unavailable, record the measurement as incomplete. Use an accepted tolerance for a compliance finding. A proposed tolerance supports a diagnostic comparison.
+
 ## Workflow
 
 1. Interpret the complete conversational request once. Normalize the project and optional Design DNA paths, focus axes, concepts, UI domains, provider, constraints, report or repair mode, and explicit implementation or browser-install authorizations into an `audit` request contract. Ambiguous language never authorizes repair or dependency installation.

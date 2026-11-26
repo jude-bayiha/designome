@@ -37,6 +37,7 @@ import {
 } from '../src/runtime/install.mjs';
 import { initializeRun } from '../src/runtime/run.mjs';
 import { loadRequestContract } from '../src/runtime/request-contract.mjs';
+import { measureComposition } from '../src/runtime/composition.mjs';
 import { measureSource } from '../src/runtime/source-measurement.mjs';
 import {
   initializeWorkflow,
@@ -187,7 +188,9 @@ function printHelp() {
     `  init-run --output <dir> --image <file> [--image <file>] [--request <normalized-request.json>] [--motion <mode>] [--project <dir>]\n`,
   );
   process.stdout.write(
-    '  measure-source --image <png> [--region <x,y,width,height>] [--min-delta <1-255>] [--annotation <new.png>]\n',
+    '  inspect-vision --image <image> --mode <contours|ocr|both> [--region <x,y,width,height>]\n' +
+      '  measure-composition --plan <json> --image <source-image> [--render <render-image>]\n' +
+      '  measure-source --image <image> [--region <x,y,width,height>] [--min-delta <1-255>] [--annotation <new.png>]\n',
   );
   process.stdout.write(
     `  validate-request --file <normalized-request.json> [--operation <extract|install|audit>]\n`,
@@ -372,6 +375,21 @@ async function main() {
       requestContractPath: option(parsed, 'request', { fallback: null }),
       contextMode: option(parsed, 'context-mode', { fallback: 'full' }),
     });
+  } else if (command === 'inspect-vision') {
+    assertArguments(parsed, ['image', 'region', 'mode']);
+    const { inspectVision } = await import('../src/runtime/vision.mjs');
+    result = await inspectVision({
+      imagePath: option(parsed, 'image', { required: true }),
+      mode: option(parsed, 'mode', { required: true }),
+      region: option(parsed, 'region'),
+    });
+  } else if (command === 'measure-composition') {
+    assertArguments(parsed, ['plan', 'image', 'render']);
+    result = await measureComposition(
+      await readJson(option(parsed, 'plan', { required: true })),
+      option(parsed, 'image', { required: true }),
+      option(parsed, 'render'),
+    );
   } else if (command === 'measure-source') {
     assertArguments(parsed, ['image', 'region', 'min-delta', 'annotation']);
     result = await measureSource({
