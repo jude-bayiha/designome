@@ -1,5 +1,36 @@
 # Changelog
 
+## [2.3.0](https://github.com/jude-bayiha/designome/compare/v2.2.0...v2.3.0) (2026-11-26)
+
+
+### Features
+
+* **installer:** prefer shadcn and guide icon selection ([5b6fd42](https://github.com/jude-bayiha/designome/commit/5b6fd42eacd4c2e57f76a572f339a6afdde6b32e))
+* **installer:** prefer shadcn and guide icon selection ([d9dc70b](https://github.com/jude-bayiha/designome/commit/d9dc70b15173e4068f3d8ba8cf11016acfd327ba))
+* **prompts:** calibrate draft grammar through isolated render benchmarks ([8ecfd7c](https://github.com/jude-bayiha/designome/commit/8ecfd7ce2cad5fa98a873366c33d65e68f85488c))
+* **prompts:** prioritize screen content by user task ([31cb23d](https://github.com/jude-bayiha/designome/commit/31cb23d467d01106ba2a4146f16c3406bd6f055c))
+* **repo:** add standalone screenshot measurement ([a5df495](https://github.com/jude-bayiha/designome/commit/a5df49503de0e8b66d30934101657dadba2ad3a9))
+* **repo:** add standalone screenshot measurement ([93223b9](https://github.com/jude-bayiha/designome/commit/93223b9d5813cd9d3e1b928d4b9cb724a624b1a1))
+* **review:** bundle Checklist Design for UI review and repair ([17ade06](https://github.com/jude-bayiha/designome/commit/17ade06cc2e57f08ceda5ea9fd4bfd7fd57c81ad))
+* **review:** select checklists by task and component ownership ([fcaee4b](https://github.com/jude-bayiha/designome/commit/fcaee4bc6adb9f272c5e2e0d1bebf0982ffa5c80))
+* **runtime:** guide signed-in dashboard utilities ([46b5456](https://github.com/jude-bayiha/designome/commit/46b54564571806f205969556dddf3e67086986e9))
+* **runtime:** inspect screenshot contours and text offline ([2bb1c13](https://github.com/jude-bayiha/designome/commit/2bb1c13bcd201a3a23b743965d095eeb2607fd0b))
+* **runtime:** measure composition, contours and text offline ([8a054fa](https://github.com/jude-bayiha/designome/commit/8a054fabe4f62f603e3e31ef1701ac3424af5bfc))
+* **runtime:** measure JPEG, GIF and WebP offline ([e31ef6c](https://github.com/jude-bayiha/designome/commit/e31ef6cc5b7a2224f08c4bccb3c629b055e02693))
+* **runtime:** replay composition measurements on rendered PNGs ([8b532fb](https://github.com/jude-bayiha/designome/commit/8b532fbebb514e21b03222b970da3d062f372724))
+
+
+### Bug Fixes
+
+* **audit:** bind captured evidence to the resolved frontend ([f8adfca](https://github.com/jude-bayiha/designome/commit/f8adfca8001bc6c41eff4ef36e071b1bea5f6783))
+* **audit:** capture ready browser evidence and require regional reviews ([ca24595](https://github.com/jude-bayiha/designome/commit/ca24595c3e7d458fa5f94a2b994b959ef6675b0f))
+* **audit:** sample pixels and geometry in the same capture state ([4b987b1](https://github.com/jude-bayiha/designome/commit/4b987b11be10396c07d05f1fe39144f3944e5a59))
+* discover workspace UI context and verify rendered grammar evidence ([744928d](https://github.com/jude-bayiha/designome/commit/744928dbd9e0237d0175d3c7d883c8b6a2bd4118))
+* **installer:** resolve shared UI imports in the frontend context ([8557da9](https://github.com/jude-bayiha/designome/commit/8557da90bc0f9b64e7f0cbe0415672dbfb33e2f3))
+* **installer:** resolve workspace frontends and reusable UI sources ([41f4766](https://github.com/jude-bayiha/designome/commit/41f4766f017d4bf89ef81ecb1cffdae1f0822954))
+* **runtime:** reject incomplete GIF pixel streams ([df06a75](https://github.com/jude-bayiha/designome/commit/df06a754b31fb27f5347ac42f04d1e07a4348bd2))
+* **runtime:** scope measurements to the product frame ([816208f](https://github.com/jude-bayiha/designome/commit/816208f8aeb32a5b1852917502e91046f426b80d))
+
 ## [2.2.0](https://github.com/jude-bayiha/designome/compare/v2.1.0...v2.2.0) (2026-10-13)
 
 
