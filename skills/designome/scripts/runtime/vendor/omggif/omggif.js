@@ -702,7 +702,7 @@ function GifReaderLZWOutputIndexStream(code_stream, p, output, output_length) {
     // TODO(deanm): We should never really get here, we should have received
     // and EOI.
     if (cur_shift < cur_code_size)
-      break;
+      throw new Error("Missing GIF end-of-information code.");
 
     var code = cur & code_mask;
     cur >>= cur_code_size;
@@ -759,9 +759,8 @@ function GifReaderLZWOutputIndexStream(code_stream, p, output, output_length) {
     var k = chase;
 
     var op_end = op + chase_length + (chase_code !== code ? 1 : 0);
-    if (op_end > output_length) {
-      console.log("Warning, gif stream longer than expected.");
-      return;
+    if (op_end >= output_length) {
+      throw new Error("GIF frame exceeds its declared pixel count.");
     }
 
     // Already have the first byte from the chase, might as well write it fast.
@@ -797,7 +796,7 @@ function GifReaderLZWOutputIndexStream(code_stream, p, output, output_length) {
   }
 
   if (op !== output_length) {
-    console.log("Warning, gif stream shorter than expected.");
+    throw new Error("GIF frame has an incomplete pixel count.");
   }
 
   return output;

@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  omggif@1.0.10: a738e7be9104987c001e7f7766abe4377901b18895ec2aab331d5e6fe78f2bfb
+
 importers:
 
   .:
@@ -46,7 +49,7 @@ importers:
         version: 0.23.2
       omggif:
         specifier: 1.0.10
-        version: 1.0.10
+        version: 1.0.10(patch_hash=a738e7be9104987c001e7f7766abe4377901b18895ec2aab331d5e6fe78f2bfb)
       pngjs:
         specifier: 7.0.0
         version: 7.0.0
@@ -1560,7 +1563,7 @@ snapshots:
 
   ms@2.1.3: {}
 
-  omggif@1.0.10: {}
+  omggif@1.0.10(patch_hash=a738e7be9104987c001e7f7766abe4377901b18895ec2aab331d5e6fe78f2bfb): {}
 
   parent-module@1.0.1:
     dependencies:

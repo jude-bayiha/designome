@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -200,5 +202,45 @@ test('detects raster formats from bytes and measures their decoded edges', async
     assert.equal(result.source.format, format);
     assert.equal(result.source.width, 16);
     assert.ok(result.edges.x.some((edge) => edge.position === 8));
+  }
+});
+
+test('rejects incomplete GIF frame data without emitting a measurement or warning on stdout', async (t) => {
+  const { imagePath } = await writeFixture(t);
+  const { default: gif } = await import('#gif-codec');
+  const encoded = Buffer.alloc(256);
+  const writer = new gif.GifWriter(encoded, 3, 1, { palette: [0, 0xffffff] });
+  writer.addFrame(0, 0, 2, 1, [0, 1]);
+  const complete = encoded.subarray(0, writer.end());
+  const frame = new gif.GifReader(complete).frameInfo(0);
+  // The descriptor width precedes height, packed flags and the LZW data.
+  const widthOffset = frame.data_offset - 5;
+  const cli = fileURLToPath(
+    new URL('../../bin/designome.mjs', import.meta.url),
+  );
+  const invalidFrames = [1, 3].map((declaredWidth) => {
+    const mismatched = Buffer.from(complete);
+    mismatched.writeUInt16LE(declaredWidth, widthOffset);
+    return mismatched;
+  });
+  // Leave the sub-block and file terminators intact but drop its last LZW byte.
+  const sizeOffset = frame.data_offset + 1;
+  const lastDataByte = sizeOffset + complete[sizeOffset];
+  const truncated = Buffer.concat([
+    complete.subarray(0, lastDataByte),
+    complete.subarray(lastDataByte + 1),
+  ]);
+  truncated[sizeOffset] -= 1;
+  invalidFrames.push(truncated);
+  for (const invalid of invalidFrames) {
+    await fs.writeFile(imagePath, invalid);
+    const run = spawnSync(
+      process.execPath,
+      [cli, 'measure-source', '--image', imagePath],
+      { encoding: 'utf8' },
+    );
+    assert.equal(run.status, 1);
+    assert.equal(run.stdout, '');
+    assert.equal(JSON.parse(run.stderr).error, 'SOURCE_MEASUREMENT_FAILED');
   }
 });
