@@ -27,6 +27,30 @@ async function temporary(t) {
   return directory;
 }
 
+test('the installed reviewer resolves both modes and every indexed checklist offline', async () => {
+  const root = path.join(
+    repositoryRoot,
+    'skills/designome/scripts/runtime/docs/vendor/checklist-design',
+  );
+  const files = await readTree(root);
+  for (const name of [
+    'LICENSE',
+    'guide.md',
+    'references/audit.md',
+    'references/critique.md',
+  ])
+    assert.ok(files.has(name), name);
+  const index = files.get('references/index.md').toString();
+  const listed = [...index.matchAll(/`([\w-]+\.md)`/gu)].map(
+    ([, name]) => 'references/checklists/' + name,
+  );
+  const shipped = [...files.keys()].filter((name) =>
+    name.startsWith('references/checklists/'),
+  );
+  assert.equal(listed.length, 138);
+  assert.deepEqual(listed.sort(), shipped.sort());
+});
+
 test('generated skills are current and contain no nested discoverable skills or symlinks', async () => {
   assert.deepEqual(await checkSkills(), []);
   for (const name of skillNames) {

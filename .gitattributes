@@ -2,3 +2,5 @@ skills/** linguist-generated=true
 # Preserve upstream codec bytes for the distribution manifest.
 skills/designome/scripts/runtime/vendor/** -text -whitespace
 patches/*.patch -whitespace
+docs/vendor/checklist-design/** -text -whitespace
+skills/designome/scripts/runtime/docs/vendor/checklist-design/** -text -whitespace
