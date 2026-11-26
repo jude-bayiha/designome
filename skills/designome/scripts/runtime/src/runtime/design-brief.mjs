@@ -240,6 +240,8 @@ function guardrailsSection() {
     '2. Entries of this brief: `observed` and `inferred` ones were measured on the screenshots.',
     '3. The Designome defaults below, only where neither speaks.',
     '',
+    'For signed-in dashboards, group profile and sign-out in a keyboard-accessible account menu. Link notifications to actionable events. Show connectivity only when real state changes a user decision. Where appropriate, offer a persistent theme switch and verify charts, text and overlays in both palettes. Unseen themes and behaviors are proposed.',
+    '',
     '### Quality guardrails',
     '',
     'Defects, not taste. Apply them on every screen unless the person explicitly asks otherwise.',
