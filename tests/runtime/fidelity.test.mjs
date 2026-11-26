@@ -278,7 +278,7 @@ test('the dossier README is a compact brief that names every accepted artifact',
   for (const guardrail of [
     'A measured ratio is never capped away.',
     'Faint cues are built, not dropped.',
-    'Sibling panels are filled.',
+    'Size panels to useful content.',
     'Finish pass before delivery.',
   ])
     assert.ok(brief.includes(guardrail), guardrail);
@@ -294,7 +294,7 @@ test('the dossier README is a compact brief that names every accepted artifact',
   // Detail guardrails keep sibling charts, screen bands and slots consistent.
   for (const guardrail of [
     'One recipe per chart family.',
-    'One screen skeleton.',
+    'Prioritize by task.',
     'Proportions hold at every width.',
   ])
     assert.ok(brief.includes(guardrail), guardrail);
