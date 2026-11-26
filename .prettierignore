@@ -6,3 +6,5 @@ pnpm-lock.yaml
 CHANGELOG.md
 skills/*/scripts/runtime/
 skills/*/bundle-manifest.json
+
+docs/vendor/checklist-design/

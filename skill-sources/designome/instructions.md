@@ -1,6 +1,6 @@
 ---
 name: designome
-description: Turn UI screenshots into evidence-backed Design DNA, install accepted Design DNA into a target project, and audit generated UI against it. Use when a user asks to analyze UI screenshots or derive reusable design rules and component guidance (extract), apply accepted guidance to a project with documentation, managed CSS and agent instructions (install), or check whether generated or existing UI follows that guidance, including states, content, responsive, accessibility, motion or data-scale findings (audit).
+description: Review or critique rendered UI with bundled Checklist Design, run checklist audits, turn UI screenshots into evidence-backed Design DNA, install accepted Design DNA into a target project, and audit generated UI against it. Use when a user asks to analyze UI screenshots or derive reusable design rules and component guidance (extract), apply accepted guidance to a project with documentation, managed CSS and agent instructions (install), or check whether generated or existing UI follows that guidance, including states, content, responsive, accessibility, motion or data-scale findings (audit).
 ---
 
 # Designome
@@ -12,6 +12,10 @@ Requires Node.js 24 or newer for deterministic commands.
 ## Resolve bundled files
 
 Resolve every relative path in this skill, including paths inside `workflows/`, from the directory that contains this `SKILL.md`, independently of the current working directory. The plugin root is `../..`. Convert it to an absolute path before invoking the helper; replace `<designome-plugin-root>` in the workflows with that path.
+
+## Review a UI with Checklist Design
+
+For design feedback, a critique, or a checklist audit, follow `../../docs/checklist-review.md` and the upstream skill in `../../docs/vendor/checklist-design/guide.md`. This path works with a review target alone. For a combined request, run the relevant DNA workflow below as well. Keep a quick critique scoped to the requested view.
 
 ## Choose the operation
 

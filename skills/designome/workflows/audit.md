@@ -15,6 +15,10 @@ This skill works from either the Designome plugin or an installed target project
 
 Stop if neither context can be resolved. Never guess which Design DNA or project is in scope.
 
+## Review feedback
+
+When reviewing a rendered UI, use the Checklist Design review in the full Designome skill. Follow `scripts/runtime/docs/checklist-review.md` and `scripts/runtime/docs/vendor/checklist-design/guide.md` from that installation. The lightweight project-local export can use a separately installed full skill. If unavailable, report checklist review as unavailable and continue the DNA audit. Record supplemental findings separately and use the authorized project repair workflow to verify corrections.
+
 ## Replay composition measurements
 
 When an accepted rule cites a composition relation, replay the private extraction plan on the verified audit image with the standalone skill's `measure-composition --plan <plan.json> --image <source.png> --render <capture.png>`. Confirm both image hashes against the respective evidence records and inspect the selected regions. Report each relation ID, expected and actual value, signed difference, tolerance and status. If the source artifacts, helper or corresponding regions are unavailable, record the measurement as incomplete. Use an accepted tolerance for a compliance finding. A proposed tolerance supports a diagnostic comparison.

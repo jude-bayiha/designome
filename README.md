@@ -241,6 +241,7 @@ Other commands include `doctor` (a read-only diagnostic), `install`, `audit`, `m
   - [transactional installation and doctor](docs/transactional-installation.md)
   - [integration and calibration](docs/integration-and-calibration-matrix.md)
   - [skill distribution](docs/skill-distribution.md)
+  - [UI critique, checklist review and verified corrections](docs/checklist-review.md)
   - [runtime and CLI](docs/runtime.md)
 - **Verify:**
   - [fidelity contract](docs/fidelity-contract.md)
