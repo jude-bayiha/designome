@@ -22,7 +22,7 @@
     "#ocr-wasm": "tesseract.js-core/tesseract-core-lstm.wasm",
     "#ocr-english": "@tesseract.js-data/eng/4.0.0_best_int/eng.traineddata.gz"
   },
-  "packageManager": "pnpm@11.5.2",
+  "packageManager": "pnpm@11.29.0",
   "engines": {
     "node": ">=24"
   },
