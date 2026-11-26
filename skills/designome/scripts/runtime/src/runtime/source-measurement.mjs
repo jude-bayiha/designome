@@ -13,7 +13,7 @@ const colorSamplesPerAxis = 64;
 
 export function parseRegion(value, width, height) {
   if (value === undefined) return { x: 0, y: 0, width, height };
-  if (/^\d+,\d+,\d+,\d+$/u.test(value)) {
+  if (typeof value === 'string' && /^\d+,\d+,\d+,\d+$/u.test(value)) {
     const [x, y, w, h] = value.split(',').map(Number);
     if (w > 0 && h > 0 && x + w <= width && y + h <= height) {
       return { x, y, width: w, height: h };

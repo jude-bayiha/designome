@@ -165,6 +165,17 @@ test('replays normalized composition evidence and reports missing landmarks', as
   assert.equal(equal.relations[0].expected, 0.5);
   assert.equal(equal.relations[0].status, 'within-tolerance');
   assert.equal(equal.source.image.contentHash, equal.render.image.contentHash);
+  const framed = await measureComposition(
+    { ...plan, sourceFrame: '6,2,18,12', renderFrame: '2,0,20,16' },
+    imagePath,
+    imagePath,
+  );
+  assert.equal(framed.relations[0].expected, 6 / 18);
+  assert.equal(framed.relations[0].actual, 10 / 20);
+  assert.deepEqual(framed.source.probes.separator.region, framed.source.frame);
+  await assert.rejects(
+    measureComposition({ ...plan, sourceFrame: '6,0,24,16' }, imagePath),
+  );
   plan.probes.separator.renderRegion = [0, 0, 0.25, 1];
   assert.equal(
     (await measureComposition(plan, imagePath, imagePath)).relations[0].status,

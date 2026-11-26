@@ -1,7 +1,7 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome",
-  "contentFingerprint": "sha256:0422acbd0e5e0a1fb9131eb58219b479adad8fb3e3ffc06a705dbe9077af2011",
+  "contentFingerprint": "sha256:eeb77afbe463b98f1fd577393ed37ab46e422611885b17955628b42ad8148a23",
   "files": {
     "agents/openai.yaml": "aeee0b3a3921828612f09507247c69041d02809a0ba0adb07fce4e3cb695d907",
     "contract.json": "65b2ba2b7324149f40628e6bcb3f8c56e7ef9c750f6632234c367d12999b2690",
@@ -27,7 +27,7 @@
     "scripts/runtime/docs/product-foundation.md": "cd06a359c5f5a41d6b97ea6f29251fe7647913c638fc7dcbe17f5f87d763cc47",
     "scripts/runtime/docs/project-discovery.md": "bb70ff08a32a9a267f668a439c04102acccdeb646a2e8b36ecfe0fcfed50b7d7",
     "scripts/runtime/docs/reference-analysis.md": "c60a5bfb863e77cc2d7a9210946731042021ed2a8b3b1aeee82059e68209bae8",
-    "scripts/runtime/docs/runtime.md": "6b1e1eee47c7b794e559a401718e9f28a9f7b7e599bbdb2ff53972a6fcea84c2",
+    "scripts/runtime/docs/runtime.md": "f646d708db72f1c065d0f9cb58741e5a169342c1eeecce85b559a55466eb59dd",
     "scripts/runtime/docs/skill-distribution.md": "8a46bd38bbd924cf7bebf70f009ceafdd17a5895e0e0c8f920fcdbdd1047f11a",
     "scripts/runtime/docs/transactional-installation.md": "1f1078afe4a5f652019c80f2ea0cd83d4d7aaca953b9f53662214b9d40b72874",
     "scripts/runtime/docs/v0.3-forward-test.md": "0af49cca4dd5f7cd93bfb3b912802ef374b9a0af25ee0da43ae2cb276068266c",
@@ -87,7 +87,7 @@
     "scripts/runtime/skill-sources/designome/contract.json": "65b2ba2b7324149f40628e6bcb3f8c56e7ef9c750f6632234c367d12999b2690",
     "scripts/runtime/skill-sources/designome/instructions.md": "4bea256e0e2dbd0274cd58a8d983794fb79477c5f4be6cb639d45cae690d989d",
     "scripts/runtime/skill-sources/designome/workflows/audit.md": "367cadfb0f35d7226f805bc8540b48253741cc68be645ac5e162ce0404cb7c0a",
-    "scripts/runtime/skill-sources/designome/workflows/extract.md": "d4dbe1e987f29e85981c905181097cd4d52b678dc767719fff13b838b744c114",
+    "scripts/runtime/skill-sources/designome/workflows/extract.md": "e2c1cf38f776c680dcc2053e902a0ab484d02f60186b2b365e61dc73df348881",
     "scripts/runtime/skill-sources/designome/workflows/install.md": "1a1180bd6fc96089dfaa54ea4f61a573cbe276e44e7f5644faa49f4d75042e0f",
     "scripts/runtime/skill-sources/project-audit/agents/openai.yaml": "e04d01b5fbdf80c26cefad0afeadff9d75a27a0f8bd6b6ebd9ba8a4a0696c36d",
     "scripts/runtime/skill-sources/project-audit/contract.json": "f5b552cb49ae9dd994439f803baa8f194b805ab1f203db40364828b98e5301b1",
@@ -99,7 +99,7 @@
     "scripts/runtime/src/runtime/audit.mjs": "59919acc6eac4a407fc5a479d7838b452fd0ce2352b29e6148aa67eb689aa74c",
     "scripts/runtime/src/runtime/benchmark.mjs": "a6fe4badba7cc5751bf524336b80c6d52e10cc35a8b1d5b62c026df484b4f3ea",
     "scripts/runtime/src/runtime/capture-session.mjs": "3d16d7785d53f4fa87039f77a7d8e821a226bad33f56d7546af9810bff10a09d",
-    "scripts/runtime/src/runtime/composition.mjs": "c93c47633453a91d91c07a5fde5549ad5fa031cb2667e5551440e472b455bc64",
+    "scripts/runtime/src/runtime/composition.mjs": "e97032de1fa31048b3c79a3c54d3ad34a77d13726e56fbb070c9b569630ff177",
     "scripts/runtime/src/runtime/context-stage.mjs": "813d87e2ed1768befd9dbc2076b14ee15096adce67f8ede0cc4e3e64fb6f921c",
     "scripts/runtime/src/runtime/context.mjs": "1392ffd0eaba968465503d6a10a494064a5b55a96e910a6879e2f3dc01160f2c",
     "scripts/runtime/src/runtime/design-brief.mjs": "066ff8af19464ca6fc89bc89ac7bee7d8ddfda3ff32811623d41f0e6bccbe8c5",
@@ -119,7 +119,7 @@
     "scripts/runtime/src/runtime/project-context.mjs": "b5b5b2fdcd4303c9805e4c20db35f20e8ac36ca323481d469ade85478c0da79d",
     "scripts/runtime/src/runtime/request-contract.mjs": "6f194771366d3b69bf71f3b7f83dad04c00ce1fb5cc7bfd1c87b294800d3e210",
     "scripts/runtime/src/runtime/run.mjs": "24fffb357e752b237bf0aab5d6c17a90efe54fa5f64bee93bc1a9a2d68a14268",
-    "scripts/runtime/src/runtime/source-measurement.mjs": "74bf0159d890b5dfda32ff63287e1e0221a5c37541c87af148e67a14aabbff2d",
+    "scripts/runtime/src/runtime/source-measurement.mjs": "1a562677d582d1fea86a1eb03a787503a55aa4e160ff092de3ece8e854e9f3ca",
     "scripts/runtime/src/runtime/vision.mjs": "0bdf7a92ec581c54e8fd2045ac4609553d35e2b6395800e6ed14101be8e6634b",
     "scripts/runtime/src/runtime/visual-review.mjs": "0cc84422966fde704510eff3765e0c81d6b497ddd024b15d097853e221fb85d0",
     "scripts/runtime/vendor/@jsquash/webp/codec/dec/webp_dec.js": "c57971611f4d9ec04e4636ce7bb4a35c031b24cbdb013518f0a017d9f6014370",
@@ -169,7 +169,7 @@
     "scripts/runtime/vendor/tesseract.js-core/tesseract-core-lstm.wasm": "220e2e87551edccb85519796a170469f8ab2a8055216789e3b8b1ada18b7bc2b",
     "SKILL.md": "d70642e2341f1db463251389b5b3ea8b572ef57cc9eecb82546d4639fad95d48",
     "workflows/audit.md": "086b193ee313d2b1b7951d469bd2ca34fb97b9c09e8279d6f62f1f6196263a88",
-    "workflows/extract.md": "9506e34f65e9e1ceb9a6b54696e256f9901491f7b9ce163734710db45dc2e3b0",
+    "workflows/extract.md": "0a1c28830d60d1ea7c9855492efe9b3338fd93e8375d8fefe8686c487c1de1a8",
     "workflows/install.md": "695db31309b966032ac290e238f463c3018c191b7b7f3c7421592763ba815daa"
   }
 }

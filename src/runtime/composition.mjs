@@ -1,6 +1,7 @@
 import {
   decodeMeasurementImage,
   scanSourceRegion,
+  parseRegion,
 } from './source-measurement.mjs';
 import { DesignomeError } from './errors.mjs';
 
@@ -9,9 +10,9 @@ function requirePlan(condition, message) {
     throw new DesignomeError(message, { code: 'INVALID_COMPOSITION_PLAN' });
 }
 
-function sampleProbe(image, probe, rendered) {
+function sampleProbe(image, frame, probe, rendered) {
   requirePlan(probe && typeof probe === 'object', 'Invalid probe');
-  const { width, height } = image.source;
+  const { width, height } = frame;
   const { axis } = probe;
   const region = rendered ? (probe.renderRegion ?? probe.region) : probe.region;
   requirePlan(['x', 'y', 'color'].includes(axis), 'Unknown probe axis');
@@ -20,10 +21,13 @@ function sampleProbe(image, probe, rendered) {
       axis !== 'color' && ['start', 'end'].includes(probe.boundary),
       'Invalid image boundary',
     );
+    const origin = axis === 'x' ? frame.x : frame.y;
     return {
       axis,
       boundary: probe.boundary,
-      value: probe.boundary === 'start' ? 0 : axis === 'x' ? width : height,
+      value:
+        origin +
+        (probe.boundary === 'start' ? 0 : axis === 'x' ? width : height),
     };
   }
   requirePlan(
@@ -37,12 +41,12 @@ function sampleProbe(image, probe, rendered) {
   const x = Math.floor(left * width),
     y = Math.floor(top * height);
   const bounds = {
-    x,
-    y,
+    x: frame.x + x,
+    y: frame.y + y,
     width: Math.ceil(right * width) - x,
     height: Math.ceil(bottom * height) - y,
   };
-  const scan = scanSourceRegion(image.pixels, width, bounds, 6);
+  const scan = scanSourceRegion(image.pixels, image.source.width, bounds, 6);
   if (axis === 'color') {
     const mode = scan.colors.mostFrequent[0];
     const value =
@@ -75,9 +79,14 @@ function luminance(hex) {
 }
 
 function measureRelations(plan, image, rendered = false) {
+  const frame = parseRegion(
+    rendered ? plan.renderFrame : plan.sourceFrame,
+    image.source.width,
+    image.source.height,
+  );
   const probes = new Map();
   for (const [id, probe] of Object.entries(plan.probes))
-    probes.set(id, sampleProbe(image, probe, rendered));
+    probes.set(id, sampleProbe(image, frame, probe, rendered));
   const values = plan.relations.map(({ kind, probes: ids }) => {
     const contrast = kind === 'contrast';
     requirePlan(
@@ -103,7 +112,12 @@ function measureRelations(plan, image, rendered = false) {
     const pair = [luminance(a), luminance(b)];
     return (Math.max(...pair) + 0.05) / (Math.min(...pair) + 0.05);
   });
-  return { source: image.source, probes: Object.fromEntries(probes), values };
+  return {
+    source: image.source,
+    frame,
+    probes: Object.fromEntries(probes),
+    values,
+  };
 }
 
 export async function measureComposition(plan, sourcePath, renderPath) {
@@ -157,8 +171,16 @@ export async function measureComposition(plan, sourcePath, renderPath) {
   });
   return {
     version: 1,
-    source: { image: source.source, probes: source.probes },
-    render: render && { image: render.source, probes: render.probes },
+    source: {
+      image: source.source,
+      frame: source.frame,
+      probes: source.probes,
+    },
+    render: render && {
+      image: render.source,
+      frame: render.frame,
+      probes: render.probes,
+    },
     relations,
   };
 }
