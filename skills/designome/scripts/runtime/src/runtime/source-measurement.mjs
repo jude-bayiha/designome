@@ -168,46 +168,89 @@ function annotateRegion(pixels, imageWidth, region, edges) {
 async function readSource(imagePath) {
   const stat = await fs.stat(imagePath);
   if (!stat.isFile() || stat.size > maxInputBytes) {
-    throw new DesignomeError('Expected a regular PNG file of at most 32 MiB', {
-      code: 'UNSUPPORTED_MEASUREMENT_IMAGE',
-    });
+    throw new DesignomeError(
+      'Expected a regular image file of at most 32 MiB',
+      {
+        code: 'UNSUPPORTED_MEASUREMENT_IMAGE',
+      },
+    );
   }
   const input = await fs.readFile(imagePath);
   const { width, height, format } = inspectImageBuffer(input);
   if (
-    format !== 'png' ||
     input.length > maxInputBytes ||
     width > maxDimension ||
     height > maxDimension ||
     width * height > maxPixels
   ) {
     throw new DesignomeError(
-      'Expected a PNG within the 8192 px per side and 16,777,216 total pixel limits',
+      'Expected an image within the 8192 px per side and 16,777,216 total pixel limits',
       { code: 'UNSUPPORTED_MEASUREMENT_IMAGE' },
     );
   }
-  return { input, width, height };
+  return { input, width, height, format };
+}
+
+let webpModule;
+async function decodePixels(input, width, height, format) {
+  if (format === 'png') {
+    validatePngChunks(input);
+    const { default: png } = await import('#png-codec');
+    return png.read(input, { checkCRC: true });
+  }
+  if (format === 'jpeg') {
+    const { default: decode } = await import('#jpeg-codec');
+    return decode(input, {
+      maxResolutionInMP: maxPixels / 1e6,
+      maxMemoryUsageInMB: 256,
+      tolerantDecoding: false,
+    });
+  }
+  if (format === 'gif') {
+    const { default: gif } = await import('#gif-codec');
+    const reader = new gif.GifReader(input);
+    if (reader.numFrames() !== 1)
+      throw new Error('Expected a single GIF frame');
+    const frame = reader.frameInfo(0);
+    if (frame.x + frame.width > width || frame.y + frame.height > height)
+      throw new Error('GIF frame exceeds canvas');
+    const data = Buffer.alloc(width * height * 4);
+    reader.decodeAndBlitFrameRGBA(0, data);
+    return { data, width, height };
+  }
+  if (input.toString('ascii', 12, 16) === 'VP8X' && input[20] & 2)
+    throw new Error('Expected a static WebP');
+  const { default: createModule } = await import('#webp-codec');
+  webpModule ??= fs
+    .readFile(new URL(import.meta.resolve('#webp-wasm')))
+    .then((wasmBinary) => createModule({ wasmBinary }));
+  return (await webpModule).decode(input);
 }
 
 export async function decodeMeasurementImage(imagePath) {
-  const { input, width, height } = await readSource(imagePath);
-  validatePngChunks(input);
-  const { default: png } = await import('#png-codec');
-  let pixels;
+  const { input, width, height, format } = await readSource(imagePath);
   try {
-    const decoded = png.read(input, { checkCRC: true });
-    if (decoded.data.length !== width * height * 4)
-      throw new Error('Unexpected decoded pixel count');
-    pixels = decoded.data;
-  } catch {
-    throw new DesignomeError('Could not decode the source PNG', {
+    const decoded = await decodePixels(input, width, height, format);
+    if (
+      decoded?.width !== width ||
+      decoded.height !== height ||
+      decoded.data.length !== width * height * 4
+    )
+      throw new Error('Unexpected decoded image dimensions');
+    return {
+      pixels: Buffer.from(
+        decoded.data.buffer,
+        decoded.data.byteOffset,
+        decoded.data.byteLength,
+      ),
+      source: { width, height, format, contentHash: `sha256:${sha256(input)}` },
+    };
+  } catch (error) {
+    if (error instanceof DesignomeError) throw error;
+    throw new DesignomeError(`Could not decode static ${format} image`, {
       code: 'SOURCE_MEASUREMENT_FAILED',
     });
   }
-  return {
-    pixels,
-    source: { width, height, contentHash: `sha256:${sha256(input)}` },
-  };
 }
 
 export async function measureSource({
@@ -248,7 +291,12 @@ export async function measureSource({
     region,
     units: 'image-px',
     method: {
-      decoder: 'pngjs RGBA8',
+      decoder: {
+        png: 'pngjs RGBA8',
+        jpeg: 'jpeg-js RGBA8',
+        gif: 'omggif RGBA8',
+        webp: 'libwebp WASM RGBA8',
+      }[source.format],
       minimumChannelDelta: minDelta,
       minimumScanlineSupport: minimumSupport,
     },

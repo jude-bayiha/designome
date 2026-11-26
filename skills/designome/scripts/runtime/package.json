@@ -7,6 +7,10 @@
     "node": ">=24"
   },
   "imports": {
-    "#png-codec": "./vendor/pngjs/lib/png-sync.js"
+    "#png-codec": "./vendor/pngjs/lib/png-sync.js",
+    "#jpeg-codec": "./vendor/jpeg-js/lib/decoder.js",
+    "#gif-codec": "./vendor/omggif/omggif.js",
+    "#webp-codec": "./vendor/@jsquash/webp/codec/dec/webp_dec.js",
+    "#webp-wasm": "./vendor/@jsquash/webp/codec/dec/webp_dec.wasm"
   }
 }

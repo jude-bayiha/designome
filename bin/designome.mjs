@@ -188,8 +188,8 @@ function printHelp() {
     `  init-run --output <dir> --image <file> [--image <file>] [--request <normalized-request.json>] [--motion <mode>] [--project <dir>]\n`,
   );
   process.stdout.write(
-    '  measure-composition --plan <json> --image <source.png> [--render <render.png>]\n' +
-      '  measure-source --image <png> [--region <x,y,width,height>] [--min-delta <1-255>] [--annotation <new.png>]\n',
+    '  measure-composition --plan <json> --image <source-image> [--render <render-image>]\n' +
+      '  measure-source --image <image> [--region <x,y,width,height>] [--min-delta <1-255>] [--annotation <new.png>]\n',
   );
   process.stdout.write(
     `  validate-request --file <normalized-request.json> [--operation <extract|install|audit>]\n`,

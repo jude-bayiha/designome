@@ -17,7 +17,7 @@ Stop if neither context can be resolved. Never guess which Design DNA or project
 
 ## Replay composition measurements
 
-When an accepted rule cites a composition relation, replay the private extraction plan on the verified audit PNG with the standalone skill's `measure-composition --plan <plan.json> --image <source.png> --render <capture.png>`. Confirm both image hashes against the respective evidence records and inspect the selected regions. Report each relation ID, expected and actual value, signed difference, tolerance and status. If the source artifacts, helper or corresponding regions are unavailable, record the measurement as incomplete. Use an accepted tolerance for a compliance finding. A proposed tolerance supports a diagnostic comparison.
+When an accepted rule cites a composition relation, replay the private extraction plan on the verified audit image with the standalone skill's `measure-composition --plan <plan.json> --image <source.png> --render <capture.png>`. Confirm both image hashes against the respective evidence records and inspect the selected regions. Report each relation ID, expected and actual value, signed difference, tolerance and status. If the source artifacts, helper or corresponding regions are unavailable, record the measurement as incomplete. Use an accepted tolerance for a compliance finding. A proposed tolerance supports a diagnostic comparison.
 
 ## Workflow
 

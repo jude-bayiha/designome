@@ -12,7 +12,11 @@
     "./audit": "./src/runtime/capture-session.mjs"
   },
   "imports": {
-    "#png-codec": "pngjs/lib/png-sync.js"
+    "#png-codec": "pngjs/lib/png-sync.js",
+    "#jpeg-codec": "jpeg-js/lib/decoder.js",
+    "#gif-codec": "omggif/omggif.js",
+    "#webp-codec": "@jsquash/webp/codec/dec/webp_dec.js",
+    "#webp-wasm": "@jsquash/webp/codec/dec/webp_dec.wasm"
   },
   "packageManager": "pnpm@11.5.2",
   "engines": {
@@ -39,12 +43,15 @@
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.2.0",
+    "@jsquash/webp": "1.5.0",
     "@playwright/test": "1.64.1",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "husky": "^9.1.7",
+    "jpeg-js": "0.4.4",
     "lint-staged": "^17.2.0",
     "markdownlint-cli2": "^0.23.2",
+    "omggif": "1.0.10",
     "pngjs": "7.0.0",
     "prettier": "^3.9.6",
     "skills": "1.5.26",

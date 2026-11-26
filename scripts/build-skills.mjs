@@ -86,6 +86,45 @@ export async function expectedSkills(root = repositoryRoot) {
       license: pngPackage.license,
     }),
   );
+  const imports = { '#png-codec': `./${pngVendor}/lib/png-sync.js` };
+  const codecs = [
+    ['jpeg-js', ['lib/decoder.js', 'LICENSE']],
+    ['omggif', ['omggif.js', 'README']],
+    [
+      '@jsquash/webp',
+      [
+        'codec/dec/webp_dec.js',
+        'codec/dec/webp_dec.wasm',
+        'LICENSE',
+        'codec/LICENSE.codec.md',
+      ],
+    ],
+  ];
+  for (const [name, files] of codecs) {
+    const packagePath = require.resolve(name + '/package.json');
+    const metadata = JSON.parse(await fs.readFile(packagePath));
+    if (pkg.devDependencies[name] !== metadata.version)
+      throw new Error('Unexpected codec version for ' + name);
+    const dir = 'vendor/' + name;
+    runtime.set(
+      `${runtimePrefix}/${dir}/package.json`,
+      json({
+        name,
+        version: metadata.version,
+        type: metadata.type ?? 'commonjs',
+        license: metadata.license,
+      }),
+    );
+    for (const file of files) {
+      runtime.set(
+        `${runtimePrefix}/${dir}/${file}`,
+        await fs.readFile(path.join(path.dirname(packagePath), file)),
+      );
+    }
+    for (const [alias, target] of Object.entries(pkg.imports)) {
+      if (target.startsWith(name + '/')) imports[alias] = './vendor/' + target;
+    }
+  }
   runtime.set(
     `${runtimePrefix}/package.json`,
     json({
@@ -94,7 +133,7 @@ export async function expectedSkills(root = repositoryRoot) {
       private: true,
       type: 'module',
       engines: pkg.engines,
-      imports: { '#png-codec': `./${pngVendor}/lib/png-sync.js` },
+      imports,
     }),
   );
   const distributions = new Map();

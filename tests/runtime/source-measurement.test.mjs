@@ -175,3 +175,19 @@ test('replays normalized composition evidence and reports missing landmarks', as
     code: 'INVALID_COMPOSITION_PLAN',
   });
 });
+
+test('detects raster formats from bytes and measures their decoded edges', async (t) => {
+  const { imagePath } = await writeFixture(t);
+  const encodings = {
+    jpeg: '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/wAALCAAMABABAREA/8QAFQABAQAAAAAAAAAAAAAAAAAACgn/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAA/AJVFUCrlUP/Z',
+    gif: 'R0lGODlhEAAMAPABAAAAAP///yH5BAAAAAAALAAAAAAQAAwAAAIZhG+hq4jM3IFLJhoswNly/XkYOIoUeZpQAQA7',
+    webp: 'UklGRigAAABXRUJQVlA4IBwAAABQAQCdASoQAAwAAgA0JaQABHQAAP2z//vd4AAA',
+  };
+  for (const [format, encoded] of Object.entries(encodings)) {
+    await fs.writeFile(imagePath, Buffer.from(encoded, 'base64'));
+    const result = await measureSource({ imagePath });
+    assert.equal(result.source.format, format);
+    assert.equal(result.source.width, 16);
+    assert.ok(result.edges.x.some((edge) => edge.position === 8));
+  }
+});
