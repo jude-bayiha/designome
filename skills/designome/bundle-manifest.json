@@ -1,7 +1,7 @@
 {
   "bundleFormatVersion": "1.0.0",
   "skill": "designome",
-  "contentFingerprint": "sha256:e10b346e3fa952d3de1d7e6228699f1f802bf9dc84103a4ac2fb18741b565324",
+  "contentFingerprint": "sha256:03f6ed07c1702993a3ee61b00681df30cee308e9c149864bb55e727d698e42be",
   "files": {
     "agents/openai.yaml": "aeee0b3a3921828612f09507247c69041d02809a0ba0adb07fce4e3cb695d907",
     "contract.json": "65b2ba2b7324149f40628e6bcb3f8c56e7ef9c750f6632234c367d12999b2690",
@@ -12,7 +12,7 @@
     "scripts/runtime/docs/audit-contract.md": "4604426583418186089a146f6a525139a72e90b377368b4aa6075e0295787514",
     "scripts/runtime/docs/browser-evidence-adapter.md": "f3423d6ee280dad4b2a037b44b7673e8a0d9ee5477d0a2083f71144c0495e6db",
     "scripts/runtime/docs/browser-evidence.md": "09df9685c4570ab5b6644d41d5d7b9c7f1798aa53a1e88644371e22510c87443",
-    "scripts/runtime/docs/checklist-review.md": "f36c84d8f6bcf914bf9bd0dadaae36dd4356ea3e913f8af062dc7fcb7461f918",
+    "scripts/runtime/docs/checklist-review.md": "57440a7dcb45ae27f95f5ebe16a2cc60d15232ce7ae405ee33aef4bc499beadb",
     "scripts/runtime/docs/concept-matrix.md": "fc32bf85e378643340e204d8e1673a1b6d2b93cde033aa80afc33fc5dda623e9",
     "scripts/runtime/docs/context-non-regression.md": "0922ac5cc92439ceaa1ae96eee73f4ae3fea9e7c242fc2ffa704aebd82eeb43f",
     "scripts/runtime/docs/conversational-request-contract.md": "dbcd09aed4016fecf79f51ab797952d408b234ebd7ea69956b349a555fc226a4",
