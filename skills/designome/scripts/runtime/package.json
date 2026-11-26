@@ -8,6 +8,10 @@
   },
   "imports": {
     "#png-codec": "./vendor/pngjs/lib/png-sync.js",
+    "#opencv": "./vendor/@techstark/opencv-js/dist/opencv.js",
+    "#ocr-core": "./vendor/tesseract.js-core/tesseract-core-lstm.js",
+    "#ocr-wasm": "./vendor/tesseract.js-core/tesseract-core-lstm.wasm",
+    "#ocr-english": "./vendor/@tesseract.js-data/eng/4.0.0_best_int/eng.traineddata.gz",
     "#jpeg-codec": "./vendor/jpeg-js/lib/decoder.js",
     "#gif-codec": "./vendor/omggif/omggif.js",
     "#webp-codec": "./vendor/@jsquash/webp/codec/dec/webp_dec.js",

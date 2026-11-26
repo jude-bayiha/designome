@@ -15,7 +15,7 @@ Designome extracts a visual grammar, not a copy. A screenshot is studied for the
 
 - Write repository content, code comments, commit messages, branch metadata, and pull-request content in English.
 - Do not reconstruct unrequested page families or user roles.
-- Do not introduce a heavy local CV, OCR, or ML pipeline. The host's multimodal model performs the analysis.
+- Load the bundled OpenCV and OCR helpers on demand for pixel evidence. The host's multimodal model verifies candidate regions and interprets their design roles.
 - A target project is a technical integration destination only. Never use its CSS, components, or UI as Design DNA evidence.
 - Every claim uses exactly one status: `observed`, `inferred`, `proposed`, or `unknown`.
 - Behavior absent from a screenshot may be proposed, but never presented as observed.

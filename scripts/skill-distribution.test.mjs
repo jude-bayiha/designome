@@ -202,6 +202,36 @@ for (const { agent, skillsDirectory } of hosts) {
         /ERR_ACCESS_DENIED/,
       );
       assert.match(await run('--help'), /Designome deterministic helper/);
+      const label = path.join(sandbox, 'label.png');
+      await fs.copyFile(
+        path.join(repositoryRoot, 'tests/fixtures/vision-total.png'),
+        label,
+      );
+      const vision = JSON.parse(
+        await run(
+          'inspect-vision',
+          '--image',
+          label,
+          '--mode',
+          'both',
+          '--region',
+          '15,5,270,100',
+        ),
+      );
+      assert.equal(vision.units, 'image-px');
+      assert.deepEqual(
+        vision.ocr.words.map((word) => word.text),
+        ['TOTAL', '42'],
+      );
+      assert.ok(vision.ocr.words.every((word) => word.x >= 46 && word.y >= 43));
+      assert.ok(
+        vision.contours.boxes.some(
+          (box) =>
+            Math.abs(box.x - 27) <= 2 &&
+            Math.abs(box.y - 12) <= 2 &&
+            Math.abs(box.width - 244) <= 3,
+        ),
+      );
       const request = await readJson(
         path.join(runtime, 'examples/request-contract.extract.reference.json'),
       );

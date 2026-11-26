@@ -16,7 +16,11 @@
     "#jpeg-codec": "jpeg-js/lib/decoder.js",
     "#gif-codec": "omggif/omggif.js",
     "#webp-codec": "@jsquash/webp/codec/dec/webp_dec.js",
-    "#webp-wasm": "@jsquash/webp/codec/dec/webp_dec.wasm"
+    "#webp-wasm": "@jsquash/webp/codec/dec/webp_dec.wasm",
+    "#opencv": "@techstark/opencv-js/dist/opencv.js",
+    "#ocr-core": "tesseract.js-core/tesseract-core-lstm.js",
+    "#ocr-wasm": "tesseract.js-core/tesseract-core-lstm.wasm",
+    "#ocr-english": "@tesseract.js-data/eng/4.0.0_best_int/eng.traineddata.gz"
   },
   "packageManager": "pnpm@11.5.2",
   "engines": {
@@ -45,6 +49,8 @@
     "@commitlint/config-conventional": "^21.2.0",
     "@jsquash/webp": "1.5.0",
     "@playwright/test": "1.64.1",
+    "@techstark/opencv-js": "5.0.0-release.1",
+    "@tesseract.js-data/eng": "1.0.0",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "husky": "^9.1.7",
@@ -55,6 +61,7 @@
     "pngjs": "7.0.0",
     "prettier": "^3.9.6",
     "skills": "1.5.26",
+    "tesseract.js-core": "6.1.2",
     "yaml": "^2.9.0"
   }
 }

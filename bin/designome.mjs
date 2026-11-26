@@ -188,7 +188,8 @@ function printHelp() {
     `  init-run --output <dir> --image <file> [--image <file>] [--request <normalized-request.json>] [--motion <mode>] [--project <dir>]\n`,
   );
   process.stdout.write(
-    '  measure-composition --plan <json> --image <source-image> [--render <render-image>]\n' +
+    '  inspect-vision --image <image> --mode <contours|ocr|both> [--region <x,y,width,height>]\n' +
+      '  measure-composition --plan <json> --image <source-image> [--render <render-image>]\n' +
       '  measure-source --image <image> [--region <x,y,width,height>] [--min-delta <1-255>] [--annotation <new.png>]\n',
   );
   process.stdout.write(
@@ -373,6 +374,14 @@ async function main() {
       targetProjectPath: option(parsed, 'project', { fallback: null }),
       requestContractPath: option(parsed, 'request', { fallback: null }),
       contextMode: option(parsed, 'context-mode', { fallback: 'full' }),
+    });
+  } else if (command === 'inspect-vision') {
+    assertArguments(parsed, ['image', 'region', 'mode']);
+    const { inspectVision } = await import('../src/runtime/vision.mjs');
+    result = await inspectVision({
+      imagePath: option(parsed, 'image', { required: true }),
+      mode: option(parsed, 'mode', { required: true }),
+      region: option(parsed, 'region'),
     });
   } else if (command === 'measure-composition') {
     assertArguments(parsed, ['plan', 'image', 'render']);

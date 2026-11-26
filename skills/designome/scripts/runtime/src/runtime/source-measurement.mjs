@@ -11,7 +11,7 @@ const minimumSupport = 0.6;
 const scanlineLimit = 192;
 const colorSamplesPerAxis = 64;
 
-function parseRegion(value, width, height) {
+export function parseRegion(value, width, height) {
   if (value === undefined) return { x: 0, y: 0, width, height };
   if (/^\d+,\d+,\d+,\d+$/u.test(value)) {
     const [x, y, w, h] = value.split(',').map(Number);

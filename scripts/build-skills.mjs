@@ -87,7 +87,16 @@ export async function expectedSkills(root = repositoryRoot) {
     }),
   );
   const imports = { '#png-codec': `./${pngVendor}/lib/png-sync.js` };
-  const codecs = [
+  const visionPackages = [
+    ['@techstark/opencv-js', ['dist/opencv.js', 'LICENSE']],
+    [
+      'tesseract.js-core',
+      ['tesseract-core-lstm.js', 'tesseract-core-lstm.wasm', 'LICENSE'],
+    ],
+    [
+      '@tesseract.js-data/eng',
+      ['4.0.0_best_int/eng.traineddata.gz', 'README.md'],
+    ],
     ['jpeg-js', ['lib/decoder.js', 'LICENSE']],
     ['omggif', ['omggif.js', 'README']],
     [
@@ -100,11 +109,11 @@ export async function expectedSkills(root = repositoryRoot) {
       ],
     ],
   ];
-  for (const [name, files] of codecs) {
+  for (const [name, files] of visionPackages) {
     const packagePath = require.resolve(name + '/package.json');
     const metadata = JSON.parse(await fs.readFile(packagePath));
     if (pkg.devDependencies[name] !== metadata.version)
-      throw new Error('Unexpected codec version for ' + name);
+      throw new Error('Unexpected vision package version for ' + name);
     const dir = 'vendor/' + name;
     runtime.set(
       `${runtimePrefix}/${dir}/package.json`,

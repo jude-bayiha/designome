@@ -45,7 +45,7 @@ Success means the new interface follows the extracted system in hierarchy, densi
 | Repository quality   | Prettier, markdownlint, Husky, lint-staged, Commitlint | Enforces formatting and contribution hygiene                                       |
 | Delivery             | GitHub Actions + Release Please                        | Runs checks and prepares conventional releases                                     |
 
-No Python, NumPy, OpenCV, OCR engine, vector database, training pipeline, or standalone model API is required for the current product. A later capability may add code only when an agent prompt cannot reliably or safely perform the job.
+The installed skill runs pixel measurements in Node.js. It bundles OpenCV for contour candidates and Tesseract with English language data for text bounds. The host verifies and interprets these observations.
 
 ## Product risks and controls
 
