@@ -6,7 +6,7 @@ activityCompose = "1.13.0"
 navigationCompose = "2.10.2"
 junit = "4.13.2"
 robolectric = "4.17"
-roborazzi = "1.76.0"
+roborazzi = "1.79.0"
 
 [libraries]
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
