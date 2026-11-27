@@ -57,8 +57,8 @@ importers:
         specifier: ^3.9.6
         version: 3.9.6
       skills:
-        specifier: 1.5.26
-        version: 1.5.26
+        specifier: 1.9.1
+        version: 1.9.1
       tesseract.js-core:
         specifier: 6.1.2
         version: 6.1.2
@@ -706,6 +706,9 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
+  nostics@1.4.0:
+    resolution: {integrity: sha512-WjXHOuNuzY3MPKOoCT2zL1Sa3cS2mOUe4o8F94JvBOH2cGfyNItbQmCb2pNHIxoodd5O+vtmmHq7PoSZVGgCHA==}
+
   omggif@1.0.10:
     resolution: {integrity: sha512-LMJTtvgc/nugXj0Vcrrs68Mn2D1r0zf630VNtqtpI1FEO7e+O9FP4gqs9AcnBaSEeoHIPm28u6qgPR0oyEpGSw==}
 
@@ -781,8 +784,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  skills@1.5.26:
-    resolution: {integrity: sha512-D5jnWoMPDRQ3fJM3RpQH8SBrAS9tmVlTC7OdOB2tk7D6nORbRnw8RLwjVj81IIGlxwWuBthEgUChM7SOZGvTHQ==}
+  skills@1.9.1:
+    resolution: {integrity: sha512-apCGOld13FyVhv3282T/PmDKdtaH/UI5idOGvzAfhOEsFu5lR5ih+oaYk8QbruH8Zyxh2DgBJORnnmOpz5s1Rw==}
     engines: {node: '>=22.20.0'}
     hasBin: true
 
@@ -1550,6 +1553,8 @@ snapshots:
 
   ms@2.1.3: {}
 
+  nostics@1.4.0: {}
+
   omggif@1.0.10(patch_hash=a738e7be9104987c001e7f7766abe4377901b18895ec2aab331d5e6fe78f2bfb): {}
 
   parent-module@1.0.1:
@@ -1607,8 +1612,9 @@ snapshots:
 
   semver@7.8.6: {}
 
-  skills@1.5.26:
+  skills@1.9.1:
     dependencies:
+      nostics: 1.4.0
       tar: 7.5.22
       yaml: 2.9.1
 
